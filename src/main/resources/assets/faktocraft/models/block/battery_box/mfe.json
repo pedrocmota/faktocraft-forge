@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube",
+	"textures": {
+		"down": "faktocraft:block/battery_box/mfe_bottom",
+		"up": "faktocraft:block/battery_box/mfe_top",
+		"north": "faktocraft:block/battery_box/mfe_front",
+		"east": "faktocraft:block/battery_box/mfe_leftright",
+		"south": "faktocraft:block/battery_box/mfe_back",
+		"west": "faktocraft:block/battery_box/mfe_leftright",
+		"particle": "faktocraft:block/battery_box/mfe_leftright"
+	}
+}

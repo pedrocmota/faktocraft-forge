@@ -1,0 +1,18 @@
+{
+  "type": "faktocraft:crushing",
+  "bonus_result": {
+    "chance": 10.0,
+    "count": 1,
+    "item": "faktocraft:iron_dust"
+  },
+  "duration": 180,
+  "experience": 0.1,
+  "ingredient": {
+    "count": 1,
+    "tag": "forge:ingots/iron"
+  },
+  "power_cost": 8,
+  "result": {
+    "item": "faktocraft:iron_dust"
+  }
+}

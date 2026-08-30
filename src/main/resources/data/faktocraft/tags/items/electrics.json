@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#faktocraft:batteries/battery",
+    "#faktocraft:electrics/tools",
+    "#faktocraft:electrics/nanosuit"
+  ]
+}

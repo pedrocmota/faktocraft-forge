@@ -1,0 +1,57 @@
+{
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "clamp": "faktocraft:block/pipe/pipe_clamp",
+    "particle": "faktocraft:block/pipe/pipe_clamp"
+  },
+  "elements": [
+    {
+      "from": [3.75, 11.5, 7.25],
+      "to": [12.25, 12.25, 8.75],
+      "faces": {
+        "north": { "texture": "#clamp" },
+        "south": { "texture": "#clamp" },
+        "east": { "texture": "#clamp" },
+        "west": { "texture": "#clamp" },
+        "up": { "texture": "#clamp" },
+        "down": { "texture": "#clamp" }
+      }
+    },
+    {
+      "from": [3.75, 3.75, 7.25],
+      "to": [12.25, 4.5, 8.75],
+      "faces": {
+        "north": { "texture": "#clamp" },
+        "south": { "texture": "#clamp" },
+        "east": { "texture": "#clamp" },
+        "west": { "texture": "#clamp" },
+        "up": { "texture": "#clamp" },
+        "down": { "texture": "#clamp" }
+      }
+    },
+    {
+      "from": [3.75, 4.5, 7.25],
+      "to": [4.5, 11.5, 8.75],
+      "faces": {
+        "north": { "texture": "#clamp" },
+        "south": { "texture": "#clamp" },
+        "east": { "texture": "#clamp" },
+        "west": { "texture": "#clamp" },
+        "up": { "texture": "#clamp" },
+        "down": { "texture": "#clamp" }
+      }
+    },
+    {
+      "from": [11.5, 4.5, 7.25],
+      "to": [12.25, 11.5, 8.75],
+      "faces": {
+        "north": { "texture": "#clamp" },
+        "south": { "texture": "#clamp" },
+        "east": { "texture": "#clamp" },
+        "west": { "texture": "#clamp" },
+        "up": { "texture": "#clamp" },
+        "down": { "texture": "#clamp" }
+      }
+    }
+  ]
+}

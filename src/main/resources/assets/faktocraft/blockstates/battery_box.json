@@ -1,0 +1,10 @@
+{
+	"variants": {
+		"facing=north":	{ "model": "faktocraft:block/battery_box/battery_box" },
+		"facing=south":	{ "model": "faktocraft:block/battery_box/battery_box", "y": 180 },
+		"facing=west":	{ "model": "faktocraft:block/battery_box/battery_box", "y": 270 },
+		"facing=east":	{ "model": "faktocraft:block/battery_box/battery_box", "y": 90 },
+		"facing=up":	{ "model": "faktocraft:block/battery_box/battery_box", "x": -90 },
+		"facing=down":	{ "model": "faktocraft:block/battery_box/battery_box", "x": 90 }
+	}
+}

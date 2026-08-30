@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": {
+      "item": "faktocraft:carbon_plate"
+    },
+    "s": {
+      "tag": "forge:dusts/lithium"
+    },
+    "a": {
+      "item": "faktocraft:advanced_alloy"
+    },
+    "i": {
+      "item": "faktocraft:intermediate_capacitor"
+    }
+  },
+  "pattern": [
+    "csc",
+    "aia",
+    "csc"
+  ],
+  "result": {
+    "item": "faktocraft:advanced_capacitor"
+  }
+}

@@ -1,0 +1,24 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "group": "faktocraft_pipes",
+ "key": {
+  "c": {
+   "item": "faktocraft:electronic_circuit"
+  },
+  "t": {
+   "item": "minecraft:crafting_table"
+  },
+  "p": {
+   "item": "faktocraft:stone_pipe"
+  }
+ },
+ "pattern": [
+  "c",
+  "t",
+  "p"
+ ],
+ "result": {
+  "count": 1,
+  "item": "faktocraft:craft_pipe"
+ }
+}

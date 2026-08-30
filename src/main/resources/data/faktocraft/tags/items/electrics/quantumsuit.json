@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "faktocraft:quantum_helmet",
+    "faktocraft:quantum_chestplate",
+    "faktocraft:quantum_leggings",
+    "faktocraft:quantum_boots"
+  ]
+}

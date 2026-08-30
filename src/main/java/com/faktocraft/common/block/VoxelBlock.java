@@ -1,0 +1,243 @@
+package com.faktocraft.common.block;
+
+import com.faktocraft.common.util.Constants;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import java.util.EnumMap;
+import java.util.Map;
+
+public class VoxelBlock extends IndRebBlock implements net.minecraft.world.level.block.SimpleWaterloggedBlock {
+
+  public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+
+  public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
+  public static final BooleanProperty EAST = BlockStateProperties.EAST;
+  public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
+  public static final BooleanProperty WEST = BlockStateProperties.WEST;
+  public static final BooleanProperty UP = BlockStateProperties.UP;
+  public static final BooleanProperty DOWN = BlockStateProperties.DOWN;
+
+  public static final Map<Direction, BooleanProperty> FACING_TO_PROPERTY_MAP = createFacingMap();
+
+  public static final BooleanProperty EXT_NORTH = BooleanProperty.create("ext_north");
+  public static final BooleanProperty EXT_EAST = BooleanProperty.create("ext_east");
+  public static final BooleanProperty EXT_SOUTH = BooleanProperty.create("ext_south");
+  public static final BooleanProperty EXT_WEST = BooleanProperty.create("ext_west");
+  public static final BooleanProperty EXT_UP = BooleanProperty.create("ext_up");
+  public static final BooleanProperty EXT_DOWN = BooleanProperty.create("ext_down");
+
+  public static final Map<Direction, BooleanProperty> EXT_TO_PROPERTY_MAP = createExtMap();
+
+  private final VoxelShape[] shapes;
+
+  private final float apothem;
+
+  public VoxelBlock(Properties properties, float apothem) {
+    super(properties);
+    this.apothem = apothem;
+    this.shapes = makeShapes(apothem);
+    BlockState state = getStateDefinition().any()
+        .setValue(NORTH, false).setValue(EAST, false).setValue(SOUTH, false)
+        .setValue(WEST, false).setValue(UP, false).setValue(DOWN, false)
+        .setValue(WATERLOGGED, false);
+    if (connectionExtensions()) {
+      for (BooleanProperty ext : EXT_TO_PROPERTY_MAP.values()) {
+        state = state.setValue(ext, false);
+      }
+    }
+    registerDefaultState(state);
+  }
+
+  public float getApothem() {
+    return apothem;
+  }
+
+  protected boolean connectionExtensions() {
+    return false;
+  }
+
+  private boolean extendsInto(LevelAccessor level, BlockPos pos, Direction direction, boolean connected) {
+    if (!connected) {
+      return false;
+    }
+    BlockPos relative = pos.relative(direction);
+    BlockState neighbor = level.getBlockState(relative);
+    if (neighbor.getBlock() instanceof VoxelBlock) {
+      return false;
+    }
+    return !neighbor.canOcclude() || !neighbor.isFaceSturdy(level, relative, direction.getOpposite());
+  }
+
+  private static Map<Direction, BooleanProperty> createFacingMap() {
+    Map<Direction, BooleanProperty> map = new EnumMap<>(Direction.class);
+    map.put(Direction.NORTH, NORTH);
+    map.put(Direction.EAST, EAST);
+    map.put(Direction.SOUTH, SOUTH);
+    map.put(Direction.WEST, WEST);
+    map.put(Direction.UP, UP);
+    map.put(Direction.DOWN, DOWN);
+    return map;
+  }
+
+  private static Map<Direction, BooleanProperty> createExtMap() {
+    Map<Direction, BooleanProperty> map = new EnumMap<>(Direction.class);
+    map.put(Direction.NORTH, EXT_NORTH);
+    map.put(Direction.EAST, EXT_EAST);
+    map.put(Direction.SOUTH, EXT_SOUTH);
+    map.put(Direction.WEST, EXT_WEST);
+    map.put(Direction.UP, EXT_UP);
+    map.put(Direction.DOWN, EXT_DOWN);
+    return map;
+  }
+
+  private VoxelShape[] makeShapes(float apothem) {
+    float min = 8 - apothem * 16;
+    float max = 8 + apothem * 16;
+    VoxelShape core = Block.box(min, min, min, max, max, max);
+
+    VoxelShape[] directionShapes = new VoxelShape[] {
+        Block.box(min, 0, min, max, max, max),
+        Block.box(min, min, min, max, 16, max),
+        Block.box(min, min, 0, max, max, max),
+        Block.box(min, min, min, max, max, 16),
+        Block.box(0, min, min, max, max, max),
+        Block.box(min, min, min, 16, max, max)
+    };
+
+    VoxelShape[] result = new VoxelShape[64];
+    for (int i = 0; i < 64; i++) {
+      VoxelShape shape = core;
+      for (int d = 0; d < 6; d++) {
+        if ((i & (1 << d)) != 0) {
+          shape = Shapes.or(shape, directionShapes[d]);
+        }
+      }
+      result[i] = shape;
+    }
+    return result;
+  }
+
+  protected int getShapeIndex(BlockState state) {
+    int index = 0;
+    for (int d = 0; d < Constants.DIRECTIONS.length; d++) {
+      if (state.getValue(FACING_TO_PROPERTY_MAP.get(Constants.DIRECTIONS[d]))) {
+        index |= 1 << d;
+      }
+    }
+    return index;
+  }
+
+  @Override
+  public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    return shapes[getShapeIndex(state)];
+  }
+
+  @Override
+  protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    super.createBlockStateDefinition(builder);
+    builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN, WATERLOGGED);
+    if (connectionExtensions()) {
+      builder.add(EXT_NORTH, EXT_EAST, EXT_SOUTH, EXT_WEST, EXT_UP, EXT_DOWN);
+    }
+  }
+
+  protected boolean canConnect(LevelAccessor level, BlockPos pos, Direction direction) {
+    return false;
+  }
+
+  @Override
+  public BlockState setStateForPlacement(BlockPlaceContext context, BlockState state) {
+    state = state.setValue(WATERLOGGED,
+        waterloggable() && hasWaterAbove(context.getLevel(), context.getClickedPos()));
+    for (Direction direction : Constants.DIRECTIONS) {
+      boolean connected = canConnect(context.getLevel(), context.getClickedPos(), direction);
+      state = state.setValue(FACING_TO_PROPERTY_MAP.get(direction), connected);
+      if (connectionExtensions()) {
+        state = state.setValue(EXT_TO_PROPERTY_MAP.get(direction),
+            extendsInto(context.getLevel(), context.getClickedPos(), direction, connected));
+      }
+    }
+    return state;
+  }
+
+  @Override
+  public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+      BlockPos pos, BlockPos neighborPos) {
+    if (waterloggable()) {
+      boolean above = hasWaterAbove(level, pos);
+      if (!state.getValue(WATERLOGGED)) {
+        if (above) {
+          state = state.setValue(WATERLOGGED, true);
+        }
+      } else if (!above && !hasSideWater(level, pos)) {
+        state = state.setValue(WATERLOGGED, false);
+      }
+    }
+    if (state.getValue(WATERLOGGED)) {
+      level.scheduleTick(pos, net.minecraft.world.level.material.Fluids.WATER,
+          net.minecraft.world.level.material.Fluids.WATER.getTickDelay(level));
+    }
+    boolean connected = canConnect(level, pos, direction);
+    state = state.setValue(FACING_TO_PROPERTY_MAP.get(direction), connected);
+    if (connectionExtensions()) {
+      state = state.setValue(EXT_TO_PROPERTY_MAP.get(direction), extendsInto(level, pos, direction, connected));
+    }
+    return state;
+  }
+
+  @Override
+  public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    return false;
+  }
+
+  private static boolean hasWaterAbove(LevelAccessor level, BlockPos pos) {
+    return level.getBlockState(pos.above()).getFluidState().is(net.minecraft.tags.FluidTags.WATER);
+  }
+
+  private static boolean hasSideWater(LevelAccessor level, BlockPos pos) {
+    for (Direction direction : Constants.DIRECTIONS) {
+      if (direction == Direction.UP) {
+        continue;
+      }
+      BlockPos relative = pos.relative(direction);
+      BlockState neighbor = level.getBlockState(relative);
+      if (neighbor.getBlock() instanceof VoxelBlock) {
+        continue;
+      }
+      if (neighbor.getFluidState().is(net.minecraft.tags.FluidTags.WATER)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  protected boolean waterloggable() {
+    return true;
+  }
+
+  @Override
+  public boolean canPlaceLiquid(BlockGetter level, BlockPos pos, BlockState state,
+      net.minecraft.world.level.material.Fluid fluid) {
+    return waterloggable()
+        && net.minecraft.world.level.block.SimpleWaterloggedBlock.super.canPlaceLiquid(level, pos, state, fluid);
+  }
+
+  @Override
+  @SuppressWarnings("deprecation")
+  public net.minecraft.world.level.material.FluidState getFluidState(BlockState state) {
+    return state.getValue(WATERLOGGED)
+        ? net.minecraft.world.level.material.Fluids.WATER.getSource(false)
+        : super.getFluidState(state);
+  }
+}

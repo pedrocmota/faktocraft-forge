@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 1,
+    "item": "minecraft:snow_block"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "minecraft:ice"
+  },
+  "type": "faktocraft:compressing"
+}

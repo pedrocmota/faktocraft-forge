@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 5,
+    "item": "faktocraft:sawdust"
+  },
+  "power_cost": 8,
+  "result": {
+    "item": "faktocraft:bio_chaff"
+  },
+  "type": "faktocraft:crushing"
+}

@@ -1,0 +1,35 @@
+* text=auto eol=lf
+
+*.java      text eol=lf
+*.gradle    text eol=lf
+*.json      text eol=lf
+*.mcmeta    text eol=lf
+*.toml      text eol=lf
+*.properties text eol=lf
+*.txt       text eol=lf
+*.md        text eol=lf
+*.cfg       text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+
+gradlew     text eol=lf
+*.sh        text eol=lf
+start       text eol=lf
+
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ogg       binary
+*.wav       binary
+*.jar       binary
+*.zip       binary
+*.gz        binary
+*.dat       binary
+*.nbt       binary
+*.schem     binary
+*.ttf       binary
+*.otf       binary

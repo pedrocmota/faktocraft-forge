@@ -1,0 +1,11 @@
+{
+  "parent": "faktocraft:item/tool/electric/nano_saber",
+  "overrides": [
+    {
+      "predicate": {
+        "faktocraft:active": 1.0
+      },
+      "model": "faktocraft:item/tool/electric/nano_saber_active"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "duration": 500,
+  "experience": 5.0,
+  "item": {
+    "item": "minecraft:copper_ore"
+  },
+  "power_cost": 256,
+  "replication": {
+    "energy_cost": 66,
+    "matter_cost": 131
+  },
+  "type": "faktocraft:scanner"
+}

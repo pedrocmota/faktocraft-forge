@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "faktocraft:block/machines/basic/ore_washing_plant_bottom",
+    "east": "faktocraft:block/machines/basic/ore_washing_plant_leftright_active",
+    "north": "faktocraft:block/machines/basic/ore_washing_plant_front_active",
+    "particle": "faktocraft:block/machines/basic/ore_washing_plant_front_active",
+    "south": "faktocraft:block/machines/basic/ore_washing_plant_back",
+    "up": "faktocraft:block/machines/basic/ore_washing_plant_top",
+    "west": "faktocraft:block/machines/basic/ore_washing_plant_leftright_active"
+  }
+}

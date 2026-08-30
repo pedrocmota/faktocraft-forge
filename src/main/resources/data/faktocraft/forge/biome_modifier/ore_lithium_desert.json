@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#forge:is_desert",
+  "features": "faktocraft:ore_lithium_desert_placed",
+  "step": "underground_ores"
+}

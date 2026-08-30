@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_pipes",
+  "key": {
+    "g": {
+      "tag": "forge:glass_blocks/colorless"
+    }
+  },
+  "pattern": [
+    "ggg",
+    "g g",
+    "ggg"
+  ],
+  "result": {
+    "item": "faktocraft:tank"
+  }
+}

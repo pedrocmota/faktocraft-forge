@@ -1,0 +1,13 @@
+{
+  "duration": 500,
+  "experience": 5.0,
+  "item": {
+    "item": "minecraft:deepslate_lapis_ore"
+  },
+  "power_cost": 256,
+  "replication": {
+    "energy_cost": 34,
+    "matter_cost": 68
+  },
+  "type": "faktocraft:scanner"
+}

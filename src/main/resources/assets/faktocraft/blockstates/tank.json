@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "joined_above=false,joined_below=false": {
+      "model": "faktocraft:block/tank"
+    },
+    "joined_above=false,joined_below=true": {
+      "model": "faktocraft:block/tank_joined_below"
+    },
+    "joined_above=true,joined_below=false": {
+      "model": "faktocraft:block/tank_joined_above"
+    },
+    "joined_above=true,joined_below=true": {
+      "model": "faktocraft:block/tank_joined_both"
+    }
+  }
+}

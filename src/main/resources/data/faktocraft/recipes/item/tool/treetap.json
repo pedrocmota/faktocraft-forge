@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_tool",
+  "key": {
+    "p": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    " p ",
+    "ppp",
+    "p  "
+  ],
+  "result": {
+    "item": "faktocraft:treetap"
+  }
+}

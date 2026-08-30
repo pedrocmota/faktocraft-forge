@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:blasting",
+  "cookingtime": 100,
+  "experience": 0.8,
+  "ingredient": {
+    "item": "faktocraft:tin_dust"
+  },
+  "result": "faktocraft:tin_ingot"
+}

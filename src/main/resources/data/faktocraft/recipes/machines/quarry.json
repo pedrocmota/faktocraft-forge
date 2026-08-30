@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "a": {
+      "item": "faktocraft:advanced_machine_casing"
+    },
+    "c": {
+      "item": "faktocraft:advanced_circuit"
+    },
+    "g": {
+      "tag": "forge:gems/diamond"
+    },
+    "p": {
+      "item": "minecraft:diamond_pickaxe"
+    },
+    "s": {
+      "tag": "forge:ingots/steel"
+    }
+  },
+  "pattern": [
+    "cgc",
+    "sas",
+    "gpg"
+  ],
+  "result": {
+    "item": "faktocraft:quarry"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "front": "faktocraft:block/machines/quarry_front_active",
+    "top": "faktocraft:block/machines/quarry_top",
+    "bottom": "faktocraft:block/advanced_machine_casing",
+    "side": "faktocraft:block/machines/quarry_side"
+  }
+}

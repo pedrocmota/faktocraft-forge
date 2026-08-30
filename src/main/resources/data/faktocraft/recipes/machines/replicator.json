@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "g": {
+      "item": "faktocraft:reinforced_glass"
+    },
+    "h": {
+      "item": "faktocraft:high_transformer"
+    },
+    "m": {
+      "item": "faktocraft:mfe"
+    },
+    "s": {
+      "item": "faktocraft:reinforced_stone"
+    },
+    "t": {
+      "item": "faktocraft:teleport_anchor"
+    }
+  },
+  "pattern": [
+    "gsg",
+    "ttt",
+    "hmh"
+  ],
+  "result": {
+    "item": "faktocraft:replicator"
+  }
+}

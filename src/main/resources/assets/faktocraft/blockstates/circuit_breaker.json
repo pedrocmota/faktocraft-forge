@@ -1,0 +1,26 @@
+{
+ "variants": {
+  "axis=z,enabled=true": {
+   "model": "faktocraft:block/circuit_breaker"
+  },
+  "axis=x,enabled=true": {
+   "model": "faktocraft:block/circuit_breaker",
+   "y": 90
+  },
+  "axis=y,enabled=true": {
+   "model": "faktocraft:block/circuit_breaker",
+   "x": 90
+  },
+  "axis=z,enabled=false": {
+   "model": "faktocraft:block/circuit_breaker"
+  },
+  "axis=x,enabled=false": {
+   "model": "faktocraft:block/circuit_breaker",
+   "y": 90
+  },
+  "axis=y,enabled=false": {
+   "model": "faktocraft:block/circuit_breaker",
+   "x": 90
+  }
+ }
+}

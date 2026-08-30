@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    {
+      "item": "faktocraft:overclocker_upgrade"
+    },
+    {
+      "item": "faktocraft:overclocker_upgrade"
+    },
+    {
+      "item": "faktocraft:advanced_circuit"
+    },
+    {
+      "item": "faktocraft:advanced_circuit"
+    },
+    {
+      "item": "faktocraft:purified_uranium"
+    }
+  ],
+  "result": {
+    "item": "faktocraft:advanced_overclocker_upgrade"
+  }
+}

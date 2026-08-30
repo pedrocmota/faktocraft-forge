@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_armour",
+  "key": {
+    "i": {
+      "item": "faktocraft:iridium_plate"
+    },
+    "n": {
+      "item": "faktocraft:nano_helmet"
+    }
+  },
+  "pattern": [
+    "iii",
+    "ini"
+  ],
+  "result": {
+    "item": "faktocraft:quantum_helmet"
+  }
+}

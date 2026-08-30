@@ -1,0 +1,18 @@
+{
+  "duration": 500,
+  "experience": 0.1,
+  "ingredient": {
+    "count": 1,
+    "tag": "forge:ores/gold"
+  },
+  "power_cost": 48,
+  "result_1": {
+    "count": 2,
+    "item": "faktocraft:gold_chunk"
+  },
+  "result_2": {
+    "item": "faktocraft:stone_dust"
+  },
+  "temperature": 1064,
+  "type": "faktocraft:thermal_centrifuging"
+}

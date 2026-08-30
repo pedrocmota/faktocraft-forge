@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 9,
+    "item": "faktocraft:rubber_shard"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "faktocraft:rubber"
+  },
+  "type": "faktocraft:compressing"
+}

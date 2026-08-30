@@ -1,0 +1,19 @@
+{
+  "bonus_result": {
+    "chance": 25.0,
+    "count": 1,
+    "item": "faktocraft:sawdust"
+  },
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 1,
+    "tag": "minecraft:planks"
+  },
+  "power_cost": 6,
+  "result": {
+    "count": 6,
+    "item": "minecraft:stick"
+  },
+  "type": "faktocraft:sawing"
+}

@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "faktocraft:block/machines/basic/recycler_bottom",
+    "front": "faktocraft:block/machines/basic/polymerizer_front_active_l1",
+    "side": "faktocraft:block/machines/basic/recycler_side",
+    "top": "faktocraft:block/machines/basic/recycler_top"
+  }
+}

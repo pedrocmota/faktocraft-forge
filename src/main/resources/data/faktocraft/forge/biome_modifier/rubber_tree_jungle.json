@@ -1,0 +1,9 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_jungle",
+  "features": [
+    "faktocraft:rubber_tree_scattered_placed",
+    "faktocraft:rubber_tree_jungle_placed"
+  ],
+  "step": "vegetal_decoration"
+}

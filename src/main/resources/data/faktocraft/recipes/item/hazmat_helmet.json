@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "r": {
+      "item": "faktocraft:rubber"
+    },
+    "g": {
+      "item": "minecraft:glass_pane"
+    },
+    "p": {
+      "item": "faktocraft:plastic"
+    }
+  },
+  "pattern": [
+    "prp",
+    "rgr"
+  ],
+  "result": {
+    "item": "faktocraft:hazmat_helmet"
+  }
+}

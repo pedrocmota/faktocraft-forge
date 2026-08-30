@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 1.0,
+  "ingredient": {
+    "count": 4,
+    "tag": "forge:dusts/deepslate"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "minecraft:deepslate"
+  },
+  "type": "faktocraft:compressing"
+}

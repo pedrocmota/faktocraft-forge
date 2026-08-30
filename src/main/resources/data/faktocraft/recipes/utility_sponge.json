@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "faktocraft:plastic"
+    },
+    {
+      "item": "faktocraft:plastic"
+    },
+    {
+      "item": "faktocraft:plastic"
+    },
+    {
+      "item": "faktocraft:plastic"
+    },
+    {
+      "item": "minecraft:yellow_dye"
+    }
+  ],
+  "result": {
+    "item": "minecraft:sponge"
+  }
+}

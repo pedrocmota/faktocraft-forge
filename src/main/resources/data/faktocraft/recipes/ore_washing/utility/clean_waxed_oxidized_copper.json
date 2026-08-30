@@ -1,0 +1,21 @@
+{
+  "acid_ingredient": {
+    "amount": 150,
+    "fluid": "faktocraft:sulfuric_acid"
+  },
+  "duration": 300,
+  "experience": 0.0,
+  "fluid_ingredient": {
+    "amount": 300,
+    "fluid": "minecraft:water"
+  },
+  "ingredient": {
+    "count": 1,
+    "item": "minecraft:waxed_oxidized_copper"
+  },
+  "power_cost": 16,
+  "result_1": {
+    "item": "minecraft:copper_block"
+  },
+  "type": "faktocraft:ore_washing"
+}

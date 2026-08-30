@@ -1,0 +1,7 @@
+{
+	"parent": "faktocraft:block/base/cable/cable_inventory",
+	"textures": {
+		"wall": "faktocraft:block/cable/copper_cable",
+		"side": "faktocraft:block/cable/copper_cable"
+	}
+}

@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "k": {
+      "item": "faktocraft:advanced_capacitor"
+    },
+    "l": {
+      "item": "minecraft:lapis_block"
+    },
+    "p": {
+      "item": "faktocraft:iridium_plate"
+    },
+    "s": {
+      "item": "faktocraft:advanced_solar_generator"
+    },
+    "c": {
+      "item": "faktocraft:advanced_circuit"
+    },
+    "e": {
+      "item": "faktocraft:energy_crystal"
+    }
+  },
+  "pattern": [
+    "klk",
+    "psp",
+    "cec"
+  ],
+  "result": {
+    "item": "faktocraft:hybrid_solar_generator",
+    "count": 1
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "credit": "Faktocraft",
+  "textures": {
+    "gate": "faktocraft:item/valve_gate_tex",
+    "dark": "minecraft:block/anvil",
+    "particle": "faktocraft:item/valve_gate_tex"
+  },
+  "elements": [
+    {
+      "from": [
+        4.9,
+        4.9,
+        7.45
+      ],
+      "to": [
+        11.1,
+        11.1,
+        8.55
+      ],
+      "faces": {
+        "north": {
+          "texture": "#gate",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#gate",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#gate",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#gate",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#gate",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "down": {
+          "texture": "#gate",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.45,
+        11.1,
+        7.45
+      ],
+      "to": [
+        8.55,
+        12.2,
+        8.55
+      ],
+      "faces": {
+        "north": {
+          "texture": "#dark",
+          "uv": [
+            6,
+            6,
+            8,
+            8
+          ]
+        },
+        "south": {
+          "texture": "#dark",
+          "uv": [
+            6,
+            6,
+            8,
+            8
+          ]
+        },
+        "east": {
+          "texture": "#dark",
+          "uv": [
+            6,
+            6,
+            8,
+            8
+          ]
+        },
+        "west": {
+          "texture": "#dark",
+          "uv": [
+            6,
+            6,
+            8,
+            8
+          ]
+        },
+        "up": {
+          "texture": "#dark",
+          "uv": [
+            6,
+            6,
+            8,
+            8
+          ]
+        },
+        "down": {
+          "texture": "#dark",
+          "uv": [
+            6,
+            6,
+            8,
+            8
+          ]
+        }
+      }
+    }
+  ]
+}

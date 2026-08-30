@@ -1,0 +1,13 @@
+{
+  "duration": 500,
+  "experience": 5.0,
+  "item": {
+    "item": "minecraft:deepslate_gold_ore"
+  },
+  "power_cost": 256,
+  "replication": {
+    "energy_cost": 70,
+    "matter_cost": 140
+  },
+  "type": "faktocraft:scanner"
+}

@@ -1,0 +1,254 @@
+{
+ "multipart": [
+  {
+   "when": {
+    "source": "north|south"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/extractor_ring"
+   }
+  },
+  {
+   "when": {
+    "source": "east|west"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/extractor_ring",
+    "y": 90
+   }
+  },
+  {
+   "when": {
+    "source": "up|down"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/extractor_ring",
+    "x": 90
+   }
+  },
+  {
+   "when": {
+    "north": "false"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_center_cap"
+   }
+  },
+  {
+   "when": {
+    "east": "false"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_center_cap",
+    "y": 90
+   }
+  },
+  {
+   "when": {
+    "south": "false"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_center_cap",
+    "y": 180
+   }
+  },
+  {
+   "when": {
+    "west": "false"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_center_cap",
+    "y": 270
+   }
+  },
+  {
+   "when": {
+    "up": "false"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_center_cap",
+    "x": -90
+   }
+  },
+  {
+   "when": {
+    "down": "false"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_center_cap",
+    "x": 90
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "source": "down|up|south|west|east"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_side"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "source": "north"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_source_side"
+   }
+  },
+  {
+   "when": {
+    "east": "true",
+    "source": "down|up|north|south|west"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_side",
+    "y": 90
+   }
+  },
+  {
+   "when": {
+    "east": "true",
+    "source": "east"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_source_side",
+    "y": 90
+   }
+  },
+  {
+   "when": {
+    "south": "true",
+    "source": "down|up|north|west|east"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_side",
+    "y": 180
+   }
+  },
+  {
+   "when": {
+    "south": "true",
+    "source": "south"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_source_side",
+    "y": 180
+   }
+  },
+  {
+   "when": {
+    "west": "true",
+    "source": "down|up|north|south|east"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_side",
+    "y": 270
+   }
+  },
+  {
+   "when": {
+    "west": "true",
+    "source": "west"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_source_side",
+    "y": 270
+   }
+  },
+  {
+   "when": {
+    "up": "true",
+    "source": "down|north|south|west|east"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_side",
+    "x": -90
+   }
+  },
+  {
+   "when": {
+    "up": "true",
+    "source": "up"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_source_side",
+    "x": -90
+   }
+  },
+  {
+   "when": {
+    "down": "true",
+    "source": "up|north|south|west|east"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_side",
+    "x": 90
+   }
+  },
+  {
+   "when": {
+    "down": "true",
+    "source": "down"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_source_side",
+    "x": 90
+   }
+  },
+  {
+   "when": {
+    "ext_north": "true"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_ext"
+   }
+  },
+  {
+   "when": {
+    "ext_east": "true"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_ext",
+    "y": 90
+   }
+  },
+  {
+   "when": {
+    "ext_south": "true"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_ext",
+    "y": 180
+   }
+  },
+  {
+   "when": {
+    "ext_west": "true"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_ext",
+    "y": 270
+   }
+  },
+  {
+   "when": {
+    "ext_up": "true"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_ext",
+    "x": -90
+   }
+  },
+  {
+   "when": {
+    "ext_down": "true"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/fluid_extractor_pipe_ext",
+    "x": 90
+   }
+  }
+ ]
+}

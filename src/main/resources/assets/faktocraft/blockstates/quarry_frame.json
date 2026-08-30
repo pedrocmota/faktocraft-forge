@@ -1,0 +1,11 @@
+{
+  "multipart": [
+    { "apply": { "model": "faktocraft:block/quarry_frame_core" } },
+    { "when": { "north": "true" }, "apply": { "model": "faktocraft:block/quarry_frame_arm" } },
+    { "when": { "east": "true" }, "apply": { "model": "faktocraft:block/quarry_frame_arm", "y": 90 } },
+    { "when": { "south": "true" }, "apply": { "model": "faktocraft:block/quarry_frame_arm", "y": 180 } },
+    { "when": { "west": "true" }, "apply": { "model": "faktocraft:block/quarry_frame_arm", "y": 270 } },
+    { "when": { "up": "true" }, "apply": { "model": "faktocraft:block/quarry_frame_arm", "x": 270 } },
+    { "when": { "down": "true" }, "apply": { "model": "faktocraft:block/quarry_frame_arm", "x": 90 } }
+  ]
+}

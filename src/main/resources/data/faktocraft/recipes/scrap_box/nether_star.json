@@ -1,0 +1,7 @@
+{
+  "type": "faktocraft:scrap_box",
+  "result": {
+    "item": "minecraft:nether_star"
+  },
+  "weight": 0.001
+}

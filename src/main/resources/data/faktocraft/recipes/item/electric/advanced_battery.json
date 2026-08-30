@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "b": {
+      "item": "faktocraft:battery"
+    },
+    "i": {
+      "item": "faktocraft:copper_cable_insulated"
+    },
+    "p": {
+      "tag": "forge:plates/copper"
+    },
+    "r": {
+      "tag": "forge:dusts/lithium"
+    },
+    "a": {
+      "type": "forge:nbt",
+      "item": "faktocraft:fluid_cell",
+      "nbt": {
+        "fluid": "faktocraft:sulfuric_acid",
+        "fluid_amount": 1000
+      }
+    }
+  },
+  "pattern": [
+    "iri",
+    "pbp",
+    "iai"
+  ],
+  "result": {
+    "item": "faktocraft:advanced_battery"
+  }
+}

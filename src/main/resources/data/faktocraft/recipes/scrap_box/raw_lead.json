@@ -1,0 +1,7 @@
+{
+  "type": "faktocraft:scrap_box",
+  "result": {
+    "item": "faktocraft:raw_lead"
+  },
+  "weight": 0.8
+}

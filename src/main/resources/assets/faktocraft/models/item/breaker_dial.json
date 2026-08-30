@@ -1,0 +1,32 @@
+{
+  "credit": "Faktocraft",
+  "textures": {
+    "dial": "faktocraft:item/breaker_dial",
+    "particle": "faktocraft:item/breaker_dial"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        0.1,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#dial",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

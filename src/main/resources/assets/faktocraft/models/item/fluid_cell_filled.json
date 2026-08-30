@@ -1,0 +1,7 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "faktocraft:item/fluid_cell",
+        "layer1": "faktocraft:item/fluid_cell_overlay"
+    }
+}

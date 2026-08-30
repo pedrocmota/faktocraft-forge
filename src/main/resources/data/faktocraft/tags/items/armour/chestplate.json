@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "faktocraft:bronze_chestplate",
+    "faktocraft:nano_chestplate",
+    "faktocraft:hazmat_chestplate",
+    "faktocraft:quantum_chestplate",
+    "faktocraft:jetpack",
+    "faktocraft:advanced_jetpack"
+  ]
+}

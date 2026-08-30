@@ -1,0 +1,69 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "pipe": "faktocraft:block/pipe/fluid_extractor_pipe",
+    "particle": "faktocraft:block/pipe/fluid_extractor_pipe"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        4,
+        -2
+      ],
+      "to": [
+        12,
+        12,
+        0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#pipe",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "up": {
+          "texture": "#pipe",
+          "uv": [
+            4,
+            0,
+            12,
+            2
+          ]
+        },
+        "down": {
+          "texture": "#pipe",
+          "uv": [
+            4,
+            14,
+            12,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#pipe",
+          "uv": [
+            0,
+            4,
+            2,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#pipe",
+          "uv": [
+            14,
+            4,
+            16,
+            12
+          ]
+        }
+      }
+    }
+  ]
+}

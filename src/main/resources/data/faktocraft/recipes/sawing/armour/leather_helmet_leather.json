@@ -1,0 +1,14 @@
+{
+  "duration": 180,
+  "experience": 0.5,
+  "ingredient": {
+    "count": 1,
+    "item": "minecraft:leather_helmet"
+  },
+  "power_cost": 6,
+  "result": {
+    "count": 2,
+    "item": "minecraft:leather"
+  },
+  "type": "faktocraft:sawing"
+}

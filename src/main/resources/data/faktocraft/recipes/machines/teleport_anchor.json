@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "a": {
+      "item": "faktocraft:advanced_machine_casing"
+    },
+    "c": {
+      "item": "faktocraft:advanced_circuit"
+    },
+    "d": {
+      "tag": "forge:gems/diamond"
+    },
+    "g": {
+      "item": "faktocraft:glass_fibre_cable"
+    },
+    "t": {
+      "item": "minecraft:ender_pearl"
+    }
+  },
+  "pattern": [
+    "ctc",
+    "gag",
+    "cdc"
+  ],
+  "result": {
+    "item": "faktocraft:teleport_anchor"
+  }
+}

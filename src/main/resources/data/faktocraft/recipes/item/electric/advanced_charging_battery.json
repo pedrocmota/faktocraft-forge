@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "a": {
+      "item": "faktocraft:advanced_battery"
+    },
+    "c": {
+      "item": "faktocraft:charging_battery"
+    },
+    "h": {
+      "type": "forge:nbt",
+      "item": "faktocraft:fluid_cell",
+      "nbt": {
+        "fluid": "faktocraft:coolant",
+        "fluid_amount": 1000
+      }
+    },
+    "s": {
+      "type": "forge:nbt",
+      "item": "faktocraft:fluid_cell",
+      "nbt": {
+        "fluid": "faktocraft:sulfuric_acid",
+        "fluid_amount": 1000
+      }
+    }
+  },
+  "pattern": [
+    "sas",
+    "aca",
+    "hah"
+  ],
+  "result": {
+    "item": "faktocraft:advanced_charging_battery"
+  }
+}

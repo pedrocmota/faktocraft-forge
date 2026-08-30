@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "b": {
+      "item": "faktocraft:basic_machine_casing"
+    },
+    "e": {
+      "item": "faktocraft:advanced_circuit"
+    },
+    "f": {
+      "item": "faktocraft:electric_furnace"
+    },
+    "h": {
+      "item": "faktocraft:heat_conductor"
+    }
+  },
+  "pattern": [
+    " e ",
+    "fbf",
+    " h "
+  ],
+  "result": {
+    "item": "faktocraft:alloy_smelter"
+  }
+}

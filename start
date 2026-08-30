@@ -1,0 +1,35 @@
+set -e
+cd "$(dirname "$0")"
+
+MODE="${1:-both}"
+
+case "$MODE" in
+  client) exec ./gradlew runClient --console=plain ;;
+  server) exec ./gradlew runServer --console=plain ;;
+esac
+
+echo "[1/3] Building once (keeps both runs from fighting over the same tasks)..."
+./gradlew compileJava processResources --console=plain
+
+echo "[2/3] Starting the dedicated server in the background..."
+rm -f run/server-console.log
+./gradlew runServer --console=plain > run/server-console.log 2>&1 &
+SERVER_PID=$!
+
+while ! grep -q 'For help, type' run/server-console.log 2>/dev/null; do
+  if ! kill -0 "$SERVER_PID" 2>/dev/null; then
+    echo "The server failed to start:"
+    tail -20 run/server-console.log
+    exit 1
+  fi
+  sleep 2
+done
+
+echo "    Server ready: localhost:25565  (Multiplayer > Direct Connection)"
+echo "[3/3] Opening the client..."
+./gradlew runClient --console=plain
+
+echo "Client closed; shutting down the server..."
+
+taskkill //FI "WINDOWTITLE eq Faktocraft*" //T //F >/dev/null 2>&1 || true
+kill "$SERVER_PID" 2>/dev/null || true

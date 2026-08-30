@@ -1,0 +1,24 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "group": "faktocraft",
+ "key": {
+  "s": {
+   "item": "faktocraft:steel_plate"
+  },
+  "r": {
+   "tag": "forge:dusts/redstone"
+  },
+  "c": {
+   "item": "faktocraft:electronic_circuit"
+  }
+ },
+ "pattern": [
+  "sss",
+  "rcr",
+  "sss"
+ ],
+ "result": {
+  "count": 1,
+  "item": "faktocraft:logistics_controller"
+ }
+}

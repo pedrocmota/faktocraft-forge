@@ -1,0 +1,110 @@
+{
+ "multipart": [
+  {
+   "when": {
+    "north": "false"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/gold_pipe_center_cap"
+   }
+  },
+  {
+   "when": {
+    "east": "false"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/gold_pipe_center_cap",
+    "y": 90
+   }
+  },
+  {
+   "when": {
+    "south": "false"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/gold_pipe_center_cap",
+    "y": 180
+   }
+  },
+  {
+   "when": {
+    "west": "false"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/gold_pipe_center_cap",
+    "y": 270
+   }
+  },
+  {
+   "when": {
+    "up": "false"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/gold_pipe_center_cap",
+    "x": -90
+   }
+  },
+  {
+   "when": {
+    "down": "false"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/gold_pipe_center_cap",
+    "x": 90
+   }
+  },
+  {
+   "when": {
+    "north": "true"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/gold_pipe_side"
+   }
+  },
+  {
+   "when": {
+    "east": "true"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/gold_pipe_side",
+    "y": 90
+   }
+  },
+  {
+   "when": {
+    "south": "true"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/gold_pipe_side",
+    "y": 180
+   }
+  },
+  {
+   "when": {
+    "west": "true"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/gold_pipe_side",
+    "y": 270
+   }
+  },
+  {
+   "when": {
+    "up": "true"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/gold_pipe_side",
+    "x": -90
+   }
+  },
+  {
+   "when": {
+    "down": "true"
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/gold_pipe_side",
+    "x": 90
+   }
+  }
+ ]
+}

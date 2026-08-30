@@ -1,0 +1,19 @@
+{
+  "type": "faktocraft:crushing",
+  "duration": 180,
+  "experience": 0.2,
+  "ingredient": {
+    "count": 1,
+    "tag": "forge:ores/tin"
+  },
+  "power_cost": 8,
+  "result": {
+    "count": 1,
+    "item": "faktocraft:tin_dust"
+  },
+  "bonus_result": {
+    "chance": 10.0,
+    "count": 1,
+    "item": "faktocraft:tin_dust"
+  }
+}

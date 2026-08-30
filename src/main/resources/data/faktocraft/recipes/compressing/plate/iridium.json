@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 1.0,
+  "ingredient": {
+    "count": 1,
+    "item": "faktocraft:raw_iridium_plate"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "faktocraft:iridium_plate"
+  },
+  "type": "faktocraft:compressing"
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "faktocraft:block/base/cable/cable_inventory",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "wall": "faktocraft:block/cable/glass_fibre_cable",
+    "side": "faktocraft:block/cable/glass_fibre_cable"
+  }
+}

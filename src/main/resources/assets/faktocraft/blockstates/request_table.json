@@ -1,0 +1,34 @@
+{
+ "variants": {
+  "active=false,facing=north": {
+   "model": "faktocraft:block/request_table"
+  },
+  "active=false,facing=east": {
+   "model": "faktocraft:block/request_table",
+   "y": 90
+  },
+  "active=false,facing=south": {
+   "model": "faktocraft:block/request_table",
+   "y": 180
+  },
+  "active=false,facing=west": {
+   "model": "faktocraft:block/request_table",
+   "y": 270
+  },
+  "active=true,facing=north": {
+   "model": "faktocraft:block/request_table"
+  },
+  "active=true,facing=east": {
+   "model": "faktocraft:block/request_table",
+   "y": 90
+  },
+  "active=true,facing=south": {
+   "model": "faktocraft:block/request_table",
+   "y": 180
+  },
+  "active=true,facing=west": {
+   "model": "faktocraft:block/request_table",
+   "y": 270
+  }
+ }
+}

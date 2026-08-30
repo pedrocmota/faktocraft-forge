@@ -1,0 +1,19 @@
+{
+  "type": "faktocraft:crushing",
+  "duration": 300,
+  "experience": 1.0,
+  "ingredient": {
+    "count": 1,
+    "tag": "forge:ores/iridium"
+  },
+  "power_cost": 16,
+  "result": {
+    "count": 1,
+    "item": "faktocraft:iridium_shard"
+  },
+  "bonus_result": {
+    "chance": 10.0,
+    "count": 1,
+    "item": "faktocraft:iridium_shard"
+  }
+}

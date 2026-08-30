@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "faktocraft:block/charge_pad/mfe_bottom",
+    "front": "faktocraft:block/charge_pad/mfe_front",
+    "side": "faktocraft:block/charge_pad/mfe_side",
+    "top": "faktocraft:block/charge_pad/mfe_top_active"
+  }
+}

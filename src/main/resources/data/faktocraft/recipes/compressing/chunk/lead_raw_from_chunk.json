@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 2,
+    "item": "faktocraft:lead_chunk"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "faktocraft:raw_lead"
+  },
+  "type": "faktocraft:compressing"
+}

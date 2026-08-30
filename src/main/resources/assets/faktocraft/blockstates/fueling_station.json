@@ -1,0 +1,154 @@
+{
+ "variants": {
+  "active=false,facing=north,level=0": {
+   "model": "faktocraft:block/fueling_station_l0"
+  },
+  "active=false,facing=north,level=1": {
+   "model": "faktocraft:block/fueling_station_l1"
+  },
+  "active=false,facing=north,level=2": {
+   "model": "faktocraft:block/fueling_station_l2"
+  },
+  "active=false,facing=north,level=3": {
+   "model": "faktocraft:block/fueling_station_l3"
+  },
+  "active=false,facing=north,level=4": {
+   "model": "faktocraft:block/fueling_station_l4"
+  },
+  "active=true,facing=north,level=0": {
+   "model": "faktocraft:block/fueling_station_active_l0"
+  },
+  "active=true,facing=north,level=1": {
+   "model": "faktocraft:block/fueling_station_active_l1"
+  },
+  "active=true,facing=north,level=2": {
+   "model": "faktocraft:block/fueling_station_active_l2"
+  },
+  "active=true,facing=north,level=3": {
+   "model": "faktocraft:block/fueling_station_active_l3"
+  },
+  "active=true,facing=north,level=4": {
+   "model": "faktocraft:block/fueling_station_active_l4"
+  },
+  "active=false,facing=east,level=0": {
+   "model": "faktocraft:block/fueling_station_l0",
+   "y": 90
+  },
+  "active=false,facing=east,level=1": {
+   "model": "faktocraft:block/fueling_station_l1",
+   "y": 90
+  },
+  "active=false,facing=east,level=2": {
+   "model": "faktocraft:block/fueling_station_l2",
+   "y": 90
+  },
+  "active=false,facing=east,level=3": {
+   "model": "faktocraft:block/fueling_station_l3",
+   "y": 90
+  },
+  "active=false,facing=east,level=4": {
+   "model": "faktocraft:block/fueling_station_l4",
+   "y": 90
+  },
+  "active=true,facing=east,level=0": {
+   "model": "faktocraft:block/fueling_station_active_l0",
+   "y": 90
+  },
+  "active=true,facing=east,level=1": {
+   "model": "faktocraft:block/fueling_station_active_l1",
+   "y": 90
+  },
+  "active=true,facing=east,level=2": {
+   "model": "faktocraft:block/fueling_station_active_l2",
+   "y": 90
+  },
+  "active=true,facing=east,level=3": {
+   "model": "faktocraft:block/fueling_station_active_l3",
+   "y": 90
+  },
+  "active=true,facing=east,level=4": {
+   "model": "faktocraft:block/fueling_station_active_l4",
+   "y": 90
+  },
+  "active=false,facing=south,level=0": {
+   "model": "faktocraft:block/fueling_station_l0",
+   "y": 180
+  },
+  "active=false,facing=south,level=1": {
+   "model": "faktocraft:block/fueling_station_l1",
+   "y": 180
+  },
+  "active=false,facing=south,level=2": {
+   "model": "faktocraft:block/fueling_station_l2",
+   "y": 180
+  },
+  "active=false,facing=south,level=3": {
+   "model": "faktocraft:block/fueling_station_l3",
+   "y": 180
+  },
+  "active=false,facing=south,level=4": {
+   "model": "faktocraft:block/fueling_station_l4",
+   "y": 180
+  },
+  "active=true,facing=south,level=0": {
+   "model": "faktocraft:block/fueling_station_active_l0",
+   "y": 180
+  },
+  "active=true,facing=south,level=1": {
+   "model": "faktocraft:block/fueling_station_active_l1",
+   "y": 180
+  },
+  "active=true,facing=south,level=2": {
+   "model": "faktocraft:block/fueling_station_active_l2",
+   "y": 180
+  },
+  "active=true,facing=south,level=3": {
+   "model": "faktocraft:block/fueling_station_active_l3",
+   "y": 180
+  },
+  "active=true,facing=south,level=4": {
+   "model": "faktocraft:block/fueling_station_active_l4",
+   "y": 180
+  },
+  "active=false,facing=west,level=0": {
+   "model": "faktocraft:block/fueling_station_l0",
+   "y": 270
+  },
+  "active=false,facing=west,level=1": {
+   "model": "faktocraft:block/fueling_station_l1",
+   "y": 270
+  },
+  "active=false,facing=west,level=2": {
+   "model": "faktocraft:block/fueling_station_l2",
+   "y": 270
+  },
+  "active=false,facing=west,level=3": {
+   "model": "faktocraft:block/fueling_station_l3",
+   "y": 270
+  },
+  "active=false,facing=west,level=4": {
+   "model": "faktocraft:block/fueling_station_l4",
+   "y": 270
+  },
+  "active=true,facing=west,level=0": {
+   "model": "faktocraft:block/fueling_station_active_l0",
+   "y": 270
+  },
+  "active=true,facing=west,level=1": {
+   "model": "faktocraft:block/fueling_station_active_l1",
+   "y": 270
+  },
+  "active=true,facing=west,level=2": {
+   "model": "faktocraft:block/fueling_station_active_l2",
+   "y": 270
+  },
+  "active=true,facing=west,level=3": {
+   "model": "faktocraft:block/fueling_station_active_l3",
+   "y": 270
+  },
+  "active=true,facing=west,level=4": {
+   "model": "faktocraft:block/fueling_station_active_l4",
+   "y": 270
+  }
+ }
+}

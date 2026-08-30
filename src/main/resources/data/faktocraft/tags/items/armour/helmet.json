@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "faktocraft:bronze_helmet",
+    "faktocraft:nano_helmet",
+    "faktocraft:hazmat_helmet",
+    "faktocraft:quantum_helmet"
+  ]
+}

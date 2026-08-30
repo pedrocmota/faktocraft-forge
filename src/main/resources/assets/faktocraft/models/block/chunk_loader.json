@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "faktocraft:block/advanced_machine_casing",
+    "side": "faktocraft:block/misc/chunk_loader_side",
+    "top": "faktocraft:block/misc/chunk_loader_top"
+  }
+}

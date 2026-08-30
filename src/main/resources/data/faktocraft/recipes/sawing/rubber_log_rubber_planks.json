@@ -1,0 +1,19 @@
+{
+  "bonus_result": {
+    "chance": 50.0,
+    "count": 1,
+    "item": "faktocraft:sticky_resin"
+  },
+  "duration": 180,
+  "experience": 0.2,
+  "ingredient": {
+    "count": 1,
+    "item": "faktocraft:rubber_log"
+  },
+  "power_cost": 6,
+  "result": {
+    "count": 5,
+    "item": "faktocraft:rubber_planks"
+  },
+  "type": "faktocraft:sawing"
+}

@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "segment=1": {
+   "model": "faktocraft:block/distillery_tower_seg1"
+  },
+  "segment=2": {
+   "model": "faktocraft:block/distillery_tower_seg2"
+  },
+  "segment=3": {
+   "model": "faktocraft:block/distillery_tower_seg3"
+  },
+  "segment=4": {
+   "model": "faktocraft:block/distillery_tower_seg4"
+  },
+  "segment=5": {
+   "model": "faktocraft:block/distillery_tower_seg5"
+  }
+ }
+}

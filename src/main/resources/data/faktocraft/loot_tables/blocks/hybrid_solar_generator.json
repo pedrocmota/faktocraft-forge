@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:advanced_machine_casing"
+        }
+      ],
+      "name": "hybrid_solar_generator",
+      "rolls": 1.0
+    }
+  ]
+}

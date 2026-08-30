@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "r": {
+      "item": "faktocraft:rubber"
+    },
+    "p": {
+      "item": "faktocraft:plastic"
+    }
+  },
+  "pattern": [
+    "r r",
+    "p p"
+  ],
+  "result": {
+    "item": "faktocraft:hazmat_boots"
+  }
+}

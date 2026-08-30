@@ -1,0 +1,20 @@
+{
+  "duration": 560,
+  "experience": 0.5,
+  "ingredients": [
+    {
+      "count": 3,
+      "tag": "forge:ingots/copper"
+    },
+    {
+      "count": 1,
+      "tag": "forge:ingots/tin"
+    }
+  ],
+  "power_cost": 32,
+  "result": {
+    "count": 4,
+    "item": "faktocraft:bronze_ingot"
+  },
+  "type": "faktocraft:alloy_smelting"
+}

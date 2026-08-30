@@ -1,0 +1,33 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "textures": {
+  "pipe": "faktocraft:block/pipe/chassis_pipe_2",
+  "particle": "faktocraft:block/pipe/chassis_pipe_2"
+ },
+ "elements": [
+  {
+   "from": [
+    4,
+    4,
+    4
+   ],
+   "to": [
+    12,
+    12,
+    4
+   ],
+   "faces": {
+    "north": {
+     "texture": "#pipe",
+     "uv": [
+      4,
+      4,
+      12,
+      12
+     ]
+    }
+   }
+  }
+ ]
+}

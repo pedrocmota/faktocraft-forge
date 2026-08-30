@@ -1,0 +1,40 @@
+package com.faktocraft.integration.jade.provider;
+
+import com.faktocraft.IndReb;
+import com.faktocraft.common.block.impl.pipe.IValveHolder;
+import com.faktocraft.common.block.impl.pipe.PipeValve;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import snownee.jade.api.BlockAccessor;
+import snownee.jade.api.IBlockComponentProvider;
+import snownee.jade.api.ITooltip;
+import snownee.jade.api.config.IPluginConfig;
+
+public class JadeValveProvider implements IBlockComponentProvider {
+
+  public static final JadeValveProvider INSTANCE = new JadeValveProvider();
+
+  private static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "valve_info");
+
+  @Override
+  public ResourceLocation getUid() {
+    return UID;
+  }
+
+  @Override
+  public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+    if (!(accessor.getBlockEntity() instanceof IValveHolder holder)) {
+      return;
+    }
+    PipeValve valve = holder.getValve();
+    if (!valve.isPresent()) {
+      return;
+    }
+    Component state = valve.isOpen()
+        ? Component.translatable("top." + IndReb.MODID + ".state_open").withStyle(ChatFormatting.GREEN)
+        : Component.translatable("top." + IndReb.MODID + ".state_closed").withStyle(ChatFormatting.RED);
+    tooltip.add(Component.translatable("top." + IndReb.MODID + ".valve", state)
+        .withStyle(ChatFormatting.GRAY));
+  }
+}

@@ -1,0 +1,9 @@
+{
+	"parent": "block/orientable",
+	"textures": {
+		"front": "faktocraft:block/machines/crusher_front_active",
+		"top": "faktocraft:block/machines/crusher_top_active",
+		"bottom": "faktocraft:block/machines/crusher_bottom",
+		"side": "faktocraft:block/machines/crusher_side"
+	}
+}

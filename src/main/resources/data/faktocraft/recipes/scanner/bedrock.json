@@ -1,0 +1,13 @@
+{
+  "duration": 500,
+  "experience": 5.0,
+  "item": {
+    "item": "minecraft:bedrock"
+  },
+  "power_cost": 256,
+  "replication": {
+    "energy_cost": 5000,
+    "matter_cost": 10000
+  },
+  "type": "faktocraft:scanner"
+}

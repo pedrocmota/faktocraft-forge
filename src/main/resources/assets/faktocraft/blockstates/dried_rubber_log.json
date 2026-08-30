@@ -1,0 +1,16 @@
+{
+ "variants": {
+  "axis=x": {
+   "model": "faktocraft:block/rubber_wood/dried_rubber_log_horizontal",
+   "x": 90,
+   "y": 90
+  },
+  "axis=y": {
+   "model": "faktocraft:block/rubber_wood/dried_rubber_log"
+  },
+  "axis=z": {
+   "model": "faktocraft:block/rubber_wood/dried_rubber_log_horizontal",
+   "x": 90
+  }
+ }
+}

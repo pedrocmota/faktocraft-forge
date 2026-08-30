@@ -1,0 +1,13 @@
+{
+  "type": "faktocraft:crushing",
+  "duration": 180,
+  "experience": 0.2,
+  "ingredient": {
+    "count": 1,
+    "item": "faktocraft:purified_gold"
+  },
+  "power_cost": 8,
+  "result": {
+    "item": "faktocraft:gold_dust"
+  }
+}

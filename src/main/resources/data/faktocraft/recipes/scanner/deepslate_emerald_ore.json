@@ -1,0 +1,13 @@
+{
+  "duration": 500,
+  "experience": 5.0,
+  "item": {
+    "item": "minecraft:deepslate_emerald_ore"
+  },
+  "power_cost": 256,
+  "replication": {
+    "energy_cost": 263,
+    "matter_cost": 525
+  },
+  "type": "faktocraft:scanner"
+}

@@ -1,0 +1,19 @@
+{
+  "type": "faktocraft:crushing",
+  "duration": 180,
+  "experience": 2.0,
+  "ingredient": {
+    "count": 1,
+    "item": "minecraft:ancient_debris"
+  },
+  "power_cost": 8,
+  "result": {
+    "count": 1,
+    "item": "minecraft:netherite_scrap"
+  },
+  "bonus_result": {
+    "chance": 10.0,
+    "count": 1,
+    "item": "minecraft:netherite_scrap"
+  }
+}

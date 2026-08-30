@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "faktocraft:bronze_boots",
+    "faktocraft:nano_boots",
+    "faktocraft:hazmat_boots",
+    "faktocraft:quantum_boots"
+  ]
+}

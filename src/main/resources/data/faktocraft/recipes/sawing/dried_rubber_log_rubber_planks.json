@@ -1,0 +1,14 @@
+{
+  "duration": 180,
+  "experience": 0.2,
+  "ingredient": {
+    "count": 1,
+    "item": "faktocraft:dried_rubber_log"
+  },
+  "power_cost": 6,
+  "result": {
+    "count": 5,
+    "item": "faktocraft:rubber_planks"
+  },
+  "type": "faktocraft:sawing"
+}

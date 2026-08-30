@@ -1,0 +1,647 @@
+package com.faktocraft.common.block.impl.logistics;
+
+import com.faktocraft.IndReb;
+import com.faktocraft.common.network.ModNetworking;
+import com.faktocraft.common.network.packet.PacketReqTableState;
+import com.faktocraft.common.network.packet.PacketRequestTarget;
+import com.faktocraft.common.network.packet.PacketTableState;
+import com.faktocraft.common.network.packet.PacketTaskHistoryOp;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import org.lwjgl.glfw.GLFW;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+
+public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable> {
+
+  private static final ResourceLocation BACKGROUND = new ResourceLocation(IndReb.MODID,
+      "textures/gui/container/request_table.png");
+  private static final ResourceLocation BACKGROUND_TASKS = new ResourceLocation(IndReb.MODID,
+      "textures/gui/container/request_table_tasks.png");
+
+  private static final int PANEL_X = 176;
+  private static final int PANEL_Y = 16;
+  private static final int PANEL_RIGHT = 330;
+  private static final int PANEL_BOTTOM = 158;
+  private static final int GRID_X = 180;
+  private static final int GRID_Y = 30;
+  private static final int COLS = 8;
+  private static final int ROWS = 7;
+  private static final int PAGE_SIZE = COLS * ROWS;
+  private static final int REFRESH_INTERVAL = 40;
+
+  private static final int AUTO_W = 12;
+  private static final int AUTO_H = 11;
+  private static final int AUTO_X = 154;
+  private static final int AUTO_Y = 88;
+
+  private static final int TAB_Y = 17;
+  private static final int TAB_H = 11;
+  private static final float TAB_FONT_SCALE = 0.7f;
+  private static final int TAB_MAX_W = 64;
+
+  private enum Tab {
+    REQUESTS, TASKS
+  }
+
+  private Tab tab = Tab.REQUESTS;
+  private List<PacketTableState.Entry> all = List.of();
+  private final List<PacketTableState.Entry> filtered = new ArrayList<>();
+  private int page;
+  private int quantity = 1;
+  private int refreshTimer;
+  private String query = "";
+  private EditBox search;
+  private Button autoExtractButton;
+  private boolean autoExtractShown;
+  private Button minusButton;
+  private Button plusButton;
+  private Button requestButton;
+  private TaskListPanel taskPanel;
+
+  public ScreenRequestTable(MenuRequestTable menu, Inventory inventory, Component title) {
+    super(menu, inventory, title);
+    this.imageWidth = 340;
+    this.imageHeight = 256;
+    this.inventoryLabelX = 8;
+    this.inventoryLabelY = 161;
+  }
+
+  private String key(String name) {
+    return "logistics." + IndReb.MODID + "." + name;
+  }
+
+  @Override
+  protected void init() {
+    if (this.minecraft != null) {
+      com.faktocraft.client.GuiScaleHelper.fit(this.minecraft, this, this.imageWidth + 8, this.imageHeight + 8);
+    }
+    super.init();
+    int left = (this.width - this.imageWidth) / 2;
+    int top = (this.height - this.imageHeight) / 2;
+
+    autoExtractButton = addRenderableWidget(new Button(left + AUTO_X, top + AUTO_Y, AUTO_W, AUTO_H,
+        autoExtractLabel(), b -> {
+          com.faktocraft.common.network.ModNetworking.sendToServer(
+              new com.faktocraft.common.network.packet.PacketMenuAction(this.menu.containerId,
+                  MenuRequestTable.BUTTON_AUTO_EXTRACT));
+          requestState();
+        }, supplier -> supplier.get()) {
+
+      @Override
+      protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        boolean on = ScreenRequestTable.this.menu.isAutoExtract();
+        boolean hovered = isHoveredOrFocused();
+        drawArrow(graphics, getX() + 1, getY() + 1, 0x50000000);
+        drawArrow(graphics, getX(), getY(),
+            on ? (hovered ? 0xFF5FE377 : 0xFF3CB54C) : (hovered ? 0xFF8A8A8A : 0xFF5E5E5E));
+      }
+    });
+    autoExtractButton.setTooltip(net.minecraft.client.gui.components.Tooltip.create(autoExtractTooltip()));
+
+    minusButton = addRenderableWidget(Button.builder(Component.literal("-"),
+        b -> adjustQuantity(-step())).bounds(left + 202, top + 193, 14, 14).build());
+    plusButton = addRenderableWidget(Button.builder(Component.literal("+"),
+        b -> adjustQuantity(step())).bounds(left + 252, top + 193, 14, 14).build());
+
+    requestButton = addRenderableWidget(Button.builder(Component.translatable(key("request_button")),
+        b -> request()).bounds(left + 176, top + 230, 154, 18).build());
+
+    search = new EditBox(this.font, left + 180, top + 176, 146, 10, Component.empty());
+    search.setBordered(false);
+    search.setMaxLength(48);
+    search.setTextColor(0xFFFFFF);
+    search.setValue(query);
+    search.setHint(Component.translatable(key("search_hint")).withStyle(ChatFormatting.DARK_GRAY));
+    search.setResponder(text -> {
+      query = text;
+      refilter();
+    });
+    addRenderableWidget(search);
+
+    if (taskPanel == null) {
+      taskPanel = new TaskListPanel(this.minecraft, this.font, false, new TaskListPanel.Host() {
+        @Override
+        public void sendHistoryOp(int mode, long id) {
+          ModNetworking.sendToServer(new PacketTaskHistoryOp(
+              ScreenRequestTable.this.menu.getTablePos(), dimensionId(), mode, id));
+        }
+
+        @Override
+        public void requestRefresh() {
+          requestState();
+        }
+      });
+    }
+    taskPanel.initWidgets(left, top, this::addRenderableWidget);
+
+    applyTabVisibility();
+    requestState();
+    refreshTimer = REFRESH_INTERVAL;
+  }
+
+  public boolean isRequestsTab() {
+    return tab == Tab.REQUESTS;
+  }
+
+  private void switchTab(Tab newTab) {
+    tab = newTab;
+    applyTabVisibility();
+  }
+
+  private static void drawArrow(GuiGraphics graphics, int x, int y, int color) {
+    graphics.fill(x + 4, y, x + 8, y + 6, color);
+    for (int row = 0; row < 5; row++) {
+      graphics.fill(x + 1 + row, y + 6 + row, x + 11 - row, y + 7 + row, color);
+    }
+  }
+
+  private Component autoExtractTooltip() {
+    return Component.empty()
+        .append(autoExtractLabel())
+        .append("\n")
+        .append(Component.translatable(key("table.auto_extract_tip")).withStyle(ChatFormatting.GRAY));
+  }
+
+  private Component autoExtractLabel() {
+    return Component.translatable(key("table.auto_extract"))
+        .append(": ")
+        .append(Component.translatable(key(this.menu.isAutoExtract() ? "on" : "off")));
+  }
+
+  private void applyTabVisibility() {
+    boolean main = tab == Tab.REQUESTS;
+    search.setVisible(main);
+    autoExtractButton.visible = main;
+    minusButton.visible = main;
+    plusButton.visible = main;
+    requestButton.visible = main;
+    taskPanel.setVisible(!main);
+  }
+
+  private String dimensionId() {
+    return this.minecraft != null && this.minecraft.level != null
+        ? this.minecraft.level.dimension().location().toString()
+        : "minecraft:overworld";
+  }
+
+  private Component tabLabel(Tab which) {
+    return Component.translatable(key(which == Tab.REQUESTS ? "tab_main" : "tab_tasks"));
+  }
+
+  private int tabWidth(Tab which) {
+    int text = (int) Math.ceil(this.font.width(tabLabel(which)) * TAB_FONT_SCALE);
+    return Math.min(TAB_MAX_W, Math.max(32, text + 9));
+  }
+
+  private int tabX(Tab which) {
+    int left = (this.width - this.imageWidth) / 2;
+    return which == Tab.REQUESTS ? left + 8 : left + 8 + tabWidth(Tab.REQUESTS) + 2;
+  }
+
+  private boolean isOverTab(double mouseX, double mouseY, Tab which) {
+    int top = (this.height - this.imageHeight) / 2;
+    int x = tabX(which);
+    return mouseX >= x && mouseX < x + tabWidth(which)
+        && mouseY >= top + TAB_Y && mouseY < top + TAB_Y + TAB_H;
+  }
+
+  private void renderTabs(GuiGraphics graphics, int mouseX, int mouseY) {
+    int top = (this.height - this.imageHeight) / 2;
+    for (Tab which : Tab.values()) {
+      int x = tabX(which);
+      int w = tabWidth(which);
+      int y = top + TAB_Y;
+      boolean selected = tab == which;
+      boolean hovered = !selected && isOverTab(mouseX, mouseY, which);
+      graphics.fill(x - 1, y - 1, x + w + 1, y + TAB_H + 1, 0xFF000000);
+      graphics.fill(x, y, x + w, y + TAB_H, selected ? 0xFF2E2E2E : (hovered ? 0xFFB8B8B8 : 0xFF9E9E9E));
+      if (!selected) {
+        graphics.fill(x, y, x + w, y + 1, 0xFFD8D8D8);
+        graphics.fill(x, y, x + 1, y + TAB_H, 0xFFD8D8D8);
+        graphics.fill(x, y + TAB_H - 1, x + w, y + TAB_H, 0xFF5E5E5E);
+        graphics.fill(x + w - 1, y, x + w, y + TAB_H, 0xFF5E5E5E);
+      }
+      Component label = tabLabel(which);
+      float scale = TAB_FONT_SCALE;
+      int rawWidth = this.font.width(label);
+      if (rawWidth * scale > w - 6) {
+        scale = (w - 6) / (float) rawWidth;
+      }
+      float textWidth = rawWidth * scale;
+      float textHeight = 8 * scale;
+      graphics.pose().pushPose();
+      graphics.pose().translate(x + (w - textWidth) / 2.0f, y + 1 + (TAB_H - 1 - textHeight) / 2.0f, 0);
+      graphics.pose().scale(scale, scale, 1.0f);
+      graphics.drawString(this.font, label, 0, 0, selected ? 0xFFFFFF : 0x3A3A3A, selected);
+      graphics.pose().popPose();
+    }
+  }
+
+  private int step() {
+    if (hasControlDown()) {
+      return 64;
+    }
+    return hasShiftDown() ? 16 : 1;
+  }
+
+  private void adjustQuantity(int delta) {
+    quantity = Math.max(1, Math.min(MenuRequestTable.MAX_REQUEST, quantity + delta));
+  }
+
+  private void request() {
+    if (this.minecraft != null && this.minecraft.gameMode != null) {
+
+      com.faktocraft.common.network.ModNetworking.sendToServer(
+          new com.faktocraft.common.network.packet.PacketMenuAction(this.menu.containerId,
+              MenuRequestTable.BUTTON_REQUEST_BASE + quantity));
+
+      requestState();
+      refreshTimer = 10;
+    }
+  }
+
+  public boolean matches(BlockPos pos) {
+    return pos.equals(this.menu.getTablePos());
+  }
+
+  public void applyState(PacketTableState state) {
+    List<PacketTableState.Entry> sorted = new ArrayList<>(state.entries());
+
+    sorted.sort(Comparator
+        .comparingInt((PacketTableState.Entry entry) -> -entry.count())
+        .thenComparing(entry -> entry.blocked() ? 1 : 0)
+        .thenComparing(entry -> entry.stack().getHoverName().getString()));
+    all = sorted;
+    taskPanel.setData(state.tasks(), state.errors());
+    refilter();
+  }
+
+  private void refilter() {
+    filtered.clear();
+    String needle = query.toLowerCase(Locale.ROOT).trim();
+    for (PacketTableState.Entry entry : all) {
+      if (needle.isEmpty()
+          || entry.stack().getHoverName().getString().toLowerCase(Locale.ROOT).contains(needle)) {
+        filtered.add(entry);
+      }
+    }
+    page = Math.min(page, maxPage());
+  }
+
+  private int maxPage() {
+    return Math.max(0, (filtered.size() - 1) / PAGE_SIZE);
+  }
+
+  private void turnPage(int direction) {
+    page = Math.max(0, Math.min(maxPage(), page + direction));
+  }
+
+  private void requestState() {
+    ModNetworking.sendToServer(new PacketReqTableState(this.menu.getTablePos(), dimensionId()));
+  }
+
+  @Override
+  protected void containerTick() {
+    super.containerTick();
+    if (autoExtractButton != null && autoExtractShown != this.menu.isAutoExtract()) {
+      autoExtractShown = this.menu.isAutoExtract();
+      autoExtractButton.setMessage(autoExtractLabel());
+      autoExtractButton.setTooltip(net.minecraft.client.gui.components.Tooltip.create(autoExtractTooltip()));
+    }
+    if (--refreshTimer <= 0) {
+      requestState();
+      refreshTimer = REFRESH_INTERVAL;
+    }
+  }
+
+  private int cellIndexAt(double mouseX, double mouseY) {
+    if (tab != Tab.REQUESTS) {
+      return -1;
+    }
+    int left = (this.width - this.imageWidth) / 2;
+    int top = (this.height - this.imageHeight) / 2;
+    int col = (int) Math.floor((mouseX - (left + GRID_X)) / 18.0);
+    int row = (int) Math.floor((mouseY - (top + GRID_Y)) / 18.0);
+    if (col < 0 || col >= COLS || row < 0 || row >= ROWS) {
+      return -1;
+    }
+    int index = page * PAGE_SIZE + row * COLS + col;
+    return index < filtered.size() ? index : -1;
+  }
+
+  private boolean overPanel(double mouseX, double mouseY) {
+    int left = (this.width - this.imageWidth) / 2;
+    int top = (this.height - this.imageHeight) / 2;
+    return mouseX >= left + PANEL_X && mouseX < left + PANEL_RIGHT
+        && mouseY >= top + PANEL_Y && mouseY < top + PANEL_BOTTOM;
+  }
+
+  private static String compactCount(int count) {
+    if (count >= 1_000_000) {
+      return (count / 1_000_000) + "M";
+    }
+    if (count >= 10_000) {
+      return (count / 1_000) + "k";
+    }
+    if (count >= 1_000) {
+      return String.format(Locale.ROOT, "%.1fk", count / 1000.0);
+    }
+    return String.valueOf(count);
+  }
+
+  @Override
+  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    int left = (this.width - this.imageWidth) / 2;
+    int top = (this.height - this.imageHeight) / 2;
+    if (tab == Tab.TASKS) {
+      this.hoveredSlot = null;
+      renderBackground(graphics);
+      graphics.blit(BACKGROUND_TASKS, left, top, 0, 0, this.imageWidth, this.imageHeight, 512, 256);
+      taskPanel.render(graphics, left, top, mouseX, mouseY);
+      for (Renderable renderable : this.renderables) {
+        renderable.render(graphics, mouseX, mouseY, partialTick);
+      }
+      graphics.drawString(this.font, this.title, left + 8, top + 6, 0x404040, false);
+      renderTabs(graphics, mouseX, mouseY);
+      taskPanel.renderTooltip(graphics, left, top, mouseX, mouseY);
+      ItemStack carried = this.menu.getCarried();
+      if (!carried.isEmpty()) {
+        graphics.pose().pushPose();
+        graphics.pose().translate(0, 0, 232);
+        graphics.renderItem(carried, mouseX - 8, mouseY - 8);
+        graphics.renderItemDecorations(this.font, carried, mouseX - 8, mouseY - 8);
+        graphics.pose().popPose();
+      }
+      return;
+    }
+    renderBackground(graphics);
+    super.render(graphics, mouseX, mouseY, partialTick);
+    renderTabs(graphics, mouseX, mouseY);
+    renderBrowser(graphics, mouseX, mouseY);
+    renderPagination(graphics, mouseX, mouseY);
+    renderQuantity(graphics);
+    renderTooltip(graphics, mouseX, mouseY);
+    renderBrowserTooltip(graphics, mouseX, mouseY);
+  }
+
+  private static final String PAGER_CHARS = "0123456789/";
+
+  private static final int[][] PAGER_GLYPHS = {
+      {7, 5, 5, 5, 7}, {2, 6, 2, 2, 7}, {7, 1, 7, 4, 7}, {7, 1, 7, 1, 7}, {5, 5, 7, 1, 1},
+      {7, 4, 7, 1, 7}, {7, 4, 7, 5, 7}, {7, 1, 2, 2, 2}, {7, 5, 7, 5, 7}, {7, 5, 7, 1, 7},
+      {1, 1, 2, 4, 4}
+  };
+
+  private void drawTinyText(GuiGraphics graphics, String text, int x, int y, int color) {
+    for (char character : text.toCharArray()) {
+      int index = PAGER_CHARS.indexOf(character);
+      if (index >= 0) {
+        int[] glyph = PAGER_GLYPHS[index];
+        for (int row = 0; row < 5; row++) {
+          for (int col = 0; col < 3; col++) {
+            if ((glyph[row] & (4 >> col)) != 0) {
+              graphics.fill(x + col, y + row, x + col + 1, y + row + 1, color);
+            }
+          }
+        }
+      }
+      x += 4;
+    }
+  }
+
+  private void drawPagerButton(GuiGraphics graphics, int x, int y, boolean rightArrow, boolean hovered,
+      boolean enabled) {
+    graphics.fill(x, y, x + 8, y + 8, hovered && enabled ? 0xFFCFCFCF : 0xFFB4B4B4);
+    graphics.fill(x, y, x + 8, y + 1, 0xFFE4E4E4);
+    graphics.fill(x, y, x + 1, y + 8, 0xFFE4E4E4);
+    graphics.fill(x, y + 7, x + 8, y + 8, 0xFF6B6B6B);
+    graphics.fill(x + 7, y, x + 8, y + 8, 0xFF6B6B6B);
+    int color = enabled ? 0xFF3A3A3A : 0xFF9A9A9A;
+    if (rightArrow) {
+      graphics.fill(x + 3, y + 2, x + 4, y + 7, color);
+      graphics.fill(x + 4, y + 3, x + 5, y + 6, color);
+      graphics.fill(x + 5, y + 4, x + 6, y + 5, color);
+    } else {
+      graphics.fill(x + 4, y + 2, x + 5, y + 7, color);
+      graphics.fill(x + 3, y + 3, x + 4, y + 6, color);
+      graphics.fill(x + 2, y + 4, x + 3, y + 5, color);
+    }
+  }
+
+  private int[] pagerLayout() {
+    int left = (this.width - this.imageWidth) / 2;
+    int top = (this.height - this.imageHeight) / 2;
+    String pages = (page + 1) + "/" + (maxPage() + 1);
+    int numberWidth = pages.length() * 4 - 1;
+    int rightButton = left + PANEL_RIGHT - 4 - 8;
+    int numberX = rightButton - 3 - numberWidth;
+    int leftButton = numberX - 3 - 8;
+    return new int[] { leftButton, rightButton, top + 19, numberX };
+  }
+
+  private void renderPagination(GuiGraphics graphics, int mouseX, int mouseY) {
+    boolean single = maxPage() <= 0;
+    int[] layout = pagerLayout();
+    drawPagerButton(graphics, layout[0], layout[2], false, isOverPager(mouseX, mouseY, -1), !single);
+    drawPagerButton(graphics, layout[1], layout[2], true, isOverPager(mouseX, mouseY, 1), !single);
+    String pages = (page + 1) + "/" + (maxPage() + 1);
+    drawTinyText(graphics, pages, layout[3], layout[2] + 2, single ? 0xFF6E6E6E : 0xFF2E2E2E);
+  }
+
+  private boolean isOverPager(double mouseX, double mouseY, int direction) {
+    int[] layout = pagerLayout();
+    int x = direction < 0 ? layout[0] : layout[1];
+    return mouseX >= x && mouseX < x + 8 && mouseY >= layout[2] && mouseY < layout[2] + 8;
+  }
+
+  private void renderQuantity(GuiGraphics graphics) {
+    int left = (this.width - this.imageWidth) / 2;
+    int top = (this.height - this.imageHeight) / 2;
+    String value = String.valueOf(quantity);
+    graphics.drawString(this.font, value, left + 234 - this.font.width(value) / 2, top + 197, 0x404040, false);
+  }
+
+  private void renderBrowser(GuiGraphics graphics, int mouseX, int mouseY) {
+    int left = (this.width - this.imageWidth) / 2;
+    int top = (this.height - this.imageHeight) / 2;
+    int start = page * PAGE_SIZE;
+
+    ItemKey target = ItemKey.of(this.menu.getGhostStack());
+    for (int i = 0; i < PAGE_SIZE && start + i < filtered.size(); i++) {
+      PacketTableState.Entry entry = filtered.get(start + i);
+      int x = left + GRID_X + (i % COLS) * 18;
+      int y = top + GRID_Y + (i / COLS) * 18;
+      boolean selected = target.matches(entry.stack());
+      if (selected) {
+        graphics.fill(x - 1, y - 1, x + 17, y + 17, 0x8033AAFF);
+      }
+      graphics.renderItem(entry.stack(), x, y);
+      graphics.pose().pushPose();
+      graphics.pose().translate(0, 0, 200);
+      if (entry.blocked()) {
+
+        graphics.fill(x, y, x + 16, y + 16, 0xB0787878);
+      }
+      String text = entry.count() > 0 ? compactCount(entry.count()) : "C";
+      int color = entry.blocked() ? 0xFF5555 : (entry.craftableOnly() ? 0xFFA000 : 0xFFFFFF);
+      graphics.pose().translate(0, 0, 10);
+      graphics.drawString(this.font, text, x + 17 - this.font.width(text), y + 9, color, true);
+      graphics.pose().popPose();
+    }
+    int hovered = cellIndexAt(mouseX, mouseY);
+    if (hovered >= 0) {
+      int x = left + GRID_X + ((hovered - start) % COLS) * 18;
+      int y = top + GRID_Y + ((hovered - start) / COLS) * 18;
+      graphics.pose().pushPose();
+      graphics.pose().translate(0, 0, 250);
+      graphics.fill(x, y, x + 16, y + 16, 0x80FFFFFF);
+      graphics.pose().popPose();
+    }
+  }
+
+  private void renderBrowserTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+    int hovered = cellIndexAt(mouseX, mouseY);
+    if (hovered < 0 || !this.menu.getCarried().isEmpty() || this.minecraft == null) {
+      return;
+    }
+    PacketTableState.Entry entry = filtered.get(hovered);
+    List<Component> tooltip = new ArrayList<>(getTooltipFromContainerItem(entry.stack()));
+    if (entry.count() > 0) {
+      tooltip.add(Component.translatable(key("in_network"), entry.count()).withStyle(ChatFormatting.GRAY));
+    }
+    if (entry.blocked()) {
+      tooltip.add(Component.translatable(key("craft_blocked")).withStyle(ChatFormatting.RED));
+      tooltip.add(Component.translatable(key("craft_missing"), entry.missing().getHoverName())
+          .withStyle(ChatFormatting.GRAY));
+    } else if (entry.craftableOnly()) {
+      tooltip.add(Component.translatable(key("craftable")).withStyle(ChatFormatting.GOLD));
+    }
+    graphics.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
+  }
+
+  @Override
+  public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    for (Tab which : Tab.values()) {
+      if (isOverTab(mouseX, mouseY, which)) {
+        if (tab != which) {
+          switchTab(which);
+          if (this.minecraft != null) {
+            this.minecraft.getSoundManager()
+                .play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+          }
+        }
+        return true;
+      }
+    }
+    if (tab == Tab.TASKS) {
+      int left = (this.width - this.imageWidth) / 2;
+      int top = (this.height - this.imageHeight) / 2;
+      if (taskPanel.mouseClicked(left, top, mouseX, mouseY)) {
+        return true;
+      }
+      for (GuiEventListener child : children()) {
+        if (child.mouseClicked(mouseX, mouseY, button)) {
+          setFocused(child);
+          return true;
+        }
+      }
+      return true;
+    }
+    if (isOverPager(mouseX, mouseY, -1)) {
+      turnPage(-1);
+      return true;
+    }
+    if (isOverPager(mouseX, mouseY, 1)) {
+      turnPage(1);
+      return true;
+    }
+    int hovered = cellIndexAt(mouseX, mouseY);
+    if (hovered >= 0 && filtered.get(hovered).blocked()) {
+
+      return true;
+    }
+    if (hovered >= 0 && button == 0 && this.menu.getCarried().isEmpty()) {
+      ItemStack target = filtered.get(hovered).stack().copyWithCount(1);
+      ModNetworking.sendToServer(new PacketRequestTarget(this.menu.getTablePos(), target));
+      if (this.minecraft != null) {
+        this.minecraft.getSoundManager()
+            .play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+      }
+      return true;
+    }
+    return super.mouseClicked(mouseX, mouseY, button);
+  }
+
+  @Override
+  public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    if (tab == Tab.TASKS) {
+      taskPanel.mouseScrolled(delta);
+      return true;
+    }
+    if (overPanel(mouseX, mouseY)) {
+      turnPage(delta < 0 ? 1 : -1);
+      return true;
+    }
+    int left = (this.width - this.imageWidth) / 2;
+    int top = (this.height - this.imageHeight) / 2;
+    if (mouseX >= left + 202 && mouseX < left + 266 && mouseY >= top + 193 && mouseY < top + 208) {
+      adjustQuantity(delta > 0 ? step() : -step());
+      return true;
+    }
+    return super.mouseScrolled(mouseX, mouseY, delta);
+  }
+
+  @Override
+  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    EditBox taskSearch = taskPanel != null ? taskPanel.searchBox() : null;
+    EditBox focused = search != null && search.isFocused() && search.isVisible() ? search
+        : taskSearch != null && taskSearch.isFocused() && taskSearch.isVisible() ? taskSearch : null;
+    if (focused != null) {
+      if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+        focused.setFocused(false);
+        return true;
+      }
+      if (focused.keyPressed(keyCode, scanCode, modifiers)) {
+        return true;
+      }
+      return keyCode != GLFW.GLFW_KEY_TAB;
+    }
+    return super.keyPressed(keyCode, scanCode, modifiers);
+  }
+
+  @Override
+  protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+    super.renderLabels(graphics, mouseX, mouseY);
+    graphics.drawString(this.font, Component.translatable(key("storage_label")), 8, 93, 0x404040, false);
+  }
+
+  @Override
+  public void removed() {
+    if (this.minecraft != null) {
+      com.faktocraft.client.GuiScaleHelper.restore(this.minecraft);
+    }
+    super.removed();
+  }
+
+  @Override
+  protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+    int left = (this.width - this.imageWidth) / 2;
+    int top = (this.height - this.imageHeight) / 2;
+    graphics.blit(BACKGROUND, left, top, 0, 0, this.imageWidth, this.imageHeight, 512, 256);
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "faktocraft:block/pipe/tank_side",
+    "end": "faktocraft:block/pipe/tank_end",
+    "side": "faktocraft:block/pipe/tank_side_joined_below"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        14,
+        16,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#end",
+          "cullface": "up"
+        }
+      }
+    }
+  ]
+}

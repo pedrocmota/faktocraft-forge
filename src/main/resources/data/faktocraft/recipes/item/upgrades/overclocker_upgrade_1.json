@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "a": {
+      "item": "faktocraft:copper_cable_insulated"
+    },
+    "c": {
+      "item": "faktocraft:medium_coolant_cell"
+    },
+    "e": {
+      "item": "faktocraft:electronic_circuit"
+    },
+    "p": {
+      "item": "faktocraft:plastic"
+    }
+  },
+  "pattern": [
+    "ccc",
+    "aea",
+    "ppp"
+  ],
+  "result": {
+    "count": 4,
+    "item": "faktocraft:overclocker_upgrade"
+  }
+}

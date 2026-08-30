@@ -1,0 +1,9 @@
+{
+ "parent": "block/orientable_with_bottom",
+ "textures": {
+  "front": "faktocraft:block/machines/distillery_front",
+  "top": "faktocraft:block/machines/distillery_top",
+  "bottom": "faktocraft:block/machines/distillery_bottom",
+  "side": "faktocraft:block/machines/distillery_side"
+ }
+}

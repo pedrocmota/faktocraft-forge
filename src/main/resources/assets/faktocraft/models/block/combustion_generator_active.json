@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "faktocraft:block/generator/combustion_generator_bottom",
+    "east": "faktocraft:block/generator/combustion_generator_leftright_active",
+    "north": "faktocraft:block/generator/combustion_generator_front_active",
+    "particle": "faktocraft:block/generator/combustion_generator_front_active",
+    "south": "faktocraft:block/generator/combustion_generator_back",
+    "up": "faktocraft:block/generator/combustion_generator_top",
+    "west": "faktocraft:block/generator/combustion_generator_leftright_active"
+  }
+}

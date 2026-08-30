@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "faktocraft:block/very_high_transformer",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "faktocraft:block/very_high_transformer",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "faktocraft:block/very_high_transformer"
+    },
+    "facing=south": {
+      "model": "faktocraft:block/very_high_transformer",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "faktocraft:block/very_high_transformer",
+      "x": -90
+    },
+    "facing=west": {
+      "model": "faktocraft:block/very_high_transformer",
+      "y": 270
+    }
+  }
+}

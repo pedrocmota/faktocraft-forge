@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_taiga",
+  "features": "faktocraft:rubber_tree_scattered_placed",
+  "step": "vegetal_decoration"
+}

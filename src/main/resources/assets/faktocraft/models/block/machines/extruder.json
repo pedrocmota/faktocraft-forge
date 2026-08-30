@@ -1,0 +1,9 @@
+{
+	"parent": "block/orientable",
+	"textures": {
+		"front": "faktocraft:block/machines/extruder_front",
+		"top": "faktocraft:block/machines/extruder_top",
+		"bottom": "faktocraft:block/machines/extruder_bottom",
+		"side": "faktocraft:block/machines/extruder_side"
+	}
+}

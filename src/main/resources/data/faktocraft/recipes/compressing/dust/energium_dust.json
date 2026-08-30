@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 5.0,
+  "ingredient": {
+    "count": 9,
+    "item": "faktocraft:energium_dust"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "faktocraft:energy_crystal"
+  },
+  "type": "faktocraft:compressing"
+}

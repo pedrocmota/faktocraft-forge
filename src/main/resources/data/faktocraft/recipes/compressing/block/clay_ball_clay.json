@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 4,
+    "item": "minecraft:clay_ball"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "minecraft:clay"
+  },
+  "type": "faktocraft:compressing"
+}

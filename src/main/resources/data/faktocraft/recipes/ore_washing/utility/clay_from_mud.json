@@ -1,0 +1,17 @@
+{
+  "duration": 200,
+  "experience": 0.0,
+  "fluid_ingredient": {
+    "amount": 250,
+    "fluid": "minecraft:water"
+  },
+  "ingredient": {
+    "count": 1,
+    "item": "faktocraft:mud_pile"
+  },
+  "power_cost": 16,
+  "result_1": {
+    "item": "minecraft:clay_ball"
+  },
+  "type": "faktocraft:ore_washing"
+}

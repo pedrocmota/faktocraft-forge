@@ -1,0 +1,9 @@
+{
+  "type": "forge:add_features",
+  "biomes": [
+    "minecraft:plains",
+    "minecraft:sunflower_plains"
+  ],
+  "features": "faktocraft:rubber_tree_sparse_placed",
+  "step": "vegetal_decoration"
+}

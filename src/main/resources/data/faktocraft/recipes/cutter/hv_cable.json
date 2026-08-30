@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    {
+      "item": "faktocraft:cutter"
+    },
+    {
+      "tag": "forge:plates/steel"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "faktocraft:hv_cable"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "faktocraft:extracting",
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 1,
+    "item": "minecraft:gunpowder"
+  },
+  "power_cost": 8,
+  "result": {
+    "item": "faktocraft:sulfur_dust"
+  }
+}

@@ -1,0 +1,10 @@
+{
+	"variants": {
+		"facing=north":	{ "model": "faktocraft:block/battery_box/mfsu" },
+		"facing=south":	{ "model": "faktocraft:block/battery_box/mfsu", "y": 180 },
+		"facing=west":	{ "model": "faktocraft:block/battery_box/mfsu", "y": 270 },
+		"facing=east":	{ "model": "faktocraft:block/battery_box/mfsu", "y": 90 },
+		"facing=up":	{ "model": "faktocraft:block/battery_box/mfsu", "x": -90 },
+		"facing=down":	{ "model": "faktocraft:block/battery_box/mfsu", "x": 90 }
+	}
+}

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "b": {
+      "item": "faktocraft:mfe"
+    },
+    "e": {
+      "item": "faktocraft:electronic_circuit"
+    },
+    "p": {
+      "item": "minecraft:stone_pressure_plate"
+    },
+    "r": {
+      "item": "faktocraft:rubber"
+    }
+  },
+  "pattern": [
+    "epe",
+    "rbr"
+  ],
+  "result": {
+    "item": "faktocraft:charge_pad_mfe"
+  }
+}

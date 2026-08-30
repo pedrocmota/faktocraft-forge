@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "i": {
+      "tag": "forge:ingots/iron"
+    },
+    "r": {
+      "tag": "forge:rods/iron"
+    }
+  },
+  "pattern": [
+    "iri",
+    "iri"
+  ],
+  "result": {
+    "count": 8,
+    "item": "faktocraft:iron_fence"
+  }
+}

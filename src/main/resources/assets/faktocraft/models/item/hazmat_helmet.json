@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "faktocraft:item/hazmat_helmet",
+    "layer1": "faktocraft:item/hazmat_helmet_overlay"
+  }
+}

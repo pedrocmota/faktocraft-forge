@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "p": {
+      "tag": "forge:plates/iron"
+    },
+    "r": {
+      "item": "faktocraft:rubber"
+    },
+    "b": {
+      "item": "faktocraft:basic_machine_casing"
+    },
+    "e": {
+      "item": "faktocraft:electronic_circuit"
+    }
+  },
+  "pattern": [
+    "prp",
+    "rbr",
+    "pep"
+  ],
+  "result": {
+    "item": "faktocraft:polymerizer"
+  }
+}

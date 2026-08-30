@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "faktocraft:nano_helmet",
+    "faktocraft:nano_chestplate",
+    "faktocraft:nano_leggings",
+    "faktocraft:nano_boots",
+    "faktocraft:nano_saber"
+  ]
+}

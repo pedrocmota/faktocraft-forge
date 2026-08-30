@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.1,
+  "ingredient": {
+    "count": 9,
+    "item": "minecraft:lapis_lazuli"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "minecraft:lapis_block"
+  },
+  "type": "faktocraft:compressing"
+}

@@ -1,0 +1,16 @@
+{
+  "replace": false,
+  "values": [
+    "faktocraft:electric_wrench",
+    "faktocraft:electric_treetap",
+    "faktocraft:chainsaw",
+    "faktocraft:diamond_chainsaw",
+    "faktocraft:iridium_chainsaw",
+    "faktocraft:mining_drill",
+    "faktocraft:diamond_drill",
+    "faktocraft:iridium_drill",
+    "faktocraft:electric_hoe",
+    "faktocraft:wind_meter",
+    "faktocraft:multi_tool"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "all": "faktocraft:block/rubber_wood/rubber_planks"
+    }
+}

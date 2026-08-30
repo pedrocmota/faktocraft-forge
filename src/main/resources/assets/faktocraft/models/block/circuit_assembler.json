@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "faktocraft:block/machines/electric_furnace_bottom",
+    "front": "faktocraft:block/machines/basic/circuit_assembler_front",
+    "side": "faktocraft:block/machines/electric_furnace_side",
+    "top": "faktocraft:block/machines/electric_furnace_top"
+  }
+}

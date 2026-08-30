@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "faktocraft:block/charge_pad/cesu_bottom",
+    "front": "faktocraft:block/charge_pad/cesu_front",
+    "side": "faktocraft:block/charge_pad/cesu_side",
+    "top": "faktocraft:block/charge_pad/cesu_top_active"
+  }
+}

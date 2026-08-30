@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "faktocraft:block/machines/advanced/matter_fabricator_bottom",
+    "front": "faktocraft:block/machines/advanced/matter_fabricator_front_active",
+    "side": "faktocraft:block/machines/advanced/matter_fabricator_side",
+    "top": "faktocraft:block/machines/advanced/matter_fabricator_top"
+  }
+}

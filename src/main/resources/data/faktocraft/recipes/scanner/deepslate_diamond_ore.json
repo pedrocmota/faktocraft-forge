@@ -1,0 +1,13 @@
+{
+  "duration": 500,
+  "experience": 5.0,
+  "item": {
+    "item": "minecraft:deepslate_diamond_ore"
+  },
+  "power_cost": 256,
+  "replication": {
+    "energy_cost": 195,
+    "matter_cost": 389
+  },
+  "type": "faktocraft:scanner"
+}

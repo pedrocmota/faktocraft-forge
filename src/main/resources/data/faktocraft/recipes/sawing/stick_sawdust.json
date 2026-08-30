@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 1,
+    "item": "minecraft:stick"
+  },
+  "power_cost": 6,
+  "result": {
+    "item": "faktocraft:sawdust"
+  },
+  "type": "faktocraft:sawing"
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "x": {
+      "tag": "forge:storage_blocks/tin"
+    }
+  },
+  "pattern": [
+    "x  "
+  ],
+  "result": {
+    "count": 9,
+    "item": "faktocraft:tin_ingot"
+  }
+}

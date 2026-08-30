@@ -1,0 +1,7 @@
+{
+  "type": "faktocraft:scrap_box",
+  "result": {
+    "item": "minecraft:bread"
+  },
+  "weight": 1.5
+}

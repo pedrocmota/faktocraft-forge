@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "faktocraft:block/transformer/low_transformer_side",
+    "east": "faktocraft:block/transformer/low_transformer_side",
+    "north": "faktocraft:block/transformer/low_transformer_front",
+    "particle": "faktocraft:block/transformer/low_transformer_front",
+    "south": "faktocraft:block/transformer/low_transformer_side",
+    "up": "faktocraft:block/transformer/low_transformer_side",
+    "west": "faktocraft:block/transformer/low_transformer_side"
+  }
+}

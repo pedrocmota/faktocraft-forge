@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "faktocraft:overclocker_upgrade",
+    "faktocraft:advanced_overclocker_upgrade",
+    "faktocraft:tension_upgrade_mk1",
+    "faktocraft:tension_upgrade_mk2",
+    "faktocraft:tension_upgrade_mk3"
+  ]
+}

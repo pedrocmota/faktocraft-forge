@@ -1,0 +1,8 @@
+{
+    "parent": "block/inner_stairs",
+    "textures": {
+        "bottom": "faktocraft:block/rubber_wood/rubber_planks",
+        "top": "faktocraft:block/rubber_wood/rubber_planks",
+        "side": "faktocraft:block/rubber_wood/rubber_planks"
+    }
+}

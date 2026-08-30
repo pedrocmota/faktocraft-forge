@@ -1,0 +1,15 @@
+{
+  "duration": 500,
+  "experience": 0.1,
+  "ingredient": {
+    "count": 1,
+    "tag": "forge:raw_materials/lead"
+  },
+  "power_cost": 48,
+  "result_1": {
+    "count": 2,
+    "item": "faktocraft:lead_chunk"
+  },
+  "temperature": 327,
+  "type": "faktocraft:thermal_centrifuging"
+}

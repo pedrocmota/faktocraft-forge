@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "F": {
+      "item": "faktocraft:iron_furnace"
+    },
+    "P": {
+      "tag": "forge:plates/iron"
+    },
+    "R": {
+      "item": "faktocraft:battery"
+    },
+    "k": {
+      "item": "faktocraft:basic_capacitor"
+    }
+  },
+  "pattern": [
+    "kRk",
+    "PPP",
+    " F "
+  ],
+  "result": {
+    "item": "faktocraft:generator"
+  }
+}

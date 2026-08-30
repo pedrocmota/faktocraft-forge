@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "a": {
+      "item": "faktocraft:lapotron_crystal"
+    },
+    "c": {
+      "item": "faktocraft:charging_energy_crystal"
+    },
+    "h": {
+      "item": "faktocraft:large_coolant_cell"
+    }
+  },
+  "pattern": [
+    "hah",
+    "aca",
+    "hah"
+  ],
+  "result": {
+    "item": "faktocraft:charging_lapotron_crystal"
+  }
+}

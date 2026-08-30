@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": {
+      "tag": "forge:plates/copper"
+    },
+    "r": {
+      "item": "faktocraft:rubber"
+    }
+  },
+  "pattern": [
+    "rcr",
+    "rcr",
+    "rcr"
+  ],
+  "result": {
+    "item": "faktocraft:heat_conductor"
+  }
+}

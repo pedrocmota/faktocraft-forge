@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "i": {
+      "item": "faktocraft:iridium_plate"
+    },
+    "a": {
+      "item": "faktocraft:advanced_circuit"
+    },
+    "d": {
+      "item": "faktocraft:energium_dust"
+    },
+    "l": {
+      "item": "faktocraft:lapotron_crystal"
+    }
+  },
+  "pattern": [
+    "iai",
+    "dld",
+    "iai"
+  ],
+  "result": {
+    "item": "faktocraft:iridium_crystal"
+  }
+}

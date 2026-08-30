@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 1.0,
+  "ingredient": {
+    "count": 9,
+    "item": "faktocraft:iridium_shard"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "faktocraft:iridium"
+  },
+  "type": "faktocraft:compressing"
+}

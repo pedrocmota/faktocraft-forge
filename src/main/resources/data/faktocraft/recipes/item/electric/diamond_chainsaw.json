@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "a": {
+      "item": "faktocraft:advanced_battery"
+    },
+    "c": {
+      "item": "faktocraft:chainsaw"
+    },
+    "d": {
+      "tag": "forge:gems/diamond"
+    }
+  },
+  "pattern": [
+    " dd",
+    " cd",
+    "a  "
+  ],
+  "result": {
+    "item": "faktocraft:diamond_chainsaw"
+  }
+}

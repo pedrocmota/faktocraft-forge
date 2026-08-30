@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_pipes",
+  "key": {
+    "m": {
+      "tag": "forge:ingots/gold"
+    },
+    "g": {
+      "item": "minecraft:glass"
+    }
+  },
+  "pattern": [
+    "mgm"
+  ],
+  "result": {
+    "count": 8,
+    "item": "faktocraft:gold_pipe"
+  }
+}

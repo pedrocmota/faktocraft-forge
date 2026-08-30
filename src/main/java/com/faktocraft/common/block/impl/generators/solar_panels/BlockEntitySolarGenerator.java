@@ -1,0 +1,106 @@
+package com.faktocraft.common.block.impl.generators.solar_panels;
+
+import com.faktocraft.common.energy.interfaces.IEnergyBlock;
+import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.enums.EnergyType;
+import com.faktocraft.common.registries.machines.M1Registry;
+import com.faktocraft.common.tier.SolarGeneratorTier;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
+
+public class BlockEntitySolarGenerator extends IndRebBlockEntity
+    implements IEnergyBlock, com.faktocraft.common.energy.ICableSideFilter {
+
+  @Override
+  public boolean acceptsCableFrom(net.minecraft.core.Direction side) {
+    return side != net.minecraft.core.Direction.UP;
+  }
+
+  private final SolarGeneratorTier tier;
+  private int lastAmount = 0;
+  public int amount = 0;
+
+  public BlockEntitySolarGenerator(BlockPos pos, BlockState state) {
+    super(M1Registry.SOLAR_GENERATOR_BE, pos, state);
+
+    BlockSolarGenerator block = (BlockSolarGenerator) state.getBlock();
+    this.tier = block.getSolarGeneratorTier();
+
+    createEnergyStorage(0, tier.getEnergyCapacity(), EnergyType.EXTRACT, tier.getEnergyTier());
+  }
+
+  @Override
+  public boolean getActive() {
+    return super.getActive();
+  }
+
+  @Override
+  public void tickWork(BlockState state) {
+    boolean active = false;
+    amount = 0;
+    getEnergyStorage().updateGenerated(0);
+
+    if (level != null
+        && level.dimensionType().hasSkyLight() && !level.dimensionType().hasCeiling()
+        && level.canSeeSky(getBlockPos().above())) {
+      if (level.isDay()) {
+        amount = level.isThundering() || level.isRaining()
+            ? tier.getNightGenerate()
+            : tier.getDayGenerate();
+      } else {
+        amount = tier.getMoonlightGenerate();
+      }
+    }
+
+    if (amount > 0) {
+      active = true;
+      if (getEnergyStorage().generateEnergy(amount, true) == amount) {
+        getEnergyStorage().generateEnergy(amount, false);
+        getEnergyStorage().updateGenerated(amount);
+      }
+    }
+
+    if (amount != lastAmount) {
+      lastAmount = amount;
+      super.updateBlockState();
+    }
+
+    if (this.setActive(active)) {
+      super.updateBlockState();
+    }
+  }
+
+  @Override
+  protected void saveAdditional(CompoundTag tag) {
+    tag.putBoolean("active", activeState);
+    tag.putInt("amount", amount);
+    tag.putInt("lastAmount", lastAmount);
+    super.saveAdditional(tag);
+  }
+
+  @Override
+  public void load(CompoundTag tag) {
+    super.load(tag);
+    activeState = tag.getBoolean("active");
+    amount = tag.contains("amount") ? tag.getInt("amount") : 0;
+    lastAmount = tag.contains("lastAmount") ? tag.getInt("lastAmount") : 0;
+  }
+
+  @Override
+  public boolean canExtractEnergyDir(@Nullable Direction side) {
+    return side != Direction.UP;
+  }
+
+  @Override
+  public int defaultGeneratorPriority() {
+    return com.faktocraft.common.config.ModConfig.server().priority_solar_generator;
+  }
+
+  @Override
+  public boolean showBarInGui() {
+    return false;
+  }
+}

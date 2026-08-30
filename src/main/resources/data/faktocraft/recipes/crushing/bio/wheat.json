@@ -1,0 +1,13 @@
+{
+  "type": "faktocraft:crushing",
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 8,
+    "item": "minecraft:wheat"
+  },
+  "power_cost": 8,
+  "result": {
+    "item": "faktocraft:bio_chaff"
+  }
+}

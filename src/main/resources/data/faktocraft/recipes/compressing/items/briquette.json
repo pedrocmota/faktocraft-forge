@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 4,
+    "item": "faktocraft:sawdust"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "faktocraft:briquette"
+  },
+  "type": "faktocraft:compressing"
+}

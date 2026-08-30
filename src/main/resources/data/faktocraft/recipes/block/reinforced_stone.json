@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "a": {
+      "item": "faktocraft:advanced_alloy"
+    },
+    "s": {
+      "item": "minecraft:stone"
+    }
+  },
+  "pattern": [
+    "sss",
+    "asa",
+    "sss"
+  ],
+  "result": {
+    "count": 7,
+    "item": "faktocraft:reinforced_stone"
+  }
+}

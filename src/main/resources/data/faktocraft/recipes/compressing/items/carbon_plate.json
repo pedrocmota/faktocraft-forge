@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 1,
+    "item": "faktocraft:combined_carbon_fibers"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "faktocraft:carbon_plate"
+  },
+  "type": "faktocraft:compressing"
+}

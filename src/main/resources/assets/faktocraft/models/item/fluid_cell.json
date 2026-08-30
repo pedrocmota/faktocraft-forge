@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "faktocraft:item/fluid_cell"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "faktocraft:filled": 1.0
+      },
+      "model": "faktocraft:item/fluid_cell_filled"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "g": {
+      "item": "faktocraft:reinforced_glass"
+    },
+    "i": {
+      "item": "faktocraft:iridium_plate"
+    },
+    "k": {
+      "item": "faktocraft:advanced_capacitor"
+    },
+    "H": {
+      "item": "faktocraft:hybrid_solar_generator"
+    },
+    "L": {
+      "item": "faktocraft:lapotron_crystal"
+    }
+  },
+  "pattern": [
+    "gig",
+    "kHk",
+    "kLk"
+  ],
+  "result": {
+    "item": "faktocraft:quantum_solar_generator",
+    "count": 1
+  }
+}

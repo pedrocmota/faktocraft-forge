@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.4,
+  "ingredient": {
+    "count": 9,
+    "tag": "forge:ingots/gold"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "minecraft:gold_block"
+  },
+  "type": "faktocraft:compressing"
+}

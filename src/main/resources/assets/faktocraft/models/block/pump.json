@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "faktocraft:block/pipe/pump_side",
+    "down": "faktocraft:block/pipe/pump_bottom",
+    "up": "faktocraft:block/pipe/pump_top",
+    "north": "faktocraft:block/pipe/pump_side",
+    "east": "faktocraft:block/pipe/pump_side",
+    "south": "faktocraft:block/pipe/pump_side",
+    "west": "faktocraft:block/pipe/pump_side"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "faktocraft:crushing",
+  "duration": 180,
+  "experience": 0.1,
+  "ingredient": {
+    "count": 1,
+    "item": "minecraft:coal"
+  },
+  "power_cost": 8,
+  "result": {
+    "item": "faktocraft:coal_dust"
+  }
+}

@@ -1,0 +1,27 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "group": "faktocraft",
+ "key": {
+  "s": {
+   "item": "faktocraft:steel_plate"
+  },
+  "t": {
+   "item": "minecraft:crafting_table"
+  },
+  "x": {
+   "item": "minecraft:chest"
+  },
+  "c": {
+   "item": "faktocraft:electronic_circuit"
+  }
+ },
+ "pattern": [
+  "sts",
+  "xcs",
+  "sss"
+ ],
+ "result": {
+  "count": 1,
+  "item": "faktocraft:request_table"
+ }
+}

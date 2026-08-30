@@ -1,0 +1,287 @@
+{
+  "tile.generator": {
+    "sounds": [
+      {
+        "name": "faktocraft:generator"
+      }
+    ]
+  },
+  "tile.geo_generator": {
+    "sounds": [
+      {
+        "name": "faktocraft:geo_generator"
+      }
+    ]
+  },
+  "tile.wind_generator": {
+    "sounds": [
+      {
+        "name": "faktocraft:wind_generator"
+      }
+    ]
+  },
+  "tile.combustion_generator": {
+    "sounds": [
+      {
+        "name": "faktocraft:combustion_generator"
+      }
+    ]
+  },
+  "tile.crusher": {
+    "sounds": [
+      {
+        "name": "faktocraft:crusher"
+      }
+    ]
+  },
+  "tile.compressor": {
+    "sounds": [
+      {
+        "name": "faktocraft:compressor"
+      }
+    ]
+  },
+  "tile.extractor": {
+    "sounds": [
+      {
+        "name": "faktocraft:extractor"
+      }
+    ]
+  },
+  "tile.sawmill": {
+    "sounds": [
+      {
+        "name": "faktocraft:sawmill"
+      }
+    ]
+  },
+  "tile.recycler": {
+    "sounds": [
+      {
+        "name": "faktocraft:recycler"
+      }
+    ]
+  },
+  "tile.charge_pad": {
+    "sounds": [
+      {
+        "name": "faktocraft:charge_pad"
+      }
+    ]
+  },
+  "tile.matter_fabricator": {
+    "sounds": [
+      {
+        "name": "faktocraft:matter_fabricator"
+      }
+    ]
+  },
+  "extra.matter_fabricator_amplified": {
+    "sounds": [
+      {
+        "name": "faktocraft:matter_fabricator_amplified"
+      }
+    ]
+  },
+  "tile.ore_washing_plant": {
+    "sounds": [
+      {
+        "name": "faktocraft:ore_washing_plant"
+      }
+    ]
+  },
+  "tile.metal_former": {
+    "sounds": [
+      {
+        "name": "faktocraft:metal_former"
+      }
+    ]
+  },
+  "tile.replicator": {
+    "sounds": [
+      {
+        "name": "faktocraft:replicator"
+      }
+    ]
+  },
+  "tile.scanner": {
+    "sounds": [
+      {
+        "name": "faktocraft:scanner"
+      }
+    ]
+  },
+  "tile.thermal_centrifuge": {
+    "sounds": [
+      {
+        "name": "faktocraft:thermal_centrifuge"
+      }
+    ]
+  },
+  "item.jetpack": {
+    "sounds": [
+      {
+        "name": "faktocraft:jetpack"
+      }
+    ]
+  },
+  "item.treetap": {
+    "sounds": [
+      {
+        "name": "faktocraft:treetap"
+      }
+    ]
+  },
+  "item.nano_saber_ignite": {
+    "sounds": [
+      {
+        "name": "faktocraft:nano_saber_ignite"
+      }
+    ]
+  },
+  "item.nano_saber_hum": {
+    "sounds": [
+      {
+        "name": "faktocraft:nano_saber_hum"
+      }
+    ]
+  },
+  "item.nano_saber_retract": {
+    "sounds": [
+      {
+        "name": "faktocraft:nano_saber_retract"
+      }
+    ]
+  },
+  "item.wrench": {
+    "sounds": [
+      {
+        "name": "faktocraft:wrench"
+      }
+    ]
+  },
+  "item.electric_wrench": {
+    "sounds": [
+      {
+        "name": "faktocraft:electric_wrench"
+      }
+    ]
+  },
+  "item.plunger": {
+    "sounds": [
+      {
+        "name": "faktocraft:plunger"
+      }
+    ]
+  },
+  "player.night_vision": {
+    "sounds": [
+      {
+        "name": "faktocraft:night_vision"
+      }
+    ]
+  },
+  "fluid.oil": {
+    "subtitle": "subtitles.faktocraft.oil_bubble",
+    "sounds": [
+      {
+        "name": "minecraft:liquid/lavapop",
+        "pitch": 0.55,
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:liquid/lavapop",
+        "pitch": 0.45,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:liquid/lava",
+        "pitch": 0.6,
+        "volume": 0.5
+      }
+    ]
+  },
+  "block.breaker_switch": {
+    "subtitle": "subtitles.faktocraft.breaker_switch",
+    "sounds": [
+      {
+        "name": "minecraft:block/iron_trapdoor/close1"
+      },
+      {
+        "name": "minecraft:block/iron_trapdoor/close2"
+      },
+      {
+        "name": "minecraft:block/iron_trapdoor/close3"
+      },
+      {
+        "name": "minecraft:block/iron_trapdoor/close4"
+      }
+    ]
+  },
+  "block.valve_wheel": {
+    "subtitle": "subtitles.faktocraft.valve_wheel",
+    "sounds": [
+      {
+        "name": "faktocraft:valve_wheel"
+      }
+    ]
+  },
+  "tile.distillery": {
+    "sounds": [
+      {
+        "name": "faktocraft:distillery"
+      }
+    ]
+  },
+  "tile.pump": {
+    "sounds": [
+      {
+        "name": "faktocraft:pump"
+      }
+    ]
+  },
+  "tile.alloy_smelter": {
+    "sounds": [
+      {
+        "name": "faktocraft:alloy_smelter"
+      }
+    ]
+  },
+  "tile.fermenter": {
+    "sounds": [
+      {
+        "name": "faktocraft:fermenter"
+      }
+    ]
+  },
+  "tile.fluid_enricher": {
+    "sounds": [
+      {
+        "name": "faktocraft:fluid_enricher"
+      }
+    ]
+  },
+  "tile.canning_machine": {
+    "sounds": [
+      {
+        "name": "faktocraft:canning_machine"
+      }
+    ]
+  },
+  "tile.extruder": {
+    "sounds": [
+      {
+        "name": "faktocraft:extruder"
+      }
+    ]
+  },
+  "tile.polymerizer": {
+    "sounds": [
+      {
+        "name": "minecraft:liquid/lava",
+        "pitch": 0.7,
+        "volume": 0.6
+      }
+    ]
+  }
+}

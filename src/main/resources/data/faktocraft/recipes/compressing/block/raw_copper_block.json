@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 9,
+    "tag": "forge:raw_materials/copper"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "minecraft:raw_copper_block"
+  },
+  "type": "faktocraft:compressing"
+}

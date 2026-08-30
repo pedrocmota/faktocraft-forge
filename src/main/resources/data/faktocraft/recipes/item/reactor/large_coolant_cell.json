@@ -1,0 +1,20 @@
+{
+  "group": "faktocraft",
+  "key": {
+    "m": {
+      "item": "faktocraft:medium_coolant_cell"
+    },
+    "t": {
+      "tag": "forge:plates/tin"
+    }
+  },
+  "pattern": [
+    "tmt",
+    "ttt",
+    "tmt"
+  ],
+  "result": {
+    "item": "faktocraft:large_coolant_cell"
+  },
+  "type": "minecraft:crafting_shaped"
+}

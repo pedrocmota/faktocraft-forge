@@ -1,0 +1,13 @@
+{
+  "duration": 500,
+  "experience": 5.0,
+  "item": {
+    "item": "minecraft:deepslate_coal_ore"
+  },
+  "power_cost": 256,
+  "replication": {
+    "energy_cost": 17,
+    "matter_cost": 33
+  },
+  "type": "faktocraft:scanner"
+}

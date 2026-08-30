@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 4,
+    "item": "minecraft:quartz"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "minecraft:quartz_block"
+  },
+  "type": "faktocraft:compressing"
+}

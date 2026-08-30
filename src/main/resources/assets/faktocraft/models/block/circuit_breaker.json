@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "faktocraft:block/cable/breaker_front",
+    "north": "faktocraft:block/cable/breaker_port",
+    "south": "faktocraft:block/cable/breaker_port",
+    "east": "faktocraft:block/cable/breaker_front",
+    "west": "faktocraft:block/cable/breaker_front",
+    "up": "faktocraft:block/cable/breaker_top",
+    "down": "faktocraft:block/cable/breaker_bottom"
+  }
+}

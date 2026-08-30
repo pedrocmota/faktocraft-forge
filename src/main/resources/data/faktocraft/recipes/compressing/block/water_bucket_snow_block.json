@@ -1,0 +1,18 @@
+{
+  "bonus_result": {
+    "chance": 100.0,
+    "count": 1,
+    "item": "minecraft:bucket"
+  },
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 1,
+    "item": "minecraft:water_bucket"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "minecraft:snow_block"
+  },
+  "type": "faktocraft:compressing"
+}

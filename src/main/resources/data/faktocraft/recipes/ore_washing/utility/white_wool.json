@@ -1,0 +1,23 @@
+{
+  "duration": 200,
+  "experience": 0.0,
+  "fluid_ingredient": {
+    "amount": 200,
+    "fluid": "minecraft:water"
+  },
+  "ingredient": {
+    "base": {
+      "tag": "minecraft:wool"
+    },
+    "count": 1,
+    "subtracted": {
+      "item": "minecraft:white_wool"
+    },
+    "type": "forge:difference"
+  },
+  "power_cost": 16,
+  "result_1": {
+    "item": "minecraft:white_wool"
+  },
+  "type": "faktocraft:ore_washing"
+}

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "a": {
+      "item": "faktocraft:advanced_alloy"
+    },
+    "b": {
+      "item": "faktocraft:basic_machine_casing"
+    },
+    "c": {
+      "item": "faktocraft:carbon_plate"
+    },
+    "s": {
+      "tag": "forge:plates/steel"
+    }
+  },
+  "pattern": [
+    "scs",
+    "aba",
+    "scs"
+  ],
+  "result": {
+    "item": "faktocraft:advanced_machine_casing"
+  }
+}

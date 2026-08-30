@@ -1,0 +1,13 @@
+{
+  "type": "faktocraft:rolling",
+  "duration": 160,
+  "experience": 0.1,
+  "ingredient": {
+    "count": 1,
+    "item": "faktocraft:plastic"
+  },
+  "power_cost": 8,
+  "result": {
+    "item": "faktocraft:plastic_plate"
+  }
+}

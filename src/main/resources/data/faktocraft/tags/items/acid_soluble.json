@@ -1,0 +1,33 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:saplings",
+    "#minecraft:leaves",
+    "#minecraft:flowers",
+    "#minecraft:villager_plantable_seeds",
+    "minecraft:wheat",
+    "minecraft:sugar_cane",
+    "minecraft:cactus",
+    "minecraft:bamboo",
+    "minecraft:kelp",
+    "minecraft:sea_pickle",
+    "minecraft:vine",
+    "minecraft:lily_pad",
+    "minecraft:moss_block",
+    "minecraft:moss_carpet",
+    "minecraft:pumpkin",
+    "minecraft:melon",
+    "minecraft:brown_mushroom",
+    "minecraft:red_mushroom",
+    "minecraft:egg",
+    "minecraft:feather",
+    "minecraft:leather",
+    "minecraft:rotten_flesh",
+    "minecraft:bone",
+    "minecraft:string",
+    "faktocraft:bio_chaff",
+    "faktocraft:fertilizer",
+    "faktocraft:rubber_sapling",
+    "faktocraft:rubber_leaves"
+  ]
+}

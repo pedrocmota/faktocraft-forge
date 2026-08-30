@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "facing=north,active=false": { "model": "faktocraft:block/machines/quarry" },
+    "facing=south,active=false": { "model": "faktocraft:block/machines/quarry", "y": 180 },
+    "facing=west,active=false": { "model": "faktocraft:block/machines/quarry", "y": 270 },
+    "facing=east,active=false": { "model": "faktocraft:block/machines/quarry", "y": 90 },
+    "facing=north,active=true": { "model": "faktocraft:block/machines/quarry_active" },
+    "facing=south,active=true": { "model": "faktocraft:block/machines/quarry_active", "y": 180 },
+    "facing=west,active=true": { "model": "faktocraft:block/machines/quarry_active", "y": 270 },
+    "facing=east,active=true": { "model": "faktocraft:block/machines/quarry_active", "y": 90 }
+  }
+}

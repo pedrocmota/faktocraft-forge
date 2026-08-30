@@ -1,0 +1,7 @@
+{
+	"parent": "faktocraft:block/base/cable/cable",
+	"textures": {
+		"wall": "faktocraft:block/cable/gold_cable",
+		"particle": "#wall"
+	}
+}

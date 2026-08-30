@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 1,
+    "item": "faktocraft:mixed_metal_ingot"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "faktocraft:advanced_alloy"
+  },
+  "type": "faktocraft:compressing"
+}

@@ -1,0 +1,13 @@
+{
+  "duration": 500,
+  "experience": 5.0,
+  "item": {
+    "item": "faktocraft:iridium_shard"
+  },
+  "power_cost": 256,
+  "replication": {
+    "energy_cost": 2000,
+    "matter_cost": 4000
+  },
+  "type": "faktocraft:scanner"
+}

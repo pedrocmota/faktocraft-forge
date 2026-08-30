@@ -1,0 +1,18 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "group": "faktocraft",
+ "key": {
+  "P": {
+   "item": "faktocraft:rubber_planks"
+  }
+ },
+ "pattern": [
+  "P  ",
+  "PP ",
+  "PPP"
+ ],
+ "result": {
+  "count": 4,
+  "item": "faktocraft:rubber_stairs"
+ }
+}

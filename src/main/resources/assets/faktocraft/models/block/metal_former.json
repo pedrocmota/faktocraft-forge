@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "faktocraft:block/machines/basic/metal_former_bottom",
+    "front": "faktocraft:block/machines/basic/metal_former_front",
+    "side": "faktocraft:block/machines/basic/metal_former_side",
+    "top": "faktocraft:block/machines/basic/metal_former_top"
+  }
+}

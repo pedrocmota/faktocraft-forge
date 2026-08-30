@@ -1,0 +1,6 @@
+{
+ "parent": "faktocraft:block/base/panel_cable_adapter",
+ "textures": {
+  "frame": "faktocraft:block/generator/advanced_solar_generator_side"
+ }
+}

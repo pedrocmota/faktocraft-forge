@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "faktocraft:battery",
+    "faktocraft:advanced_battery",
+    "faktocraft:advanced_medium_battery",
+    "faktocraft:medium_battery",
+    "faktocraft:energy_crystal",
+    "faktocraft:lapotron_crystal",
+    "faktocraft:advanced_energy_crystal",
+    "faktocraft:advanced_lapotron_crystal",
+    "faktocraft:iridium_crystal",
+    "faktocraft:charging_battery",
+    "faktocraft:advanced_charging_battery",
+    "faktocraft:charging_energy_crystal",
+    "faktocraft:charging_lapotron_crystal"
+  ]
+}

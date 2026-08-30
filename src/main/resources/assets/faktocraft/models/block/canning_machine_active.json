@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "faktocraft:block/machines/basic/canning_machine_bottom",
+    "east": "faktocraft:block/machines/basic/canning_machine_leftright",
+    "north": "faktocraft:block/machines/basic/canning_machine_front_active",
+    "particle": "faktocraft:block/machines/basic/canning_machine_front_active",
+    "south": "faktocraft:block/machines/basic/canning_machine_back",
+    "up": "faktocraft:block/machines/basic/canning_machine_top",
+    "west": "faktocraft:block/machines/basic/canning_machine_leftright"
+  }
+}

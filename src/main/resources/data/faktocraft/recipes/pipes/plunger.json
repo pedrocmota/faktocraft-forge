@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_pipes",
+  "key": {
+    "r": {
+      "item": "faktocraft:rubber"
+    },
+    "s": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "r",
+    "s"
+  ],
+  "result": {
+    "item": "faktocraft:plunger"
+  }
+}

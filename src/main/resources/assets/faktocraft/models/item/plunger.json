@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "faktocraft:item/tool/plunger"
+  },
+  "display": {
+    "gui": {
+      "scale": [0.8, 0.8, 0.8]
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "faktocraft:plunging": 0.5
+      },
+      "model": "faktocraft:item/plunger_plunging_up"
+    },
+    {
+      "predicate": {
+        "faktocraft:plunging": 1.0
+      },
+      "model": "faktocraft:item/plunger_plunging"
+    }
+  ]
+}

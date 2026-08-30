@@ -1,0 +1,13 @@
+{
+  "duration": 500,
+  "experience": 5.0,
+  "item": {
+    "item": "minecraft:ancient_debris"
+  },
+  "power_cost": 256,
+  "replication": {
+    "energy_cost": 932,
+    "matter_cost": 1863
+  },
+  "type": "faktocraft:scanner"
+}

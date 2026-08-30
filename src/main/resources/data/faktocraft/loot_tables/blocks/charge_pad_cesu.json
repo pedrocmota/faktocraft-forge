@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "name": "charge_pad_cesu",
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:cesu"
+        }
+      ]
+    }
+  ]
+}

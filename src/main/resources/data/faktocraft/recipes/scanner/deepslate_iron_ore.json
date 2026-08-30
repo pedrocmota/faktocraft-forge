@@ -1,0 +1,13 @@
+{
+  "duration": 500,
+  "experience": 5.0,
+  "item": {
+    "item": "minecraft:deepslate_iron_ore"
+  },
+  "power_cost": 256,
+  "replication": {
+    "energy_cost": 36,
+    "matter_cost": 72
+  },
+  "type": "faktocraft:scanner"
+}

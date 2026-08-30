@@ -1,0 +1,188 @@
+{
+ "render_type": "minecraft:cutout",
+ "textures": {
+  "base": "faktocraft:block/ore/iridium",
+  "glow": "faktocraft:block/ore/iridium_glow",
+  "particle": "faktocraft:block/ore/iridium"
+ },
+ "elements": [
+  {
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    16,
+    16,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "cullface": "north"
+    },
+    "south": {
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "cullface": "south"
+    },
+    "east": {
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "cullface": "east"
+    },
+    "west": {
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "cullface": "west"
+    },
+    "up": {
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "cullface": "up"
+    },
+    "down": {
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "cullface": "down"
+    }
+   }
+  },
+  {
+   "from": [
+    -0.02,
+    -0.02,
+    -0.02
+   ],
+   "to": [
+    16.02,
+    16.02,
+    16.02
+   ],
+   "faces": {
+    "north": {
+     "texture": "#glow",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "cullface": "north",
+     "forge_data": {
+      "block_light": 15,
+      "sky_light": 15,
+      "ambient_occlusion": false
+     }
+    },
+    "south": {
+     "texture": "#glow",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "cullface": "south",
+     "forge_data": {
+      "block_light": 15,
+      "sky_light": 15,
+      "ambient_occlusion": false
+     }
+    },
+    "east": {
+     "texture": "#glow",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "cullface": "east",
+     "forge_data": {
+      "block_light": 15,
+      "sky_light": 15,
+      "ambient_occlusion": false
+     }
+    },
+    "west": {
+     "texture": "#glow",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "cullface": "west",
+     "forge_data": {
+      "block_light": 15,
+      "sky_light": 15,
+      "ambient_occlusion": false
+     }
+    },
+    "up": {
+     "texture": "#glow",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "cullface": "up",
+     "forge_data": {
+      "block_light": 15,
+      "sky_light": 15,
+      "ambient_occlusion": false
+     }
+    },
+    "down": {
+     "texture": "#glow",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "cullface": "down",
+     "forge_data": {
+      "block_light": 15,
+      "sky_light": 15,
+      "ambient_occlusion": false
+     }
+    }
+   }
+  }
+ ]
+}

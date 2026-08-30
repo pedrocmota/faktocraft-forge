@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_armour",
+  "key": {
+    "c": {
+      "item": "faktocraft:carbon_plate"
+    },
+    "e": {
+      "item": "faktocraft:energy_crystal"
+    }
+  },
+  "pattern": [
+    "c c",
+    "cec"
+  ],
+  "result": {
+    "item": "faktocraft:nano_boots"
+  }
+}

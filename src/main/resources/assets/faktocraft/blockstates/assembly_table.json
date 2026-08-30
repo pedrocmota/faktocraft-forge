@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "active=false": {
+   "model": "faktocraft:block/assembly_table"
+  },
+  "active=true": {
+   "model": "faktocraft:block/assembly_table_active"
+  }
+ }
+}

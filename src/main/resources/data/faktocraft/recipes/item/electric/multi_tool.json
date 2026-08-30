@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "a": {
+      "item": "faktocraft:advanced_alloy"
+    },
+    "c": {
+      "item": "faktocraft:carbon_plate"
+    },
+    "e": {
+      "item": "faktocraft:energy_crystal"
+    },
+    "h": {
+      "item": "faktocraft:electric_hoe"
+    },
+    "i": {
+      "item": "faktocraft:advanced_circuit"
+    },
+    "t": {
+      "item": "faktocraft:electric_treetap"
+    },
+    "w": {
+      "item": "faktocraft:electric_wrench"
+    }
+  },
+  "pattern": [
+    "ctc",
+    "aea",
+    "wih"
+  ],
+  "result": {
+    "item": "faktocraft:multi_tool"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "faktocraft:block/generator/wind_generator_casing",
+    "north": "faktocraft:block/generator/wind_generator_mount",
+    "south": "faktocraft:block/generator/wind_generator_side_active",
+    "east": "faktocraft:block/generator/wind_generator_casing",
+    "west": "faktocraft:block/generator/wind_generator_casing",
+    "up": "faktocraft:block/generator/generator_top",
+    "down": "faktocraft:block/generator/generator_bottom"
+  }
+}

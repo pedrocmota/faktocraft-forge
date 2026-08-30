@@ -1,0 +1,22 @@
+{
+  "type": "faktocraft:circuit_assembling",
+  "duration": 400,
+  "ingredients": [
+    {
+      "count": 1,
+      "item": "faktocraft:electronic_circuit"
+    },
+    {
+      "count": 2,
+      "item": "faktocraft:plastic_plate"
+    },
+    {
+      "count": 1,
+      "item": "faktocraft:purified_gold"
+    }
+  ],
+  "power_cost": 16,
+  "result": {
+    "item": "faktocraft:advanced_circuit"
+  }
+}

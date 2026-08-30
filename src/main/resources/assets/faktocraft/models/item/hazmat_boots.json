@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "faktocraft:item/hazmat_boots",
+    "layer1": "faktocraft:item/hazmat_boots_overlay"
+  }
+}

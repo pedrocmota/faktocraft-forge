@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "C": {
+      "tag": "forge:dusts/coal"
+    },
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "l": {
+      "tag": "forge:plates/lapis"
+    },
+    "E": {
+      "item": "faktocraft:electronic_circuit"
+    },
+    "k": {
+      "item": "faktocraft:basic_capacitor"
+    }
+  },
+  "pattern": [
+    "CgC",
+    "glg",
+    "kEk"
+  ],
+  "result": {
+    "item": "faktocraft:solar_generator",
+    "count": 1
+  }
+}

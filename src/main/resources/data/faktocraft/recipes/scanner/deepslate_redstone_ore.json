@@ -1,0 +1,13 @@
+{
+  "duration": 500,
+  "experience": 5.0,
+  "item": {
+    "item": "minecraft:deepslate_redstone_ore"
+  },
+  "power_cost": 256,
+  "replication": {
+    "energy_cost": 26,
+    "matter_cost": 51
+  },
+  "type": "faktocraft:scanner"
+}

@@ -1,0 +1,7 @@
+{
+  "type": "faktocraft:scrap_box",
+  "result": {
+    "item": "faktocraft:silver_ingot"
+  },
+  "weight": 0.7
+}

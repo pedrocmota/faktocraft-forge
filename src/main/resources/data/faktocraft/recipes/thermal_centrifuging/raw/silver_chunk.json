@@ -1,0 +1,15 @@
+{
+  "duration": 500,
+  "experience": 0.1,
+  "ingredient": {
+    "count": 1,
+    "tag": "forge:raw_materials/silver"
+  },
+  "power_cost": 48,
+  "result_1": {
+    "count": 2,
+    "item": "faktocraft:silver_chunk"
+  },
+  "temperature": 961,
+  "type": "faktocraft:thermal_centrifuging"
+}

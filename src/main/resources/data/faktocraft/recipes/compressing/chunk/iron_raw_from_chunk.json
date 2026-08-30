@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 2,
+    "item": "faktocraft:iron_chunk"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "minecraft:raw_iron"
+  },
+  "type": "faktocraft:compressing"
+}

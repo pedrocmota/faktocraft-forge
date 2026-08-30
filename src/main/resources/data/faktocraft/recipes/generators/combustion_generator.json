@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": {
+      "item": "faktocraft:fluid_cell"
+    },
+    "g": {
+      "item": "faktocraft:geo_generator"
+    },
+    "p": {
+      "tag": "forge:plates/iron"
+    }
+  },
+  "pattern": [
+    "pcp",
+    "cgc",
+    "pcp"
+  ],
+  "result": {
+    "item": "faktocraft:combustion_generator"
+  }
+}

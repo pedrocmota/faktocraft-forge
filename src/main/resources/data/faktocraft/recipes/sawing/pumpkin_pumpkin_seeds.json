@@ -1,0 +1,14 @@
+{
+  "duration": 180,
+  "experience": 0.1,
+  "ingredient": {
+    "count": 1,
+    "item": "minecraft:pumpkin"
+  },
+  "power_cost": 6,
+  "result": {
+    "count": 6,
+    "item": "minecraft:pumpkin_seeds"
+  },
+  "type": "faktocraft:sawing"
+}

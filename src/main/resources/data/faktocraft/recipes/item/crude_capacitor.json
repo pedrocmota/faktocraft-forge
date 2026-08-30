@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "t": {
+      "tag": "forge:plates/tin"
+    },
+    "r": {
+      "item": "faktocraft:rubber"
+    },
+    "d": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "trt",
+    "rdr"
+  ],
+  "result": {
+    "item": "faktocraft:crude_capacitor"
+  }
+}

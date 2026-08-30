@@ -1,0 +1,8 @@
+{
+  "type": "forge:add_features",
+  "biomes": [
+    "minecraft:windswept_forest"
+  ],
+  "features": "faktocraft:rubber_tree_scattered_placed",
+  "step": "vegetal_decoration"
+}

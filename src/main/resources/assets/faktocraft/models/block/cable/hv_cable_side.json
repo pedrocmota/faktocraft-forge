@@ -1,0 +1,21 @@
+{
+	"parent": "faktocraft:block/base/cable/cable_side",
+	"elements": [
+		{   "from": [ 5, 5, 0 ],
+			"to": [ 11, 11, 5 ],
+			"faces": {
+				"down":  { "texture": "#wall" },
+				"up":    { "texture": "#wall" },
+				"north": { "texture": "#wall" },
+				"south": { "texture": "#wall" },
+				"west":  { "texture": "#wall" },
+				"east":  { "texture": "#wall" }
+			},
+			"__comment": "Center post"
+		}
+	],
+	"textures": {
+		"wall": "faktocraft:block/cable/hv_cable",
+		"particle": "#wall"
+	}
+}

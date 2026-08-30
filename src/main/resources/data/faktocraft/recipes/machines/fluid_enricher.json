@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "b": {
+      "item": "faktocraft:basic_machine_casing"
+    },
+    "c": {
+      "item": "faktocraft:fluid_cell"
+    },
+    "e": {
+      "item": "faktocraft:electronic_circuit"
+    },
+    "p": {
+      "tag": "forge:plates/tin"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "cbc",
+    "pep"
+  ],
+  "result": {
+    "item": "faktocraft:fluid_enricher"
+  }
+}
