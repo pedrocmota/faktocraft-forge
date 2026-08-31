@@ -25,7 +25,7 @@ A Fabric port is unlikely - the mod is deeply tied to Forge internals (energy ca
 
 ## Wiki
 
-A wiki for the mod is currently under development.
+The official wiki is available at **[pedrocmota.github.io/faktocraft-forge](https://pedrocmota.github.io/faktocraft-forge)** (English and Portuguese). It is still under development, so some pages may change.
 
 ## Translations
 
