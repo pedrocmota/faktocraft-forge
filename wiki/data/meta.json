@@ -1,0 +1,381 @@
+{
+  "languages": [
+    {
+      "id": "en",
+      "label": "English"
+    },
+    {
+      "id": "pt",
+      "label": "Português"
+    }
+  ],
+  "ui": {
+    "search": {
+      "en": "Search pages…",
+      "pt": "Buscar páginas…"
+    },
+    "loading": {
+      "en": "Loading…",
+      "pt": "Carregando…"
+    },
+    "error": {
+      "en": "Failed to load this page.",
+      "pt": "Falha ao carregar esta página."
+    },
+    "notfound": {
+      "en": "Page not found.",
+      "pt": "Página não encontrada."
+    },
+    "footer": {
+      "en": "Faktocraft is in alpha - found a mistake or a bug? Report it on [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues).",
+      "pt": "O Faktocraft está em alpha - achou um erro ou bug? Reporte no [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues)."
+    }
+  },
+  "nav": [
+    {
+      "section": {
+        "en": "The mod",
+        "pt": "O mod"
+      },
+      "pages": [
+        {
+          "id": "home",
+          "title": {
+            "en": "Introduction",
+            "pt": "Introdução"
+          },
+          "icon": {
+            "item": "item/tool/wrench"
+          }
+        },
+        {
+          "id": "getting-started",
+          "title": {
+            "en": "Getting started",
+            "pt": "Primeiros passos"
+          },
+          "icon": {
+            "item": "item/tool/treetap"
+          }
+        }
+      ]
+    },
+    {
+      "section": {
+        "en": "Energy",
+        "pt": "Energia"
+      },
+      "pages": [
+        {
+          "id": "energy",
+          "title": {
+            "en": "Power & voltage tiers",
+            "pt": "Energia e tensões"
+          },
+          "icon": {
+            "cable": {
+              "side": "block/cable/copper_cable_insulated_side",
+              "cap": "block/cable/copper_cable_insulated"
+            }
+          }
+        },
+        {
+          "id": "generators",
+          "title": {
+            "en": "Generators",
+            "pt": "Geradores"
+          },
+          "icon": {
+            "block": {
+              "top": "block/generator/generator_top",
+              "front": "block/generator/generator_front",
+              "side": "block/generator/generator_side"
+            }
+          }
+        },
+        {
+          "id": "transformer",
+          "title": {
+            "en": "Transformers",
+            "pt": "Transformadores"
+          },
+          "icon": {
+            "block": {
+              "top": "block/transformer/medium_transformer_side",
+              "front": "block/transformer/medium_transformer_front",
+              "side": "block/transformer/medium_transformer_side"
+            }
+          }
+        },
+        {
+          "id": "breaker",
+          "title": {
+            "en": "Circuit Breaker",
+            "pt": "Disjuntor"
+          },
+          "icon": {
+            "block": {
+              "top": "block/cable/breaker_top",
+              "front": "block/cable/breaker_front",
+              "side": "block/cable/breaker_port"
+            }
+          }
+        },
+        {
+          "id": "battery-box",
+          "title": {
+            "en": "Battery boxes",
+            "pt": "Caixas de bateria"
+          },
+          "icon": {
+            "block": {
+              "top": "block/battery_box/mfe_top",
+              "front": "block/battery_box/mfe_front",
+              "side": "block/battery_box/mfe_leftright"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": {
+        "en": "Machines",
+        "pt": "Máquinas"
+      },
+      "pages": [
+        {
+          "id": "machines-processing",
+          "title": {
+            "en": "Ore processing",
+            "pt": "Processamento de minério"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/crusher_top",
+              "front": "block/machines/crusher_front",
+              "side": "block/machines/crusher_side"
+            }
+          }
+        },
+        {
+          "id": "machines-manufacturing",
+          "title": {
+            "en": "Manufacturing",
+            "pt": "Manufatura"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/compressor_top",
+              "front": "block/machines/compressor_front",
+              "side": "block/machines/compressor_side"
+            }
+          }
+        },
+        {
+          "id": "upgrades",
+          "title": {
+            "en": "Upgrades",
+            "pt": "Melhorias"
+          },
+          "icon": {
+            "item": "item/upgrade/overclocker"
+          }
+        }
+      ]
+    },
+    {
+      "section": {
+        "en": "Logistics",
+        "pt": "Logística"
+      },
+      "pages": [
+        {
+          "id": "logistics",
+          "title": {
+            "en": "Item logistics",
+            "pt": "Logística de itens"
+          },
+          "icon": {
+            "item": "item/module_provider"
+          }
+        },
+        {
+          "id": "request-table",
+          "title": {
+            "en": "Request Table & autocrafting",
+            "pt": "Mesa de Requisição e autocraft"
+          },
+          "icon": {
+            "block": {
+              "top": "block/request_table_top",
+              "front": "block/request_table_front",
+              "side": "block/request_table_side"
+            }
+          }
+        },
+        {
+          "id": "fluids",
+          "title": {
+            "en": "Fluids",
+            "pt": "Fluidos"
+          },
+          "icon": {
+            "item": "item/fluid_cell"
+          }
+        }
+      ]
+    },
+    {
+      "section": {
+        "en": "Oil & chemistry",
+        "pt": "Petróleo e química"
+      },
+      "pages": [
+        {
+          "id": "oil",
+          "title": {
+            "en": "Oil, fuel & acid",
+            "pt": "Petróleo, fuel e ácido"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/distillery_top",
+              "front": "block/machines/distillery_front",
+              "side": "block/machines/distillery_side"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": {
+        "en": "Mining & world",
+        "pt": "Mineração e mundo"
+      },
+      "pages": [
+        {
+          "id": "quarry",
+          "title": {
+            "en": "Quarry",
+            "pt": "Mineradora"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/quarry_top",
+              "front": "block/machines/quarry_front",
+              "side": "block/machines/quarry_side"
+            }
+          }
+        },
+        {
+          "id": "world",
+          "title": {
+            "en": "Ores & world generation",
+            "pt": "Minérios e geração de mundo"
+          },
+          "icon": {
+            "block": {
+              "all": "block/ore/tin"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": {
+        "en": "Endgame",
+        "pt": "Fim de jogo"
+      },
+      "pages": [
+        {
+          "id": "machines-endgame",
+          "title": {
+            "en": "Replicator & UU-Matter",
+            "pt": "Replicador e UU-Matter"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/advanced/replicator_top",
+              "front": "block/machines/advanced/replicator_front",
+              "side": "block/machines/advanced/replicator_right"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": {
+        "en": "Gear",
+        "pt": "Equipamentos"
+      },
+      "pages": [
+        {
+          "id": "gear",
+          "title": {
+            "en": "Armor & tools",
+            "pt": "Armaduras e ferramentas"
+          },
+          "icon": {
+            "item": "item/armor/nano_chestplate"
+          }
+        },
+        {
+          "id": "jetpack",
+          "title": {
+            "en": "Jetpacks",
+            "pt": "Jetpacks"
+          },
+          "icon": {
+            "item": "item/jetpack"
+          }
+        },
+        {
+          "id": "prospector",
+          "title": {
+            "en": "Prospector",
+            "pt": "Prospector"
+          },
+          "icon": {
+            "item": "item/tool/electric/prospector"
+          }
+        }
+      ]
+    },
+    {
+      "section": {
+        "en": "Utility blocks",
+        "pt": "Blocos utilitários"
+      },
+      "pages": [
+        {
+          "id": "teleport-anchor",
+          "title": {
+            "en": "Teleport Anchor",
+            "pt": "Âncora de Teleporte"
+          },
+          "icon": {
+            "block": {
+              "top": "block/misc/teleport_anchor_top",
+              "front": "block/misc/teleport_anchor_side",
+              "side": "block/misc/teleport_anchor_side"
+            }
+          }
+        },
+        {
+          "id": "chunk-loader",
+          "title": {
+            "en": "Chunk Loader",
+            "pt": "Carregador de Chunks"
+          },
+          "icon": {
+            "block": {
+              "top": "block/misc/chunk_loader_top",
+              "front": "block/misc/chunk_loader_side",
+              "side": "block/misc/chunk_loader_side"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

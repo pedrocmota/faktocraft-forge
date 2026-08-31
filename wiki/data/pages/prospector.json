@@ -1,0 +1,29 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The **Prospector** is an electric scanner that surveys chunks for ores. Instead of strip-mining blindly, you sweep an area and dig only where it pays off.",
+      "pt": "O **Prospector** é um escâner elétrico que sonda chunks em busca de minérios. Em vez de minerar às cegas, você varre uma área e cava só onde compensa."
+    },
+    {
+      "type": "h",
+      "en": "Usage",
+      "pt": "Uso"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Charge it and **use** it to scan around you.",
+        "Open its screen to see a **chunk map**: scanned chunks are shaded by what they contain.",
+        "Hover a chunk for a summary of the ores found in it.",
+        "Pair it with the [Quarry](#/quarry): survey first, then drop the landmarks on the richest spot."
+      ],
+      "pt": [
+        "Carregue-o e **use** para escanear ao seu redor.",
+        "Abra a tela para ver um **mapa de chunks**: chunks escaneados ficam sombreados pelo que contêm.",
+        "Passe o mouse num chunk para um resumo dos minérios encontrados.",
+        "Combine com a [Mineradora](#/quarry): sonde primeiro, depois solte os marcos no ponto mais rico."
+      ]
+    }
+  ]
+}

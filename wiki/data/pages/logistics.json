@@ -1,0 +1,190 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The logistics network moves items through **transparent pipes** - you literally watch items travel. It is request-driven: nothing moves without a reason, whether that reason is a module's rule or a player's request.",
+      "pt": "A rede de logística move itens por **tubos transparentes** - você literalmente vê os itens viajando. Ela é orientada a demanda: nada se move sem motivo, seja a regra de um módulo ou a requisição de um jogador."
+    },
+    {
+      "type": "h",
+      "en": "Pipes",
+      "pt": "Tubos"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Stone Pipe",
+            "pt": "Tubo de Pedra"
+          },
+          "icon": {
+            "pipe": "block/pipe/stone_pipe"
+          },
+          "desc": {
+            "en": "The backbone - every network is built from these.",
+            "pt": "O tronco - toda rede é construída com eles."
+          }
+        },
+        {
+          "name": {
+            "en": "Gold Pipe",
+            "pt": "Tubo de Ouro"
+          },
+          "icon": {
+            "pipe": "block/pipe/gold_pipe"
+          },
+          "desc": {
+            "en": "Speeds items up as they pass through.",
+            "pt": "Acelera os itens que passam por ele."
+          }
+        },
+        {
+          "name": {
+            "en": "Chassis Mk1 / Mk2",
+            "pt": "Chassi Mk1 / Mk2"
+          },
+          "icon": {
+            "pipe": "block/pipe/chassis_pipe_2"
+          },
+          "desc": {
+            "en": "Docks against an inventory and holds 2 (Mk1) or 3 (Mk2) modules.",
+            "pt": "Encosta num inventário e comporta 2 (Mk1) ou 3 (Mk2) módulos."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Modules",
+      "pt": "Módulos"
+    },
+    {
+      "type": "p",
+      "en": "Modules give a chassis its behavior. Each module has a **RimWorld-style item filter**: a tree of every item in the game where you mark whole mods, categories or single items.",
+      "pt": "Módulos dão comportamento ao chassi. Cada módulo tem um **filtro de itens estilo RimWorld**: uma árvore com todos os itens do jogo onde você marca mods inteiros, categorias ou itens individuais."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Sink",
+            "pt": "Sink"
+          },
+          "icon": {
+            "item": "item/module_sink"
+          },
+          "desc": {
+            "en": "Accepts matching items into the docked inventory. Priority decides ties.",
+            "pt": "Aceita itens compatíveis no inventário encostado. Prioridade decide empates."
+          }
+        },
+        {
+          "name": {
+            "en": "Provider",
+            "pt": "Provider"
+          },
+          "icon": {
+            "item": "item/module_provider"
+          },
+          "desc": {
+            "en": "Offers the inventory's stock to the network.",
+            "pt": "Oferece o estoque do inventário à rede."
+          }
+        },
+        {
+          "name": {
+            "en": "Extractor",
+            "pt": "Extractor"
+          },
+          "icon": {
+            "item": "item/module_extractor"
+          },
+          "desc": {
+            "en": "Actively pulls matching items out and sends them to sinks.",
+            "pt": "Puxa itens compatíveis ativamente e os envia aos sinks."
+          }
+        },
+        {
+          "name": {
+            "en": "Supplier",
+            "pt": "Supplier"
+          },
+          "icon": {
+            "item": "item/module_supplier"
+          },
+          "desc": {
+            "en": "Keeps a target amount of each marked item stocked in the inventory.",
+            "pt": "Mantém uma quantidade-alvo de cada item marcado no inventário."
+          }
+        },
+        {
+          "name": {
+            "en": "Collector",
+            "pt": "Collector"
+          },
+          "icon": {
+            "item": "item/module_collector"
+          },
+          "desc": {
+            "en": "Vacuums dropped items near the chassis' free faces.",
+            "pt": "Aspira itens dropados perto das faces livres do chassi."
+          }
+        },
+        {
+          "name": {
+            "en": "Ejector",
+            "pt": "Ejector"
+          },
+          "icon": {
+            "item": "item/module_ejector"
+          },
+          "desc": {
+            "en": "Throws items out into the world.",
+            "pt": "Ejeta itens para o mundo."
+          }
+        },
+        {
+          "name": {
+            "en": "Disposal",
+            "pt": "Disposal"
+          },
+          "icon": {
+            "item": "item/module_disposal"
+          },
+          "desc": {
+            "en": "Destroys matching overflow - the network's trash can.",
+            "pt": "Destrói excedente compatível - a lixeira da rede."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Building your first network",
+      "pt": "Montando a primeira rede"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Run **stone pipes** between your machines and chests.",
+        "Put a **chassis** against each inventory that should participate.",
+        "Give output chests a **sink** module (mark what belongs there), storage a **provider**, and machine outputs an **extractor**.",
+        "Add a [Logistics Controller and Request Table](#/request-table) to start requesting items on demand."
+      ],
+      "pt": [
+        "Passe **tubos de pedra** entre suas máquinas e baús.",
+        "Coloque um **chassi** encostado em cada inventário que deve participar.",
+        "Dê aos baús de saída um módulo **sink** (marque o que pertence lá), ao armazém um **provider**, e às saídas de máquina um **extractor**.",
+        "Adicione um [Controlador de Logística e uma Mesa de Requisição](#/request-table) para pedir itens sob demanda."
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Pipes are transparent **on purpose**: watching the flow is the best debugging tool the network has.",
+      "pt": "Os tubos são transparentes **de propósito**: ver o fluxo é a melhor ferramenta de depuração da rede."
+    }
+  ]
+}

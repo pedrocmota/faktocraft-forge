@@ -1,0 +1,152 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The endgame loop: recycle junk into scrap, condense scrap into **UU-Matter**, scan an item to record its pattern and replicate it from matter. Expensive, power-hungry - and it can duplicate almost anything.",
+      "pt": "O loop de fim de jogo: recicle tralha em sucata, condense sucata em **UU-Matter**, escaneie um item para gravar seu padrão e replique-o a partir de matéria. Caro, devorador de energia - e capaz de duplicar quase qualquer coisa."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Matter Fabricator",
+            "pt": "Fabricador de Matéria"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/advanced/matter_fabricator_top",
+              "front": "block/machines/advanced/matter_fabricator_front",
+              "side": "block/machines/advanced/matter_fabricator_side"
+            }
+          },
+          "desc": {
+            "en": "Converts enormous amounts of energy (boosted by scrap) into UU-Matter.",
+            "pt": "Converte quantidades enormes de energia (acelerado por sucata) em UU-Matter."
+          }
+        },
+        {
+          "name": {
+            "en": "Scanner",
+            "pt": "Escâner"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/advanced/scanner_top",
+              "front": "block/machines/advanced/scanner_front",
+              "side": "block/machines/advanced/scanner_side"
+            }
+          },
+          "desc": {
+            "en": "Scans an item and saves its pattern to a Memory Card, with its matter cost.",
+            "pt": "Escaneia um item e grava seu padrão num Cartão de Memória, com o custo em matéria."
+          }
+        },
+        {
+          "name": {
+            "en": "Replicator",
+            "pt": "Replicador"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/advanced/replicator_top",
+              "front": "block/machines/advanced/replicator_front",
+              "side": "block/machines/advanced/replicator_right"
+            }
+          },
+          "desc": {
+            "en": "Rebuilds the scanned item from UU-Matter - single run or repeat mode.",
+            "pt": "Reconstrói o item escaneado a partir de UU-Matter - execução única ou modo contínuo."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "The currency of the loop",
+      "pt": "A moeda do ciclo"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Scrap",
+            "pt": "Sucata"
+          },
+          "icon": {
+            "item": "item/crafting/scrap"
+          },
+          "desc": {
+            "en": "Recycled junk - amplifies the Matter Fabricator.",
+            "pt": "Tralha reciclada - amplifica o Fabricador de Matéria."
+          }
+        },
+        {
+          "name": {
+            "en": "Scrap Box",
+            "pt": "Caixa de Sucata"
+          },
+          "icon": {
+            "item": "item/crafting/scrap_box"
+          },
+          "desc": {
+            "en": "9 scrap compressed - denser to store and feed.",
+            "pt": "9 sucatas comprimidas - mais denso para guardar e alimentar."
+          }
+        },
+        {
+          "name": {
+            "en": "Memory Card",
+            "pt": "Cartão de Memória"
+          },
+          "icon": {
+            "item": "item/crafting/memory_card"
+          },
+          "desc": {
+            "en": "Holds one scanned pattern and its matter cost.",
+            "pt": "Guarda um padrão escaneado e seu custo em matéria."
+          }
+        },
+        {
+          "name": {
+            "en": "UU-Matter",
+            "pt": "UU-Matter"
+          },
+          "icon": {
+            "item": "item/fluid_cell"
+          },
+          "desc": {
+            "en": "The universal liquid - carried in cells or piped straight to the Replicator.",
+            "pt": "O líquido universal - em células ou canalizado direto ao Replicador."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "The flow",
+      "pt": "O fluxo"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Feed the **Recycler** anything - cobble, dirt, leftovers. It produces **scrap**.",
+        "The **Matter Fabricator** consumes energy to produce liquid **UU-Matter**; scrap amplifies the rate dramatically.",
+        "**Scan** the item you want in the Scanner: the pattern and its matter cost go to a **Memory Card**.",
+        "Insert the card and matter into the **Replicator** and run it - once, or on repeat."
+      ],
+      "pt": [
+        "Alimente o **Reciclador** com qualquer coisa - pedregulho, terra, sobras. Ele produz **sucata**.",
+        "O **Fabricador de Matéria** consome energia para produzir **UU-Matter** líquida; sucata amplifica a taxa dramaticamente.",
+        "**Escaneie** o item desejado no Escâner: o padrão e o custo em matéria vão para um **Cartão de Memória**.",
+        "Insira o cartão e a matéria no **Replicador** e execute - uma vez, ou em modo contínuo."
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "Replication is intentionally expensive - it is an endgame sink for a mature power grid, not a shortcut.",
+      "pt": "A replicação é cara de propósito - é um consumidor de fim de jogo para uma rede madura, não um atalho."
+    }
+  ]
+}

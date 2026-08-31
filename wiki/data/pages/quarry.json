@@ -1,0 +1,82 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The quarry mines a rectangular area for you, layer by layer, with a moving frame and drill you can watch work. It runs on **High tier** power.",
+      "pt": "A mineradora escava uma área retangular por você, camada por camada, com uma moldura e uma broca móveis que dá para ver trabalhando. Funciona com energia de tensão **Alta**."
+    },
+    {
+      "type": "h",
+      "en": "Setup",
+      "pt": "Montagem"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Place **three Landmarks** forming an **L** - they define the mining rectangle (up to a large area).",
+        "Put the **Quarry block** right next to one of the landmarks, outside the rectangle.",
+        "Feed it High-tier power (and dock a capacitor - like any machine it needs a buffer).",
+        "The landmarks pop back into the quarry's inventory, the frame builds itself and mining begins."
+      ],
+      "pt": [
+        "Coloque **três Marcos** formando um **L** - eles definem o retângulo de mineração (até uma área grande).",
+        "Ponha o **bloco da Mineradora** encostado num dos marcos, fora do retângulo.",
+        "Alimente com tensão Alta (e encaixe um capacitor - como toda máquina, ela precisa de buffer).",
+        "Os marcos voltam para o inventário da mineradora, a moldura se constrói sozinha e a escavação começa."
+      ]
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Quarry",
+            "pt": "Mineradora"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/quarry_top",
+              "front": "block/machines/quarry_front",
+              "side": "block/machines/quarry_side"
+            }
+          }
+        },
+        {
+          "name": {
+            "en": "Landmark",
+            "pt": "Marco"
+          },
+          "icon": {
+            "item": "block/misc/landmark"
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Behavior",
+      "pt": "Comportamento"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Mined items go to the quarry's **27-slot internal inventory** - pull them out with [logistics pipes](#/logistics).",
+        "It **never breaks** spawners, structures or fluids - it mines around them.",
+        "Supports **overclocker** (faster, hungrier) and **efficiency** (cheaper) upgrades, four slots total.",
+        "Breaking the quarry removes the whole frame cleanly."
+      ],
+      "pt": [
+        "Itens minerados vão para o **inventário interno de 27 slots** - retire com os [tubos de logística](#/logistics).",
+        "Ela **nunca quebra** spawners, estruturas ou fluidos - minera ao redor deles.",
+        "Suporta melhorias de **overclocker** (mais rápida e faminta) e **eficiência** (mais barata), quatro slots no total.",
+        "Quebrar a mineradora remove a moldura inteira de forma limpa."
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "A quarry plus a chassis with an **extractor module** on its inventory face is the classic set-and-forget mining rig.",
+      "pt": "Mineradora + chassi com **módulo extractor** na face do inventário é o combo clássico de mineração esquece-e-deixa-rodar."
+    }
+  ]
+}

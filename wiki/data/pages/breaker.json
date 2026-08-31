@@ -1,0 +1,35 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The **Circuit Breaker** is a switch for your grid: a cable segment with a big animated handle. Flip the handle and the whole network behind it disconnects - machines lose power, generators stop pushing.",
+      "pt": "O **Disjuntor** é um interruptor para a sua rede: um segmento de cabo com uma grande manivela animada. Vire a manivela e toda a rede atrás dele desconecta - máquinas perdem energia, geradores param de enviar."
+    },
+    {
+      "type": "h",
+      "en": "Usage",
+      "pt": "Uso"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Place it inline with a cable run; it conducts along a single axis.",
+        "Right-click the handle to toggle **ON/OFF**. The handle animates and the state is visible from afar.",
+        "While **OFF**, the breaker splits the network - use it to isolate a wing of your factory for maintenance, or to cut power-hungry sections.",
+        "The breaker adapts to the tier of the cables around it."
+      ],
+      "pt": [
+        "Coloque-o em linha com um cabo; ele conduz ao longo de um único eixo.",
+        "Clique com o botão direito na manivela para alternar **ON/OFF**. A manivela anima e o estado é visível de longe.",
+        "Enquanto **OFF**, o disjuntor divide a rede - use para isolar uma ala da fábrica em manutenção ou cortar seções que consomem demais.",
+        "O disjuntor se adapta à tensão dos cabos ao redor."
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Combine breakers with [transformers](#/transformer) to build a main panel: one breaker per wing of the base, just like a real electrical panel.",
+      "pt": "Combine disjuntores com [transformadores](#/transformer) para montar um quadro de força: um disjuntor por ala da base, como num quadro elétrico de verdade."
+    }
+  ]
+}

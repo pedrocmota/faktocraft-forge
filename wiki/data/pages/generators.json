@@ -1,0 +1,207 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Generators produce energy and feed it into the cable network. Each family has its own niche - pick by fuel availability and how much attention you want to give it.",
+      "pt": "Geradores produzem energia e a injetam na rede de cabos. Cada família tem seu nicho - escolha pela disponibilidade de combustível e por quanta atenção você quer dar."
+    },
+    {
+      "type": "h",
+      "en": "Fuel burners",
+      "pt": "Queimadores de combustível"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Generator",
+            "pt": "Gerador"
+          },
+          "icon": {
+            "block": {
+              "top": "block/generator/generator_top",
+              "front": "block/generator/generator_front",
+              "side": "block/generator/generator_side"
+            }
+          },
+          "desc": {
+            "en": "Burns anything a furnace accepts. **10 E/t** - your first power source.",
+            "pt": "Queima o que uma fornalha aceitar. **10 E/t** - sua primeira fonte."
+          }
+        },
+        {
+          "name": {
+            "en": "Geothermal Generator",
+            "pt": "Gerador Geotérmico"
+          },
+          "icon": {
+            "block": {
+              "top": "block/generator/geo_generator_top",
+              "front": "block/generator/geo_generator_front",
+              "side": "block/generator/geo_generator_side"
+            }
+          },
+          "desc": {
+            "en": "Runs on **lava** (buckets, cells or pipes) at **20 E/t**.",
+            "pt": "Funciona com **lava** (baldes, células ou tubos) a **20 E/t**."
+          }
+        },
+        {
+          "name": {
+            "en": "Combustion Generator",
+            "pt": "Gerador de Combustão"
+          },
+          "icon": {
+            "block": {
+              "top": "block/generator/combustion_generator_top",
+              "front": "block/generator/combustion_generator_front",
+              "side": "block/generator/combustion_generator_leftright"
+            }
+          },
+          "desc": {
+            "en": "Burns **fuel** (40 E/t) or **biofuel** (20 E/t) - the strongest mid-game option.",
+            "pt": "Queima **fuel** (40 E/t) ou **biocombustível** (20 E/t) - a opção mais forte do meio de jogo."
+          }
+        }
+      ]
+    },
+    {
+      "type": "p",
+      "en": "The Geothermal pairs with a [Pump](#/fluids) over a lava lake or in the Nether; the Combustion Generator sits at the end of the [oil chain](#/oil): pump oil, distill into fuel, burn.",
+      "pt": "O Geotérmico casa com uma [Bomba](#/fluids) sobre um lago de lava ou no Nether; o Gerador de Combustão fecha a [cadeia do petróleo](#/oil): bombear, destilar em fuel, queimar."
+    },
+    {
+      "type": "h",
+      "en": "Solar panels",
+      "pt": "Painéis solares"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Solar Generator",
+            "pt": "Gerador Solar"
+          },
+          "icon": {
+            "block": {
+              "top": "block/generator/solar_generator_top_cells",
+              "front": "block/generator/solar_generator_side",
+              "side": "block/generator/solar_generator_side"
+            }
+          },
+          "desc": {
+            "en": "1 E/t by day, nothing at night.",
+            "pt": "1 E/t de dia, nada à noite."
+          }
+        },
+        {
+          "name": {
+            "en": "Advanced Solar",
+            "pt": "Solar Avançado"
+          },
+          "icon": {
+            "block": {
+              "top": "block/generator/advanced_solar_generator_top_cells",
+              "front": "block/generator/advanced_solar_generator_side",
+              "side": "block/generator/advanced_solar_generator_side"
+            }
+          },
+          "desc": {
+            "en": "8 E/t by day, 1 E/t at night.",
+            "pt": "8 E/t de dia, 1 E/t à noite."
+          }
+        },
+        {
+          "name": {
+            "en": "Hybrid Solar",
+            "pt": "Solar Híbrido"
+          },
+          "icon": {
+            "block": {
+              "top": "block/generator/hybrid_solar_generator_top_cells",
+              "front": "block/generator/hybrid_solar_generator_side",
+              "side": "block/generator/hybrid_solar_generator_side"
+            }
+          },
+          "desc": {
+            "en": "64 E/t by day, 8 E/t at night.",
+            "pt": "64 E/t de dia, 8 E/t à noite."
+          }
+        },
+        {
+          "name": {
+            "en": "Quantum Solar",
+            "pt": "Solar Quântico"
+          },
+          "icon": {
+            "block": {
+              "top": "block/generator/quantum_solar_generator_top_cells",
+              "front": "block/generator/quantum_solar_generator_side",
+              "side": "block/generator/quantum_solar_generator_side"
+            }
+          },
+          "desc": {
+            "en": "384 E/t by day, 48 at night, +16 under moonlight.",
+            "pt": "384 E/t de dia, 48 à noite, +16 sob luar."
+          }
+        }
+      ]
+    },
+    {
+      "type": "p",
+      "en": "Silent, fuel-free, daylight-dependent - they need open sky above. Panels placed side by side merge visually into one continuous field.",
+      "pt": "Silenciosos, sem combustível, dependentes de luz do dia - precisam de céu aberto acima. Painéis lado a lado se fundem visualmente num campo contínuo."
+    },
+    {
+      "type": "h",
+      "en": "Wind Generator",
+      "pt": "Gerador Eólico"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Wind Generator",
+            "pt": "Gerador Eólico"
+          },
+          "icon": {
+            "block": {
+              "all": "block/generator/wind_generator_casing"
+            }
+          },
+          "desc": {
+            "en": "Casing + external rotor. Up to **16 E/t**.",
+            "pt": "Carcaça + rotor externo. Até **16 E/t**."
+          }
+        },
+        {
+          "name": {
+            "en": "Wind Meter",
+            "pt": "Anemômetro"
+          },
+          "icon": {
+            "item": "item/tool/electric/wind_meter"
+          },
+          "desc": {
+            "en": "Reads the live wind before you commit to a spot.",
+            "pt": "Mede o vento ao vivo antes de você escolher o lugar."
+          }
+        }
+      ]
+    },
+    {
+      "type": "p",
+      "en": "Output follows a live **wind simulation**: it changes over time, grows with the rotor's **height** and drops with nearby obstructions. Build high, keep the rotor clear, and check candidates with the Wind Meter.",
+      "pt": "A produção segue uma **simulação de vento** ao vivo: varia com o tempo, cresce com a **altura** do rotor e cai com obstruções próximas. Construa alto, deixe o rotor livre e avalie os locais com o Anemômetro."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Generators have priorities: when the grid is satisfied, expensive fuels idle first. Solar and wind run at priority over fuel burners, so free energy is always used before coal, lava or fuel.",
+      "pt": "Geradores têm prioridade: quando a rede está satisfeita, os combustíveis caros param primeiro. Solar e eólico têm prioridade sobre queimadores, então energia grátis é usada antes de carvão, lava ou fuel."
+    }
+  ]
+}

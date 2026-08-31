@@ -1,0 +1,35 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The **Chunk Loader** keeps its surroundings loaded and ticking while you are away - machines run, crops grow, the quarry keeps digging.",
+      "pt": "O **Carregador de Chunks** mantém os arredores carregados e funcionando na sua ausência - máquinas rodam, plantações crescem, a mineradora segue cavando."
+    },
+    {
+      "type": "h",
+      "en": "Rules",
+      "pt": "Regras"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Runs on **High tier** power - no energy, no loading.",
+        "Each loader keeps an area of chunks around itself loaded.",
+        "There is a **global limit of 3 active loaders per world**, to protect server performance.",
+        "It reacts calmly to power flickers: a short outage will not instantly drop your chunks."
+      ],
+      "pt": [
+        "Funciona com tensão **Alta** - sem energia, sem carregamento.",
+        "Cada carregador mantém uma área de chunks ao redor de si carregada.",
+        "Há um **limite global de 3 carregadores ativos por mundo**, para proteger o desempenho do servidor.",
+        "Ele reage com calma a oscilações de energia: uma queda curta não derruba seus chunks na hora."
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Give the loader its own battery box so a generator hiccup upstream never unloads your base.",
+      "pt": "Dê ao carregador uma caixa de bateria própria, para um soluço do gerador lá atrás nunca descarregar sua base."
+    }
+  ]
+}

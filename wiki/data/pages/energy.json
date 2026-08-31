@@ -1,0 +1,268 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Faktocraft's grid runs on five **voltage tiers**. Every cable, generator and machine belongs to a tier, and the tier defines how much energy can flow per tick.",
+      "pt": "A rede do Faktocraft funciona com cinco **tensões**. Cada cabo, gerador e máquina pertence a uma tensão, e a tensão define quanta energia pode fluir por tick."
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": [
+          "Tier",
+          "Transfer (E/t)",
+          "Cable"
+        ],
+        "pt": [
+          "Tensão",
+          "Transferência (E/t)",
+          "Cabo"
+        ]
+      },
+      "rows": [
+        [
+          {
+            "en": "Low",
+            "pt": "Baixa"
+          },
+          "32",
+          {
+            "en": "Tin cable",
+            "pt": "Cabo de estanho"
+          }
+        ],
+        [
+          {
+            "en": "Medium",
+            "pt": "Média"
+          },
+          "128",
+          {
+            "en": "Copper cable",
+            "pt": "Cabo de cobre"
+          }
+        ],
+        [
+          {
+            "en": "High",
+            "pt": "Alta"
+          },
+          "512",
+          {
+            "en": "Gold cable",
+            "pt": "Cabo de ouro"
+          }
+        ],
+        [
+          {
+            "en": "Very High",
+            "pt": "Muito Alta"
+          },
+          "2048",
+          {
+            "en": "HV cable",
+            "pt": "Cabo AT"
+          }
+        ],
+        [
+          {
+            "en": "Ultra",
+            "pt": "Ultra"
+          },
+          "8192",
+          {
+            "en": "Glass fibre cable",
+            "pt": "Cabo de fibra de vidro"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "**The explosion rule:** feeding a machine a higher tier than it accepts makes it **explode**. See the full list of electrical hazards below.",
+      "pt": "**A regra da explosão:** alimentar uma máquina com tensão maior do que ela aceita faz a máquina **explodir**. Veja a lista completa de perigos elétricos abaixo."
+    },
+    {
+      "type": "h",
+      "en": "Cables",
+      "pt": "Cabos"
+    },
+    {
+      "type": "p",
+      "en": "Each tier has a bare and an **insulated** cable variant (insulate with rubber). Cables connect automatically to machines and to each other; a network forms from every connected cable of the same tier.",
+      "pt": "Cada tensão tem um cabo puro e uma variante **isolada** (isole com borracha). Cabos conectam automaticamente a máquinas e entre si; uma rede se forma com todos os cabos conectados da mesma tensão."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Tin (Low)",
+            "pt": "Estanho (Baixa)"
+          },
+          "icon": {
+            "cable": {
+              "side": "block/cable/tin_cable_insulated_side",
+              "cap": "block/cable/tin_cable_insulated"
+            }
+          }
+        },
+        {
+          "name": {
+            "en": "Copper (Medium)",
+            "pt": "Cobre (Média)"
+          },
+          "icon": {
+            "cable": {
+              "side": "block/cable/copper_cable_insulated_side",
+              "cap": "block/cable/copper_cable_insulated"
+            }
+          }
+        },
+        {
+          "name": {
+            "en": "Gold (High)",
+            "pt": "Ouro (Alta)"
+          },
+          "icon": {
+            "cable": {
+              "side": "block/cable/gold_cable_insulated_side",
+              "cap": "block/cable/gold_cable_insulated"
+            }
+          }
+        },
+        {
+          "name": {
+            "en": "HV (Very High)",
+            "pt": "AT (Muito Alta)"
+          },
+          "icon": {
+            "cable": {
+              "side": "block/cable/hv_cable_insulated_side",
+              "cap": "block/cable/hv_cable_insulated"
+            }
+          }
+        },
+        {
+          "name": {
+            "en": "Glass fibre (Ultra)",
+            "pt": "Fibra de vidro (Ultra)"
+          },
+          "icon": {
+            "cable": {
+              "side": "block/cable/glass_fibre_cable_side",
+              "cap": "block/cable/glass_fibre_cable"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Electrical hazards",
+      "pt": "Perigos elétricos"
+    },
+    {
+      "type": "p",
+      "en": "Electricity in Faktocraft punishes carelessness in four different ways:",
+      "pt": "A eletricidade no Faktocraft pune o descuido de quatro jeitos diferentes:"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Machine explosion** - a machine (or a battery slot) fed a higher tier than it accepts blows up, destroying the machine. The blast grows with the tier difference: one tier above is a small pop, several tiers above levels the room.",
+        "**Cable burn** - pushing a higher tier into a lower-tier cable line burns the **entire cable network away**: the cables vanish, fire spreads where they were, and with a difference of two or more tiers it ends in an explosion too.",
+        "**Touch shock** - stepping on a **bare (uninsulated) cable** while current flows shocks you: about half a heart on Low, 1.5 hearts on Medium, 3 hearts on High, and **instantly lethal** above that. No current, no shock - a dead wire is safe.",
+        "**Electrified water** - a bare cable **under water** with current flowing electrifies the water around it (1 to 5 blocks, by tier), sparking and repeatedly damaging anything swimming there - from half a heart per second on Low up to 4 hearts per second on Ultra."
+      ],
+      "pt": [
+        "**Explosão de máquina** - uma máquina (ou um slot de bateria) alimentada com tensão maior do que aceita explode, destruindo a máquina. O estrago cresce com a diferença de tensão: um tier acima é um estouro pequeno, vários tiers acima derruba a sala.",
+        "**Queima de cabos** - empurrar tensão maior numa linha de cabos de tensão menor queima a **rede de cabos inteira**: os cabos somem, fogo se espalha onde eles estavam e, com diferença de dois tiers ou mais, termina em explosão também.",
+        "**Choque por contato** - pisar num **cabo nu (sem isolamento)** com corrente passando dá choque: meio coração na Baixa, 1,5 na Média, 3 na Alta e **letal na hora** acima disso. Sem corrente, sem choque - fio morto é seguro.",
+        "**Água eletrificada** - um cabo nu **debaixo d'água** com corrente eletrifica a água ao redor (1 a 5 blocos, conforme a tensão), soltando faíscas e ferindo repetidamente quem estiver nadando ali - de meio coração por segundo na Baixa até 4 corações por segundo na Ultra."
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "**Glass fibre is the exception:** it looks insulated, but Ultra current leaks through - touching it costs 3 hearts, and if the network is **90% charged or more, the shock is instantly lethal**.",
+      "pt": "**A fibra de vidro é a exceção:** parece isolada, mas a corrente Ultra vaza - encostar custa 3 corações e, se a rede estiver com **90% de carga ou mais, o choque é letal na hora**."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Protection exists: **Hazmat boots** make you immune to cable shocks, and **Nano armor** absorbs them by spending charge. Or simply insulate your cables with rubber.",
+      "pt": "Existe proteção: as **botas hazmat** deixam você imune a choques de cabo, e a **armadura nano** os absorve gastando carga. Ou simplesmente isole seus cabos com borracha."
+    },
+    {
+      "type": "h",
+      "en": "Moving between tiers",
+      "pt": "Passando de uma tensão a outra"
+    },
+    {
+      "type": "list",
+      "en": [
+        "[Transformers](#/transformer) convert energy between adjacent tiers, in both directions.",
+        "[Circuit breakers](#/breaker) turn whole sections of the grid on and off.",
+        "[Battery boxes](#/battery-box) store energy and output it on their own tier.",
+        "A **tension upgrade** ([upgrades](#/upgrades)) lets a single machine accept one tier above its own."
+      ],
+      "pt": [
+        "[Transformadores](#/transformer) convertem energia entre tensões vizinhas, nos dois sentidos.",
+        "[Disjuntores](#/breaker) ligam e desligam seções inteiras da rede.",
+        "[Caixas de bateria](#/battery-box) armazenam energia e a fornecem na própria tensão.",
+        "Uma **melhoria de tensão** ([melhorias](#/upgrades)) faz uma máquina aceitar uma tensão acima da sua."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Machine buffers and the battery dock",
+      "pt": "Buffer das máquinas e o dock de bateria"
+    },
+    {
+      "type": "p",
+      "en": "Most machines have a **battery dock** in their GUI. Insert a **capacitor** to give the machine an internal energy buffer - without one, many machines can barely hold any charge. Dedicated slots also charge portable batteries and crystals from the machine's buffer.",
+      "pt": "A maioria das máquinas tem um **dock de bateria** na interface. Insira um **capacitor** para dar um buffer interno de energia à máquina - sem ele, muitas máquinas mal seguram carga. Slots dedicados também carregam baterias e cristais portáteis a partir do buffer da máquina."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Crude capacitor",
+            "pt": "Capacitor rudimentar"
+          },
+          "icon": {
+            "item": "item/crude_capacitor"
+          }
+        },
+        {
+          "name": {
+            "en": "Basic capacitor",
+            "pt": "Capacitor básico"
+          },
+          "icon": {
+            "item": "item/basic_capacitor"
+          }
+        },
+        {
+          "name": {
+            "en": "Intermediate capacitor",
+            "pt": "Capacitor intermediário"
+          },
+          "icon": {
+            "item": "item/intermediate_capacitor"
+          }
+        },
+        {
+          "name": {
+            "en": "Advanced capacitor",
+            "pt": "Capacitor avançado"
+          },
+          "icon": {
+            "item": "item/advanced_capacitor"
+          }
+        }
+      ]
+    }
+  ]
+}

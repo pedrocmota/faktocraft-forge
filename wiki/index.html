@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Faktocraft Wiki</title>
+  <link rel="icon" type="image/png" href="assets/tex/item/tool/wrench.png">
+  <style>
+    :root {
+      --bg: #f4f2ee;
+      --panel: #ffffff;
+      --ink: #23282e;
+      --muted: #6b7280;
+      --accent: #d97706;
+      --accent-soft: #fef3e2;
+      --side-bg: #1d2126;
+      --side-ink: #c9cdd3;
+      --side-active: #2c323a;
+      --border: #e2ded7;
+      --code-bg: #ece8e1;
+      --warn-bg: #fdf0e0;
+      --warn-border: #e8a33d;
+      --tip-bg: #e8f2e4;
+      --tip-border: #6da95d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.6 system-ui, "Segoe UI", sans-serif;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .pix {
+      image-rendering: pixelated;
+    }
+
+    #sidebar {
+      width: 270px;
+      flex: 0 0 270px;
+      background: var(--side-bg);
+      color: var(--side-ink);
+      padding: 18px 0 30px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    #sidebar .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 18px 12px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 19px;
+    }
+
+    #sidebar .logo img {
+      width: 30px;
+      height: 30px;
+    }
+
+    #langs {
+      display: flex;
+      gap: 6px;
+      padding: 0 18px 12px;
+    }
+
+    #langs button {
+      flex: 1;
+      background: var(--side-active);
+      color: var(--side-ink);
+      border: 1px solid #3a414b;
+      border-radius: 6px;
+      padding: 5px 0;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+    }
+
+    #langs button.on {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    #search {
+      display: block;
+      width: calc(100% - 36px);
+      margin: 0 18px 14px;
+      background: #14171b;
+      border: 1px solid #3a414b;
+      border-radius: 6px;
+      color: #eee;
+      padding: 7px 10px;
+      font: inherit;
+      font-size: 14px;
+    }
+
+    #search::placeholder {
+      color: #6d747d;
+    }
+
+    #nav .sect {
+      padding: 12px 18px 4px;
+      font-size: 11px;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: #8b929b;
+    }
+
+    #nav a {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 6px 18px;
+      color: var(--side-ink);
+      text-decoration: none;
+      font-size: 14.5px;
+      border-left: 3px solid transparent;
+    }
+
+    #nav a:hover {
+      background: var(--side-active);
+    }
+
+    #nav a.on {
+      background: var(--side-active);
+      border-left-color: var(--accent);
+      color: #fff;
+    }
+
+    #nav a .navicon {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #nav a .navicon img {
+      max-width: 20px;
+      max-height: 20px;
+    }
+
+    #nav .hidden {
+      display: none;
+    }
+
+    #burger {
+      display: none;
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 30;
+      background: var(--side-bg);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      width: 42px;
+      height: 42px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 34px 44px 70px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    main h1 {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 30px;
+      margin: 0 0 6px;
+    }
+
+    main h2 {
+      font-size: 21px;
+      margin: 30px 0 8px;
+      padding-bottom: 5px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    main p {
+      margin: 10px 0;
+    }
+
+    main img.banner {
+      width: 100%;
+      max-width: 700px;
+      border-radius: 10px;
+      display: block;
+      margin: 4px 0 14px;
+    }
+
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: .88em;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    ul {
+      margin: 8px 0;
+      padding-left: 24px;
+    }
+
+    li {
+      margin: 4px 0;
+    }
+
+    .callout {
+      border-left: 4px solid var(--warn-border);
+      background: var(--warn-bg);
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      margin: 14px 0;
+    }
+
+    .callout.tip {
+      border-left-color: var(--tip-border);
+      background: var(--tip-bg);
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 14px 0;
+      width: 100%;
+      background: var(--panel);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+      font-size: 14.5px;
+    }
+
+    th,
+    td {
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--accent-soft);
+      font-size: 13px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tablewrap {
+      overflow-x: auto;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a.card:hover {
+      border-color: var(--accent);
+    }
+
+    .card .ic {
+      flex: 0 0 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card .ic img {
+      width: 44px;
+      height: 44px;
+    }
+
+    .card .tx {
+      min-width: 0;
+    }
+
+    .card .nm {
+      font-weight: 600;
+      font-size: 14.5px;
+    }
+
+    .card .ds {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+
+    .blockimg {
+      width: 52px;
+      height: 52px;
+    }
+
+    .blockimg.mini {
+      width: 20px;
+      height: 20px;
+    }
+
+    .blockimg.big {
+      width: 60px;
+      height: 60px;
+    }
+
+    h1 .ic img {
+      width: 48px;
+      height: 48px;
+    }
+
+    h1 .ic img.blockimg {
+      width: 60px;
+      height: 60px;
+    }
+
+    .spin {
+      color: var(--muted);
+      padding: 40px 0;
+    }
+
+    footer {
+      margin-top: 50px;
+      font-size: 13px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+
+    @media (max-width: 900px) {
+      #burger {
+        display: block;
+      }
+
+      #sidebar {
+        position: fixed;
+        z-index: 20;
+        left: 0;
+        transform: translateX(-100%);
+        transition: transform .18s ease;
+        box-shadow: 4px 0 18px rgba(0, 0, 0, .3);
+      }
+
+      body.menuopen #sidebar {
+        transform: none;
+      }
+
+      main {
+        padding: 66px 20px 60px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <button id="burger" aria-label="menu">☰</button>
+  <nav id="sidebar">
+    <div class="logo"><img src="assets/tex/item/tool/wrench.png" class="pix" alt="">Faktocraft Wiki</div>
+    <div id="langs"></div>
+    <input id="search" type="search">
+    <div id="nav"></div>
+  </nav>
+  <main id="content">
+    <div class="spin">Loading…</div>
+  </main>
+  <script>
+    "use strict";
+    const state = {lang: "en", meta: null, cache: {}};
+    try {state.lang = localStorage.getItem("fk-wiki-lang") || "en";} catch (e) { }
+
+    function t(v) {
+      if (v == null) return "";
+      if (typeof v === "string") return v;
+      return v[state.lang] != null ? v[state.lang] : (v.en != null ? v.en : "");
+    }
+    function esc(s) {
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+    function fmt(s) {
+      return esc(s)
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/`(.+?)`/g, "<code>$1</code>")
+        .replace(/\[(.+?)\]\((.+?)\)/g, (m, txt, href) =>
+          /^(#|https?:)/.test(href) ? '<a href="' + href + '">' + txt + "</a>" : m);
+    }
+    function icon(spec, cls) {
+      if (!spec) return "";
+      if (spec.item) {
+        return '<img class="pix" src="assets/tex/' + esc(spec.item) + '.png" alt="" loading="lazy">';
+      }
+      let slug = null;
+      if (spec.block) {
+        const b = spec.block;
+        const top = b.top || b.all, front = b.front || b.all, side = b.side || front;
+        slug = [top, front, side].join("~");
+      } else if (spec.pipe) {
+        slug = "pipe~" + spec.pipe;
+      } else if (spec.cable) {
+        slug = ["cable", spec.cable.side, spec.cable.cap].join("~");
+      } else if (spec.fluid) {
+        slug = "fluid~" + spec.fluid;
+      }
+      if (slug) {
+        return '<img class="blockimg ' + (cls || "") + '" src="assets/render/' + esc(slug.replace(/\//g, ".")) + '.png" alt="" loading="lazy">';
+      }
+      return "";
+    }
+    function renderBlock(b) {
+      switch (b.type) {
+        case "h": return "<h2>" + fmt(t(b)) + "</h2>";
+        case "p": return "<p>" + fmt(t(b)) + "</p>";
+        case "banner": return '<img class="banner" src="' + esc(b.src) + '" alt="Faktocraft">';
+        case "callout":
+          return '<div class="callout ' + (b.style === "tip" ? "tip" : "") + '">' + fmt(t(b)) + "</div>";
+        case "list":
+          return "<ul>" + (b[state.lang] || b.en || []).map(li => "<li>" + fmt(li) + "</li>").join("") + "</ul>";
+        case "table": {
+          const heads = (b.headers[state.lang] || b.headers.en || []).map(h => "<th>" + fmt(h) + "</th>").join("");
+          const rows = b.rows.map(r =>
+            "<tr>" + r.map(c => "<td>" + fmt(t(c)) + "</td>").join("") + "</tr>").join("");
+          return '<div class="tablewrap"><table><thead><tr>' + heads + "</tr></thead><tbody>" + rows + "</tbody></table></div>";
+        }
+        case "icons":
+          return '<div class="cards">' + b.items.map(it => {
+            const tag = it.link ? "a" : "div";
+            const href = it.link ? ' href="#/' + esc(it.link) + '"' : "";
+            return "<" + tag + ' class="card"' + href + '><span class="ic">' + icon(it.icon) + "</span>" +
+              '<span class="tx"><span class="nm">' + fmt(t(it.name)) + "</span>" +
+              (it.desc ? '<div class="ds">' + fmt(t(it.desc)) + "</div>" : "") +
+              "</span></" + tag + ">";
+          }).join("") + "</div>";
+        default: return "";
+      }
+    }
+    function findNav(id) {
+      for (const s of state.meta.nav) {
+        for (const p of s.pages) {
+          if (p.id === id) return p;
+        }
+      }
+      return null;
+    }
+    async function loadPage(id) {
+      if (!state.cache[id]) {
+        const r = await fetch("data/pages/" + id + ".json");
+        if (!r.ok) throw new Error(id);
+        state.cache[id] = await r.json();
+      }
+      return state.cache[id];
+    }
+    async function route() {
+      const id = (location.hash.replace(/^#\/?/, "") || state.meta.nav[0].pages[0].id).split("?")[0];
+      const nav = findNav(id);
+      const main = document.getElementById("content");
+      document.querySelectorAll("#nav a").forEach(a => a.classList.toggle("on", a.dataset.id === id));
+      document.body.classList.remove("menuopen");
+      if (!nav) {
+        main.innerHTML = '<div class="spin">' + esc(t(state.meta.ui.notfound)) + "</div>";
+        return;
+      }
+      document.title = t(nav.title) + " · Faktocraft Wiki";
+      main.innerHTML = '<div class="spin">' + esc(t(state.meta.ui.loading)) + "</div>";
+      try {
+        const page = await loadPage(id);
+        main.innerHTML =
+          "<h1>" + (page.icon ? '<span class="ic">' + icon(page.icon, "big") + "</span>" : "") + fmt(t(nav.title)) + "</h1>" +
+          page.blocks.map(renderBlock).join("") +
+          "<footer>" + fmt(t(state.meta.ui.footer)) + "</footer>";
+        main.scrollTop = 0;
+        window.scrollTo(0, 0);
+      } catch (e) {
+        main.innerHTML = '<div class="spin">' + esc(t(state.meta.ui.error)) + "</div>";
+      }
+    }
+    function buildNav() {
+      const q = document.getElementById("search").value.trim().toLowerCase();
+      const nav = document.getElementById("nav");
+      nav.innerHTML = state.meta.nav.map(sec => {
+        const pages = sec.pages.filter(p => !q || t(p.title).toLowerCase().includes(q));
+        if (!pages.length) return "";
+        return '<div class="sect">' + esc(t(sec.section)) + "</div>" +
+          pages.map(p =>
+            '<a href="#/' + esc(p.id) + '" data-id="' + esc(p.id) + '">' +
+            '<span class="navicon">' + icon(p.icon, "mini") + "</span>" + esc(t(p.title)) + "</a>").join("");
+      }).join("");
+      const id = (location.hash.replace(/^#\/?/, "") || "").split("?")[0];
+      document.querySelectorAll("#nav a").forEach(a => a.classList.toggle("on", a.dataset.id === id));
+    }
+    function buildLangs() {
+      document.getElementById("langs").innerHTML = state.meta.languages.map(l =>
+        '<button data-l="' + l.id + '" class="' + (state.lang === l.id ? "on" : "") + '">' + esc(l.label) + "</button>").join("");
+      document.querySelectorAll("#langs button").forEach(b => b.onclick = () => {
+        state.lang = b.dataset.l;
+        try {localStorage.setItem("fk-wiki-lang", state.lang);} catch (e) { }
+        document.getElementById("search").placeholder = t(state.meta.ui.search);
+        buildLangs();
+        buildNav();
+        route();
+      });
+    }
+    async function boot() {
+      const r = await fetch("data/meta.json");
+      state.meta = await r.json();
+      if (!state.meta.languages.some(l => l.id === state.lang)) state.lang = "en";
+      document.getElementById("search").placeholder = t(state.meta.ui.search);
+      buildLangs();
+      buildNav();
+      document.getElementById("search").addEventListener("input", buildNav);
+      document.getElementById("burger").onclick = () => document.body.classList.toggle("menuopen");
+      window.addEventListener("hashchange", route);
+      route();
+    }
+    boot().catch(() => {
+      document.getElementById("content").innerHTML =
+        '<div class="spin">Failed to load the wiki data. If you opened this file directly from disk, serve it over HTTP instead (e.g. <code>python -m http.server</code> in the wiki folder).</div>';
+    });
+  </script>
+</body>
+
+</html>

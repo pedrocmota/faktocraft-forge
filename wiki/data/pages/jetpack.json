@@ -1,0 +1,65 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Jetpacks give you powered flight long before the elytra. They burn fuel from their internal tank - refill at the [Fueling Station](#/fluids).",
+      "pt": "Jetpacks dão voo motorizado muito antes do élitro. Elas queimam combustível do tanque interno - reabasteça no [Posto de Abastecimento](#/fluids)."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Jetpack",
+            "pt": "Jetpack"
+          },
+          "icon": {
+            "item": "item/jetpack"
+          },
+          "desc": {
+            "en": "Hold jump to thrust upward; ease off to hover down.",
+            "pt": "Segure pular para subir; solte para descer planando."
+          }
+        },
+        {
+          "name": {
+            "en": "Advanced Jetpack",
+            "pt": "Jetpack Avançada"
+          },
+          "icon": {
+            "item": "item/advanced_jetpack"
+          },
+          "desc": {
+            "en": "Stronger thrust, bigger tank, and an elytra mode.",
+            "pt": "Mais empuxo, tanque maior e um modo élitro."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Flying",
+      "pt": "Voando"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Hold jump** to fly up. Release to descend slowly.",
+        "The advanced jetpack has a **mode key**: switch between hover flight and **elytra mode**, which glides like an elytra while spending fuel for boosts.",
+        "A soft engine hum plays while thrusting; it stops the moment you run dry.",
+        "Fuel is visible on the item tooltip - keep a filled cell or a Fueling Station at home."
+      ],
+      "pt": [
+        "**Segure pular** para subir. Solte para descer devagar.",
+        "A jetpack avançada tem uma **tecla de modo**: alterne entre voo pairado e o **modo élitro**, que plana como um élitro gastando combustível nos impulsos.",
+        "Um ronco suave do motor toca durante o empuxo; ele para na hora se o combustível acabar.",
+        "O combustível aparece no tooltip do item - mantenha uma célula cheia ou um Posto de Abastecimento em casa."
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "Watch the tank mid-flight: when fuel ends, thrust ends - gravity does not.",
+      "pt": "Fique de olho no tanque em pleno voo: quando o combustível acaba, o empuxo acaba - a gravidade, não."
+    }
+  ]
+}

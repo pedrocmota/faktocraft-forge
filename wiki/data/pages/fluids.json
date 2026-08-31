@@ -1,0 +1,214 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Fluids have their own pipe layer, separate from item logistics: pump sources in, store them, pipe them between machines and carry them around in cells.",
+      "pt": "Fluidos têm sua própria camada de tubos, separada da logística de itens: bombeie fontes, armazene, transporte entre máquinas e carregue em células."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Pump",
+            "pt": "Bomba"
+          },
+          "icon": {
+            "block": {
+              "top": "block/pipe/pump_top",
+              "front": "block/pipe/pump_side",
+              "side": "block/pipe/pump_side"
+            }
+          },
+          "desc": {
+            "en": "Drains fluid sources below it, extending its tube downwards.",
+            "pt": "Drena fontes de fluido abaixo dela, estendendo o tubo para baixo."
+          }
+        },
+        {
+          "name": {
+            "en": "Tank",
+            "pt": "Tanque"
+          },
+          "icon": {
+            "block": {
+              "top": "block/pipe/tank_end",
+              "front": "block/pipe/tank_side",
+              "side": "block/pipe/tank_side"
+            }
+          },
+          "desc": {
+            "en": "Stores fluid; stack tanks to grow the volume.",
+            "pt": "Armazena fluido; empilhe tanques para crescer o volume."
+          }
+        },
+        {
+          "name": {
+            "en": "Fluid Stone Pipe",
+            "pt": "Tubo de Fluido de Pedra"
+          },
+          "icon": {
+            "pipe": "block/pipe/fluid_stone_pipe"
+          },
+          "desc": {
+            "en": "The fluid backbone.",
+            "pt": "O tronco dos fluidos."
+          }
+        },
+        {
+          "name": {
+            "en": "Fluid Gold Pipe",
+            "pt": "Tubo de Fluido de Ouro"
+          },
+          "icon": {
+            "pipe": "block/pipe/fluid_gold_pipe"
+          },
+          "desc": {
+            "en": "Higher throughput.",
+            "pt": "Vazão maior."
+          }
+        },
+        {
+          "name": {
+            "en": "Fluid Extractor",
+            "pt": "Extrator de Fluido"
+          },
+          "icon": {
+            "pipe": "block/pipe/fluid_extractor_pipe"
+          },
+          "desc": {
+            "en": "Pulls fluid out of tanks and machines into the pipes.",
+            "pt": "Puxa fluido de tanques e máquinas para os tubos."
+          }
+        },
+        {
+          "name": {
+            "en": "Fluid Cell",
+            "pt": "Célula de Fluido"
+          },
+          "icon": {
+            "item": "item/fluid_cell"
+          },
+          "desc": {
+            "en": "A portable bucket-like container for any mod fluid.",
+            "pt": "Um contêiner portátil, tipo balde, para qualquer fluido do mod."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "The fluids",
+      "pt": "Os fluidos"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Oil",
+            "pt": "Petróleo"
+          },
+          "icon": {
+            "fluid": "block/fluid/oil"
+          },
+          "link": "oil",
+          "desc": {
+            "en": "Pumped from underground pockets and desert lakes. The root of the whole chain: distills into fuel and acid, polymerizes into plastic and rubber.",
+            "pt": "Bombeado de bolsões subterrâneos e lagos desérticos. A raiz da cadeia inteira: destila em fuel e ácido, polimeriza em plástico e borracha."
+          }
+        },
+        {
+          "name": {
+            "en": "Fuel",
+            "pt": "Fuel"
+          },
+          "icon": {
+            "fluid": "block/fluid/fuel"
+          },
+          "desc": {
+            "en": "80 mB per 100 mB of oil at the Distillery. The strongest liquid fuel: **40 E/t** in the Combustion Generator - and what jetpacks drink.",
+            "pt": "80 mB a cada 100 mB de petróleo na Destilaria. O combustível líquido mais forte: **40 E/t** no Gerador de Combustão - e o que as jetpacks bebem."
+          }
+        },
+        {
+          "name": {
+            "en": "Biomass",
+            "pt": "Biomassa"
+          },
+          "icon": {
+            "fluid": "block/fluid/biomass"
+          },
+          "desc": {
+            "en": "Fluid Enricher: bio chaff (ground plant matter) + 1000 mB water → 1000 mB biomass. The renewable route's raw broth.",
+            "pt": "Enriquecedora: bio chaff (matéria vegetal moída) + 1000 mB de água → 1000 mB de biomassa. O caldo bruto da rota renovável."
+          }
+        },
+        {
+          "name": {
+            "en": "Biofuel",
+            "pt": "Biocombustível"
+          },
+          "icon": {
+            "fluid": "block/fluid/biogas"
+          },
+          "desc": {
+            "en": "Fermenter: 1000 mB biomass → 250 mB biofuel. Burns at **20 E/t** - fully renewable, no drilling required.",
+            "pt": "Fermentadora: 1000 mB de biomassa → 250 mB de biocombustível. Queima a **20 E/t** - totalmente renovável, sem perfurar nada."
+          }
+        },
+        {
+          "name": {
+            "en": "Sulfuric Acid",
+            "pt": "Ácido Sulfúrico"
+          },
+          "icon": {
+            "fluid": "block/fluid/sulfuric_acid"
+          },
+          "link": "oil",
+          "desc": {
+            "en": "Distillery byproduct, or sulfur dust + water in the Enricher. Battery electrolyte and coolant ingredient. **Burns on contact** - 3 hearts.",
+            "pt": "Subproduto da Destilaria, ou pó de enxofre + água na Enriquecedora. Eletrólito de baterias e ingrediente do refrigerante. **Queima ao contato** - 3 corações."
+          }
+        },
+        {
+          "name": {
+            "en": "Coolant",
+            "pt": "Refrigerante"
+          },
+          "icon": {
+            "fluid": "block/fluid/coolant"
+          },
+          "desc": {
+            "en": "Enricher: water + acid + lapis + diamond dust. Fills the coolant cells used by charging crystals and overclocker recipes.",
+            "pt": "Enriquecedora: água + ácido + lápis + pó de diamante. Enche as células de refrigerante usadas em cristais de carga e receitas de overclocker."
+          }
+        },
+        {
+          "name": {
+            "en": "UU-Matter",
+            "pt": "UU-Matter"
+          },
+          "icon": {
+            "fluid": "block/fluid/matter"
+          },
+          "link": "machines-endgame",
+          "desc": {
+            "en": "Condensed from enormous amounts of energy (and scrap) in the Matter Fabricator; the Replicator turns it back into items.",
+            "pt": "Condensada de quantidades enormes de energia (e sucata) no Fabricador de Matéria; o Replicador a transforma de volta em itens."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Fueling Station",
+      "pt": "Posto de Abastecimento"
+    },
+    {
+      "type": "p",
+      "en": "The **Fueling Station** fills fluid-powered gear - most importantly [jetpacks](#/jetpack) - straight from its internal tank. Park the item in its slot and watch the gauge fill.",
+      "pt": "O **Posto de Abastecimento** enche equipamentos movidos a fluido - principalmente as [jetpacks](#/jetpack) - direto do tanque interno. Deixe o item no slot e veja o medidor encher."
+    }
+  ]
+}

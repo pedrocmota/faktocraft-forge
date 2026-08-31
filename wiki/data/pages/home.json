@@ -1,0 +1,149 @@
+{
+  "blocks": [
+    {
+      "type": "banner",
+      "src": "assets/banner.png"
+    },
+    {
+      "type": "p",
+      "en": "**Faktocraft** is a modern port of several classic tech mods - **Industrial Reborn**, **IndustrialCraft 2**, **BuildCraft** and **Logistics Pipes** - rebuilt as a single, coherent mod: electrical machines, tiered power grids, item and fluid logistics, and automated mining.",
+      "pt": "O **Faktocraft** é um port moderno de vários mods técnicos clássicos - **Industrial Reborn**, **IndustrialCraft 2**, **BuildCraft** e **Logistics Pipes** - reconstruídos como um único mod coerente: máquinas elétricas, redes de energia com tensões, logística de itens e fluidos e mineração automatizada."
+    },
+    {
+      "type": "callout",
+      "en": "Faktocraft is in its **first alpha version**. Bugs may occur - please report them on [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues)!",
+      "pt": "O Faktocraft está na **primeira versão alpha**. Bugs podem ocorrer - reporte no [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues)!"
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Playing with **JEI** and **Jade** is highly recommended: JEI shows every machine recipe in-game, and Jade shows live machine info (energy, progress, tier) when you look at a block.",
+      "pt": "Jogar com **JEI** e **Jade** é altamente recomendado: o JEI mostra todas as receitas das máquinas dentro do jogo, e o Jade mostra informações ao vivo (energia, progresso, tensão) ao mirar num bloco."
+    },
+    {
+      "type": "h",
+      "en": "The systems",
+      "pt": "Os sistemas"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Power & voltage tiers",
+            "pt": "Energia e tensões"
+          },
+          "link": "energy",
+          "icon": {
+            "cable": {
+              "side": "block/cable/copper_cable_insulated_side",
+              "cap": "block/cable/copper_cable_insulated"
+            }
+          },
+          "desc": {
+            "en": "Five tiers, cables, transformers and the explosion rule.",
+            "pt": "Cinco tensões, cabos, transformadores e a regra da explosão."
+          }
+        },
+        {
+          "name": {
+            "en": "Machines",
+            "pt": "Máquinas"
+          },
+          "link": "machines-processing",
+          "icon": {
+            "block": {
+              "top": "block/machines/crusher_top",
+              "front": "block/machines/crusher_front",
+              "side": "block/machines/crusher_side"
+            }
+          },
+          "desc": {
+            "en": "Over 20 machines, from ore doubling to matter replication.",
+            "pt": "Mais de 20 máquinas, da duplicação de minério à replicação de matéria."
+          }
+        },
+        {
+          "name": {
+            "en": "Item logistics",
+            "pt": "Logística de itens"
+          },
+          "link": "logistics",
+          "icon": {
+            "item": "item/module_provider"
+          },
+          "desc": {
+            "en": "Transparent pipes, chassis, modules and request-based crafting.",
+            "pt": "Tubos transparentes, chassis, módulos e craft por requisição."
+          }
+        },
+        {
+          "name": {
+            "en": "Quarry",
+            "pt": "Mineradora"
+          },
+          "link": "quarry",
+          "icon": {
+            "block": {
+              "top": "block/machines/quarry_top",
+              "front": "block/machines/quarry_front",
+              "side": "block/machines/quarry_side"
+            }
+          },
+          "desc": {
+            "en": "Automated mining with landmarks, frame and drill.",
+            "pt": "Mineração automática com marcos, moldura e broca."
+          }
+        },
+        {
+          "name": {
+            "en": "Gear",
+            "pt": "Equipamentos"
+          },
+          "link": "gear",
+          "icon": {
+            "item": "item/armor/nano_chestplate"
+          },
+          "desc": {
+            "en": "Jetpacks, nano and quantum armor, electric tools.",
+            "pt": "Jetpacks, armaduras nano e quantum, ferramentas elétricas."
+          }
+        },
+        {
+          "name": {
+            "en": "Ores & world",
+            "pt": "Minérios e mundo"
+          },
+          "link": "world",
+          "icon": {
+            "block": {
+              "all": "block/ore/tin"
+            }
+          },
+          "desc": {
+            "en": "Rubber trees, seven new ores and underground oil.",
+            "pt": "Seringueiras, sete minérios novos e petróleo subterrâneo."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Versions",
+      "pt": "Versões"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Minecraft 1.20.1 with Forge** is the only supported version.",
+        "The mod will move to newer Minecraft versions once Minecraft stabilizes its Vulkan support.",
+        "A **Fabric** port is unlikely - the mod is deeply tied to Forge internals."
+      ],
+      "pt": [
+        "**Minecraft 1.20.1 com Forge** é a única versão suportada.",
+        "O mod será atualizado para versões mais novas quando o Minecraft estabilizar o suporte a Vulkan.",
+        "Um port para **Fabric** é improvável - o mod é profundamente ligado aos internals do Forge."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The ore chain is the heart of the early factory. Raw ore goes through crushing, washing and centrifuging - each stage adds extra output on top of simple smelting.",
+      "pt": "A cadeia de minérios é o coração da fábrica inicial. O minério bruto passa por trituração, lavagem e centrifugação - cada etapa adiciona rendimento extra em relação a simplesmente fundir."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Iron Furnace",
+            "pt": "Fornalha de Ferro"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/iron_furnace_top",
+              "front": "block/machines/iron_furnace_front",
+              "side": "block/machines/iron_furnace_side"
+            }
+          },
+          "desc": {
+            "en": "Fuel-burning furnace, faster than stone. No power needed.",
+            "pt": "Fornalha a combustível, mais rápida que a de pedra. Sem energia."
+          }
+        },
+        {
+          "name": {
+            "en": "Electric Furnace",
+            "pt": "Fornalha Elétrica"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/electric_furnace_top",
+              "front": "block/machines/electric_furnace_front",
+              "side": "block/machines/electric_furnace_side"
+            }
+          },
+          "desc": {
+            "en": "Smelts with energy instead of fuel.",
+            "pt": "Funde com energia em vez de combustível."
+          }
+        },
+        {
+          "name": {
+            "en": "Crusher",
+            "pt": "Triturador"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/crusher_top",
+              "front": "block/machines/crusher_front",
+              "side": "block/machines/crusher_side"
+            }
+          },
+          "desc": {
+            "en": "Crushes raw ore - the ore-doubling step.",
+            "pt": "Tritura minério bruto - a etapa de duplicação."
+          }
+        },
+        {
+          "name": {
+            "en": "Ore Washing Plant",
+            "pt": "Lavadora de Minério"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/ore_washing_plant_top",
+              "front": "block/machines/basic/ore_washing_plant_front",
+              "side": "block/machines/basic/ore_washing_plant_leftright"
+            }
+          },
+          "desc": {
+            "en": "Washes crushed ore with water for purified ore plus byproducts.",
+            "pt": "Lava minério triturado com água: minério purificado e subprodutos."
+          }
+        },
+        {
+          "name": {
+            "en": "Thermal Centrifuge",
+            "pt": "Centrífuga Térmica"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/advanced/thermal_centrifuge_top",
+              "front": "block/machines/advanced/thermal_centrifuge_front",
+              "side": "block/machines/advanced/thermal_centrifuge_leftright"
+            }
+          },
+          "desc": {
+            "en": "The last refining stage - squeezes out the final byproducts.",
+            "pt": "A última etapa de refino - extrai os subprodutos finais."
+          }
+        },
+        {
+          "name": {
+            "en": "Recycler",
+            "pt": "Reciclador"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/recycler_top",
+              "front": "block/machines/basic/recycler_front",
+              "side": "block/machines/basic/recycler_side"
+            }
+          },
+          "desc": {
+            "en": "Turns junk into scrap - fuel for the Matter Fabricator.",
+            "pt": "Transforma tralha em sucata - combustível para o Fabricador de Matéria."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "The chain in practice",
+      "pt": "A cadeia na prática"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Smelt only:** 1 raw ore → 1 ingot.",
+        "**Crush + smelt:** crushed ore smelts into more metal than the raw ore alone.",
+        "**Crush + wash + centrifuge:** maximum yield, plus stone dust and small piles of other metals.",
+        "Pipe the stages together with [logistics](#/logistics) and the whole chain runs itself."
+      ],
+      "pt": [
+        "**Só fundir:** 1 minério bruto → 1 lingote.",
+        "**Triturar + fundir:** o minério triturado rende mais metal que o bruto sozinho.",
+        "**Triturar + lavar + centrifugar:** rendimento máximo, mais pó de pedra e pilhas pequenas de outros metais.",
+        "Ligue as etapas com a [logística](#/logistics) e a cadeia inteira roda sozinha."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,221 @@
+{
+  "blocks": [
+    {
+      "type": "h",
+      "en": "Armor",
+      "pt": "Armaduras"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Bronze armor",
+            "pt": "Armadura de bronze"
+          },
+          "icon": {
+            "item": "item/armor/bronze_chestplate"
+          },
+          "desc": {
+            "en": "Solid early armor between iron and diamond.",
+            "pt": "Armadura inicial sólida, entre ferro e diamante."
+          }
+        },
+        {
+          "name": {
+            "en": "Hazmat suit",
+            "pt": "Traje hazmat"
+          },
+          "icon": {
+            "item": "item/hazmat_chestplate"
+          },
+          "desc": {
+            "en": "Protects against fire, acid and hazards.",
+            "pt": "Protege contra fogo, ácido e perigos."
+          }
+        },
+        {
+          "name": {
+            "en": "Nano armor",
+            "pt": "Armadura nano"
+          },
+          "icon": {
+            "item": "item/armor/nano_chestplate"
+          },
+          "desc": {
+            "en": "Energy-powered protection - damage drains charge.",
+            "pt": "Proteção movida a energia - dano consome carga."
+          }
+        },
+        {
+          "name": {
+            "en": "Quantum armor",
+            "pt": "Armadura quantum"
+          },
+          "icon": {
+            "item": "item/armor/quantum_chestplate"
+          },
+          "desc": {
+            "en": "The endgame suit.",
+            "pt": "O traje de fim de jogo."
+          }
+        },
+        {
+          "name": {
+            "en": "Nightvision Goggles",
+            "pt": "Óculos de Visão Noturna"
+          },
+          "icon": {
+            "item": "item/armor/nightvision_goggles"
+          },
+          "desc": {
+            "en": "Toggleable night vision on a keybind.",
+            "pt": "Visão noturna alternável por atalho."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Electric tools",
+      "pt": "Ferramentas elétricas"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Mining Drill",
+            "pt": "Furadeira"
+          },
+          "icon": {
+            "item": "item/tool/electric/mining_drill"
+          },
+          "desc": {
+            "en": "Pickaxe and shovel in one, no durability - just charge.",
+            "pt": "Picareta e pá em uma, sem durabilidade - só carga."
+          }
+        },
+        {
+          "name": {
+            "en": "Diamond / Iridium Drill",
+            "pt": "Furadeira de Diamante / Irídio"
+          },
+          "icon": {
+            "item": "item/tool/electric/diamond_drill"
+          },
+          "desc": {
+            "en": "Faster, stronger tiers of the drill.",
+            "pt": "Versões mais rápidas e fortes da furadeira."
+          }
+        },
+        {
+          "name": {
+            "en": "Chainsaw",
+            "pt": "Motosserra"
+          },
+          "icon": {
+            "item": "item/tool/electric/chainsaw"
+          },
+          "desc": {
+            "en": "Axe, sword and shears rolled into one.",
+            "pt": "Machado, espada e tesoura em um."
+          }
+        },
+        {
+          "name": {
+            "en": "Nano Saber",
+            "pt": "Sabre Nano"
+          },
+          "icon": {
+            "item": "item/tool/electric/nano_saber"
+          },
+          "desc": {
+            "en": "An energy blade with an active mode.",
+            "pt": "Uma lâmina de energia com modo ativo."
+          }
+        },
+        {
+          "name": {
+            "en": "Electric Wrench",
+            "pt": "Chave Elétrica"
+          },
+          "icon": {
+            "item": "item/tool/electric/electric_wrench"
+          },
+          "desc": {
+            "en": "The wrench, without wear.",
+            "pt": "A chave inglesa, sem desgaste."
+          }
+        },
+        {
+          "name": {
+            "en": "Multi Tool",
+            "pt": "Multiferramenta"
+          },
+          "icon": {
+            "item": "item/tool/electric/multi_tool"
+          },
+          "desc": {
+            "en": "Several tools in a single charged device.",
+            "pt": "Várias ferramentas num único aparelho carregado."
+          }
+        }
+      ]
+    },
+    {
+      "type": "p",
+      "en": "Electric gear recharges in machine battery slots, on a **Charge Pad**, or from batteries in your inventory. See also the [Jetpack](#/jetpack) and the [Prospector](#/prospector).",
+      "pt": "Equipamentos elétricos recarregam nos slots de bateria das máquinas, num **Charge Pad** ou com baterias no inventário. Veja também a [Jetpack](#/jetpack) e o [Prospector](#/prospector)."
+    },
+    {
+      "type": "h",
+      "en": "Utility",
+      "pt": "Utilidades"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Toolbox",
+            "pt": "Caixa de Ferramentas"
+          },
+          "icon": {
+            "item": "item/toolbox"
+          },
+          "desc": {
+            "en": "Carries your tool set in one slot.",
+            "pt": "Carrega seu kit de ferramentas num slot só."
+          }
+        },
+        {
+          "name": {
+            "en": "Wind Meter",
+            "pt": "Anemômetro"
+          },
+          "icon": {
+            "item": "item/tool/electric/wind_meter"
+          },
+          "desc": {
+            "en": "Reads the live wind speed for turbine placement.",
+            "pt": "Mede o vento ao vivo para posicionar turbinas."
+          }
+        },
+        {
+          "name": {
+            "en": "IE Meter",
+            "pt": "Medidor IE"
+          },
+          "icon": {
+            "item": "item/tool/electric/ie_meter"
+          },
+          "desc": {
+            "en": "Probes cables and machines for grid diagnostics.",
+            "pt": "Sonda cabos e máquinas para diagnosticar a rede."
+          }
+        }
+      ]
+    }
+  ]
+}

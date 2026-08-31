@@ -1,0 +1,130 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The autocrafting layer sits on top of the pipe network: you ask for an item, and the network finds ingredients, drives machines and delivers the result - including multi-step chains.",
+      "pt": "A camada de autocraft fica sobre a rede de tubos: você pede um item, e a rede encontra ingredientes, aciona máquinas e entrega o resultado - inclusive cadeias de várias etapas."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Logistics Controller",
+            "pt": "Controlador de Logística"
+          },
+          "icon": {
+            "block": {
+              "top": "block/logistics_controller_top",
+              "front": "block/logistics_controller_side",
+              "side": "block/logistics_controller_side"
+            }
+          },
+          "desc": {
+            "en": "The brain - coordinates jobs across one network.",
+            "pt": "O cérebro - coordena os trabalhos de uma rede."
+          }
+        },
+        {
+          "name": {
+            "en": "Request Table",
+            "pt": "Mesa de Requisição"
+          },
+          "icon": {
+            "block": {
+              "top": "block/request_table_top",
+              "front": "block/request_table_front",
+              "side": "block/request_table_side"
+            }
+          },
+          "desc": {
+            "en": "Browse everything the network can provide or craft, and request it.",
+            "pt": "Navegue por tudo que a rede pode fornecer ou produzir, e peça."
+          }
+        },
+        {
+          "name": {
+            "en": "Craft Pipe",
+            "pt": "Tubo de Craft"
+          },
+          "icon": {
+            "pipe": "block/pipe/craft_pipe"
+          },
+          "desc": {
+            "en": "Holds crafting-table patterns the network can execute.",
+            "pt": "Guarda padrões de bancada que a rede executa."
+          }
+        },
+        {
+          "name": {
+            "en": "Recipe Pipe",
+            "pt": "Tubo de Receita"
+          },
+          "icon": {
+            "pipe": "block/pipe/recipe_pipe"
+          },
+          "desc": {
+            "en": "Teaches the network what a docked machine consumes and produces.",
+            "pt": "Ensina à rede o que a máquina encostada consome e produz."
+          }
+        },
+        {
+          "name": {
+            "en": "Assembly Table",
+            "pt": "Mesa de Montagem"
+          },
+          "icon": {
+            "block": {
+              "top": "block/assembly_table_top",
+              "front": "block/assembly_table_side",
+              "side": "block/assembly_table_side"
+            }
+          },
+          "desc": {
+            "en": "A crafting station the network operates directly.",
+            "pt": "Uma estação de craft que a rede opera diretamente."
+          }
+        },
+        {
+          "name": {
+            "en": "Remote Requester",
+            "pt": "Requisitor Remoto"
+          },
+          "icon": {
+            "item": "item/remote_requester"
+          },
+          "desc": {
+            "en": "A portable Request Table linked to your network.",
+            "pt": "Uma Mesa de Requisição portátil vinculada à sua rede."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "How a request runs",
+      "pt": "Como uma requisição roda"
+    },
+    {
+      "type": "list",
+      "en": [
+        "You request, say, 16 circuits at the Request Table.",
+        "The controller checks providers for ready stock and delivers what exists.",
+        "For the rest it walks the known recipes (craft pipes and recipe pipes), requests the ingredients - recursively - and dispatches them to the right machines.",
+        "Products come back through the network until the request is fulfilled at the table."
+      ],
+      "pt": [
+        "Você pede, digamos, 16 circuitos na Mesa de Requisição.",
+        "O controlador confere estoque pronto nos providers e entrega o que existe.",
+        "Para o resto, ele percorre as receitas conhecidas (craft pipes e recipe pipes), pede os ingredientes - recursivamente - e os despacha para as máquinas certas.",
+        "Os produtos voltam pela rede até a requisição ser cumprida na mesa."
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "The recipe pipe can pin ingredients to specific machine slots - use it for machines whose slots have different roles.",
+      "pt": "O tubo de receita pode fixar ingredientes em slots específicos da máquina - use com máquinas cujos slots têm papéis diferentes."
+    }
+  ]
+}

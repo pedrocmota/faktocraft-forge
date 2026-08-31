@@ -1,0 +1,135 @@
+{
+  "blocks": [
+    {
+      "type": "h",
+      "en": "Rubber trees",
+      "pt": "Seringueiras"
+    },
+    {
+      "type": "p",
+      "en": "Rubber trees are the start of everything - see [Getting started](#/getting-started). They are common in **forests and swamps**, rarer in jungles, savannas and taigas.",
+      "pt": "As seringueiras são o começo de tudo - veja [Primeiros passos](#/getting-started). São comuns em **florestas e pântanos**, mais raras em selvas, savanas e taigas."
+    },
+    {
+      "type": "h",
+      "en": "Ores",
+      "pt": "Minérios"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Tin",
+            "pt": "Estanho"
+          },
+          "icon": {
+            "block": {
+              "all": "block/ore/tin"
+            }
+          },
+          "desc": {
+            "en": "The early-game workhorse: cables, bronze, cells.",
+            "pt": "O burro de carga do início: cabos, bronze, células."
+          }
+        },
+        {
+          "name": {
+            "en": "Lead",
+            "pt": "Chumbo"
+          },
+          "icon": {
+            "block": {
+              "all": "block/ore/lead"
+            }
+          },
+          "desc": {
+            "en": "Heavy plates and shielding.",
+            "pt": "Placas pesadas e blindagem."
+          }
+        },
+        {
+          "name": {
+            "en": "Silver",
+            "pt": "Prata"
+          },
+          "icon": {
+            "block": {
+              "all": "block/ore/silver"
+            }
+          },
+          "desc": {
+            "en": "Fine electronics and advanced circuits.",
+            "pt": "Eletrônica fina e circuitos avançados."
+          }
+        },
+        {
+          "name": {
+            "en": "Lithium",
+            "pt": "Lítio"
+          },
+          "icon": {
+            "block": {
+              "all": "block/ore/lithium"
+            }
+          },
+          "desc": {
+            "en": "Batteries. More common in deserts.",
+            "pt": "Baterias. Mais comum em desertos."
+          }
+        },
+        {
+          "name": {
+            "en": "Sulfur",
+            "pt": "Enxofre"
+          },
+          "icon": {
+            "block": {
+              "all": "block/ore/sulfur"
+            }
+          },
+          "desc": {
+            "en": "Chemistry and combustion recipes.",
+            "pt": "Química e receitas de combustão."
+          }
+        },
+        {
+          "name": {
+            "en": "Iridium",
+            "pt": "Irídio"
+          },
+          "icon": {
+            "block": {
+              "all": "block/ore/iridium"
+            }
+          },
+          "desc": {
+            "en": "Rare and deep - the endgame metal. It glows faintly.",
+            "pt": "Raro e profundo - o metal de fim de jogo. Brilha de leve."
+          }
+        }
+      ]
+    },
+    {
+      "type": "p",
+      "en": "All ores have **deepslate variants** at lower depths. The [Prospector](#/prospector) scans chunks and reports what they hold before you dig.",
+      "pt": "Todos os minérios têm **variantes de deepslate** nas profundidades. O [Prospector](#/prospector) escaneia chunks e informa o que há antes de você cavar."
+    },
+    {
+      "type": "h",
+      "en": "Oil",
+      "pt": "Petróleo"
+    },
+    {
+      "type": "p",
+      "en": "**Oil** spawns as underground pockets (small and giant) and surface lakes in dry biomes. Pump it, distill it into **fuel** and burn it in the [Combustion Generator](#/generators) - or polymerize it into **plastic**.",
+      "pt": "O **petróleo** aparece como bolsões subterrâneos (pequenos e gigantes) e lagos de superfície em biomas secos. Bombeie, destile em **fuel** e queime no [Gerador de Combustão](#/generators) - ou polimerize em **plástico**."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "The commands `/faktocraft locateoil` and `/faktocraft locateore` exist for operators - handy when testing worldgen.",
+      "pt": "Os comandos `/faktocraft locateoil` e `/faktocraft locateore` existem para operadores - úteis ao testar a geração de mundo."
+    }
+  ]
+}

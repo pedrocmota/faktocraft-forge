@@ -1,0 +1,82 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Most machines have upgrade slots. Upgrades stack - each additional one compounds the effect, and you can mix types in the same machine.",
+      "pt": "A maioria das máquinas tem slots de melhoria. Melhorias acumulam - cada unidade adicional compõe o efeito, e você pode misturar tipos na mesma máquina."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Overclocker (+ Advanced)",
+            "pt": "Overclocker (+ Avançado)"
+          },
+          "icon": {
+            "item": "item/upgrade/overclocker"
+          },
+          "desc": {
+            "en": "Faster processing at a steep energy premium.",
+            "pt": "Processamento mais rápido a um custo alto de energia."
+          }
+        },
+        {
+          "name": {
+            "en": "Efficiency Upgrade (+ Advanced)",
+            "pt": "Melhoria de Eficiência (+ Avançada)"
+          },
+          "icon": {
+            "item": "item/upgrade/efficiency"
+          },
+          "desc": {
+            "en": "Cuts energy use per operation.",
+            "pt": "Corta o consumo de energia por operação."
+          }
+        },
+        {
+          "name": {
+            "en": "Tension Upgrade Mk1-Mk3",
+            "pt": "Melhoria de Tensão Mk1-Mk3"
+          },
+          "icon": {
+            "item": "item/upgrade/tension_mk1"
+          },
+          "desc": {
+            "en": "Lets the machine safely accept higher voltage tiers.",
+            "pt": "Faz a máquina aceitar tensões maiores com segurança."
+          }
+        },
+        {
+          "name": {
+            "en": "Throughput Upgrade",
+            "pt": "Melhoria de Vazão"
+          },
+          "icon": {
+            "item": "item/upgrade/throughput"
+          },
+          "desc": {
+            "en": "Speeds up logistics extraction devices.",
+            "pt": "Acelera os dispositivos de extração da logística."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "The overclocker trade-off",
+      "pt": "O dilema do overclocker"
+    },
+    {
+      "type": "p",
+      "en": "Each overclocker multiplies speed but raises the energy per operation even more - a heavily overclocked machine is a power hog. Pair overclockers with efficiency upgrades and a [capacitor](#/energy) big enough to smooth the spikes.",
+      "pt": "Cada overclocker multiplica a velocidade, mas aumenta ainda mais a energia por operação - uma máquina cheia de overclock devora energia. Combine overclockers com melhorias de eficiência e um [capacitor](#/energy) grande o bastante para amortecer os picos."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "The info button in a machine's GUI lists which upgrades that machine supports.",
+      "pt": "O botão de informação na interface da máquina lista quais melhorias ela suporta."
+    }
+  ]
+}

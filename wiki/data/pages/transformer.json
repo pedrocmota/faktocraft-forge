@@ -1,0 +1,90 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Transformers convert energy between two **adjacent voltage tiers**. Each transformer model covers one pair of tiers - to go from Low all the way to Ultra you chain them.",
+      "pt": "Transformadores convertem energia entre duas **tensões vizinhas**. Cada modelo cobre um par de tensões - para ir da Baixa até a Ultra, você os encadeia."
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": [
+          "Transformer",
+          "Converts"
+        ],
+        "pt": [
+          "Transformador",
+          "Converte"
+        ]
+      },
+      "rows": [
+        [
+          {
+            "en": "Low Transformer",
+            "pt": "Transformador Baixo"
+          },
+          {
+            "en": "Low ↔ Medium",
+            "pt": "Baixa ↔ Média"
+          }
+        ],
+        [
+          {
+            "en": "Medium Transformer",
+            "pt": "Transformador Médio"
+          },
+          {
+            "en": "Medium ↔ High",
+            "pt": "Média ↔ Alta"
+          }
+        ],
+        [
+          {
+            "en": "High Transformer",
+            "pt": "Transformador Alto"
+          },
+          {
+            "en": "High ↔ Very High",
+            "pt": "Alta ↔ Muito Alta"
+          }
+        ],
+        [
+          {
+            "en": "Very High Transformer",
+            "pt": "Transformador Muito Alto"
+          },
+          {
+            "en": "Very High ↔ Ultra",
+            "pt": "Muito Alta ↔ Ultra"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "en": "How it works",
+      "pt": "Como funciona"
+    },
+    {
+      "type": "list",
+      "en": [
+        "The **front face** carries one tier; the **other five faces** carry the other.",
+        "It has two modes: **step down** (high tier in, low tier out) and **step up** (low in, high out). Toggle the mode by interacting with the block.",
+        "A **redstone signal** pauses the transformer, letting you gate conversions with automation.",
+        "Point the front the wrong way and the high-tier side may face a low-tier machine - remember the [explosion rule](#/energy)!"
+      ],
+      "pt": [
+        "A **face frontal** carrega uma tensão; as **outras cinco faces** carregam a outra.",
+        "Tem dois modos: **rebaixar** (tensão alta entra, baixa sai) e **elevar** (baixa entra, alta sai). Alterne o modo interagindo com o bloco.",
+        "Um **sinal de redstone** pausa o transformador, permitindo controlar conversões com automação.",
+        "Aponte a frente para o lado errado e a face de tensão alta pode encarar uma máquina de tensão baixa - lembre da [regra da explosão](#/energy)!"
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "The tooltip of every transformer item tells you which pair of tiers it converts.",
+      "pt": "O tooltip de cada transformador informa qual par de tensões ele converte."
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "blocks": [
+    {
+      "type": "h",
+      "en": "1. Rubber",
+      "pt": "1. Borracha"
+    },
+    {
+      "type": "p",
+      "en": "Everything starts with **rubber trees**. They grow mostly in forests, swamps and jungles, and their logs show orange resin spots. Craft a **Treetap**, use it on a resin spot to collect **resin**, then smelt the resin into **rubber**. Rubber insulates your first cables.",
+      "pt": "Tudo começa com as **seringueiras**. Elas crescem principalmente em florestas, pântanos e selvas, e seus troncos têm manchas laranja de resina. Crie um **Extrator de Resina** (Treetap), use-o numa mancha para coletar **resina** e derreta a resina em **borracha**. A borracha isola seus primeiros cabos."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Treetap",
+            "pt": "Treetap"
+          },
+          "icon": {
+            "item": "item/tool/treetap"
+          }
+        },
+        {
+          "name": {
+            "en": "Rubber sheet",
+            "pt": "Folha de borracha"
+          },
+          "icon": {
+            "item": "block/rubber_sheet"
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "2. Bronze and first tools",
+      "pt": "2. Bronze e primeiras ferramentas"
+    },
+    {
+      "type": "p",
+      "en": "Mine the new ores - **tin** is the important one early on - and combine them into **bronze** for better tools and your first machine parts. A **Hammer** and a **Cutter** turn ingots into plates and cables at the crafting table before you have machines to do it for you.",
+      "pt": "Minere os novos minérios - o **estanho** é o importante no começo - e combine-os em **bronze** para ferramentas melhores e as primeiras peças de máquina. O **Martelo** e o **Alicate de Corte** transformam lingotes em placas e cabos na bancada, antes de você ter máquinas que façam isso."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Hammer",
+            "pt": "Martelo"
+          },
+          "icon": {
+            "item": "item/tool/hammer"
+          }
+        },
+        {
+          "name": {
+            "en": "Cutter",
+            "pt": "Alicate de corte"
+          },
+          "icon": {
+            "item": "item/tool/cutter"
+          }
+        },
+        {
+          "name": {
+            "en": "Wrench",
+            "pt": "Chave inglesa"
+          },
+          "icon": {
+            "item": "item/tool/wrench"
+          },
+          "desc": {
+            "en": "Rotates and safely removes machines.",
+            "pt": "Gira e remove máquinas com segurança."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "3. First power",
+      "pt": "3. Primeira energia"
+    },
+    {
+      "type": "p",
+      "en": "Build a **Generator** (burns furnace fuel), connect it with **tin cables** (Low tier) and power your first machines: an **Electric Furnace** and a **Crusher**. The crusher doubles your ores - crush raw ore, then smelt.",
+      "pt": "Construa um **Gerador** (queima combustível de fornalha), conecte com **cabos de estanho** (tensão Baixa) e alimente as primeiras máquinas: a **Fornalha Elétrica** e o **Triturador**. O triturador duplica seus minérios - triture o minério bruto e depois funda."
+    },
+    {
+      "type": "callout",
+      "en": "**Respect the voltage tier!** A machine fed a higher tier than it accepts **explodes**. Start everything on Low tier and read the [energy page](#/energy) before mixing tiers.",
+      "pt": "**Respeite a tensão!** Uma máquina alimentada com tensão maior do que aceita **explode**. Comece tudo na tensão Baixa e leia a [página de energia](#/energy) antes de misturar tensões."
+    },
+    {
+      "type": "h",
+      "en": "4. Where to go next",
+      "pt": "4. Próximos passos"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Automate ore processing with the full chain: [ore processing machines](#/machines-processing).",
+        "Store surplus power in a [battery box](#/battery-box) so machines keep running while generation dips.",
+        "Move items around with [logistics pipes](#/logistics).",
+        "Let a [quarry](#/quarry) mine for you."
+      ],
+      "pt": [
+        "Automatize o processamento de minério com a cadeia completa: [máquinas de processamento](#/machines-processing).",
+        "Guarde o excedente numa [caixa de bateria](#/battery-box) para as máquinas continuarem rodando quando a geração cair.",
+        "Mova itens com os [tubos de logística](#/logistics).",
+        "Deixe a [mineradora](#/quarry) minerar por você."
+      ]
+    }
+  ]
+}

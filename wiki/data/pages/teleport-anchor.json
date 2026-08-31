@@ -1,0 +1,61 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Teleport Anchors form a network of fixed teleport points. Each jump costs energy from the anchor - distance decides the price.",
+      "pt": "Âncoras de Teleporte formam uma rede de pontos fixos de teleporte. Cada salto custa energia da âncora - a distância decide o preço."
+    },
+    {
+      "type": "h",
+      "en": "Setting up",
+      "pt": "Configurando"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Place two or more anchors and power them.",
+        "Link them using a **Teleport Card**: register the destination on the card and bind it to the anchor.",
+        "Stand on an anchor and activate it to jump to its destination.",
+        "The anchor refuses to send you into a blocked destination - no teleporting into walls."
+      ],
+      "pt": [
+        "Coloque duas ou mais âncoras e alimente-as.",
+        "Vincule-as com um **Cartão de Teleporte**: registre o destino no cartão e associe-o à âncora.",
+        "Fique sobre uma âncora e ative-a para saltar ao destino.",
+        "A âncora se recusa a te mandar para um destino obstruído - nada de teleportar para dentro de parede."
+      ]
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Teleport Anchor",
+            "pt": "Âncora de Teleporte"
+          },
+          "icon": {
+            "block": {
+              "top": "block/misc/teleport_anchor_top",
+              "front": "block/misc/teleport_anchor_side",
+              "side": "block/misc/teleport_anchor_side"
+            }
+          }
+        },
+        {
+          "name": {
+            "en": "Teleport Card",
+            "pt": "Cartão de Teleporte"
+          },
+          "icon": {
+            "item": "item/crafting/teleport_card"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "There is a short cooldown between jumps, and long jumps cost real energy - size the anchor's power supply accordingly.",
+      "pt": "Há um pequeno cooldown entre saltos, e saltos longos custam energia de verdade - dimensione a alimentação da âncora de acordo."
+    }
+  ]
+}

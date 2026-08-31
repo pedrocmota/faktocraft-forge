@@ -1,0 +1,169 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Battery boxes store surplus energy and feed it back into the grid when generation drops. Each one belongs to a tier - it charges from its input faces and discharges through the output face.",
+      "pt": "Caixas de bateria armazenam o excedente de energia e o devolvem à rede quando a geração cai. Cada uma pertence a uma tensão - carrega pelas faces de entrada e descarrega pela face de saída."
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": [
+          "Block",
+          "Tier",
+          "Capacity"
+        ],
+        "pt": [
+          "Bloco",
+          "Tensão",
+          "Capacidade"
+        ]
+      },
+      "rows": [
+        [
+          {
+            "en": "Wooden Battery Box",
+            "pt": "Caixa de Bateria de Madeira"
+          },
+          {
+            "en": "Low",
+            "pt": "Baixa"
+          },
+          "40.000 E"
+        ],
+        [
+          "CESU",
+          {
+            "en": "Medium",
+            "pt": "Média"
+          },
+          "300.000 E"
+        ],
+        [
+          "MFE",
+          {
+            "en": "High",
+            "pt": "Alta"
+          },
+          "4.000.000 E"
+        ],
+        [
+          "MFSU",
+          {
+            "en": "Very High",
+            "pt": "Muito Alta"
+          },
+          "40.000.000 E"
+        ]
+      ]
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Wooden Battery Box",
+            "pt": "Caixa de Madeira"
+          },
+          "icon": {
+            "block": {
+              "top": "block/battery_box/battery_box_top",
+              "front": "block/battery_box/battery_box_front",
+              "side": "block/battery_box/battery_box_leftright"
+            }
+          }
+        },
+        {
+          "name": "CESU",
+          "icon": {
+            "block": {
+              "top": "block/battery_box/cesu_top",
+              "front": "block/battery_box/cesu_front",
+              "side": "block/battery_box/cesu_leftright"
+            }
+          }
+        },
+        {
+          "name": "MFE",
+          "icon": {
+            "block": {
+              "top": "block/battery_box/mfe_top",
+              "front": "block/battery_box/mfe_front",
+              "side": "block/battery_box/mfe_leftright"
+            }
+          }
+        },
+        {
+          "name": "MFSU",
+          "icon": {
+            "block": {
+              "top": "block/battery_box/mfsu_top",
+              "front": "block/battery_box/mfsu_front",
+              "side": "block/battery_box/mfsu_leftright"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Portable storage",
+      "pt": "Armazenamento portátil"
+    },
+    {
+      "type": "p",
+      "en": "Batteries and energy crystals carry charge in your inventory: charge them in machine battery slots or on a **Charge Pad**, then use them to power tools or kick-start a machine. Higher-tier crystals (energy, lapotron, iridium) hold far more.",
+      "pt": "Baterias e cristais de energia carregam carga no inventário: carregue-os nos slots de bateria das máquinas ou num **Charge Pad**, e use para alimentar ferramentas ou dar partida numa máquina. Cristais de tier alto (energia, lapotron, irídio) guardam muito mais."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Battery",
+            "pt": "Bateria"
+          },
+          "icon": {
+            "item": "item/battery/battery_4"
+          }
+        },
+        {
+          "name": {
+            "en": "Advanced battery",
+            "pt": "Bateria avançada"
+          },
+          "icon": {
+            "item": "item/battery/advanced_battery_4"
+          }
+        },
+        {
+          "name": {
+            "en": "Energy crystal",
+            "pt": "Cristal de energia"
+          },
+          "icon": {
+            "item": "item/battery/energy_crystal_4"
+          }
+        },
+        {
+          "name": {
+            "en": "Lapotron crystal",
+            "pt": "Cristal lapotron"
+          },
+          "icon": {
+            "item": "item/battery/lapotron_crystal_4"
+          }
+        },
+        {
+          "name": {
+            "en": "Iridium crystal",
+            "pt": "Cristal de irídio"
+          },
+          "icon": {
+            "item": "item/battery/iridium_crystal_4"
+          }
+        }
+      ]
+    }
+  ]
+}

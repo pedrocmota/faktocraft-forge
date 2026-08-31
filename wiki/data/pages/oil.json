@@ -1,0 +1,173 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Oil is the industrial mid-game in one fluid: it becomes **fuel** for the strongest generators, **plastic** and mass-produced **rubber**, and its refining yields **sulfuric acid** - the electrolyte of every battery.",
+      "pt": "O petróleo é o meio de jogo industrial num único fluido: vira **fuel** para os geradores mais fortes, **plástico** e **borracha** em escala, e seu refino rende **ácido sulfúrico** - o eletrólito de toda bateria."
+    },
+    {
+      "type": "h",
+      "en": "Finding and pumping",
+      "pt": "Encontrando e bombeando"
+    },
+    {
+      "type": "p",
+      "en": "Oil generates as underground **pockets** (small and giant) and as surface **lakes** in dry biomes - see [Ores & world](#/world). Drop a [Pump](#/fluids) over the deposit, buffer it in [Tanks](#/fluids) and pipe it home.",
+      "pt": "O petróleo gera como **bolsões** subterrâneos (pequenos e gigantes) e **lagos** de superfície em biomas secos - veja [Minérios e mundo](#/world). Ponha uma [Bomba](#/fluids) sobre o depósito, acumule em [Tanques](#/fluids) e leve por tubos para casa."
+    },
+    {
+      "type": "h",
+      "en": "Distillation",
+      "pt": "Destilação"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Distillery",
+            "pt": "Destilaria"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/distillery_top",
+              "front": "block/machines/distillery_front",
+              "side": "block/machines/distillery_side"
+            }
+          },
+          "desc": {
+            "en": "Needs clear space above - it raises its own distillation tower.",
+            "pt": "Precisa de espaço livre acima - ela ergue a própria torre de destilação."
+          }
+        }
+      ]
+    },
+    {
+      "type": "p",
+      "en": "Each operation refines **100 mB of oil + 40 mB of water** into **80 mB of fuel**, **20 mB of sulfuric acid** and a trickle of **sulfur dust** in the output slot. Nothing is wasted - every byproduct has a job below.",
+      "pt": "Cada operação refina **100 mB de petróleo + 40 mB de água** em **80 mB de fuel**, **20 mB de ácido sulfúrico** e um pingado de **pó de enxofre** no slot de saída. Nada se perde - cada subproduto tem função abaixo."
+    },
+    {
+      "type": "h",
+      "en": "Fuel",
+      "pt": "Fuel"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Combustion Generator",
+            "pt": "Gerador de Combustão"
+          },
+          "icon": {
+            "block": {
+              "top": "block/generator/combustion_generator_top",
+              "front": "block/generator/combustion_generator_front",
+              "side": "block/generator/combustion_generator_leftright"
+            }
+          },
+          "desc": {
+            "en": "Burns fuel at **40 E/t** - the strongest mid-game generator.",
+            "pt": "Queima fuel a **40 E/t** - o gerador mais forte do meio de jogo."
+          }
+        },
+        {
+          "name": {
+            "en": "Fueling Station",
+            "pt": "Posto de Abastecimento"
+          },
+          "icon": {
+            "item": "block/machines/basic/fueling_station_front"
+          },
+          "desc": {
+            "en": "Fills [jetpacks](#/jetpack) with fuel from its tank.",
+            "pt": "Enche [jetpacks](#/jetpack) com o fuel do tanque."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Plastic and rubber",
+      "pt": "Plástico e borracha"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Plastic",
+            "pt": "Plástico"
+          },
+          "icon": {
+            "item": "item/resource/plastic"
+          },
+          "desc": {
+            "en": "Polymerizer: 500 mB oil + coal dust → **2 plastic**.",
+            "pt": "Polimerizadora: 500 mB de petróleo + pó de carvão → **2 plásticos**."
+          }
+        },
+        {
+          "name": {
+            "en": "Rubber",
+            "pt": "Borracha"
+          },
+          "icon": {
+            "item": "item/resource/rubber"
+          },
+          "desc": {
+            "en": "Polymerizer: 500 mB oil + sulfur dust → **3 rubber** - industrial-scale rubber, no treetap.",
+            "pt": "Polimerizadora: 500 mB de petróleo + pó de enxofre → **3 borrachas** - escala industrial, sem treetap."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Sulfuric acid",
+      "pt": "Ácido sulfúrico"
+    },
+    {
+      "type": "p",
+      "en": "Two sources: the distillery byproduct above, or the **Fluid Enricher** - 1 sulfur dust + 250 mB water → **250 mB acid** (mine [sulfur ore](#/world) for the dust). Two consumers:",
+      "pt": "Duas fontes: o subproduto da destilaria acima, ou a **Enriquecedora de Fluidos** - 1 pó de enxofre + 250 mB de água → **250 mB de ácido** (minere [minério de enxofre](#/world) para o pó). Dois consumidores:"
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Battery electrolyte",
+            "pt": "Eletrólito de bateria"
+          },
+          "icon": {
+            "item": "item/battery/battery_4"
+          },
+          "desc": {
+            "en": "Battery recipes take a fluid cell with **1000 mB of acid**.",
+            "pt": "Receitas de bateria pedem uma célula com **1000 mB de ácido**."
+          }
+        },
+        {
+          "name": {
+            "en": "Coolant",
+            "pt": "Refrigerante"
+          },
+          "icon": {
+            "item": "item/fluid_cell"
+          },
+          "desc": {
+            "en": "Fluid Enricher: water + acid + lapis + diamond dust → coolant for advanced gear.",
+            "pt": "Enriquecedora: água + ácido + lápis + pó de diamante → refrigerante para equipamentos avançados."
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "Sulfuric acid is **dangerous as a placed fluid**: touching it burns for 3 hearts. Move it in cells and pipes, not buckets on the floor.",
+      "pt": "O ácido sulfúrico é **perigoso como fluido no mundo**: encostar queima 3 corações. Transporte em células e tubos, não em baldes pelo chão."
+    }
+  ]
+}

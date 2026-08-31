@@ -1,0 +1,224 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Manufacturing machines turn refined resources into parts: plates, rods, circuits, alloys and plastic. Most recipes that you make by hand early on move into these machines later.",
+      "pt": "As máquinas de manufatura transformam recursos refinados em peças: placas, hastes, circuitos, ligas e plástico. A maioria das receitas feitas à mão no começo migra para essas máquinas depois."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Compressor",
+            "pt": "Compressor"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/compressor_top",
+              "front": "block/machines/compressor_front",
+              "side": "block/machines/compressor_side"
+            }
+          },
+          "desc": {
+            "en": "Presses plates, carbon and dense materials.",
+            "pt": "Prensa placas, carbono e materiais densos."
+          }
+        },
+        {
+          "name": {
+            "en": "Metal Former",
+            "pt": "Formadora de Metal"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/metal_former_top",
+              "front": "block/machines/basic/metal_former_front",
+              "side": "block/machines/basic/metal_former_side"
+            }
+          },
+          "desc": {
+            "en": "Rolls, extrudes or cuts metal - three switchable modes.",
+            "pt": "Lamina, extruda ou corta metal - três modos alternáveis."
+          }
+        },
+        {
+          "name": {
+            "en": "Extruder",
+            "pt": "Extrusora"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/extruder_top",
+              "front": "block/machines/extruder_front",
+              "side": "block/machines/extruder_side"
+            }
+          },
+          "desc": {
+            "en": "Shapes rods, cables and profiles.",
+            "pt": "Molda hastes, cabos e perfis."
+          }
+        },
+        {
+          "name": {
+            "en": "Alloy Smelter",
+            "pt": "Fundidora de Ligas"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/alloy_smelter_top",
+              "front": "block/machines/basic/alloy_smelter_front",
+              "side": "block/machines/basic/alloy_smelter_side"
+            }
+          },
+          "desc": {
+            "en": "Combines up to three inputs into alloys like bronze.",
+            "pt": "Combina até três entradas em ligas como o bronze."
+          }
+        },
+        {
+          "name": {
+            "en": "Circuit Assembler",
+            "pt": "Montadora de Circuitos"
+          },
+          "icon": {
+            "block": {
+              "top": "block/basic_machine_casing",
+              "front": "block/machines/basic/circuit_assembler_front",
+              "side": "block/basic_machine_casing"
+            }
+          },
+          "desc": {
+            "en": "Builds the circuits every advanced machine needs.",
+            "pt": "Monta os circuitos que toda máquina avançada exige."
+          }
+        },
+        {
+          "name": {
+            "en": "Extractor",
+            "pt": "Extratora"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/extractor_top",
+              "front": "block/machines/extractor_front",
+              "side": "block/machines/extractor_leftright"
+            }
+          },
+          "desc": {
+            "en": "Extracts rubber and essences efficiently.",
+            "pt": "Extrai borracha e essências com eficiência."
+          }
+        },
+        {
+          "name": {
+            "en": "Sawmill",
+            "pt": "Serraria"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/sawmill_top",
+              "front": "block/machines/sawmill_front",
+              "side": "block/machines/sawmill_side"
+            }
+          },
+          "desc": {
+            "en": "More planks per log, plus sawdust.",
+            "pt": "Mais tábuas por tronco, e serragem."
+          }
+        },
+        {
+          "name": {
+            "en": "Fermenter",
+            "pt": "Fermentadora"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/fermenter_top",
+              "front": "block/machines/basic/fermenter_front",
+              "side": "block/machines/basic/fermenter_leftright"
+            }
+          },
+          "desc": {
+            "en": "Ferments biomass towards biofuel.",
+            "pt": "Fermenta biomassa rumo ao biocombustível."
+          }
+        },
+        {
+          "name": {
+            "en": "Polymerizer",
+            "pt": "Polimerizadora"
+          },
+          "icon": {
+            "block": {
+              "top": "block/basic_machine_casing",
+              "front": "block/machines/basic/polymerizer_front_l4",
+              "side": "block/basic_machine_casing"
+            }
+          },
+          "desc": {
+            "en": "Makes plastic from oil products.",
+            "pt": "Produz plástico a partir de derivados do petróleo."
+          }
+        },
+        {
+          "name": {
+            "en": "Canning Machine",
+            "pt": "Enlatadora"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/canning_machine_top",
+              "front": "block/machines/basic/canning_machine_front",
+              "side": "block/machines/basic/canning_machine_leftright"
+            }
+          },
+          "desc": {
+            "en": "Fills cells and cans with fluids and food.",
+            "pt": "Enche células e latas com fluidos e comida."
+          }
+        },
+        {
+          "name": {
+            "en": "Distillery",
+            "pt": "Destilaria"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/distillery_top",
+              "front": "block/machines/distillery_front",
+              "side": "block/machines/distillery_side"
+            }
+          },
+          "desc": {
+            "en": "Distills oil into fuel through its tower.",
+            "pt": "Destila petróleo em fuel pela sua torre."
+          }
+        },
+        {
+          "name": {
+            "en": "Fluid Enricher",
+            "pt": "Enriquecedora de Fluidos"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/fluid_enricher_top",
+              "front": "block/machines/basic/fluid_enricher_front",
+              "side": "block/machines/basic/fluid_enricher_leftright"
+            }
+          },
+          "desc": {
+            "en": "Mixes items into fluids for advanced recipes.",
+            "pt": "Mistura itens em fluidos para receitas avançadas."
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Open any machine in **JEI** to see everything it can make - every recipe category in the mod is registered there.",
+      "pt": "Abra qualquer máquina no **JEI** para ver tudo que ela produz - todas as categorias de receita do mod estão registradas lá."
+    }
+  ]
+}
