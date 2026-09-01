@@ -1,6 +1,6 @@
 package com.faktocraft.common.registries;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -36,7 +36,7 @@ public final class RegistrationHandler {
   }
 
   public static ResourceLocation id(String name) {
-    return new ResourceLocation(IndReb.MODID, name);
+    return new ResourceLocation(Faktocraft.MODID, name);
   }
 
   public static synchronized <T> T enqueue(ResourceKey<? extends Registry<? super T>> registry, String name, T value) {

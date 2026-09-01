@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import java.util.List;
-import static com.faktocraft.IndReb.MODID;
+import static com.faktocraft.Faktocraft.MODID;
 
 public class GuiExpButton extends GuiButton {
 

@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jade.provider;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.pipe.IValveHolder;
 import com.faktocraft.common.block.impl.pipe.PipeValve;
 import net.minecraft.ChatFormatting;
@@ -15,7 +15,7 @@ public class JadeValveProvider implements IBlockComponentProvider {
 
   public static final JadeValveProvider INSTANCE = new JadeValveProvider();
 
-  private static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "valve_info");
+  private static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "valve_info");
 
   @Override
   public ResourceLocation getUid() {
@@ -32,9 +32,9 @@ public class JadeValveProvider implements IBlockComponentProvider {
       return;
     }
     Component state = valve.isOpen()
-        ? Component.translatable("top." + IndReb.MODID + ".state_open").withStyle(ChatFormatting.GREEN)
-        : Component.translatable("top." + IndReb.MODID + ".state_closed").withStyle(ChatFormatting.RED);
-    tooltip.add(Component.translatable("top." + IndReb.MODID + ".valve", state)
+        ? Component.translatable("top." + Faktocraft.MODID + ".state_open").withStyle(ChatFormatting.GREEN)
+        : Component.translatable("top." + Faktocraft.MODID + ".state_closed").withStyle(ChatFormatting.RED);
+    tooltip.add(Component.translatable("top." + Faktocraft.MODID + ".valve", state)
         .withStyle(ChatFormatting.GRAY));
   }
 }

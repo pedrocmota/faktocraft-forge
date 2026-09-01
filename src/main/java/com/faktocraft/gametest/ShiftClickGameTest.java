@@ -1,6 +1,6 @@
 package com.faktocraft.gametest;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.recycler.MenuRecycler;
 import com.faktocraft.common.entity.block.IndRebBlockEntity;
 import com.faktocraft.common.registries.ModItems;
@@ -13,7 +13,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-@net.minecraftforge.gametest.GameTestHolder(IndReb.MODID)
+@net.minecraftforge.gametest.GameTestHolder(Faktocraft.MODID)
 @net.minecraftforge.gametest.PrefixGameTestTemplate(false)
 public class ShiftClickGameTest {
 

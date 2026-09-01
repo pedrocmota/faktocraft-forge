@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.extractor;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.progress.GuiProgressExtracting;
 import net.minecraft.network.chat.Component;
@@ -25,6 +25,6 @@ public class ScreenExtractor extends BetterScreen<MenuExtractor> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/standard_machine.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/standard_machine.png");
   }
 }

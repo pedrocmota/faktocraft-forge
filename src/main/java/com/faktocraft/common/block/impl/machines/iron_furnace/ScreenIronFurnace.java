@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.iron_furnace;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.progress.GuiProgressArrow;
 import com.faktocraft.common.screen.progress.GuiProgressFuel;
@@ -27,6 +27,6 @@ public class ScreenIronFurnace extends BetterScreen<MenuIronFurnace> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/iron_furnace.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/iron_furnace.png");
   }
 }

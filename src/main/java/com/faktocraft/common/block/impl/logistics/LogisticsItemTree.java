@@ -55,7 +55,7 @@ public final class LogisticsItemTree {
         }
       }
     } catch (Throwable error) {
-      com.faktocraft.IndReb.LOGGER.error("Failed to build the creative item index for module filters", error);
+      com.faktocraft.Faktocraft.LOGGER.error("Failed to build the creative item index for module filters", error);
     }
     tabIndex = byItem;
     uiIndex = ui;

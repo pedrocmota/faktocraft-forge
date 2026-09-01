@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.recipe.impl.ExtrudingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
@@ -21,7 +21,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class ExtrudingCategory extends AbstractRecipeCategory<ExtrudingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "extruding");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "extruding");
   public static final RecipeType<ExtrudingRecipe> TYPE = new RecipeType<>(UID, ExtrudingRecipe.class);
 
   private IDrawableAnimated progress;

@@ -1,6 +1,6 @@
 package com.faktocraft.common.subscribers;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.interfaces.item.IElectricItem;
 import net.minecraft.server.level.ServerLevel;
@@ -13,7 +13,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = IndReb.MODID)
+@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
 public class ModEvents {
 
   @SubscribeEvent

@@ -1,6 +1,6 @@
 package com.faktocraft.common.fluid;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.registries.ModBlocks;
 import com.faktocraft.common.registries.RegistrationHandler;
 import net.minecraft.core.BlockPos;
@@ -105,9 +105,9 @@ public class ModFluids {
     FlowingFluid[] holder = new FlowingFluid[2];
     Block[] blockHolder = new Block[1];
 
-    ResourceLocation stillTexture = new ResourceLocation(IndReb.MODID, "block/fluid/" + stillName + "_still");
-    ResourceLocation flowingTexture = new ResourceLocation(IndReb.MODID, "block/fluid/" + stillName + "_flow");
-    ResourceLocation overlayTexture = new ResourceLocation(IndReb.MODID, "block/fluid/" + stillName + "_overlay");
+    ResourceLocation stillTexture = new ResourceLocation(Faktocraft.MODID, "block/fluid/" + stillName + "_still");
+    ResourceLocation flowingTexture = new ResourceLocation(Faktocraft.MODID, "block/fluid/" + stillName + "_flow");
+    ResourceLocation overlayTexture = new ResourceLocation(Faktocraft.MODID, "block/fluid/" + stillName + "_overlay");
     FluidType fluidType = new FluidType(FluidType.Properties.create().viscosity(viscosity).density(density)) {
       @Override
       public boolean isVaporizedOnPlacement(Level level, BlockPos pos, FluidStack stack) {

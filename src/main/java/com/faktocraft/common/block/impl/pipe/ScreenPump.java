@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.pipe;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.GuiUtil;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,7 +22,7 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
     return BACKGROUND;
   }
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
       "textures/gui/container/pipe_machine.png");
 
   private com.faktocraft.common.screen.bar.GuiElectricBarVertical energyBar;
@@ -48,7 +48,7 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
     for (int i = 0; i < 3; i++) {
       final int id = i;
       runModeButtons[i] = addRenderableWidget(net.minecraft.client.gui.components.Button
-          .builder(Component.translatable("motor." + IndReb.MODID + ".run." + i), b -> press(id))
+          .builder(Component.translatable("motor." + Faktocraft.MODID + ".run." + i), b -> press(id))
           .bounds(left + 8, top + 43 + i * 17, 112, 16).build());
     }
   }
@@ -85,12 +85,12 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
       return;
     }
     String key = hoveredSlot.index < 2
-        ? "gui." + IndReb.MODID + ".slot.capacitor"
+        ? "gui." + Faktocraft.MODID + ".slot.capacitor"
         : hoveredSlot.index == 2
-            ? "gui." + IndReb.MODID + ".slot.tension"
+            ? "gui." + Faktocraft.MODID + ".slot.tension"
             : hoveredSlot.index < 6
-                ? "gui." + IndReb.MODID + ".motor.overclock"
-                : "gui." + IndReb.MODID + ".slot.dock_battery";
+                ? "gui." + Faktocraft.MODID + ".motor.overclock"
+                : "gui." + Faktocraft.MODID + ".slot.dock_battery";
     graphics.renderTooltip(GuiUtil.getFont(), Component.translatable(key), mouseX, mouseY);
   }
 

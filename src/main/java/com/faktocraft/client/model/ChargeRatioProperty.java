@@ -1,6 +1,6 @@
 package com.faktocraft.client.model;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.item.base.ElectricItem;
 import com.faktocraft.common.registries.ModItems;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item;
 
 public class ChargeRatioProperty {
 
-  public static final ResourceLocation ID = new ResourceLocation(IndReb.MODID, "charge_ratio");
+  public static final ResourceLocation ID = new ResourceLocation(Faktocraft.MODID, "charge_ratio");
 
   public static void register() {
     ClampedItemPropertyFunction function = (stack, level, entity, seed) -> ElectricItem.getChargeRatio(stack);

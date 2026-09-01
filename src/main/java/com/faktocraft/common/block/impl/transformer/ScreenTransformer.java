@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.transformer;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.button.GuiTransformerButton;
 import com.faktocraft.common.screen.widgets.GuiText;
@@ -22,9 +22,9 @@ public class ScreenTransformer extends BetterScreen<MenuTransformer> {
     BlockEntityTransformer be = (BlockEntityTransformer) getBlockEntity();
 
     addRenderableOnlyComponent(
-        new GuiText(this, 88, 5, 8, 30, Component.translatable("gui." + IndReb.MODID + ".input")));
+        new GuiText(this, 88, 5, 8, 30, Component.translatable("gui." + Faktocraft.MODID + ".input")));
     addRenderableOnlyComponent(
-        new GuiText(this, 88, 5, 8, 46, Component.translatable("gui." + IndReb.MODID + ".output")));
+        new GuiText(this, 88, 5, 8, 46, Component.translatable("gui." + Faktocraft.MODID + ".output")));
 
     addRenderableOnlyComponent(new GuiTransformerInfo(this, be.getTransformerTier(), be::getTransformerMode));
     addRenderableComponent(new GuiTransformerButton(this, 140, 32, be.changeMode()));
@@ -34,6 +34,6 @@ public class ScreenTransformer extends BetterScreen<MenuTransformer> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/transformer.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/transformer.png");
   }
 }

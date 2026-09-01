@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.battery_box;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.impl.BasicEnergyStorage;
 import com.faktocraft.common.enums.EnumLang;
 import com.faktocraft.common.screen.BetterScreen;
@@ -46,6 +46,6 @@ public class ScreenBatteryBox extends BetterScreen<MenuBatteryBox> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/battery_box.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/battery_box.png");
   }
 }

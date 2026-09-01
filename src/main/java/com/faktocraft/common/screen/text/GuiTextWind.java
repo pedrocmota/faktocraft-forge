@@ -1,6 +1,6 @@
 package com.faktocraft.common.screen.text;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.widgets.GuiElement;
 import com.faktocraft.common.util.GuiUtil;
@@ -22,7 +22,7 @@ public class GuiTextWind extends GuiElement {
 
   @Override
   protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
-    MutableComponent component = Component.translatable("gui." + IndReb.MODID + ".wind_strength",
+    MutableComponent component = Component.translatable("gui." + Faktocraft.MODID + ".wind_strength",
         percent.getAsInt());
     Font font = GuiUtil.getFont();
     float left = (float) (getLeftOffset() + 5 - font.width(component) / 2);

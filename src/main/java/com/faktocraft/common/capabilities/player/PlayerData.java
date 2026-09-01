@@ -1,6 +1,6 @@
 package com.faktocraft.common.capabilities.player;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -28,7 +28,7 @@ public class PlayerData {
   public static final Capability<Data> CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
   });
 
-  private static final ResourceLocation ID = new ResourceLocation(IndReb.MODID, "player_data");
+  private static final ResourceLocation ID = new ResourceLocation(Faktocraft.MODID, "player_data");
 
   private static class Provider implements ICapabilitySerializable<CompoundTag> {
     private final Data data = new Data();

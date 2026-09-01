@@ -1,6 +1,6 @@
 package com.faktocraft.common.network.packet;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.interfaces.item.IElectricItem;
 import com.faktocraft.common.item.impl.tools.Prospector;
@@ -46,7 +46,7 @@ public record PacketProspectorScan() {
       IEnergy energy = prospector.getEnergy(stack);
       if (energy == null || energy.energyStored() < Prospector.SCAN_COST) {
         player.displayClientMessage(Component
-            .translatable("gui." + IndReb.MODID + ".prospector.no_energy")
+            .translatable("gui." + Faktocraft.MODID + ".prospector.no_energy")
             .withStyle(ChatFormatting.RED), true);
         return;
       }

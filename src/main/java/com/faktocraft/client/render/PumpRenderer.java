@@ -1,6 +1,6 @@
 package com.faktocraft.client.render;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.pipe.BlockEntityPump;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -21,7 +21,7 @@ public class PumpRenderer implements BlockEntityRenderer<BlockEntityPump> {
   private static final float R0 = 6.5f / 16.0f;
   private static final float R1 = 9.5f / 16.0f;
   private static final float CHASE_SPEED = 0.2f;
-  private static final ResourceLocation TUBE_SPRITE = new ResourceLocation(IndReb.MODID, "block/pipe/pump_tube");
+  private static final ResourceLocation TUBE_SPRITE = new ResourceLocation(Faktocraft.MODID, "block/pipe/pump_tube");
 
   @Override
   public void render(BlockEntityPump pump, float partialTick, PoseStack poseStack, MultiBufferSource buffer,

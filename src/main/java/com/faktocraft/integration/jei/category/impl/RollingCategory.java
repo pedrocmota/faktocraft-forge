@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.recipe.impl.RollingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
@@ -21,7 +21,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class RollingCategory extends AbstractRecipeCategory<RollingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "rolling");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "rolling");
   public static final RecipeType<RollingRecipe> TYPE = new RecipeType<>(UID, RollingRecipe.class);
 
   private IDrawableAnimated progress;

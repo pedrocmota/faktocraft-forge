@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.alloy_smelter;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.progress.GuiProgressArrow;
 import com.faktocraft.common.screen.progress.GuiProgressFuel;
@@ -30,6 +30,6 @@ public class ScreenAlloySmelter extends BetterScreen<MenuAlloySmelter> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/alloy_smelter.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/alloy_smelter.png");
   }
 }

@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.impl.upgrade;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.UpgradeType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -25,7 +25,7 @@ public class TensionUpgrade extends ItemUpgrade {
 
   @Override
   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip." + IndReb.MODID + ".tension_upgrade", mkLevel)
+    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".tension_upgrade", mkLevel)
         .withStyle(ChatFormatting.GRAY));
     super.appendHoverText(stack, level, tooltip, flag);
   }

@@ -2,7 +2,7 @@ package com.faktocraft.common.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraftforge.fml.loading.FMLPaths;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,7 +30,7 @@ public class ModConfig {
       }
       Files.writeString(path, GSON.toJson(server));
     } catch (IOException | RuntimeException e) {
-      IndReb.LOGGER.error("Failed to load config, using defaults", e);
+      Faktocraft.LOGGER.error("Failed to load config, using defaults", e);
     }
   }
 }

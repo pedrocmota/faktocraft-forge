@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.polymerizer;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.bar.GuiFluidBarVertical;
@@ -30,6 +30,6 @@ public class ScreenPolymerizer extends BetterScreen<MenuPolymerizer> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/polymerizer.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/polymerizer.png");
   }
 }

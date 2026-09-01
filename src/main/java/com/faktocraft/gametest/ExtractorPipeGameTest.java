@@ -1,6 +1,6 @@
 package com.faktocraft.gametest;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.pipe.BlockEntityFluidExtractorPipe;
 import com.faktocraft.common.block.impl.pipe.BlockEntityTank;
 import com.faktocraft.common.block.impl.pipe.BlockFluidExtractorPipe;
@@ -11,7 +11,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 
-@net.minecraftforge.gametest.GameTestHolder(IndReb.MODID)
+@net.minecraftforge.gametest.GameTestHolder(Faktocraft.MODID)
 @net.minecraftforge.gametest.PrefixGameTestTemplate(false)
 public class ExtractorPipeGameTest {
 

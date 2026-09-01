@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.metal_former.screen;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.metal_former.BlockEntityMetalFormer;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
@@ -21,7 +21,7 @@ public class GuiMetalFormerMode extends GuiButton {
   public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY)) {
       graphics.renderTooltip(com.faktocraft.common.util.GuiUtil.getFont(),
-          Component.translatable("gui." + IndReb.MODID + ".change_mode"), mouseX, mouseY);
+          Component.translatable("gui." + Faktocraft.MODID + ".change_mode"), mouseX, mouseY);
     }
     super.renderWidgetToolTip(screen, graphics, mouseX, mouseY);
   }

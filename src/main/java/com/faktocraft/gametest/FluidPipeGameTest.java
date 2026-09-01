@@ -1,6 +1,6 @@
 package com.faktocraft.gametest;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.VoxelBlock;
 import com.faktocraft.common.block.impl.pipe.BlockEntityFluidPipe;
 import com.faktocraft.common.block.impl.pipe.BlockEntityTank;
@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 
-@net.minecraftforge.gametest.GameTestHolder(IndReb.MODID)
+@net.minecraftforge.gametest.GameTestHolder(Faktocraft.MODID)
 @net.minecraftforge.gametest.PrefixGameTestTemplate(false)
 public class FluidPipeGameTest {
 

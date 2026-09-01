@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.metal_former;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.metal_former.screen.GuiMetalFormerMode;
 import com.faktocraft.common.block.impl.machines.metal_former.screen.GuiMetalFormerProgress;
 import com.faktocraft.common.network.ModNetworking;
@@ -33,6 +33,6 @@ public class ScreenMetalFormer extends BetterScreen<MenuMetalFormer> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/metal_former.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/metal_former.png");
   }
 }

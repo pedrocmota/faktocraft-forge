@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jade.provider;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.EnergyTier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -15,7 +15,7 @@ public class JadeCableProvider implements IBlockComponentProvider {
 
   public static final JadeCableProvider INSTANCE = new JadeCableProvider();
 
-  private static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "cable_info");
+  private static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "cable_info");
 
   @Override
   public ResourceLocation getUid() {
@@ -42,11 +42,11 @@ public class JadeCableProvider implements IBlockComponentProvider {
     } else {
       flowingComponent = Component.literal("-");
     }
-    tooltip.add(Component.translatable("top." + IndReb.MODID + ".current_voltage", flowingComponent)
+    tooltip.add(Component.translatable("top." + Faktocraft.MODID + ".current_voltage", flowingComponent)
         .withStyle(ChatFormatting.DARK_GRAY));
 
     EnergyTier cableTier = EnergyTier.getTierFromLvl(cableTierLvl);
-    tooltip.add(Component.translatable("top." + IndReb.MODID + ".energy_tier",
+    tooltip.add(Component.translatable("top." + Faktocraft.MODID + ".energy_tier",
         Component.translatable(cableTier.getLang().getTranslationKey()).withStyle(cableTier.getColor()))
         .withStyle(ChatFormatting.DARK_GRAY));
   }

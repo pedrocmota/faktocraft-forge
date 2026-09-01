@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.pipe;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.GuiSlotType;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.GuiUtil;
@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPipe>
     implements com.faktocraft.common.interfaces.screen.IGuiWrapper {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
       "textures/gui/container/pipe_machine.png");
 
   private static final int PANEL_W = 24;
@@ -67,7 +67,7 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
     for (int i = 0; i < 3; i++) {
       final int id = i;
       runModeButtons[i] = addRenderableWidget(Button
-          .builder(Component.translatable("extractor." + IndReb.MODID + ".run." + i), b -> press(id))
+          .builder(Component.translatable("extractor." + Faktocraft.MODID + ".run." + i), b -> press(id))
           .bounds(left + 8, top + 43 + i * 17, 112, 16).build());
     }
     if (menu.getExtractor() != null) {
@@ -105,7 +105,7 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
     if (energyBar != null) {
       if (missingCapacitor() && energyBar.isMouseOver(mouseX, mouseY)) {
         graphics.renderTooltip(GuiUtil.getFont(),
-            Component.translatable("gui." + IndReb.MODID + ".capacitor_required")
+            Component.translatable("gui." + Faktocraft.MODID + ".capacitor_required")
                 .withStyle(net.minecraft.ChatFormatting.RED),
             mouseX, mouseY);
       } else {
@@ -137,10 +137,10 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
       return;
     }
     int dockSlot = hoveredSlot.index - MenuExtractorPipe.DOCK_INDEX;
-    String key = dockSlot < 0 ? "gui." + IndReb.MODID + ".extractor.upgrade"
-        : dockSlot == PipeExtractor.DOCK_TENSION_SLOT ? "gui." + IndReb.MODID + ".slot.tension"
-            : dockSlot == PipeExtractor.DOCK_BATTERY_SLOT ? "gui." + IndReb.MODID + ".slot.dock_battery"
-                : "gui." + IndReb.MODID + ".slot.capacitor";
+    String key = dockSlot < 0 ? "gui." + Faktocraft.MODID + ".extractor.upgrade"
+        : dockSlot == PipeExtractor.DOCK_TENSION_SLOT ? "gui." + Faktocraft.MODID + ".slot.tension"
+            : dockSlot == PipeExtractor.DOCK_BATTERY_SLOT ? "gui." + Faktocraft.MODID + ".slot.dock_battery"
+                : "gui." + Faktocraft.MODID + ".slot.capacitor";
     graphics.renderTooltip(GuiUtil.getFont(), Component.translatable(key), mouseX, mouseY);
   }
 
@@ -207,7 +207,7 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
     public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
       if (isMouseOver(mouseX, mouseY)) {
         graphics.renderTooltip(GuiUtil.getFont(),
-            Component.translatable("gui." + IndReb.MODID + ".energy",
+            Component.translatable("gui." + Faktocraft.MODID + ".energy",
                 TextComponentUtil.getFormattedEnergyUnit(getProgress().getProgress()),
                 TextComponentUtil.getFormattedEnergyUnit(getProgress().getProgressMax())),
             mouseX, mouseY);

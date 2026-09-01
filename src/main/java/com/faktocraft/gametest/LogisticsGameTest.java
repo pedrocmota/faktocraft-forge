@@ -1,6 +1,6 @@
 package com.faktocraft.gametest;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.logistics.BlockEntityAssemblyTable;
 import com.faktocraft.common.block.impl.logistics.BlockEntityChassis;
 import com.faktocraft.common.block.impl.logistics.BlockEntityCraftPipe;
@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder(IndReb.MODID)
+@GameTestHolder(Faktocraft.MODID)
 @PrefixGameTestTemplate(false)
 public class LogisticsGameTest {
 

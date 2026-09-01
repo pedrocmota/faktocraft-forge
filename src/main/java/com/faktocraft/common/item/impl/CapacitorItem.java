@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.item.base.BaseItem;
 import com.faktocraft.common.util.TextComponentUtil;
 import net.minecraft.ChatFormatting;
@@ -26,7 +26,7 @@ public class CapacitorItem extends BaseItem {
 
   @Override
   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip." + IndReb.MODID + ".capacitor_capacity",
+    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".capacitor_capacity",
         TextComponentUtil.getFormattedEnergyUnit(capacity)).withStyle(ChatFormatting.GRAY));
     super.appendHoverText(stack, level, tooltip, flag);
   }

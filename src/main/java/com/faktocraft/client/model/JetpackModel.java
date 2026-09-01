@@ -1,6 +1,6 @@
 package com.faktocraft.client.model;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -17,7 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 public class JetpackModel extends HumanoidModel<LivingEntity> {
 
   public static final ModelLayerLocation LAYER =
-      new ModelLayerLocation(new ResourceLocation(IndReb.MODID, "jetpack"), "main");
+      new ModelLayerLocation(new ResourceLocation(Faktocraft.MODID, "jetpack"), "main");
 
   private static JetpackModel instance;
 

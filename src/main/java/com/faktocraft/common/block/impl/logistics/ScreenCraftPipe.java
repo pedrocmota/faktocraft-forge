@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.util.ItemStackHandler;
@@ -20,7 +20,7 @@ import java.util.List;
 
 public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
       "textures/gui/container/craft_pipe.png");
 
   public static final int ARROW_X = 94 + PAD;

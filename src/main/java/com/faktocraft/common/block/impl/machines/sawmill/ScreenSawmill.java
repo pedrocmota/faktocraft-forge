@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.sawmill;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.progress.GuiProgressSawing;
 import net.minecraft.network.chat.Component;
@@ -24,6 +24,6 @@ public class ScreenSawmill extends BetterScreen<MenuSawmill> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/standard_machine.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/standard_machine.png");
   }
 }

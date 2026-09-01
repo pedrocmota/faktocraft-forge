@@ -1,6 +1,6 @@
 package com.faktocraft.common.screen.text;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.interfaces.entity.IProgress;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.widgets.GuiElement;
@@ -21,7 +21,7 @@ public class GuiTextHeat extends GuiElement {
 
   @Override
   protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
-    MutableComponent component = Component.translatable("gui." + IndReb.MODID + ".heat",
+    MutableComponent component = Component.translatable("gui." + Faktocraft.MODID + ".heat",
         progress.getPercentProgressString() + "%");
     GuiUtil.renderScaled(graphics, component.getString(), getLeftOffset(), getTopOffset(), 0.8f, 4210752, false);
     super.renderBg(graphics, minecraft, mouseX, mouseY);

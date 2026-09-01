@@ -2,7 +2,90 @@
  "multipart": [
   {
    "when": {
-    "source": "north|south"
+    "OR": [
+     {
+      "up": "true",
+      "source": "north|south|east|west|down"
+     },
+     {
+      "down": "true",
+      "source": "north|south|east|west|up"
+     },
+     {
+      "source": "up",
+      "down": "false",
+      "north": "false",
+      "south": "false",
+      "east": "false",
+      "west": "false"
+     },
+     {
+      "source": "down",
+      "up": "false",
+      "north": "false",
+      "south": "false",
+      "east": "false",
+      "west": "false"
+     }
+    ]
+   },
+   "apply": {
+    "model": "faktocraft:block/pipe/extractor_ring",
+    "x": 90
+   }
+  },
+  {
+   "when": {
+    "OR": [
+     {
+      "north": "true",
+      "source": "south|east|west",
+      "up": "false",
+      "down": "false"
+     },
+     {
+      "north": "true",
+      "source": "up",
+      "down": "false"
+     },
+     {
+      "north": "true",
+      "source": "down",
+      "up": "false"
+     },
+     {
+      "south": "true",
+      "source": "north|east|west",
+      "up": "false",
+      "down": "false"
+     },
+     {
+      "south": "true",
+      "source": "up",
+      "down": "false"
+     },
+     {
+      "south": "true",
+      "source": "down",
+      "up": "false"
+     },
+     {
+      "source": "north",
+      "south": "false",
+      "east": "false",
+      "west": "false",
+      "up": "false",
+      "down": "false"
+     },
+     {
+      "source": "south",
+      "north": "false",
+      "east": "false",
+      "west": "false",
+      "up": "false",
+      "down": "false"
+     }
+    ]
    },
    "apply": {
     "model": "faktocraft:block/pipe/extractor_ring"
@@ -10,20 +93,100 @@
   },
   {
    "when": {
-    "source": "east|west"
+    "OR": [
+     {
+      "east": "true",
+      "source": "north",
+      "south": "false",
+      "up": "false",
+      "down": "false"
+     },
+     {
+      "east": "true",
+      "source": "south",
+      "north": "false",
+      "up": "false",
+      "down": "false"
+     },
+     {
+      "east": "true",
+      "source": "up",
+      "north": "false",
+      "south": "false",
+      "down": "false"
+     },
+     {
+      "east": "true",
+      "source": "down",
+      "north": "false",
+      "south": "false",
+      "up": "false"
+     },
+     {
+      "east": "true",
+      "source": "west",
+      "north": "false",
+      "south": "false",
+      "up": "false",
+      "down": "false"
+     },
+     {
+      "west": "true",
+      "source": "north",
+      "south": "false",
+      "up": "false",
+      "down": "false"
+     },
+     {
+      "west": "true",
+      "source": "south",
+      "north": "false",
+      "up": "false",
+      "down": "false"
+     },
+     {
+      "west": "true",
+      "source": "up",
+      "north": "false",
+      "south": "false",
+      "down": "false"
+     },
+     {
+      "west": "true",
+      "source": "down",
+      "north": "false",
+      "south": "false",
+      "up": "false"
+     },
+     {
+      "west": "true",
+      "source": "east",
+      "north": "false",
+      "south": "false",
+      "up": "false",
+      "down": "false"
+     },
+     {
+      "source": "east",
+      "west": "false",
+      "north": "false",
+      "south": "false",
+      "up": "false",
+      "down": "false"
+     },
+     {
+      "source": "west",
+      "east": "false",
+      "north": "false",
+      "south": "false",
+      "up": "false",
+      "down": "false"
+     }
+    ]
    },
    "apply": {
     "model": "faktocraft:block/pipe/extractor_ring",
     "y": 90
-   }
-  },
-  {
-   "when": {
-    "source": "up|down"
-   },
-   "apply": {
-    "model": "faktocraft:block/pipe/extractor_ring",
-    "x": 90
    }
   },
   {

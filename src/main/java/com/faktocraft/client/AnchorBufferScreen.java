@@ -1,6 +1,6 @@
 package com.faktocraft.client;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketAnchorBuffer;
 import com.faktocraft.common.util.TextComponentUtil;
@@ -29,7 +29,7 @@ public class AnchorBufferScreen extends Screen {
   private int selected;
 
   private AnchorBufferScreen(BlockPos target, int current, int min, int max) {
-    super(Component.translatable("gui." + IndReb.MODID + ".anchor_buffer"));
+    super(Component.translatable("gui." + Faktocraft.MODID + ".anchor_buffer"));
     this.target = target;
     this.current = current;
     this.min = min;
@@ -63,7 +63,7 @@ public class AnchorBufferScreen extends Screen {
       }
     });
     addRenderableWidget(Button.builder(
-        Component.translatable("gui." + IndReb.MODID + ".anchor_buffer.apply"),
+        Component.translatable("gui." + Faktocraft.MODID + ".anchor_buffer.apply"),
         button -> apply()).bounds(left + 14, top + 74, PANEL_W - 28, 20).build());
   }
 
@@ -100,7 +100,7 @@ public class AnchorBufferScreen extends Screen {
     graphics.drawCenteredString(font, title.copy().withStyle(ChatFormatting.BOLD),
         left + PANEL_W / 2, top + 14, 0xFFE8C43A);
     graphics.drawCenteredString(font,
-        Component.translatable("gui." + IndReb.MODID + ".anchor_buffer.hint",
+        Component.translatable("gui." + Faktocraft.MODID + ".anchor_buffer.hint",
             TextComponentUtil.getFormattedEnergyUnit(min),
             TextComponentUtil.getFormattedEnergyUnit(max)).withStyle(ChatFormatting.GRAY),
         left + PANEL_W / 2, top + 58, 0xA0A0A0);

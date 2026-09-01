@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.recipe.impl.ScrapBoxRecipe;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.util.GuiUtil;
@@ -19,7 +19,7 @@ import static com.faktocraft.common.util.Constants.JEI;
 
 public class ScrapBoxCategory extends AbstractRecipeCategory<ScrapBoxRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "scrap_box");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "scrap_box");
   public static final RecipeType<ScrapBoxRecipe> TYPE = new RecipeType<>(UID, ScrapBoxRecipe.class);
 
   private static volatile float totalWeight = 0.0F;

@@ -38,7 +38,7 @@ public record PacketOpenCoreView(BlockPos blockPos, boolean taskBook) {
       if (msg.taskBook) {
         NetworkHooks.openScreen(player, new SimpleMenuProvider(
             (windowId, inventory, p) -> new MenuCoreTasks(windowId, p.level(), msg.blockPos, inventory, p),
-            Component.translatable("logistics." + com.faktocraft.IndReb.MODID + ".task_book")),
+            Component.translatable("logistics." + com.faktocraft.Faktocraft.MODID + ".task_book")),
             buf -> buf.writeBlockPos(msg.blockPos));
       } else if (block instanceof IHasMenu hasMenu) {
         NetworkHooks.openScreen(player,

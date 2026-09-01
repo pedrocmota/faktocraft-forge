@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketCoreTasksReq;
 import com.faktocraft.common.network.packet.PacketOpenCoreView;
@@ -18,7 +18,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class ScreenCoreTasks extends AbstractContainerScreen<MenuCoreTasks> {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
       "textures/gui/container/request_table_tasks.png");
   private static final int REFRESH_INTERVAL = 40;
 
@@ -32,7 +32,7 @@ public class ScreenCoreTasks extends AbstractContainerScreen<MenuCoreTasks> {
   }
 
   private String key(String name) {
-    return "logistics." + IndReb.MODID + "." + name;
+    return "logistics." + Faktocraft.MODID + "." + name;
   }
 
   @Override

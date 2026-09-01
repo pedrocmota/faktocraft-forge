@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.impl.quantum;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.ModArmorMaterials;
 import com.faktocraft.common.item.impl.nano.ItemNanoArmor;
@@ -14,6 +14,6 @@ public class ItemQuantumArmor extends ItemNanoArmor {
 
   @Override
   protected String protectionTooltipKey() {
-    return "tooltip." + IndReb.MODID + ".quantum_protection";
+    return "tooltip." + Faktocraft.MODID + ".quantum_protection";
   }
 }

@@ -1,6 +1,6 @@
 package com.faktocraft.common.command;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.pipe.BlockEntityFluidPipe;
 import com.faktocraft.common.block.impl.pipe.BlockEntityTank;
 import com.faktocraft.common.block.impl.pipe.PipeValve;
@@ -16,7 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = IndReb.MODID)
+@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
 public final class DebugValveTest {
 
   private DebugValveTest() {
@@ -93,7 +93,7 @@ public final class DebugValveTest {
   }
 
   private static void log(String msg) {
-    IndReb.LOGGER.info("[FAKTO-VALVE-TEST] " + msg);
+    Faktocraft.LOGGER.info("[FAKTO-VALVE-TEST] " + msg);
   }
 
   private static String amounts(ServerLevel level, int z) {

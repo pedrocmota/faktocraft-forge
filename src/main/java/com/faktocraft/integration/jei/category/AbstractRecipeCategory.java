@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
@@ -23,7 +23,7 @@ public abstract class AbstractRecipeCategory<T> extends mezz.jei.api.recipe.cate
   protected final int halfX;
 
   protected static String key(String name) {
-    return "jei." + IndReb.MODID + "." + name;
+    return "jei." + Faktocraft.MODID + "." + name;
   }
 
   protected AbstractRecipeCategory(RecipeType<T> recipeType, String unlocalizedName, IGuiHelper guiHelper,

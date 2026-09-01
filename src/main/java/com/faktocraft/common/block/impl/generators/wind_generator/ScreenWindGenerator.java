@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.generators.wind_generator;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.text.GuiTextSolar;
 import com.faktocraft.common.screen.text.GuiTextWind;
@@ -25,15 +25,15 @@ public class ScreenWindGenerator extends BetterScreen<MenuWindGenerator> {
     addRenderableOnlyComponent(new com.faktocraft.common.screen.text.GuiTextStatus(this, 140, 10, 8, 60, () -> {
       if (be.getRotorStack().isEmpty()) {
         return new com.faktocraft.common.screen.text.GuiTextStatus.StatusLine(
-            Component.translatable("gui." + IndReb.MODID + ".wind_no_rotor"), 0xB02020);
+            Component.translatable("gui." + Faktocraft.MODID + ".wind_no_rotor"), 0xB02020);
       }
       if (be.rotorBlocked) {
         return new com.faktocraft.common.screen.text.GuiTextStatus.StatusLine(
-            Component.translatable("gui." + IndReb.MODID + ".wind_blocked"), 0xB02020);
+            Component.translatable("gui." + Faktocraft.MODID + ".wind_blocked"), 0xB02020);
       }
       if (be.crowdCount > 0) {
         return new com.faktocraft.common.screen.text.GuiTextStatus.StatusLine(
-            Component.translatable("gui." + IndReb.MODID + ".wind_crowded", be.crowdCount), 0xC07818);
+            Component.translatable("gui." + Faktocraft.MODID + ".wind_crowded", be.crowdCount), 0xC07818);
       }
       return null;
     }));
@@ -43,6 +43,6 @@ public class ScreenWindGenerator extends BetterScreen<MenuWindGenerator> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/wind_generator.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/wind_generator.png");
   }
 }

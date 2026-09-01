@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 public final class ExtractorSocketRenderer {
 
   public static final ResourceLocation SOCKET_MODEL =
-      new ResourceLocation(com.faktocraft.IndReb.MODID, "block/pipe/extractor_cable_socket");
+      new ResourceLocation(com.faktocraft.Faktocraft.MODID, "block/pipe/extractor_cable_socket");
 
   private ExtractorSocketRenderer() {
   }

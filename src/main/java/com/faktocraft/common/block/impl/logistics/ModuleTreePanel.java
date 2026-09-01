@@ -1,7 +1,7 @@
 package com.faktocraft.common.block.impl.logistics;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketModuleTree;
 import net.minecraft.client.gui.Font;
@@ -77,7 +77,7 @@ public class ModuleTreePanel {
   }
 
   private String key(String name) {
-    return "logistics." + IndReb.MODID + "." + name;
+    return "logistics." + Faktocraft.MODID + "." + name;
   }
 
   public void setQuery(String query) {
@@ -117,8 +117,8 @@ public class ModuleTreePanel {
 
   private static List<String> orderedNamespaces(Set<String> present) {
     List<String> order = new ArrayList<>();
-    if (present.contains(IndReb.MODID)) {
-      order.add(IndReb.MODID);
+    if (present.contains(Faktocraft.MODID)) {
+      order.add(Faktocraft.MODID);
     }
     if (present.contains("minecraft")) {
       order.add("minecraft");

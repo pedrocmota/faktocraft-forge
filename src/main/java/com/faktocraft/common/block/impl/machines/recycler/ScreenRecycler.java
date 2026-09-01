@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.recycler;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.progress.GuiProgressRecycler;
 import net.minecraft.network.chat.Component;
@@ -25,6 +25,6 @@ public class ScreenRecycler extends BetterScreen<MenuRecycler> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/recycler.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/recycler.png");
   }
 }

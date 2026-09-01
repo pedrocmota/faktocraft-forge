@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.fluid_enricher;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.bar.GuiFluidBarVertical;
 import com.faktocraft.common.screen.progress.GuiProgressArrow;
@@ -30,6 +30,6 @@ public class ScreenFluidEnricher extends BetterScreen<MenuFluidEnricher> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/fluid_enricher.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/fluid_enricher.png");
   }
 }

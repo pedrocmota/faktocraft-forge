@@ -1,6 +1,6 @@
 package com.faktocraft.gametest;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.chunk_loader.BlockEntityChunkLoader;
 import com.faktocraft.common.block.impl.chunk_loader.ChunkLoaderManager;
 import com.faktocraft.common.block.impl.chunk_loader.ChunkLoaderRegistry;
@@ -17,7 +17,7 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-@GameTestHolder(IndReb.MODID)
+@GameTestHolder(Faktocraft.MODID)
 @PrefixGameTestTemplate(false)
 public class ChunkLoaderGameTest {
 

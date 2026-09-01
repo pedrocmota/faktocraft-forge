@@ -1,6 +1,6 @@
 package com.faktocraft.common.enums;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.registries.ModTags;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -102,7 +102,7 @@ public enum ModArmorMaterials implements ArmorMaterial {
 
   @Override
   public String getName() {
-    return IndReb.MODID + ":" + name;
+    return Faktocraft.MODID + ":" + name;
   }
 
   @Override

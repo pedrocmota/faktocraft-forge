@@ -25,8 +25,8 @@ public record PacketToggleDischarge(BlockPos blockPos) {
         return;
       }
       ModNetworking.withBlockEntity(sender, msg.blockPos(), (player, be) -> {
-        if (be instanceof IndRebBlockEntity indReb && indReb.hasBatteryDock()) {
-          indReb.toggleDischargeMode();
+        if (be instanceof IndRebBlockEntity faktocraft && faktocraft.hasBatteryDock()) {
+          faktocraft.toggleDischargeMode();
         }
       });
     });

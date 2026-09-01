@@ -1,6 +1,6 @@
 package com.faktocraft.common.energy.provider;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.EnergyLookup;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.energy.interfaces.IEnergyCore;
@@ -38,7 +38,7 @@ import java.util.WeakHashMap;
 
 public class EnergyCore extends SavedData implements IEnergyCore {
 
-  public static final String DATA_NAME = IndReb.MODID + "_energy_core";
+  public static final String DATA_NAME = Faktocraft.MODID + "_energy_core";
 
   private static final Map<Level, EnergyCore> CLIENT_CORES = new WeakHashMap<>();
 

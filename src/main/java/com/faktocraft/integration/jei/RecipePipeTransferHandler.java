@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.logistics.BlockEntityRecipePipe;
 import com.faktocraft.common.block.impl.logistics.LogisticsRegistry;
 import com.faktocraft.common.block.impl.logistics.MenuRecipePipe;
@@ -47,13 +47,13 @@ public class RecipePipeTransferHandler implements IUniversalRecipeTransferHandle
       Player player, boolean maxTransfer, boolean doTransfer) {
     if (recipe instanceof CraftingRecipe) {
       return helper.createUserErrorWithTooltip(
-          Component.translatable("logistics." + IndReb.MODID + ".craft.transfer_crafting"));
+          Component.translatable("logistics." + Faktocraft.MODID + ".craft.transfer_crafting"));
     }
     List<ItemStack> inputs = collect(recipeSlots, RecipeIngredientRole.INPUT, BlockEntityRecipePipe.MAX_INPUTS);
     List<ItemStack> outputs = collect(recipeSlots, RecipeIngredientRole.OUTPUT, BlockEntityRecipePipe.MAX_OUTPUTS);
     if (inputs.isEmpty() || outputs.isEmpty()) {
       return helper.createUserErrorWithTooltip(
-          Component.translatable("logistics." + IndReb.MODID + ".craft.transfer_items_only"));
+          Component.translatable("logistics." + Faktocraft.MODID + ".craft.transfer_items_only"));
     }
     if (!doTransfer) {
       return null;

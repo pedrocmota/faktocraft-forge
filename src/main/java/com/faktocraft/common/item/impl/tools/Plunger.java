@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.impl.tools;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.VoxelBlock;
 import com.faktocraft.common.block.impl.pipe.BlockEntityFluidPipe;
 import com.faktocraft.common.block.impl.pipe.BlockEntityTank;
@@ -43,7 +43,7 @@ public class Plunger extends ToolItem {
 
   @Override
   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("plunger." + IndReb.MODID + ".desc").withStyle(ChatFormatting.GRAY));
+    tooltip.add(Component.translatable("plunger." + Faktocraft.MODID + ".desc").withStyle(ChatFormatting.GRAY));
     super.appendHoverText(stack, level, tooltip, flag);
   }
 
@@ -152,14 +152,14 @@ public class Plunger extends ToolItem {
           }
         }
       }
-      message = Component.translatable("gui." + IndReb.MODID + ".plunger_pipes",
+      message = Component.translatable("gui." + Faktocraft.MODID + ".plunger_pipes",
           String.valueOf(clearedMb), String.valueOf(pipes));
     } else if (blockEntity instanceof BlockEntityTank tankEntity) {
       for (FluidStorage part : tankEntity.columnStorage.parts()) {
         clearedMb += part.getFluidAmount();
         part.setFluid(FluidStack.EMPTY, 0);
       }
-      message = Component.translatable("gui." + IndReb.MODID + ".plunger_tank", String.valueOf(clearedMb));
+      message = Component.translatable("gui." + Faktocraft.MODID + ".plunger_tank", String.valueOf(clearedMb));
     } else {
       return;
     }

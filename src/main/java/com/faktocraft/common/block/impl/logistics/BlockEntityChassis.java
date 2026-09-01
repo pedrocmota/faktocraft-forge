@@ -42,6 +42,11 @@ public class BlockEntityChassis extends BlockEntity {
     protected void onContentsChanged(int slot) {
       BlockEntityChassis.this.setChanged();
     }
+
+    @Override
+    public int getSlotLimit(int slot) {
+      return 1;
+    }
   };
 
   private final ItemStackHandler collectorBuffer = new ItemStackHandler(COLLECTOR_BUFFER_SLOTS) {
@@ -114,7 +119,7 @@ public class BlockEntityChassis extends BlockEntity {
     int count = 0;
     for (int i = 0; i < upgradeSlotCount(); i++) {
       if (upgrades.getStackInSlot(i).getItem() instanceof ThroughputUpgradeItem) {
-        count += upgrades.getStackInSlot(i).getCount();
+        count++;
       }
     }
     return count;
@@ -152,7 +157,7 @@ public class BlockEntityChassis extends BlockEntity {
     if (candidates.size() < 2) {
       if (player != null) {
         player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
-            "logistics." + com.faktocraft.IndReb.MODID
+            "logistics." + com.faktocraft.Faktocraft.MODID
                 + (candidates.isEmpty() ? ".chassis.inventory_none" : ".chassis.inventory_single")), true);
       }
       return false;
@@ -165,7 +170,7 @@ public class BlockEntityChassis extends BlockEntity {
     if (player != null) {
       BlockPos target = worldPosition.relative(selectedInventory);
       player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
-          "logistics." + com.faktocraft.IndReb.MODID + ".chassis.inventory_selected",
+          "logistics." + com.faktocraft.Faktocraft.MODID + ".chassis.inventory_selected",
           level.getBlockState(target).getBlock().getName(), selectedInventory.getName()), true);
     }
     return true;

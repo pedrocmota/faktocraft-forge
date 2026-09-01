@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.IndRebBlockEntity;
@@ -176,7 +176,7 @@ public class BlockEntityLogisticsController extends IndRebBlockEntity implements
       try {
         plan = pending.future().join();
       } catch (Exception exception) {
-        IndReb.LOGGER.error("Logistics planning failed", exception);
+        Faktocraft.LOGGER.error("Logistics planning failed", exception);
         recordFailure(pending.player(), pending.target(), pending.quantity(), "internal", "",
             pending.destNode());
         continue;
@@ -374,7 +374,7 @@ public class BlockEntityLogisticsController extends IndRebBlockEntity implements
     }
     ledger.addRecord(target.stack(), quantity, "error." + errorKey, detail, origin, originLabel(origin));
     player.displayClientMessage(
-        Component.translatable("logistics." + IndReb.MODID + ".state.error." + errorKey, detail), true);
+        Component.translatable("logistics." + Faktocraft.MODID + ".state.error." + errorKey, detail), true);
   }
 
   @Override

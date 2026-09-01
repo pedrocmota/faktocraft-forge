@@ -56,7 +56,7 @@ public class MenuChassis extends AbstractContainerMenu {
 
           @Override
           public int getMaxStackSize() {
-            return ThroughputUpgradeItem.PACK;
+            return 1;
           }
         });
       }

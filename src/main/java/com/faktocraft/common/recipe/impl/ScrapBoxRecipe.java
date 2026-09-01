@@ -1,6 +1,6 @@
 package com.faktocraft.common.recipe.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.interfaces.receipe.IBaseRecipe;
 import com.faktocraft.common.recipe.RecipeJsonHelper;
 import com.faktocraft.common.registries.ModRecipeType;
@@ -26,7 +26,7 @@ public class ScrapBoxRecipe implements IBaseRecipe<Container> {
   private static final DecimalFormat DF = new DecimalFormat("0.00");
 
   public static final ResourceKey<Item> SCRAP_BOX_ITEM_KEY = ResourceKey.create(Registries.ITEM,
-      new ResourceLocation(IndReb.MODID, "scrap_box"));
+      new ResourceLocation(Faktocraft.MODID, "scrap_box"));
 
   public static final RecipeSerializer<ScrapBoxRecipe> SERIALIZER = new Serializer();
 

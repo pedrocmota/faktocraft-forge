@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.rubber_wood;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class RubberSapling extends SaplingBlock {
 
   public static final ResourceKey<ConfiguredFeature<?, ?>> RUBBER_TREE_FEATURE = ResourceKey
-      .create(Registries.CONFIGURED_FEATURE, new ResourceLocation(IndReb.MODID, "rubber_tree"));
+      .create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Faktocraft.MODID, "rubber_tree"));
 
   public static final AbstractTreeGrower RUBBER_TREE_GROWER = new AbstractTreeGrower() {
     @Nullable

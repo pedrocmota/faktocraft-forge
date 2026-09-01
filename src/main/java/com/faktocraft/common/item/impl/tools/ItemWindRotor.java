@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.impl.tools;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -25,9 +25,9 @@ public class ItemWindRotor extends Item {
 
   @Override
   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip." + IndReb.MODID + ".wind_rotor_desc")
+    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".wind_rotor_desc")
         .withStyle(ChatFormatting.GRAY));
-    tooltip.add(Component.translatable("tooltip." + IndReb.MODID + ".wind_rotor_boost",
+    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".wind_rotor_boost",
         (int) Math.round(generationFactor * 100.0)).withStyle(ChatFormatting.DARK_AQUA));
     super.appendHoverText(stack, level, tooltip, flag);
   }

@@ -1,6 +1,6 @@
 package com.faktocraft.client;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.client.model.ChargeRatioProperty;
 import com.faktocraft.client.model.FluidTintSource;
 import com.faktocraft.client.render.FluidPipeRenderer;
@@ -39,7 +39,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
 
-@Mod.EventBusSubscriber(modid = IndReb.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Faktocraft.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class IndRebClient {
 
   public static KeyMapping NIGHT_VISION_KEY;
@@ -95,13 +95,13 @@ public class IndRebClient {
   }
 
   private static void registerItemProperties() {
-    ItemProperties.register(ModItems.NANO_SABER, new ResourceLocation(IndReb.MODID, "active"),
+    ItemProperties.register(ModItems.NANO_SABER, new ResourceLocation(Faktocraft.MODID, "active"),
         (stack, level, entity, seed) -> ModComponents.getActive(stack, false) ? 1.0f : 0.0f);
 
-    ItemProperties.register(ModItems.FLUID_CELL, new ResourceLocation(IndReb.MODID, "filled"),
+    ItemProperties.register(ModItems.FLUID_CELL, new ResourceLocation(Faktocraft.MODID, "filled"),
         (stack, level, entity, seed) -> ModComponentsFluids.hasFluid(stack) ? 1.0f : 0.0f);
 
-    ItemProperties.register(ModItems.PLUNGER, new ResourceLocation(IndReb.MODID, "plunging"),
+    ItemProperties.register(ModItems.PLUNGER, new ResourceLocation(Faktocraft.MODID, "plunging"),
         (stack, level, entity, seed) -> {
           if (entity == null || !entity.isUsingItem() || entity.getUseItem().getItem() != stack.getItem()) {
             return 0.0f;
@@ -197,7 +197,7 @@ public class IndRebClient {
     }, com.faktocraft.common.block.impl.machines.fueling_station.FuelingStationRegistry.FUELING_STATION);
   }
 
-  @Mod.EventBusSubscriber(modid = IndReb.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+  @Mod.EventBusSubscriber(modid = Faktocraft.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
   public static class ForgeEvents {
 
     private static net.minecraft.client.gui.components.AbstractSliderButton machineSlider;
@@ -261,7 +261,7 @@ public class IndRebClient {
       String pct = value <= 0 ? net.minecraft.client.resources.language.I18n.get("options.off")
           : (int) (value * 100) + "%";
       return net.minecraft.network.chat.Component
-          .translatable("options." + IndReb.MODID + ".machine_volume")
+          .translatable("options." + Faktocraft.MODID + ".machine_volume")
           .append(": " + pct);
     }
 

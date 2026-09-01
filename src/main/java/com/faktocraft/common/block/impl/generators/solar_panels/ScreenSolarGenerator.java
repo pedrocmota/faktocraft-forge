@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.generators.solar_panels;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.active.GuiSolarActive;
 import com.faktocraft.common.screen.text.GuiTextSolar;
@@ -28,6 +28,6 @@ public class ScreenSolarGenerator extends BetterScreen<MenuSolarGenerator> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/solar_generator.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/solar_generator.png");
   }
 }

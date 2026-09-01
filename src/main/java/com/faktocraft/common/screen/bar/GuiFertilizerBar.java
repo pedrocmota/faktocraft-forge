@@ -1,7 +1,7 @@
 package com.faktocraft.common.screen.bar;
 
 import com.faktocraft.common.util.GuiUtil;
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.entity.IProgress;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
@@ -27,7 +27,7 @@ public class GuiFertilizerBar extends GuiProgress {
   public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY)) {
       graphics.renderTooltip(GuiUtil.getFont(),
-          Component.translatable("gui." + IndReb.MODID + ".waste", getProgress().getPercentProgressString() + "%"),
+          Component.translatable("gui." + Faktocraft.MODID + ".waste", getProgress().getPercentProgressString() + "%"),
           mouseX, mouseY);
     }
   }

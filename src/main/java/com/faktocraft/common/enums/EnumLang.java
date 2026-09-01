@@ -1,6 +1,6 @@
 package com.faktocraft.common.enums;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -52,7 +52,7 @@ public enum EnumLang {
     if (path.isEmpty()) {
       return type;
     }
-    return path + "." + IndReb.MODID + "." + type;
+    return path + "." + Faktocraft.MODID + "." + type;
   }
 
   public MutableComponent getTranslationComponent() {

@@ -1,6 +1,6 @@
 package com.faktocraft.gametest;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.pipe.BlockEntityPump;
 import com.faktocraft.common.registries.PipeRegistry;
 import net.minecraft.core.BlockPos;
@@ -12,7 +12,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Blocks;
 
-@net.minecraftforge.gametest.GameTestHolder(IndReb.MODID)
+@net.minecraftforge.gametest.GameTestHolder(Faktocraft.MODID)
 @net.minecraftforge.gametest.PrefixGameTestTemplate(false)
 public class PumpGameTest {
 

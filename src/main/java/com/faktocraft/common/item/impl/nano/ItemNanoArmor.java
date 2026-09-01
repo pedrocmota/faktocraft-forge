@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.impl.nano;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -34,7 +34,7 @@ public class ItemNanoArmor extends ElectricArmorItem {
   }
 
   protected String protectionTooltipKey() {
-    return "tooltip." + IndReb.MODID + ".nano_protection";
+    return "tooltip." + Faktocraft.MODID + ".nano_protection";
   }
 
   @Override

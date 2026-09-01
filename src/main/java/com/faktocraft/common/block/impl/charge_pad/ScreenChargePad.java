@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.charge_pad;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.impl.BasicEnergyStorage;
 import com.faktocraft.common.enums.EnumLang;
 import com.faktocraft.common.screen.BetterScreen;
@@ -37,6 +37,6 @@ public class ScreenChargePad extends BetterScreen<MenuChargePad> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/charge_pad.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/charge_pad.png");
   }
 }

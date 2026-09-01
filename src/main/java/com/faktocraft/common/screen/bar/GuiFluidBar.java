@@ -1,7 +1,7 @@
 package com.faktocraft.common.screen.bar;
 
 import com.faktocraft.common.util.GuiUtil;
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.entity.block.FluidStorage;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.widgets.GuiElement;
@@ -94,25 +94,25 @@ public class GuiFluidBar extends GuiElement {
     if (isMouseOver(mouseX, mouseY)) {
       java.util.List<Component> lines = new java.util.ArrayList<>();
       if (!fluidStorage.isEmpty()) {
-        lines.add(Component.translatable("gui." + IndReb.MODID + ".fluid",
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".fluid",
             fluidStorage.getFluid().getFluidType().getDescription().getString(),
             TextComponentUtil.getFormattedEnergyUnit(fluidStorage.getFluidAmount()),
             TextComponentUtil.getFormattedEnergyUnit(fluidStorage.getCapacityMb())));
       } else {
-        lines.add(Component.translatable("gui." + IndReb.MODID + ".fluid_empty"));
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".fluid_empty"));
       }
       if (plungerCarried() && !fluidStorage.isEmpty()) {
-        lines.add(Component.translatable("gui." + IndReb.MODID + ".plunger_drain_hint")
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".plunger_drain_hint")
             .withStyle(net.minecraft.ChatFormatting.GOLD));
       } else if (cellPourable()) {
-        lines.add(Component.translatable("gui." + IndReb.MODID + ".cell_fill_hint")
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".cell_fill_hint")
             .withStyle(net.minecraft.ChatFormatting.AQUA));
-        lines.add(Component.translatable("gui." + IndReb.MODID + ".cell_fill_all_hint")
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".cell_fill_all_hint")
             .withStyle(net.minecraft.ChatFormatting.DARK_AQUA));
       } else if (cellFillable()) {
-        lines.add(Component.translatable("gui." + IndReb.MODID + ".cell_drain_hint")
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".cell_drain_hint")
             .withStyle(net.minecraft.ChatFormatting.AQUA));
-        lines.add(Component.translatable("gui." + IndReb.MODID + ".cell_drain_all_hint")
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".cell_drain_all_hint")
             .withStyle(net.minecraft.ChatFormatting.DARK_AQUA));
       }
       graphics.renderComponentTooltip(GuiUtil.getFont(), lines, mouseX, mouseY);

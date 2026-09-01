@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.recipe.impl.ThermalCentrifugingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
@@ -21,7 +21,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class ThermalCentrifugingCategory extends AbstractRecipeCategory<ThermalCentrifugingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "thermal_centrifuging");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "thermal_centrifuging");
   public static final RecipeType<ThermalCentrifugingRecipe> TYPE = new RecipeType<>(UID,
       ThermalCentrifugingRecipe.class);
 

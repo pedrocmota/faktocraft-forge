@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.impl.tools;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.item.base.ElectricItem;
@@ -150,9 +150,9 @@ public class Prospector extends ElectricItem {
 
   @Override
   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip." + IndReb.MODID + ".prospector")
+    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".prospector")
         .withStyle(ChatFormatting.GRAY));
-    tooltip.add(Component.translatable("tooltip." + IndReb.MODID + ".prospector_accuracy")
+    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".prospector_accuracy")
         .withStyle(ChatFormatting.DARK_GRAY));
     super.appendHoverText(stack, level, tooltip, flag);
   }

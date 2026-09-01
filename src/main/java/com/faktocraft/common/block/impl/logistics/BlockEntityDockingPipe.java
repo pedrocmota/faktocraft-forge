@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.VoxelBlock;
 import com.faktocraft.common.config.ModConfig;
 import net.minecraft.core.BlockPos;
@@ -83,7 +83,7 @@ public abstract class BlockEntityDockingPipe extends BlockEntity {
     List<Direction> candidates = inventoryDirections();
     if (candidates.size() < 2) {
       if (player != null) {
-        player.displayClientMessage(Component.translatable("logistics." + IndReb.MODID
+        player.displayClientMessage(Component.translatable("logistics." + Faktocraft.MODID
             + (candidates.isEmpty() ? ".chassis.inventory_none" : ".chassis.inventory_single")), true);
       }
       return false;
@@ -95,7 +95,7 @@ public abstract class BlockEntityDockingPipe extends BlockEntity {
     LogisticsCores.markDirtyNear(level, worldPosition);
     if (player != null) {
       BlockPos target = worldPosition.relative(selectedInventory);
-      player.displayClientMessage(Component.translatable("logistics." + IndReb.MODID
+      player.displayClientMessage(Component.translatable("logistics." + Faktocraft.MODID
           + ".chassis.inventory_selected",
           level.getBlockState(target).getBlock().getName(), selectedInventory.getName()), true);
     }

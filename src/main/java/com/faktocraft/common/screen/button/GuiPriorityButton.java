@@ -1,6 +1,6 @@
 package com.faktocraft.common.screen.button;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.container.IndRebMenu;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
@@ -48,12 +48,12 @@ public class GuiPriorityButton extends GuiButton {
     if (isMouseOver(mouseX, mouseY)) {
       int mode = mode();
       Component value = mode == 0
-          ? Component.translatable("gui." + IndReb.MODID + ".generator_priority.auto",
+          ? Component.translatable("gui." + Faktocraft.MODID + ".generator_priority.auto",
               menu.getGeneratorPriorityDefault()).withStyle(ChatFormatting.GREEN)
-          : Component.translatable("gui." + IndReb.MODID + ".generator_priority.manual", mode)
+          : Component.translatable("gui." + Faktocraft.MODID + ".generator_priority.manual", mode)
               .withStyle(ChatFormatting.GOLD);
       graphics.renderComponentTooltip(Minecraft.getInstance().font, List.of(
-          Component.translatable("gui." + IndReb.MODID + ".generator_priority"),
+          Component.translatable("gui." + Faktocraft.MODID + ".generator_priority"),
           value), mouseX, mouseY);
     }
   }

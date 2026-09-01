@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jade.provider;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.cable.BlockEntityCable;
 import com.faktocraft.common.energy.provider.EnergyNetwork;
 import com.faktocraft.common.enums.EnergyTier;
@@ -13,7 +13,7 @@ public class JadeCableDataProvider implements IServerDataProvider<BlockAccessor>
 
   public static final JadeCableDataProvider INSTANCE = new JadeCableDataProvider();
 
-  private static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "cable_info_data");
+  private static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "cable_info_data");
 
   public static final String TAG_FLOWING = "faktocraftFlowing";
   public static final String TAG_CABLE_TIER = "faktocraftCableTier";

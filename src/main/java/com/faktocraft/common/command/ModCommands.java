@@ -1,6 +1,6 @@
 package com.faktocraft.common.command;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.fluid.ModFluids;
 import com.faktocraft.common.registries.RegistrationHandler;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = IndReb.MODID)
+@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
 public final class ModCommands {
 
   private ModCommands() {
@@ -166,25 +166,25 @@ public final class ModCommands {
 
     if (found.isEmpty()) {
       source.sendSuccess(() -> Component
-          .translatable("command." + IndReb.MODID + ".locate.pocket_none", chunkRadius)
+          .translatable("command." + Faktocraft.MODID + ".locate.pocket_none", chunkRadius)
           .withStyle(ChatFormatting.YELLOW), false);
       return 0;
     }
     source.sendSuccess(() -> Component
-        .translatable("command." + IndReb.MODID + ".locate.pocket_header", chunkRadius)
+        .translatable("command." + Faktocraft.MODID + ".locate.pocket_header", chunkRadius)
         .withStyle(ChatFormatting.GREEN), false);
     for (Predicted hit : found) {
       String posText = hit.pos().getX() + " " + hit.pos().getY() + " " + hit.pos().getZ();
-      Component label = Component.translatable("command." + IndReb.MODID
+      Component label = Component.translatable("command." + Faktocraft.MODID
           + (hit.richBiome() ? ".locate.pocket_rich" : ".locate.pocket_normal"));
       Component entry = Component
-          .translatable("command." + IndReb.MODID + ".locate.pocket_entry",
+          .translatable("command." + Faktocraft.MODID + ".locate.pocket_entry",
               label, posText, (int) Math.sqrt(hit.distSq()))
           .withStyle(style -> style
               .withColor(ChatFormatting.AQUA)
               .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp @s " + posText))
               .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                  Component.translatable("command." + IndReb.MODID + ".locate.teleport"))));
+                  Component.translatable("command." + Faktocraft.MODID + ".locate.teleport"))));
       source.sendSuccess(() -> entry, false);
     }
     return found.size();
@@ -277,7 +277,7 @@ public final class ModCommands {
     if (hits.isEmpty()) {
       final int scanned = scannedChunks;
       source.sendSuccess(() -> Component
-          .translatable("command." + IndReb.MODID + ".locate.none", blockName, chunkRadius, scanned)
+          .translatable("command." + Faktocraft.MODID + ".locate.none", blockName, chunkRadius, scanned)
           .withStyle(ChatFormatting.YELLOW), false);
       return 0;
     }
@@ -285,18 +285,18 @@ public final class ModCommands {
     hits.sort(Comparator.comparingDouble(Hit::distSq));
     final int total = totalCount;
     source.sendSuccess(() -> Component
-        .translatable("command." + IndReb.MODID + ".locate.header", total, blockName, chunkRadius)
+        .translatable("command." + Faktocraft.MODID + ".locate.header", total, blockName, chunkRadius)
         .withStyle(ChatFormatting.GREEN), false);
     for (Hit hit : hits.subList(0, Math.min(5, hits.size()))) {
       String posText = hit.pos().getX() + " " + hit.pos().getY() + " " + hit.pos().getZ();
       Component entry = Component
-          .translatable("command." + IndReb.MODID + ".locate.entry",
+          .translatable("command." + Faktocraft.MODID + ".locate.entry",
               hit.count(), posText, (int) Math.sqrt(hit.distSq()))
           .withStyle(style -> style
               .withColor(ChatFormatting.AQUA)
               .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp @s " + posText))
               .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                  Component.translatable("command." + IndReb.MODID + ".locate.teleport"))));
+                  Component.translatable("command." + Faktocraft.MODID + ".locate.teleport"))));
       source.sendSuccess(() -> entry, false);
     }
     return hits.size();

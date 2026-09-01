@@ -1,6 +1,6 @@
 package com.faktocraft.client;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketRedstoneControl;
 import net.minecraft.ChatFormatting;
@@ -20,7 +20,7 @@ public class RedstoneControlScreen extends Screen {
   private boolean redstoneOnly;
 
   private RedstoneControlScreen(BlockPos target, boolean redstoneOnly) {
-    super(Component.translatable("gui." + IndReb.MODID + ".redstone_control"));
+    super(Component.translatable("gui." + Faktocraft.MODID + ".redstone_control"));
     this.target = target;
     this.redstoneOnly = redstoneOnly;
   }
@@ -30,7 +30,7 @@ public class RedstoneControlScreen extends Screen {
   }
 
   private Component toggleLabel() {
-    return Component.translatable("gui." + IndReb.MODID
+    return Component.translatable("gui." + Faktocraft.MODID
         + (redstoneOnly ? ".redstone_control.redstone_only" : ".redstone_control.manual"));
   }
 

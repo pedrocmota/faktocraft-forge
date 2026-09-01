@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -33,8 +33,8 @@ public class ChargingBattery extends ElectricItem {
       int currentMode = ModComponentsFluids.getChargingMode(stack, 1);
       int newMode = currentMode + 1 > 3 ? 0 : currentMode + 1;
       ModComponentsFluids.setChargingMode(stack, newMode);
-      player.sendSystemMessage(Component.translatable("charging." + IndReb.MODID + ".mode",
-          Component.translatable("mode." + IndReb.MODID + "." + newMode).withStyle(ChatFormatting.AQUA))
+      player.sendSystemMessage(Component.translatable("charging." + Faktocraft.MODID + ".mode",
+          Component.translatable("mode." + Faktocraft.MODID + "." + newMode).withStyle(ChatFormatting.AQUA))
           .withStyle(ChatFormatting.GRAY));
     }
     return InteractionResultHolder.pass(stack);

@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.scanner.screen;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.scanner.BlockEntityScanner;
 import com.faktocraft.common.enums.ScannerMode;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
@@ -36,7 +36,7 @@ public class GuiScannerMode extends GuiElement {
     String string;
     int color;
     if (invalidItem) {
-      string = Component.translatable("gui." + IndReb.MODID + ".scanner.invalid_item").getString();
+      string = Component.translatable("gui." + Faktocraft.MODID + ".scanner.invalid_item").getString();
       color = INVALID_ITEM_COLOR;
     } else if (entity.getMode() == ScannerMode.PROGRESS) {
       string = Component.translatable(entity.getMode().getLangKey(), entity.progress.getPercentProgressString())

@@ -1,6 +1,6 @@
 package com.faktocraft.common.command;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.provider.EnergyCore;
 import com.faktocraft.common.energy.provider.EnergyNetwork;
 import com.faktocraft.common.entity.block.IndRebBlockEntity;
@@ -16,7 +16,7 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = IndReb.MODID)
+@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
 public final class DebugCableTest {
 
   private DebugCableTest() {
@@ -141,6 +141,6 @@ public final class DebugCableTest {
   }
 
   private static void log(String msg) {
-    IndReb.LOGGER.info("[FAKTO-CABLE-TEST] " + msg);
+    Faktocraft.LOGGER.info("[FAKTO-CABLE-TEST] " + msg);
   }
 }

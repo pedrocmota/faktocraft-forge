@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.distillery.DistilleryRegistry;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
@@ -26,7 +26,7 @@ public class DistillingCategory extends AbstractRecipeCategory<DistillingCategor
       ItemStack byproduct, float byproductChance, int duration, int powerCost) {
   }
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "distilling");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "distilling");
   public static final RecipeType<Entry> TYPE = new RecipeType<>(UID, Entry.class);
 
   private IDrawableAnimated progress;

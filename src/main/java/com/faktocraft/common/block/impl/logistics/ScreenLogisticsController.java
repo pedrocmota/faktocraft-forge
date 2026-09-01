@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +19,7 @@ public class ScreenLogisticsController extends BetterScreen<MenuLogisticsControl
 
     int width = 56;
     addRenderableWidget(net.minecraft.client.gui.components.Button.builder(
-        Component.translatable("logistics." + IndReb.MODID + ".task_book_button"),
+        Component.translatable("logistics." + Faktocraft.MODID + ".task_book_button"),
         b -> com.faktocraft.common.network.ModNetworking.sendToServer(
             new com.faktocraft.common.network.packet.PacketOpenCoreView(
                 this.menu.getBlockEntity().getBlockPos(), true)))
@@ -28,6 +28,6 @@ public class ScreenLogisticsController extends BetterScreen<MenuLogisticsControl
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/logistics_controller.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/logistics_controller.png");
   }
 }

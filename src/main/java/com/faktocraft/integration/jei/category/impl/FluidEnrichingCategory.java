@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.recipe.impl.FluidEnrichingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
@@ -21,7 +21,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class FluidEnrichingCategory extends AbstractRecipeCategory<FluidEnrichingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "fluid_enriching");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "fluid_enriching");
   public static final RecipeType<FluidEnrichingRecipe> TYPE = new RecipeType<>(UID, FluidEnrichingRecipe.class);
 
   private IDrawableAnimated progress;

@@ -1,6 +1,6 @@
 package com.faktocraft.common.registries;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.recipe.impl.AdvancedShapedRecipe;
 import com.faktocraft.common.recipe.impl.AlloySmeltingRecipe;
 import com.faktocraft.common.recipe.impl.CompressingRecipe;
@@ -49,7 +49,7 @@ public final class ModRecipeType {
     return RegistrationHandler.recipeType(key, new RecipeType<T>() {
       @Override
       public String toString() {
-        return IndReb.MODID + ":" + key;
+        return Faktocraft.MODID + ":" + key;
       }
     });
   }

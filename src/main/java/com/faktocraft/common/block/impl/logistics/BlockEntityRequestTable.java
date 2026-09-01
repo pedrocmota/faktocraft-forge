@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.entity.block.IndRebBlockEntity;
 import com.faktocraft.common.entity.slot.IndRebSlot;
 import com.faktocraft.common.enums.GuiSlotType;
@@ -147,7 +147,7 @@ public class BlockEntityRequestTable extends IndRebBlockEntity {
 
   private void message(@Nullable ServerPlayer player, String key) {
     if (player != null) {
-      player.displayClientMessage(Component.translatable("logistics." + IndReb.MODID + "." + key), true);
+      player.displayClientMessage(Component.translatable("logistics." + Faktocraft.MODID + "." + key), true);
     }
   }
 

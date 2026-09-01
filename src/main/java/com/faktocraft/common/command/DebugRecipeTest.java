@@ -1,6 +1,6 @@
 package com.faktocraft.common.command;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraftforge.event.server.ServerStartedEvent;
@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = IndReb.MODID)
+@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
 public final class DebugRecipeTest {
 
   private DebugRecipeTest() {
@@ -32,10 +32,10 @@ public final class DebugRecipeTest {
       }
       if (!bad.isEmpty()) {
         broken++;
-        IndReb.LOGGER.info("[FAKTO-RECIPE-TEST] QUEBRADA: {} -> {}", recipe.getId(), bad);
+        Faktocraft.LOGGER.info("[FAKTO-RECIPE-TEST] QUEBRADA: {} -> {}", recipe.getId(), bad);
       }
     }
-    IndReb.LOGGER.info("[FAKTO-RECIPE-TEST] verificadas {} receitas, {} quebradas", checked, broken);
+    Faktocraft.LOGGER.info("[FAKTO-RECIPE-TEST] verificadas {} receitas, {} quebradas", checked, broken);
     event.getServer().halt(false);
   }
 }

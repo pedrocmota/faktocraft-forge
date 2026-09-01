@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.recipe.impl.ScannerRecipe;
 import com.faktocraft.common.registries.machines.M4Registry;
 import com.faktocraft.common.util.GuiUtil;
@@ -23,7 +23,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class ScannerCategory extends AbstractRecipeCategory<ScannerRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "scanner");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "scanner");
   public static final RecipeType<ScannerRecipe> TYPE = new RecipeType<>(UID, ScannerRecipe.class);
 
   private IDrawableAnimated progress;
@@ -60,13 +60,13 @@ public class ScannerCategory extends AbstractRecipeCategory<ScannerRecipe> {
     }
 
     GuiUtil.renderScaled(graphics,
-        Component.translatable("gui." + IndReb.MODID + ".scanner.replication_cost").getString(), 67, 18, 0.65f,
+        Component.translatable("gui." + Faktocraft.MODID + ".scanner.replication_cost").getString(), 67, 18, 0.65f,
         0x00a200, false);
-    GuiUtil.renderScaled(graphics, Component.translatable("gui." + IndReb.MODID + ".scanner.matter_cost").getString()
+    GuiUtil.renderScaled(graphics, Component.translatable("gui." + Faktocraft.MODID + ".scanner.matter_cost").getString()
         + " " + recipe.getMatterCost() + " mB", 67, 25, 0.65f, 0x00a200, false);
     GuiUtil
         .renderScaled(graphics,
-            Component.translatable("gui." + IndReb.MODID + ".scanner.energy_cost").getString() + " "
+            Component.translatable("gui." + Faktocraft.MODID + ".scanner.energy_cost").getString() + " "
                 + TextComponentUtil.getFormattedEnergyUnit(recipe.getEnergyCost()) + " IE",
             67, 32, 0.65f, 0x00a200, false);
 

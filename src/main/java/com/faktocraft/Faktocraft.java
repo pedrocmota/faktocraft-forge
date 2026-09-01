@@ -14,12 +14,12 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Mod(IndReb.MODID)
-public class IndReb {
+@Mod(Faktocraft.MODID)
+public class Faktocraft {
   public static final String MODID = "faktocraft";
   public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
-  public IndReb() {
+  public Faktocraft() {
     IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
     modBus.addListener(RegistrationHandler::onRegister);
 
@@ -31,12 +31,12 @@ public class IndReb {
         net.minecraftforge.fml.config.ModConfig.Type.SERVER,
         com.faktocraft.common.config.BasicConfig.SERVER_SPEC, "faktocraft-basic-server.toml");
 
-    RegistrationHandler.setBootstrap(IndReb::bootstrapRegistries);
+    RegistrationHandler.setBootstrap(Faktocraft::bootstrapRegistries);
 
     com.faktocraft.common.capabilities.player.PlayerData.register(modBus);
     com.faktocraft.common.network.ModNetworking.init();
 
-    MinecraftForge.EVENT_BUS.addListener(IndReb::onLevelTick);
+    MinecraftForge.EVENT_BUS.addListener(Faktocraft::onLevelTick);
 
     net.minecraftforge.common.world.ForgeChunkManager.setForcedChunkLoadingCallback(MODID,
         com.faktocraft.common.block.impl.chunk_loader.ChunkLoaderManager::validateTickets);

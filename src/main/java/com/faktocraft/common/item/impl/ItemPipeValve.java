@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -18,9 +18,9 @@ public class ItemPipeValve extends Item {
 
   @Override
   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip." + IndReb.MODID + ".pipe_valve")
+    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".pipe_valve")
         .withStyle(ChatFormatting.GRAY));
-    tooltip.add(Component.translatable("tooltip." + IndReb.MODID + ".pipe_valve_usage")
+    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".pipe_valve_usage")
         .withStyle(ChatFormatting.DARK_GRAY));
     super.appendHoverText(stack, level, tooltip, flag);
   }

@@ -1,6 +1,6 @@
 package com.faktocraft.client.render;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.quarry.BlockEntityQuarry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class QuarryRenderer implements BlockEntityRenderer<BlockEntityQuarry> {
 
-  private static final ResourceLocation FRAME_SPRITE = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation FRAME_SPRITE = new ResourceLocation(Faktocraft.MODID,
       "block/misc/quarry_frame");
   private static final float CHASE_SPEED = 0.3F;
   private static final float BEAM_HALF = 0.125F;

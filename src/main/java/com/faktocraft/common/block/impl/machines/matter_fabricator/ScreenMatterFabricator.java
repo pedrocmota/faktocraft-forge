@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.matter_fabricator;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.bar.GuiFluidBarVertical;
 import com.faktocraft.common.screen.progress.GuiProgressArrow;
@@ -24,9 +24,9 @@ public class ScreenMatterFabricator extends BetterScreen<MenuMatterFabricator> {
     BlockEntityMatterFabricator be = (BlockEntityMatterFabricator) getBlockEntity();
 
     addRenderableOnlyComponent(
-        new GuiText(this, 45, 5, 8, 20, Component.translatable("gui." + IndReb.MODID + ".text_progress")));
+        new GuiText(this, 45, 5, 8, 20, Component.translatable("gui." + Faktocraft.MODID + ".text_progress")));
     addRenderableOnlyComponent(
-        new GuiText(this, 45, 5, 8, 36, Component.translatable("gui." + IndReb.MODID + ".text_amplifier")));
+        new GuiText(this, 45, 5, 8, 36, Component.translatable("gui." + Faktocraft.MODID + ".text_amplifier")));
 
     addRenderableOnlyComponent(new GuiTextProgress(this, 37, 5, 60, 20, be.progress, "", "%"));
     addRenderableOnlyComponent(new GuiTextCurrentProgress(this, 37, 5, 60, 36, be.progressAmplifier, "", ""));
@@ -39,6 +39,6 @@ public class ScreenMatterFabricator extends BetterScreen<MenuMatterFabricator> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/matter_fabricator.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/matter_fabricator.png");
   }
 }

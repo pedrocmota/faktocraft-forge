@@ -1,6 +1,6 @@
 package com.faktocraft.gametest;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.gametest.framework.GameTestInfo;
 import net.minecraft.gametest.framework.GlobalTestReporter;
 import net.minecraft.gametest.framework.TestReporter;
@@ -30,7 +30,7 @@ public final class ProgressTestReporter implements TestReporter {
   @Override
   public void onTestSuccess(GameTestInfo info) {
     finished++;
-    IndReb.LOGGER.info("[Gametest] {} ok      {} ({} ms)", finished, info.getTestName(),
+    Faktocraft.LOGGER.info("[Gametest] {} ok      {} ({} ms)", finished, info.getTestName(),
         info.getRunTime());
     delegate.onTestSuccess(info);
   }
@@ -39,13 +39,13 @@ public final class ProgressTestReporter implements TestReporter {
   public void onTestFailed(GameTestInfo info) {
     finished++;
     failed++;
-    IndReb.LOGGER.info("[Gametest] {} FAILED  {}", finished, info.getTestName());
+    Faktocraft.LOGGER.info("[Gametest] {} FAILED  {}", finished, info.getTestName());
     delegate.onTestFailed(info);
   }
 
   @Override
   public void finish() {
-    IndReb.LOGGER.info("[Gametest] done: {} tests, {} failed", finished, failed);
+    Faktocraft.LOGGER.info("[Gametest] done: {} tests, {} failed", finished, failed);
     delegate.finish();
   }
 }

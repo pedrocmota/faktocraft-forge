@@ -1,6 +1,6 @@
 package com.faktocraft.gametest;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.mojang.logging.LogUtils;
 import net.minecraft.gametest.framework.GameTestBatch;
 import net.minecraft.gametest.framework.GameTestServer;
@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-@Mod.EventBusSubscriber(modid = IndReb.MODID)
+@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
 public final class GameTestFilter {
 
   private static final Logger LOGGER = LogUtils.getLogger();

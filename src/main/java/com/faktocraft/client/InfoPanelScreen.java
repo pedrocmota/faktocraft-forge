@@ -1,6 +1,6 @@
 package com.faktocraft.client;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.util.GuiUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -14,7 +14,7 @@ import java.util.List;
 
 public class InfoPanelScreen extends Screen {
 
-  private static final ResourceLocation PANEL = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation PANEL = new ResourceLocation(Faktocraft.MODID,
       "textures/gui/container/pipe_motor.png");
 
   protected interface Row {

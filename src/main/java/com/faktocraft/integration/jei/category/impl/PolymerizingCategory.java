@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.recipe.impl.PolymerizingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
@@ -22,7 +22,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class PolymerizingCategory extends AbstractRecipeCategory<PolymerizingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "polymerizing");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "polymerizing");
   public static final RecipeType<PolymerizingRecipe> TYPE = new RecipeType<>(UID, PolymerizingRecipe.class);
 
   private IDrawableAnimated progress;

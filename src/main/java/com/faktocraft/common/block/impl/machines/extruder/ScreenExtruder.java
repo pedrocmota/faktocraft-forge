@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.extruder;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketExtruderRecipe;
 import com.faktocraft.common.screen.BetterScreen;
@@ -39,6 +39,6 @@ public class ScreenExtruder extends BetterScreen<MenuExtruder> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/extruder.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/extruder.png");
   }
 }

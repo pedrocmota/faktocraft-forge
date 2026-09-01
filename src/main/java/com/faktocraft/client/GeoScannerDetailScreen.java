@@ -1,6 +1,6 @@
 package com.faktocraft.client;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -22,11 +22,11 @@ public class GeoScannerDetailScreen extends Screen {
   private int scroll;
 
   public GeoScannerDetailScreen(Screen parent, int chunkX, int chunkZ, CompoundTag scan) {
-    super(Component.translatable("gui." + IndReb.MODID + ".prospector.report", chunkX, chunkZ));
+    super(Component.translatable("gui." + Faktocraft.MODID + ".prospector.report", chunkX, chunkZ));
     this.parent = parent;
     List<Component> report = ProspectorDetailScreen.buildReportLines(scan);
     this.lines = report.isEmpty()
-        ? List.of(Component.translatable("gui." + IndReb.MODID + ".prospector.empty")
+        ? List.of(Component.translatable("gui." + Faktocraft.MODID + ".prospector.empty")
             .withStyle(ChatFormatting.GRAY))
         : report;
   }
@@ -36,7 +36,7 @@ public class GeoScannerDetailScreen extends Screen {
     panelLeft = (width - PANEL_W) / 2;
     panelTop = (height - PANEL_H) / 2;
     addRenderableWidget(new DeviceButton(panelLeft + 12, panelTop + PANEL_H - 30, PANEL_W - 24, 20,
-        Component.translatable("gui." + IndReb.MODID + ".prospector.back"),
+        Component.translatable("gui." + Faktocraft.MODID + ".prospector.back"),
         button -> minecraft.setScreen(parent)));
   }
 

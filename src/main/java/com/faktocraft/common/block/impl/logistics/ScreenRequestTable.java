@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketReqTableState;
 import com.faktocraft.common.network.packet.PacketRequestTarget;
@@ -28,9 +28,9 @@ import java.util.Locale;
 
 public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable> {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
       "textures/gui/container/request_table.png");
-  private static final ResourceLocation BACKGROUND_TASKS = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation BACKGROUND_TASKS = new ResourceLocation(Faktocraft.MODID,
       "textures/gui/container/request_table_tasks.png");
 
   private static final int PANEL_X = 176;
@@ -82,7 +82,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
   }
 
   private String key(String name) {
-    return "logistics." + IndReb.MODID + "." + name;
+    return "logistics." + Faktocraft.MODID + "." + name;
   }
 
   @Override

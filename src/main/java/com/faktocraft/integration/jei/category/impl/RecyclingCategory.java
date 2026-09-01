@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.EnumLang;
 import com.faktocraft.common.recipe.impl.RecyclingRecipe;
 import com.faktocraft.common.registries.machines.M2Registry;
@@ -27,7 +27,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class RecyclingCategory extends AbstractRecipeCategory<RecyclingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "recycling");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "recycling");
   public static final RecipeType<RecyclingRecipe> TYPE = new RecipeType<>(UID, RecyclingRecipe.class);
 
   private IDrawableAnimated progress;

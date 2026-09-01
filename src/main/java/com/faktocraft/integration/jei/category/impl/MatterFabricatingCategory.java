@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.registries.machines.M4Registry;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
@@ -26,7 +26,7 @@ public class MatterFabricatingCategory extends AbstractRecipeCategory<MatterFabr
   public record Entry(ItemStack amplifier, int energyCost, FluidStack result) {
   }
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "matter_fabricating");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "matter_fabricating");
   public static final RecipeType<Entry> TYPE = new RecipeType<>(UID, Entry.class);
 
   private IDrawableAnimated progress;

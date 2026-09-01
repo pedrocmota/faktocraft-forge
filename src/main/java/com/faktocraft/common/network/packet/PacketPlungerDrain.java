@@ -1,6 +1,6 @@
 package com.faktocraft.common.network.packet;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.entity.block.FluidStorage;
 import com.faktocraft.common.entity.block.IndRebBlockEntity;
 import com.faktocraft.common.item.impl.tools.Plunger;
@@ -53,7 +53,7 @@ public record PacketPlungerDrain(BlockPos blockPos, int tankIndex) {
         carried.hurtAndBreak(1, player, p -> {
         });
         player.containerMenu.broadcastChanges();
-        player.displayClientMessage(Component.translatable("gui." + IndReb.MODID + ".plunger_tank",
+        player.displayClientMessage(Component.translatable("gui." + Faktocraft.MODID + ".plunger_tank",
             String.valueOf(clearedMb)), true);
       });
     });

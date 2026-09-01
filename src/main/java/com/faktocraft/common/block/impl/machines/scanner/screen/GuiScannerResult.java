@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.scanner.screen;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.scanner.BlockEntityScanner;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.widgets.GuiElement;
@@ -22,14 +22,14 @@ public class GuiScannerResult extends GuiElement {
   @Override
   protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
     GuiUtil.renderScaled(graphics,
-        Component.translatable("gui." + IndReb.MODID + ".scanner.replication_cost").getString(), getLeftOffset() + 3,
+        Component.translatable("gui." + Faktocraft.MODID + ".scanner.replication_cost").getString(), getLeftOffset() + 3,
         getTopOffset(), 0.65f, 0x00a200, false);
     GuiUtil.renderScaled(graphics,
-        Component.translatable("gui." + IndReb.MODID + ".scanner.matter_cost").getString() + " "
+        Component.translatable("gui." + Faktocraft.MODID + ".scanner.matter_cost").getString() + " "
             + blockEntityScanner.getResult().getMatterCost() + " mB",
         getLeftOffset() + 3, getTopOffset() + 6, 0.65f, 0x00a200, false);
     GuiUtil.renderScaled(graphics,
-        Component.translatable("gui." + IndReb.MODID + ".scanner.energy_cost").getString() + " "
+        Component.translatable("gui." + Faktocraft.MODID + ".scanner.energy_cost").getString() + " "
             + TextComponentUtil.getFormattedEnergyUnit(blockEntityScanner.getResult().getEnergyCost()) + " IE/t",
         getLeftOffset() + 3, getTopOffset() + 12, 0.65f, 0x00a200, false);
 

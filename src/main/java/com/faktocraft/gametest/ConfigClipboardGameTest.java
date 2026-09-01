@@ -1,6 +1,6 @@
 package com.faktocraft.gametest;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.logistics.BlockEntityChassis;
 import com.faktocraft.common.block.impl.logistics.BlockEntityCraftPipe;
 import com.faktocraft.common.block.impl.logistics.LogisticsRegistry;
@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-@net.minecraftforge.gametest.GameTestHolder(IndReb.MODID)
+@net.minecraftforge.gametest.GameTestHolder(Faktocraft.MODID)
 @net.minecraftforge.gametest.PrefixGameTestTemplate(false)
 public class ConfigClipboardGameTest {
 

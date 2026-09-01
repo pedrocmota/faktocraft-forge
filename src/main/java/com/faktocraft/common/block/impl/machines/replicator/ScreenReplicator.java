@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.replicator;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.replicator.screen.GuiReplicatorMode;
 import com.faktocraft.common.block.impl.machines.replicator.screen.GuiReplicatorRepeatRun;
 import com.faktocraft.common.block.impl.machines.replicator.screen.GuiReplicatorSingleRun;
@@ -35,6 +35,6 @@ public class ScreenReplicator extends BetterScreen<MenuReplicator> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/replicator.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/replicator.png");
   }
 }

@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.quarry;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.GuiUtil;
 import net.minecraft.client.gui.GuiGraphics;
@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
     implements com.faktocraft.common.interfaces.screen.IGuiWrapper {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
       "textures/gui/container/quarry.png");
 
   private static final String[] STATUS_KEYS = {
@@ -55,7 +55,7 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
     for (int i = 0; i < 3; i++) {
       final int id = i;
       runModeButtons[i] = addRenderableWidget(net.minecraft.client.gui.components.Button
-          .builder(Component.translatable("motor." + IndReb.MODID + ".run." + i), b -> press(id))
+          .builder(Component.translatable("motor." + Faktocraft.MODID + ".run." + i), b -> press(id))
           .bounds(left + 8, top + 18 + i * 17, 112, 16).build());
     }
   }
@@ -95,12 +95,12 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
       return;
     }
     String key = hoveredSlot.index < 2
-        ? "gui." + IndReb.MODID + ".slot.capacitor"
+        ? "gui." + Faktocraft.MODID + ".slot.capacitor"
         : hoveredSlot.index == 2
-            ? "gui." + IndReb.MODID + ".slot.tension"
+            ? "gui." + Faktocraft.MODID + ".slot.tension"
             : hoveredSlot.index < 7
-                ? "gui." + IndReb.MODID + ".extractor.upgrade"
-                : "gui." + IndReb.MODID + ".slot.dock_battery";
+                ? "gui." + Faktocraft.MODID + ".extractor.upgrade"
+                : "gui." + Faktocraft.MODID + ".slot.dock_battery";
     graphics.renderTooltip(GuiUtil.getFont(), Component.translatable(key), mouseX, mouseY);
   }
 

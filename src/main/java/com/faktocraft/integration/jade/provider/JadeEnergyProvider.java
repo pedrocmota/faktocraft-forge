@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jade.provider;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.util.TextComponentUtil;
 import net.minecraft.ChatFormatting;
@@ -19,7 +19,7 @@ public class JadeEnergyProvider implements IBlockComponentProvider {
 
   public static final JadeEnergyProvider INSTANCE = new JadeEnergyProvider();
 
-  private static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "energy_info");
+  private static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "energy_info");
 
   private static final int FILLED_COLOR = 0xFF000000 | (76 << 16) | (178 << 8) | 13;
 
@@ -37,7 +37,7 @@ public class JadeEnergyProvider implements IBlockComponentProvider {
     if (maxEnergy <= 0) {
       if (data.contains(JadeEnergyDataProvider.TAG_TIER)) {
         appendTierLine(tooltip, data);
-        tooltip.add(Component.translatable("gui." + IndReb.MODID + ".capacitor_required")
+        tooltip.add(Component.translatable("gui." + Faktocraft.MODID + ".capacitor_required")
             .withStyle(ChatFormatting.RED));
       }
       return;
@@ -57,18 +57,18 @@ public class JadeEnergyProvider implements IBlockComponentProvider {
     appendTierLine(tooltip, data);
 
     if (data.getBoolean(JadeEnergyDataProvider.TAG_REDSTONE_OFF)) {
-      tooltip.add(Component.translatable("top." + IndReb.MODID + ".redstone_off")
+      tooltip.add(Component.translatable("top." + Faktocraft.MODID + ".redstone_off")
           .withStyle(ChatFormatting.GOLD));
     } else if (data.getInt(JadeEnergyDataProvider.TAG_ENERGY) <= 0) {
       if (data.getBoolean(JadeEnergyDataProvider.TAG_GENERATOR)) {
-        tooltip.add(Component.translatable("top." + IndReb.MODID + ".buffer_empty")
+        tooltip.add(Component.translatable("top." + Faktocraft.MODID + ".buffer_empty")
             .withStyle(ChatFormatting.GRAY));
       } else {
-        tooltip.add(Component.translatable("top." + IndReb.MODID + ".no_energy")
+        tooltip.add(Component.translatable("top." + Faktocraft.MODID + ".no_energy")
             .withStyle(ChatFormatting.RED));
       }
     } else if (data.getBoolean(JadeEnergyDataProvider.TAG_UNDERVOLTAGE)) {
-      tooltip.add(Component.translatable("top." + IndReb.MODID + ".undervoltage")
+      tooltip.add(Component.translatable("top." + Faktocraft.MODID + ".undervoltage")
           .withStyle(ChatFormatting.YELLOW));
     }
   }
@@ -91,7 +91,7 @@ public class JadeEnergyProvider implements IBlockComponentProvider {
       tiers.append(Component.translatable(tier.getLang().getTranslationKey()).withStyle(tier.getColor()));
     }
 
-    tooltip.add(Component.translatable("top." + IndReb.MODID + ".energy_tier", tiers)
+    tooltip.add(Component.translatable("top." + Faktocraft.MODID + ".energy_tier", tiers)
         .withStyle(ChatFormatting.DARK_GRAY));
   }
 }

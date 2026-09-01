@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.EnumLang;
 import com.faktocraft.common.recipe.ChanceResult;
 import com.faktocraft.common.recipe.impl.CrushingRecipe;
@@ -26,7 +26,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class CrushingCategory extends AbstractRecipeCategory<CrushingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "crushing");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "crushing");
   public static final RecipeType<CrushingRecipe> TYPE = new RecipeType<>(UID, CrushingRecipe.class);
 
   private IDrawableAnimated progress;

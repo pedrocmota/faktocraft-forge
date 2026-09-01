@@ -74,7 +74,7 @@ public class ToolboxItem extends Item {
       java.util.List<net.minecraft.network.chat.Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
     if (getTooltipImage(stack).isEmpty()) {
       tooltip.add(net.minecraft.network.chat.Component
-          .translatable("tooltip." + com.faktocraft.IndReb.MODID + ".toolbox_empty")
+          .translatable("tooltip." + com.faktocraft.Faktocraft.MODID + ".toolbox_empty")
           .withStyle(net.minecraft.ChatFormatting.GRAY));
     }
     super.appendHoverText(stack, level, tooltip, flag);

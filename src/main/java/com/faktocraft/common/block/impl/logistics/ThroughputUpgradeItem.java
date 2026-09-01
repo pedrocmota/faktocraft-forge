@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -21,7 +21,7 @@ public class ThroughputUpgradeItem extends Item {
   @Override
   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
     super.appendHoverText(stack, level, tooltip, flag);
-    tooltip.add(Component.translatable("logistics." + IndReb.MODID + ".throughput.desc")
+    tooltip.add(Component.translatable("logistics." + Faktocraft.MODID + ".throughput.desc")
         .withStyle(ChatFormatting.GRAY));
   }
 }

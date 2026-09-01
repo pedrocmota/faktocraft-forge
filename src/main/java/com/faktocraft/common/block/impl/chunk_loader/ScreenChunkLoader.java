@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.chunk_loader;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.button.GuiButton;
@@ -41,7 +41,7 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/chunk_loader.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/chunk_loader.png");
   }
 
   @Override

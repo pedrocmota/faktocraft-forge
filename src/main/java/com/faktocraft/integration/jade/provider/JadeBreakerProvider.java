@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jade.provider;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.cable.BlockBreaker;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -14,7 +14,7 @@ public class JadeBreakerProvider implements IBlockComponentProvider {
 
   public static final JadeBreakerProvider INSTANCE = new JadeBreakerProvider();
 
-  private static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "breaker_info");
+  private static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "breaker_info");
 
   @Override
   public ResourceLocation getUid() {
@@ -29,9 +29,9 @@ public class JadeBreakerProvider implements IBlockComponentProvider {
     }
     boolean on = state.getValue(BlockBreaker.ON);
     Component stateComponent = on
-        ? Component.translatable("top." + IndReb.MODID + ".state_on").withStyle(ChatFormatting.GREEN)
-        : Component.translatable("top." + IndReb.MODID + ".state_off").withStyle(ChatFormatting.RED);
-    tooltip.add(Component.translatable("top." + IndReb.MODID + ".breaker", stateComponent)
+        ? Component.translatable("top." + Faktocraft.MODID + ".state_on").withStyle(ChatFormatting.GREEN)
+        : Component.translatable("top." + Faktocraft.MODID + ".state_off").withStyle(ChatFormatting.RED);
+    tooltip.add(Component.translatable("top." + Faktocraft.MODID + ".breaker", stateComponent)
         .withStyle(ChatFormatting.GRAY));
   }
 }

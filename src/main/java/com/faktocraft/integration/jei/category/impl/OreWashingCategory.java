@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.recipe.impl.OreWashingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
@@ -21,7 +21,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class OreWashingCategory extends AbstractRecipeCategory<OreWashingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "ore_washing");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "ore_washing");
   public static final RecipeType<OreWashingRecipe> TYPE = new RecipeType<>(UID, OreWashingRecipe.class);
 
   private IDrawableAnimated progress;

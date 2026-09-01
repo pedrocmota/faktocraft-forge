@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.canning_machine;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketMetalFormerChangeMode;
 import com.faktocraft.common.screen.BetterScreen;
@@ -34,6 +34,6 @@ public class ScreenCanningMachine extends BetterScreen<MenuCanningMachine> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/canning_machine.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/canning_machine.png");
   }
 }

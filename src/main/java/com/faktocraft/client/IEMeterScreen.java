@@ -1,6 +1,6 @@
 package com.faktocraft.client;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.network.packet.PacketIEMeterInfo;
 import com.faktocraft.common.util.TextComponentUtil;
@@ -18,7 +18,7 @@ public class IEMeterScreen extends InfoPanelScreen {
   private final PacketIEMeterInfo info;
 
   public IEMeterScreen(PacketIEMeterInfo info) {
-    super(Component.translatable("ie." + IndReb.MODID + (info.network() ? ".network_info" : ".machine_info")));
+    super(Component.translatable("ie." + Faktocraft.MODID + (info.network() ? ".network_info" : ".machine_info")));
     this.info = info;
   }
 
@@ -27,7 +27,7 @@ public class IEMeterScreen extends InfoPanelScreen {
     super.init();
     rows.clear();
     lines.clear();
-    String modid = IndReb.MODID;
+    String modid = Faktocraft.MODID;
 
     long shortfall = info.netDemand() - (info.network() ? info.netOutput() : 0);
 

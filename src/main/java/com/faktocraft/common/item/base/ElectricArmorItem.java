@@ -93,7 +93,7 @@ public class ElectricArmorItem extends ArmorItem implements IElectricItem {
   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
     if (this instanceof com.faktocraft.common.interfaces.item.IArmorProperties armorProperties
         && armorProperties.supportsNightVision()) {
-      tooltip.add(Component.translatable("tooltip." + com.faktocraft.IndReb.MODID + ".night_vision_cost",
+      tooltip.add(Component.translatable("tooltip." + com.faktocraft.Faktocraft.MODID + ".night_vision_cost",
           com.faktocraft.common.util.NightVisionHandler.COST_PER_SECOND).withStyle(ChatFormatting.GRAY));
     }
     tooltip.add(EnumLang.POWER_TIER.getTranslationComponent(

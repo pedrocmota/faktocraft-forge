@@ -1,6 +1,6 @@
 package com.faktocraft.client;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.item.impl.tools.Prospector;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketProspectorScan;
@@ -42,7 +42,7 @@ public class ProspectorScreen extends Screen {
   private int mapOriginChunkZ;
 
   public ProspectorScreen() {
-    super(Component.translatable("item." + IndReb.MODID + ".prospector"));
+    super(Component.translatable("item." + Faktocraft.MODID + ".prospector"));
   }
 
   public static void drawDeviceFrame(GuiGraphics graphics, int left, int top, int w, int h) {
@@ -85,7 +85,7 @@ public class ProspectorScreen extends Screen {
     panelLeft = (width - PANEL_W) / 2;
     panelTop = (height - PANEL_H) / 2;
     scanButton = addRenderableWidget(Button.builder(
-        Component.translatable("gui." + IndReb.MODID + ".prospector.scan"),
+        Component.translatable("gui." + Faktocraft.MODID + ".prospector.scan"),
         button -> ModNetworking.sendToServer(PacketProspectorScan.INSTANCE))
         .bounds(panelLeft + 12, panelTop + PANEL_H - 32, PANEL_W - 24, 20)
         .build());
@@ -235,7 +235,7 @@ public class ProspectorScreen extends Screen {
         panelLeft + PANEL_W / 2, panelTop + PANEL_H - 46, 0xFFFFFF);
     if (!canAfford && job == null) {
       graphics.drawCenteredString(font,
-          Component.translatable("gui." + IndReb.MODID + ".prospector.no_energy")
+          Component.translatable("gui." + Faktocraft.MODID + ".prospector.no_energy")
               .withStyle(ChatFormatting.RED),
           panelLeft + PANEL_W / 2, panelTop + PANEL_H - 58, 0xFFFFFF);
     }
@@ -250,7 +250,7 @@ public class ProspectorScreen extends Screen {
       graphics.fill(barLeft, barTop, barLeft + barW, barTop + 20, 0xFF26262C);
       graphics.fill(barLeft + 1, barTop + 1, barLeft + 1 + (int) ((barW - 2) * progress), barTop + 19, 0xFF7F9E32);
       graphics.drawCenteredString(font,
-          Component.translatable("gui." + IndReb.MODID + ".prospector.scanning",
+          Component.translatable("gui." + Faktocraft.MODID + ".prospector.scanning",
               (int) (progress * 100)),
           panelLeft + PANEL_W / 2, barTop + 6, 0xFFFFFF);
     }
@@ -267,7 +267,7 @@ public class ProspectorScreen extends Screen {
     List<Component> lines = new ArrayList<>();
     lines.add(Component.literal("Chunk " + chunkX + ", " + chunkZ).withStyle(ChatFormatting.WHITE));
     if (scan == null) {
-      lines.add(Component.translatable("gui." + IndReb.MODID + ".prospector.not_scanned")
+      lines.add(Component.translatable("gui." + Faktocraft.MODID + ".prospector.not_scanned")
           .withStyle(ChatFormatting.DARK_GRAY));
       return lines;
     }
@@ -277,13 +277,13 @@ public class ProspectorScreen extends Screen {
       total += entries.getInt(key);
     }
     if (entries.isEmpty()) {
-      lines.add(Component.translatable("gui." + IndReb.MODID + ".prospector.empty")
+      lines.add(Component.translatable("gui." + Faktocraft.MODID + ".prospector.empty")
           .withStyle(ChatFormatting.GRAY));
     } else {
-      lines.add(Component.translatable("gui." + IndReb.MODID + ".prospector.summary",
+      lines.add(Component.translatable("gui." + Faktocraft.MODID + ".prospector.summary",
           entries.getAllKeys().size(), total).withStyle(ChatFormatting.YELLOW));
     }
-    lines.add(Component.translatable("gui." + IndReb.MODID + ".prospector.details_hint")
+    lines.add(Component.translatable("gui." + Faktocraft.MODID + ".prospector.details_hint")
         .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
     return lines;
   }

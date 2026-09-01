@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jade.provider;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.impl.BasicEnergyStorage;
 import com.faktocraft.common.entity.block.IndRebBlockEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -12,7 +12,7 @@ public class JadeEnergyDataProvider implements IServerDataProvider<BlockAccessor
 
   public static final JadeEnergyDataProvider INSTANCE = new JadeEnergyDataProvider();
 
-  private static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "energy_info_data");
+  private static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "energy_info_data");
 
   public static final String TAG_ENERGY = "faktocraftEnergy";
   public static final String TAG_MAX_ENERGY = "faktocraftMaxEnergy";

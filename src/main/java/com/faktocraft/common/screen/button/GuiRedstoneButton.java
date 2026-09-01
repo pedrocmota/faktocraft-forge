@@ -1,6 +1,6 @@
 package com.faktocraft.common.screen.button;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.container.IndRebMenu;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
@@ -48,8 +48,8 @@ public class GuiRedstoneButton extends GuiButton {
     if (isMouseOver(mouseX, mouseY)) {
       boolean on = menu.isRedstoneOnly();
       graphics.renderComponentTooltip(Minecraft.getInstance().font, List.of(
-          Component.translatable("gui." + IndReb.MODID + ".redstone_control"),
-          Component.translatable("gui." + IndReb.MODID
+          Component.translatable("gui." + Faktocraft.MODID + ".redstone_control"),
+          Component.translatable("gui." + Faktocraft.MODID
               + (on ? ".redstone_control.redstone" : ".redstone_control.always"))
               .withStyle(on ? ChatFormatting.RED : ChatFormatting.GRAY)),
           mouseX, mouseY);

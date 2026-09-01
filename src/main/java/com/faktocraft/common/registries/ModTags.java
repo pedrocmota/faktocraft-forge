@@ -1,6 +1,6 @@
 package com.faktocraft.common.registries;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -20,7 +20,7 @@ public class ModTags {
   public static final TagKey<Item> BOOTS = itemTag("boots");
 
   public static TagKey<Item> itemTag(String path) {
-    return TagKey.create(Registries.ITEM, new ResourceLocation(IndReb.MODID, path));
+    return TagKey.create(Registries.ITEM, new ResourceLocation(Faktocraft.MODID, path));
   }
 
   public static TagKey<Item> commonItemTag(String path) {

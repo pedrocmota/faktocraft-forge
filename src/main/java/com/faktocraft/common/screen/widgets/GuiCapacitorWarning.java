@@ -1,6 +1,6 @@
 package com.faktocraft.common.screen.widgets;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.entity.block.IndRebBlockEntity;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.util.Constants;
@@ -50,7 +50,7 @@ public class GuiCapacitorWarning extends GuiElement {
   public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
     if (active() && isMouseOver(mouseX, mouseY)) {
       graphics.renderTooltip(GuiUtil.getFont(),
-          Component.translatable("gui." + IndReb.MODID + ".capacitor_required")
+          Component.translatable("gui." + Faktocraft.MODID + ".capacitor_required")
               .withStyle(ChatFormatting.RED),
           mouseX, mouseY);
     }

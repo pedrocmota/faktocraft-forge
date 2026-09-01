@@ -1,6 +1,6 @@
 package com.faktocraft.client;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.geo_scanner.BlockEntityGeoScanner;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketGeoScannerControl;
@@ -97,7 +97,7 @@ public class GeoScannerScreen extends Screen {
   private int chipH;
 
   public GeoScannerScreen(PacketGeoScannerState state) {
-    super(Component.translatable("block." + IndReb.MODID + ".geological_scanner"));
+    super(Component.translatable("block." + Faktocraft.MODID + ".geological_scanner"));
     this.pos = state.blockPos();
     ChunkPos center = new ChunkPos(pos);
     this.centerChunkX = center.x;
@@ -164,12 +164,12 @@ public class GeoScannerScreen extends Screen {
   }
 
   private Component toggleLabel() {
-    return Component.translatable("gui." + IndReb.MODID
+    return Component.translatable("gui." + Faktocraft.MODID
         + (running ? ".geo_scanner.pause" : ".geo_scanner.start"));
   }
 
   private Component infoLine(int scannedValue, int energyValue) {
-    return Component.translatable("gui." + IndReb.MODID + ".geo_scanner.progress",
+    return Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.progress",
         scannedValue, BlockEntityGeoScanner.TOTAL_CHUNKS).withStyle(ChatFormatting.GRAY)
         .append(Component.literal("  ·  ").withStyle(ChatFormatting.DARK_GRAY))
         .append(Component.literal(TextComponentUtil.getFormattedEnergyUnit(energyValue) + " / "
@@ -190,9 +190,9 @@ public class GeoScannerScreen extends Screen {
     int infoW = font.width(infoLine(BlockEntityGeoScanner.TOTAL_CHUNKS, capacity)) + 12;
     int titleW = font.width(title) + 12;
     int labelW = Math.max(
-        Math.max(font.width(Component.translatable("gui." + IndReb.MODID + ".geo_scanner.start")),
-            font.width(Component.translatable("gui." + IndReb.MODID + ".geo_scanner.pause"))),
-        font.width(Component.translatable("gui." + IndReb.MODID + ".geo_scanner.center")));
+        Math.max(font.width(Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.start")),
+            font.width(Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.pause"))),
+        font.width(Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.center")));
     int textNeed = Math.max(Math.max(infoW, titleW), 2 * (labelW + 18) + 8);
 
     mapH = Math.max(7 * MIN_CELL, height - MAP_TOP - FOOTER_H - BOTTOM_PAD - 16);
@@ -215,7 +215,7 @@ public class GeoScannerScreen extends Screen {
           ModNetworking.sendToServer(new PacketGeoScannerControl(pos, running));
         }));
     addRenderableWidget(new DeviceButton(panelLeft + SIDE + half + 8, buttonsY, half, 20,
-        Component.translatable("gui." + IndReb.MODID + ".geo_scanner.center"),
+        Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.center"),
         button -> {
           viewX = -gridW / 2;
           viewZ = -gridH / 2;
@@ -457,17 +457,17 @@ public class GeoScannerScreen extends Screen {
       graphics.drawString(font, chip, chipX + 5, chipY + 3, 0xFFE8C43A);
       if (overChip) {
         List<Component> lines = new ArrayList<>();
-        lines.add(Component.translatable("gui." + IndReb.MODID + ".geo_scanner.rare_header")
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.rare_header")
             .withStyle(ChatFormatting.GOLD));
         for (RareFind find : rareFinds) {
           Component name = find.iridium()
-              ? Component.translatable("item." + IndReb.MODID + ".iridium")
-              : Component.translatable("gui." + IndReb.MODID + ".prospector.oil_giant");
+              ? Component.translatable("item." + Faktocraft.MODID + ".iridium")
+              : Component.translatable("gui." + Faktocraft.MODID + ".prospector.oil_giant");
           lines.add(name.copy().withStyle(find.iridium() ? ChatFormatting.GOLD : ChatFormatting.YELLOW)
               .append(Component.literal(" · " + find.chunkX() + ", " + find.chunkZ())
                   .withStyle(ChatFormatting.GRAY)));
         }
-        lines.add(Component.translatable("gui." + IndReb.MODID + ".geo_scanner.rare_hint")
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.rare_hint")
             .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         hoverLines = lines;
       }
@@ -479,16 +479,16 @@ public class GeoScannerScreen extends Screen {
     Component status;
     ChatFormatting statusColor;
     if (jobActive) {
-      status = Component.translatable("gui." + IndReb.MODID + ".geo_scanner.status_scanning", jobCx, jobCz);
+      status = Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.status_scanning", jobCx, jobCz);
       statusColor = ChatFormatting.GREEN;
     } else if (running) {
-      status = Component.translatable("gui." + IndReb.MODID + ".geo_scanner.status_no_energy");
+      status = Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.status_no_energy");
       statusColor = ChatFormatting.RED;
     } else if (scanned >= BlockEntityGeoScanner.TOTAL_CHUNKS) {
-      status = Component.translatable("gui." + IndReb.MODID + ".geo_scanner.status_done");
+      status = Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.status_done");
       statusColor = ChatFormatting.AQUA;
     } else {
-      status = Component.translatable("gui." + IndReb.MODID + ".geo_scanner.status_paused");
+      status = Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.status_paused");
       statusColor = ChatFormatting.YELLOW;
     }
     int footerTop = panelTop + MAP_TOP + mapH;
@@ -539,9 +539,9 @@ public class GeoScannerScreen extends Screen {
     List<Component> lines = new ArrayList<>();
     lines.add(Component.literal("Chunk " + chunkX + ", " + chunkZ).withStyle(ChatFormatting.WHITE));
     if (scan == null) {
-      lines.add(Component.translatable("gui." + IndReb.MODID + ".prospector.not_scanned")
+      lines.add(Component.translatable("gui." + Faktocraft.MODID + ".prospector.not_scanned")
           .withStyle(ChatFormatting.DARK_GRAY));
-      lines.add(Component.translatable("gui." + IndReb.MODID + ".geo_scanner.manual_hint")
+      lines.add(Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.manual_hint")
           .withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC));
     } else {
       CompoundTag entries = scan.getCompound("entries");
@@ -550,16 +550,16 @@ public class GeoScannerScreen extends Screen {
         total += entries.getInt(key);
       }
       if (entries.isEmpty()) {
-        lines.add(Component.translatable("gui." + IndReb.MODID + ".prospector.empty")
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".prospector.empty")
             .withStyle(ChatFormatting.GRAY));
       } else {
-        lines.add(Component.translatable("gui." + IndReb.MODID + ".prospector.summary",
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".prospector.summary",
             entries.getAllKeys().size(), total).withStyle(ChatFormatting.YELLOW));
       }
-      lines.add(Component.translatable("gui." + IndReb.MODID + ".prospector.details_hint")
+      lines.add(Component.translatable("gui." + Faktocraft.MODID + ".prospector.details_hint")
           .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
     }
-    lines.add(Component.translatable("gui." + IndReb.MODID + ".geo_scanner.pan_hint")
+    lines.add(Component.translatable("gui." + Faktocraft.MODID + ".geo_scanner.pan_hint")
         .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
     return lines;
   }

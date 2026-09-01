@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketModuleTree;
 import com.faktocraft.common.util.Constants;
@@ -18,7 +18,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class ScreenModule extends AbstractContainerScreen<MenuModule> {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
       "textures/gui/container/logistics_module.png");
 
   private static final int CONTROLS_Y = 146;
@@ -46,7 +46,7 @@ public class ScreenModule extends AbstractContainerScreen<MenuModule> {
   }
 
   private String key(String name) {
-    return "logistics." + IndReb.MODID + "." + name;
+    return "logistics." + Faktocraft.MODID + "." + name;
   }
 
   @Override
@@ -144,11 +144,11 @@ public class ScreenModule extends AbstractContainerScreen<MenuModule> {
     addRenderableWidget(new com.faktocraft.common.screen.button.GuiCopyPasteButton(
         left + 185, top + 2, false,
         b -> press(MenuModule.encode(MenuModule.ACTION_COPY_CONFIG, 0)),
-        Component.translatable("gui." + com.faktocraft.IndReb.MODID + ".config.copy")));
+        Component.translatable("gui." + com.faktocraft.Faktocraft.MODID + ".config.copy")));
     addRenderableWidget(new com.faktocraft.common.screen.button.GuiCopyPasteButton(
         left + 198, top + 2, true,
         b -> press(MenuModule.encode(MenuModule.ACTION_PASTE_CONFIG, 0)),
-        Component.translatable("gui." + com.faktocraft.IndReb.MODID + ".config.paste")));
+        Component.translatable("gui." + com.faktocraft.Faktocraft.MODID + ".config.paste")));
   }
 
   private Component priorityLabel() {

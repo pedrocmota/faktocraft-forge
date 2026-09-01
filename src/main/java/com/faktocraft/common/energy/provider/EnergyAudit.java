@@ -1,6 +1,6 @@
 package com.faktocraft.common.energy.provider;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.cable.BlockCable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -43,7 +43,7 @@ public final class EnergyAudit {
     if (!reported.add(where + "|" + what)) {
       return;
     }
-    IndReb.LOGGER.error("[energyAudit] {} after {}, at {}", what, where, pos,
+    Faktocraft.LOGGER.error("[energyAudit] {} after {}, at {}", what, where, pos,
         new Throwable("energyAudit trace"));
   }
 }

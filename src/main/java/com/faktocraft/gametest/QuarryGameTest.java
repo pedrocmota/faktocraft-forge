@@ -1,6 +1,6 @@
 package com.faktocraft.gametest;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.quarry.BlockEntityQuarry;
 import com.faktocraft.common.block.impl.quarry.QuarryRegistry;
 import com.faktocraft.common.entity.block.IndRebBlockEntity;
@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder(IndReb.MODID)
+@GameTestHolder(Faktocraft.MODID)
 @PrefixGameTestTemplate(false)
 public class QuarryGameTest {
 

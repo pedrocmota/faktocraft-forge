@@ -1,6 +1,6 @@
 package com.faktocraft.common.network.packet;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.logistics.BlockEntityRecipePipe;
 import com.faktocraft.common.block.impl.logistics.MenuRecipePipe;
 import com.faktocraft.common.util.TransferUtil;
@@ -45,7 +45,7 @@ public record PacketRecipePipeBind(BlockPos pipePos, int ioId, int slot) {
       IItemHandler handler = TransferUtil.findItemHandler(player.level(), docked, null);
       if (handler == null || msg.slot >= handler.getSlots()) {
         player.displayClientMessage(
-            Component.translatable("logistics." + IndReb.MODID + ".link.invalid_slot"), true);
+            Component.translatable("logistics." + Faktocraft.MODID + ".link.invalid_slot"), true);
         return;
       }
       String blockId = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(player.level().getBlockState(

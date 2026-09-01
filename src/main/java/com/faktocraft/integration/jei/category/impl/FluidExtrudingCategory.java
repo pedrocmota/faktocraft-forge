@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.recipe.impl.FluidExtrudingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
@@ -22,7 +22,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class FluidExtrudingCategory extends AbstractRecipeCategory<FluidExtrudingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "fluid_extruding");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "fluid_extruding");
   public static final RecipeType<FluidExtrudingRecipe> TYPE = new RecipeType<>(UID, FluidExtrudingRecipe.class);
 
   private IDrawableAnimated progress;

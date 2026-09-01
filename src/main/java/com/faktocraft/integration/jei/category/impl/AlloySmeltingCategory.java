@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.recipe.impl.AlloySmeltingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
@@ -24,7 +24,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class AlloySmeltingCategory extends AbstractRecipeCategory<AlloySmeltingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "alloy_smelting");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "alloy_smelting");
   public static final RecipeType<AlloySmeltingRecipe> TYPE = new RecipeType<>(UID, AlloySmeltingRecipe.class);
 
   private IDrawableAnimated progress;

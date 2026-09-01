@@ -1,6 +1,6 @@
 package com.faktocraft.common.command;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
@@ -11,7 +11,7 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = IndReb.MODID)
+@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
 public final class DebugWorldgenTest {
 
   private DebugWorldgenTest() {
@@ -63,7 +63,7 @@ public final class DebugWorldgenTest {
         }
       }
     }
-    IndReb.LOGGER.info(
+    Faktocraft.LOGGER.info(
         "[FAKTO-WORLDGEN-TEST] {} chunks gerados em {}s: iridio={} blocos em {} chunks; estanho={} blocos",
         (2 * radius + 1) * (2 * radius + 1), (System.currentTimeMillis() - start) / 1000,
         iridiumCount, chunksWithIridium, tinCount);

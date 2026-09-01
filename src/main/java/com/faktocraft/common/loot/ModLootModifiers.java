@@ -1,6 +1,6 @@
 package com.faktocraft.common.loot;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.registries.ModItems;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@Mod.EventBusSubscriber(modid = IndReb.MODID)
+@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
 public class ModLootModifiers {
 
   private record Injection(Supplier<Item> item, float chance) {

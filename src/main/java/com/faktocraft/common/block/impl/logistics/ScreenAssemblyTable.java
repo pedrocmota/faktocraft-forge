@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.entity.slot.IndRebSlot;
 import com.faktocraft.common.enums.GuiSlotType;
 import com.faktocraft.common.enums.InventorySlotType;
@@ -48,7 +48,7 @@ public class ScreenAssemblyTable extends BetterScreen<MenuAssemblyTable> {
   }
 
   private String key(String name) {
-    return "logistics." + IndReb.MODID + "." + name;
+    return "logistics." + Faktocraft.MODID + "." + name;
   }
 
   private BlockEntityAssemblyTable table() {
@@ -191,7 +191,7 @@ public class ScreenAssemblyTable extends BetterScreen<MenuAssemblyTable> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/assembly_table.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/assembly_table.png");
   }
 
   @Override

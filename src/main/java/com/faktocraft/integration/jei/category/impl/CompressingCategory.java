@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.EnumLang;
 import com.faktocraft.common.recipe.ChanceResult;
 import com.faktocraft.common.recipe.impl.CompressingRecipe;
@@ -26,7 +26,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class CompressingCategory extends AbstractRecipeCategory<CompressingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "compressing");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "compressing");
   public static final RecipeType<CompressingRecipe> TYPE = new RecipeType<>(UID, CompressingRecipe.class);
 
   private IDrawableAnimated progress;

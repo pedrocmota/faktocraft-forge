@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.scanner;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.scanner.screen.GuiScannerClearPattern;
 import com.faktocraft.common.block.impl.machines.scanner.screen.GuiScannerMode;
 import com.faktocraft.common.block.impl.machines.scanner.screen.GuiScannerResult;
@@ -56,6 +56,6 @@ public class ScreenScanner extends BetterScreen<MenuScanner> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/scanner.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/scanner.png");
   }
 }

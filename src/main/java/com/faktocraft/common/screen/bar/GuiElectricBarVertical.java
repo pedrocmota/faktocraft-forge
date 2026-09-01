@@ -1,7 +1,7 @@
 package com.faktocraft.common.screen.bar;
 
 import com.faktocraft.common.util.GuiUtil;
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.impl.BasicEnergyStorage;
 import com.faktocraft.common.entity.block.IndRebBlockEntity;
 import com.faktocraft.common.enums.GuiSprite;
@@ -78,11 +78,11 @@ public class GuiElectricBarVertical extends GuiProgress {
     }
     if (isMouseOver(mouseX, mouseY)) {
       java.util.List<Component> lines = new java.util.ArrayList<>();
-      lines.add(Component.translatable("gui." + IndReb.MODID + ".energy",
+      lines.add(Component.translatable("gui." + Faktocraft.MODID + ".energy",
           TextComponentUtil.getFormattedEnergyUnit(getProgress().getProgress()),
           TextComponentUtil.getFormattedEnergyUnit(getProgress().getProgressMax())));
       if (blockEntity != null && blockEntity.isUndervoltage() && !blockEntity.isDischargeMode()) {
-        lines.add(Component.translatable("gui." + IndReb.MODID + ".undervoltage")
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".undervoltage")
             .withStyle(net.minecraft.ChatFormatting.YELLOW));
       }
       graphics.renderComponentTooltip(GuiUtil.getFont(), lines, mouseX, mouseY);

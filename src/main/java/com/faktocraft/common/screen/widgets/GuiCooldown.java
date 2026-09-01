@@ -2,7 +2,7 @@ package com.faktocraft.common.screen.widgets;
 
 import net.minecraft.client.Minecraft;
 import com.faktocraft.common.util.GuiUtil;
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.interfaces.entity.ICooldown;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.util.Constants;
@@ -29,13 +29,13 @@ public class GuiCooldown extends GuiElement {
     if (isMouseOver(mouseX, mouseY)) {
       if (be.getCooldown() > 0) {
         graphics.renderTooltip(GuiUtil.getFont(),
-            Component.translatable("gui." + IndReb.MODID + ".can_operate_in", be.getCooldown()), mouseX, mouseY);
+            Component.translatable("gui." + Faktocraft.MODID + ".can_operate_in", be.getCooldown()), mouseX, mouseY);
       } else if (bufferFull()) {
         graphics.renderTooltip(GuiUtil.getFont(),
-            Component.translatable("gui." + IndReb.MODID + ".buffer_full"), mouseX, mouseY);
+            Component.translatable("gui." + Faktocraft.MODID + ".buffer_full"), mouseX, mouseY);
       } else {
         graphics.renderTooltip(GuiUtil.getFont(),
-            Component.translatable("gui." + IndReb.MODID + ".can_operate"), mouseX, mouseY);
+            Component.translatable("gui." + Faktocraft.MODID + ".can_operate"), mouseX, mouseY);
       }
     }
   }

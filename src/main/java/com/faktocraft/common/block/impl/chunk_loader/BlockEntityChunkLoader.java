@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.chunk_loader;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.IndRebBlockEntity;
@@ -179,7 +179,7 @@ public class BlockEntityChunkLoader extends IndRebBlockEntity implements IEnergy
   private void forceRange(ServerLevel serverLevel, int from, int to, boolean add) {
     ChunkPos base = new ChunkPos(worldPosition);
     for (int i = from; i < to; i++) {
-      ForgeChunkManager.forceChunk(serverLevel, IndReb.MODID, worldPosition,
+      ForgeChunkManager.forceChunk(serverLevel, Faktocraft.MODID, worldPosition,
           base.x + CHUNK_OFFSETS[i][0], base.z + CHUNK_OFFSETS[i][1], add, true);
     }
   }

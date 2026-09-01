@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketMenuAction;
 import com.faktocraft.common.util.Constants;
@@ -86,7 +86,7 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
   }
 
   protected String key(String name) {
-    return "logistics." + IndReb.MODID + "." + name;
+    return "logistics." + Faktocraft.MODID + "." + name;
   }
 
   protected abstract int listRows();
@@ -168,11 +168,11 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
       addRenderableWidget(new com.faktocraft.common.screen.button.GuiCopyPasteButton(
           left + MenuPipeRecipes.WIDTH - 34, top + 4, false,
           b -> press(MenuPipeRecipes.encode(MenuPipeRecipes.ACTION_COPY_CONFIG, 0)),
-          Component.translatable("gui." + com.faktocraft.IndReb.MODID + ".config.copy")));
+          Component.translatable("gui." + com.faktocraft.Faktocraft.MODID + ".config.copy")));
       addRenderableWidget(new com.faktocraft.common.screen.button.GuiCopyPasteButton(
           left + MenuPipeRecipes.WIDTH - 20, top + 4, true,
           b -> press(MenuPipeRecipes.encode(MenuPipeRecipes.ACTION_PASTE_CONFIG, 0)),
-          Component.translatable("gui." + com.faktocraft.IndReb.MODID + ".config.paste")));
+          Component.translatable("gui." + com.faktocraft.Faktocraft.MODID + ".config.paste")));
       refreshFilter();
     } else {
       addButton = null;

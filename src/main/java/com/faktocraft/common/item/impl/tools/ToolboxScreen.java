@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.impl.tools;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class ToolboxScreen extends AbstractContainerScreen<ToolboxMenu> {
 
-  private static final ResourceLocation TEXTURE = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation TEXTURE = new ResourceLocation(Faktocraft.MODID,
       "textures/gui/container/toolbox.png");
 
   public ToolboxScreen(ToolboxMenu menu, Inventory playerInventory, Component title) {

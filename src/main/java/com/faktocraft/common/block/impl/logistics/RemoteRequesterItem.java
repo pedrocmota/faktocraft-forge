@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -57,7 +57,7 @@ public class RemoteRequesterItem extends Item {
       stack.getOrCreateTag().putString("tableDim", level.dimension().location().toString());
       if (context.getPlayer() != null) {
         context.getPlayer().displayClientMessage(
-            Component.translatable("logistics." + IndReb.MODID + ".remote.bound"), true);
+            Component.translatable("logistics." + Faktocraft.MODID + ".remote.bound"), true);
       }
     }
     return InteractionResult.sidedSuccess(level.isClientSide());
@@ -73,20 +73,20 @@ public class RemoteRequesterItem extends Item {
     ResourceKey<Level> dim = boundDim(stack);
     if (pos == null || dim == null) {
       serverPlayer.displayClientMessage(
-          Component.translatable("logistics." + IndReb.MODID + ".remote.unbound"), true);
+          Component.translatable("logistics." + Faktocraft.MODID + ".remote.unbound"), true);
       return InteractionResultHolder.fail(stack);
     }
     ServerLevel targetLevel = serverPlayer.server.getLevel(dim);
     if (targetLevel == null || !targetLevel.isLoaded(pos)
         || !(targetLevel.getBlockEntity(pos) instanceof BlockEntityRequestTable)) {
       serverPlayer.displayClientMessage(
-          Component.translatable("logistics." + IndReb.MODID + ".remote.unreachable"), true);
+          Component.translatable("logistics." + Faktocraft.MODID + ".remote.unreachable"), true);
       return InteractionResultHolder.fail(stack);
     }
     NetworkHooks.openScreen(serverPlayer,
         new SimpleMenuProvider(
             (windowId, inventory, p) -> new MenuRequestTable(windowId, targetLevel, pos, inventory, p, true),
-            Component.translatable("block." + IndReb.MODID + ".request_table")),
+            Component.translatable("block." + Faktocraft.MODID + ".request_table")),
         buf -> {
           buf.writeBlockPos(pos);
           buf.writeBoolean(true);
@@ -97,11 +97,11 @@ public class RemoteRequesterItem extends Item {
   @Override
   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
     super.appendHoverText(stack, level, tooltip, flag);
-    tooltip.add(Component.translatable("logistics." + IndReb.MODID + ".remote.desc")
+    tooltip.add(Component.translatable("logistics." + Faktocraft.MODID + ".remote.desc")
         .withStyle(ChatFormatting.GRAY));
     BlockPos pos = boundPos(stack);
     if (pos != null) {
-      tooltip.add(Component.translatable("logistics." + IndReb.MODID + ".remote.bound_to",
+      tooltip.add(Component.translatable("logistics." + Faktocraft.MODID + ".remote.bound_to",
           pos.getX() + ", " + pos.getY() + ", " + pos.getZ()).withStyle(ChatFormatting.DARK_GRAY));
     }
   }

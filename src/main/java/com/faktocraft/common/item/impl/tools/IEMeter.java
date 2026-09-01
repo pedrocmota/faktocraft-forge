@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.impl.tools;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.cable.BlockEntityCable;
 import com.faktocraft.common.energy.EnergyLookup;
 import com.faktocraft.common.energy.impl.BasicEnergyStorage;
@@ -33,7 +33,7 @@ public class IEMeter extends BaseItem {
 
   @Override
   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("ie." + IndReb.MODID + ".desc").withStyle(ChatFormatting.GRAY));
+    tooltip.add(Component.translatable("ie." + Faktocraft.MODID + ".desc").withStyle(ChatFormatting.GRAY));
     super.appendHoverText(stack, level, tooltip, flag);
   }
 

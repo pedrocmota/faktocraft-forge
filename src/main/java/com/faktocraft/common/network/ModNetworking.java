@@ -1,6 +1,6 @@
 package com.faktocraft.common.network;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.packet.PacketExperience;
 import com.faktocraft.common.network.packet.PacketExtruderRecipe;
 import com.faktocraft.common.network.packet.PacketIEMeterInfo;
@@ -28,7 +28,7 @@ import java.util.function.BiConsumer;
 public class ModNetworking {
 
   public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-      new ResourceLocation(IndReb.MODID, "main"), () -> "1", "1"::equals, "1"::equals);
+      new ResourceLocation(Faktocraft.MODID, "main"), () -> "1", "1"::equals, "1"::equals);
 
   public static void init() {
     int id = 0;
@@ -183,7 +183,7 @@ public class ModNetworking {
   public static void withBlockEntity(ServerPlayer player, BlockPos pos,
       BiConsumer<ServerPlayer, BlockEntity> handler) {
     if (!(player.distanceToSqr(Vec3.atCenterOf(pos)) <= 8.5 * 8.5)) {
-      IndReb.LOGGER.debug("Rejected packet for out-of-reach block {} from {}", pos, player.getName().getString());
+      Faktocraft.LOGGER.debug("Rejected packet for out-of-reach block {} from {}", pos, player.getName().getString());
       return;
     }
     BlockEntity be = player.level().getBlockEntity(pos);

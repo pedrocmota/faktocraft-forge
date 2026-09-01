@@ -1,6 +1,6 @@
 package com.faktocraft.client;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.item.impl.tools.Prospector;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -31,7 +31,7 @@ public class ProspectorDetailScreen extends Screen {
   private int scroll;
 
   public ProspectorDetailScreen(int chunkX, int chunkZ) {
-    super(Component.translatable("gui." + IndReb.MODID + ".prospector.report", chunkX, chunkZ));
+    super(Component.translatable("gui." + Faktocraft.MODID + ".prospector.report", chunkX, chunkZ));
     this.chunkX = chunkX;
     this.chunkZ = chunkZ;
   }
@@ -41,7 +41,7 @@ public class ProspectorDetailScreen extends Screen {
     panelLeft = (width - PANEL_W) / 2;
     panelTop = (height - PANEL_H) / 2;
     addRenderableWidget(Button.builder(
-        Component.translatable("gui." + IndReb.MODID + ".prospector.back"),
+        Component.translatable("gui." + Faktocraft.MODID + ".prospector.back"),
         button -> minecraft.setScreen(new ProspectorScreen()))
         .bounds(panelLeft + 12, panelTop + PANEL_H - 30, PANEL_W - 24, 20)
         .build());
@@ -73,7 +73,7 @@ public class ProspectorDetailScreen extends Screen {
         ChatFormatting color;
         String oilKey = OIL_LABELS.get(id);
         if (oilKey != null) {
-          name = Component.translatable("gui." + IndReb.MODID + ".prospector." + oilKey);
+          name = Component.translatable("gui." + Faktocraft.MODID + ".prospector." + oilKey);
           color = ChatFormatting.GOLD;
         } else {
           var block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(id));
@@ -113,12 +113,12 @@ public class ProspectorDetailScreen extends Screen {
     CompoundTag scan = Prospector.getScan(stack,
         Prospector.chunkKey(minecraft.player.level(), chunkX, chunkZ));
     if (scan == null) {
-      return List.of(Component.translatable("gui." + IndReb.MODID + ".prospector.not_scanned")
+      return List.of(Component.translatable("gui." + Faktocraft.MODID + ".prospector.not_scanned")
           .withStyle(ChatFormatting.DARK_GRAY));
     }
     List<Component> lines = buildReportLines(scan);
     if (lines.isEmpty()) {
-      return List.of(Component.translatable("gui." + IndReb.MODID + ".prospector.empty")
+      return List.of(Component.translatable("gui." + Faktocraft.MODID + ".prospector.empty")
           .withStyle(ChatFormatting.GRAY));
     }
     return lines;

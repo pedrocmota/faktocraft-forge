@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.EnumLang;
 import com.faktocraft.common.recipe.ChanceResult;
 import com.faktocraft.common.recipe.impl.SawingRecipe;
@@ -26,7 +26,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class SawingCategory extends AbstractRecipeCategory<SawingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "sawing");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "sawing");
   public static final RecipeType<SawingRecipe> TYPE = new RecipeType<>(UID, SawingRecipe.class);
 
   private IDrawableAnimated progress;

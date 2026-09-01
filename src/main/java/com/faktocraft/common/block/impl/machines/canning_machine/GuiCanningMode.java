@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.canning_machine;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.button.GuiButton;
@@ -23,7 +23,7 @@ public class GuiCanningMode extends GuiButton {
   public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY)) {
       graphics.renderTooltip(com.faktocraft.common.util.GuiUtil.getFont(),
-          Component.translatable("gui." + IndReb.MODID + ".canning_mode." + entity.getMode().getType()),
+          Component.translatable("gui." + Faktocraft.MODID + ".canning_mode." + entity.getMode().getType()),
           mouseX, mouseY);
     }
     super.renderWidgetToolTip(screen, graphics, mouseX, mouseY);

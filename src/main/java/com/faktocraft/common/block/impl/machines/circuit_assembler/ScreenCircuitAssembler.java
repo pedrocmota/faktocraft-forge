@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.circuit_assembler;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.progress.GuiProgressArrow;
 import net.minecraft.network.chat.Component;
@@ -26,6 +26,6 @@ public class ScreenCircuitAssembler extends BetterScreen<MenuCircuitAssembler> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/circuit_assembler.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/circuit_assembler.png");
   }
 }

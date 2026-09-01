@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.GuiSlotType;
 import com.faktocraft.common.util.Constants;
 import net.minecraft.ChatFormatting;
@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class ScreenChassis extends AbstractContainerScreen<MenuChassis> {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
       "textures/gui/container/logistics_chassis.png");
 
   private static final int PANEL_X = 175;
@@ -36,7 +36,7 @@ public class ScreenChassis extends AbstractContainerScreen<MenuChassis> {
   }
 
   private String key(String name) {
-    return "logistics." + IndReb.MODID + "." + name;
+    return "logistics." + Faktocraft.MODID + "." + name;
   }
 
   @Override

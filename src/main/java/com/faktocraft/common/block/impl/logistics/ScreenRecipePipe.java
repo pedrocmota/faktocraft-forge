@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketRecipePipeBind;
 import com.faktocraft.common.util.GuiUtil;
@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(IndReb.MODID,
+  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
       "textures/gui/container/recipe_pipe.png");
 
   private static final float LABEL_SCALE = 0.75f;

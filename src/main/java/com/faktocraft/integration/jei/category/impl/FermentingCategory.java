@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
@@ -25,7 +25,7 @@ public class FermentingCategory extends AbstractRecipeCategory<FermentingCategor
   public record Entry(ItemStack input, FluidStack fluidInput, FluidStack result, int duration, int powerCost) {
   }
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "fermenting");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "fermenting");
   public static final RecipeType<Entry> TYPE = new RecipeType<>(UID, Entry.class);
 
   private IDrawableAnimated progress;

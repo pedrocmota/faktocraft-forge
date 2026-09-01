@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei.category.impl;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.EnumLang;
 import com.faktocraft.common.recipe.ChanceResult;
 import com.faktocraft.common.recipe.impl.ExtractingRecipe;
@@ -26,7 +26,7 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class ExtractingCategory extends AbstractRecipeCategory<ExtractingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, "extracting");
+  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "extracting");
   public static final RecipeType<ExtractingRecipe> TYPE = new RecipeType<>(UID, ExtractingRecipe.class);
 
   private IDrawableAnimated progress;

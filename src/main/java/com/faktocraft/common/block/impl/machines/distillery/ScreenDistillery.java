@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.distillery;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.bar.GuiFluidBarVertical;
 import com.faktocraft.common.screen.progress.GuiProgressArrow;
@@ -32,6 +32,6 @@ public class ScreenDistillery extends BetterScreen<MenuDistillery> {
 
   @Override
   public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(IndReb.MODID, "textures/gui/container/distillery.png");
+    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/distillery.png");
   }
 }

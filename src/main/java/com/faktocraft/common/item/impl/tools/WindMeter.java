@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.impl.tools;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.WindSim;
 import com.faktocraft.common.enums.EnergyTier;
@@ -32,7 +32,7 @@ public class WindMeter extends ElectricItem {
 
   @Override
   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("wind_meter." + IndReb.MODID + ".desc").withStyle(ChatFormatting.GRAY));
+    tooltip.add(Component.translatable("wind_meter." + Faktocraft.MODID + ".desc").withStyle(ChatFormatting.GRAY));
     super.appendHoverText(stack, level, tooltip, flag);
   }
 
@@ -43,7 +43,7 @@ public class WindMeter extends ElectricItem {
       int energy = ModComponents.getEnergy(stack, initialEnergy);
       if (energy < ENERGY_PER_READING && !player.isCreative()) {
         player.displayClientMessage(
-            Component.translatable("wind_meter." + IndReb.MODID + ".no_energy").withStyle(ChatFormatting.RED),
+            Component.translatable("wind_meter." + Faktocraft.MODID + ".no_energy").withStyle(ChatFormatting.RED),
             true);
         return InteractionResultHolder.fail(stack);
       }

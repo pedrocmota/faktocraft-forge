@@ -1,6 +1,6 @@
 package com.faktocraft.integration.jei;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.alloy_smelter.BlockEntityAlloySmelter;
 import com.faktocraft.common.block.impl.machines.alloy_smelter.MenuAlloySmelter;
 import com.faktocraft.common.block.impl.machines.alloy_smelter.ScreenAlloySmelter;
@@ -97,7 +97,7 @@ import java.util.List;
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {
 
-  private static final ResourceLocation UID = new ResourceLocation(IndReb.MODID, IndReb.MODID);
+  private static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, Faktocraft.MODID);
 
   @Override
   public ResourceLocation getPluginUid() {
@@ -160,7 +160,7 @@ public class JEIPlugin implements IModPlugin {
     Minecraft minecraft = Minecraft.getInstance();
     ClientLevel level = minecraft.level;
     if (level == null) {
-      IndReb.LOGGER.warn("JEI recipe registration ran without a client level; Faktocraft recipes skipped");
+      Faktocraft.LOGGER.warn("JEI recipe registration ran without a client level; Faktocraft recipes skipped");
       return;
     }
     RecipeManager recipeManager = level.getRecipeManager();
@@ -172,7 +172,7 @@ public class JEIPlugin implements IModPlugin {
     registration.addRecipes(SawingCategory.TYPE, recipes(recipeManager, ModRecipeType.SAWING));
     registration.addRecipes(AlloySmeltingCategory.TYPE, recipes(recipeManager, ModRecipeType.ALLOY_SMELTING));
     registration.addRecipes(CircuitAssemblingCategory.TYPE, recipes(recipeManager, ModRecipeType.CIRCUIT_ASSEMBLING));
-    IndReb.LOGGER.info("JEI sync check: alloy_smelting={} circuit_assembling={}",
+    Faktocraft.LOGGER.info("JEI sync check: alloy_smelting={} circuit_assembling={}",
         recipes(recipeManager, ModRecipeType.ALLOY_SMELTING).size(),
         recipes(recipeManager, ModRecipeType.CIRCUIT_ASSEMBLING).size());
     registration.addRecipes(RecyclingCategory.TYPE, recipes(recipeManager, ModRecipeType.RECYCLING));
@@ -191,14 +191,14 @@ public class JEIPlugin implements IModPlugin {
     registration.addRecipes(MatterFabricatingCategory.TYPE, matterFabricatingEntries());
 
     registration.addIngredientInfo(ModItems.FERTILIZER,
-        net.minecraft.network.chat.Component.translatable("jei." + IndReb.MODID + ".fertilizer.info",
+        net.minecraft.network.chat.Component.translatable("jei." + Faktocraft.MODID + ".fertilizer.info",
             BlockEntityFermenter.WASTE_EVERY_TICKS / 20));
 
     List<ScrapBoxRecipe> scrapBoxRecipes = recipeManager.getAllRecipesFor(ModRecipeType.SCRAP_BOX);
     ScrapBoxCategory.setTotalWeight(ScrapBoxRecipe.getTotalWeight(scrapBoxRecipes));
     registration.addRecipes(ScrapBoxCategory.TYPE, scrapBoxRecipes);
 
-    IndReb.LOGGER.info("Loaded JEI recipe integration in {} ms", (System.nanoTime() - start) / 1_000_000);
+    Faktocraft.LOGGER.info("Loaded JEI recipe integration in {} ms", (System.nanoTime() - start) / 1_000_000);
   }
 
   private static FermentingCategory.Entry fermentingEntry() {

@@ -1,6 +1,6 @@
 package com.faktocraft.gametest;
 
-import com.faktocraft.IndReb;
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.entity.block.IndRebBlockEntity;
 import com.faktocraft.common.interfaces.block.IStateFacing;
 import com.faktocraft.common.registries.ModBlocks;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder(IndReb.MODID)
+@GameTestHolder(Faktocraft.MODID)
 @PrefixGameTestTemplate(false)
 public class EnergyNetworkGameTest {
 
