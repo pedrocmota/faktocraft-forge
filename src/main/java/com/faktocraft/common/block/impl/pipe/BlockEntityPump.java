@@ -2,7 +2,7 @@ package com.faktocraft.common.block.impl.pipe;
 
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.FluidStorage;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.registries.PipeRegistry;
@@ -28,7 +28,7 @@ import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Set;
 
-public class BlockEntityPump extends IndRebBlockEntity
+public class BlockEntityPump extends FaktocraftBlockEntity
     implements IEnergyBlock, com.faktocraft.common.interfaces.entity.ITileSound {
 
   @org.jetbrains.annotations.Nullable
@@ -47,13 +47,13 @@ public class BlockEntityPump extends IndRebBlockEntity
   private static final int MAX_DRAW_PER_TICK = 4;
   public static final int UPGRADE_SLOTS = 3;
 
-  private final com.faktocraft.common.util.ItemStackHandler upgrades =
-      new com.faktocraft.common.util.ItemStackHandler(UPGRADE_SLOTS) {
-        @Override
-        protected void onContentsChanged(int slot) {
-          BlockEntityPump.this.setChanged();
-        }
-      };
+  private final com.faktocraft.common.util.ItemStackHandler upgrades = new com.faktocraft.common.util.ItemStackHandler(
+      UPGRADE_SLOTS) {
+    @Override
+    protected void onContentsChanged(int slot) {
+      BlockEntityPump.this.setChanged();
+    }
+  };
 
   public com.faktocraft.common.util.ItemStackHandler getUpgrades() {
     return upgrades;
@@ -78,6 +78,7 @@ public class BlockEntityPump extends IndRebBlockEntity
   public int maxDrawPerTick() {
     return (int) Math.ceil(MAX_DRAW_PER_TICK * Math.pow(1.6 / 0.7, boostPoints()));
   }
+
   private static final int PUSH_RATE_MB = 200;
 
   private static final int MAX_DEPTH = 384;
@@ -114,12 +115,14 @@ public class BlockEntityPump extends IndRebBlockEntity
   }
 
   private final com.faktocraft.common.util.NeighborFluidCache neighborFluidCache =
-      new com.faktocraft.common.util.NeighborFluidCache(this);
+      new com.faktocraft.common.util.NeighborFluidCache(
+          this);
 
   private boolean allowedToRun() {
     return runMode != PipeExtractor.RUN_OFF
         && !(runMode == PipeExtractor.RUN_REDSTONE && getRedstonePower() <= 0);
   }
+
   private static final int REBUILD_COOLDOWN_TICKS = 60;
 
   public final FluidStorage tank = new FluidStorage(TANK_CAPACITY_MB);

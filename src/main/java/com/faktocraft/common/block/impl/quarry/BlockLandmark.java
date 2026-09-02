@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -15,6 +16,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -22,14 +25,21 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
-public class BlockLandmark extends Block {
+public class BlockLandmark extends Block implements EntityBlock {
 
-  public static final int MAX_SPAN = 64;
+  public static final int MAX_SPAN = BlockEntityQuarry.MAX_FRAME_SPAN;
+  public static final int MIN_SPAN = BlockEntityQuarry.MIN_FRAME_SPAN;
 
   private static final VoxelShape SHAPE = Block.box(6, 0, 6, 10, 10, 10);
 
   public BlockLandmark(Properties properties) {
     super(properties);
+  }
+
+  @Nullable
+  @Override
+  public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    return new BlockEntityLandmark(pos, state);
   }
 
   @Override
@@ -57,14 +67,8 @@ public class BlockLandmark extends Block {
     if (level.isClientSide()) {
       return InteractionResult.SUCCESS;
     }
-    BlockPos alongX = findPartner(level, pos, Direction.EAST);
-    if (alongX == null) {
-      alongX = findPartner(level, pos, Direction.WEST);
-    }
-    BlockPos alongZ = findPartner(level, pos, Direction.SOUTH);
-    if (alongZ == null) {
-      alongZ = findPartner(level, pos, Direction.NORTH);
-    }
+    BlockPos alongX = partnerOnAxis(level, pos, Direction.EAST, Direction.WEST);
+    BlockPos alongZ = partnerOnAxis(level, pos, Direction.SOUTH, Direction.NORTH);
     if (alongX != null && alongZ != null) {
       int width = Math.abs(alongX.getX() - pos.getX()) + 1;
       int depth = Math.abs(alongZ.getZ() - pos.getZ()) + 1;
@@ -81,7 +85,78 @@ public class BlockLandmark extends Block {
   }
 
   @Nullable
-  public static BlockPos findPartner(Level level, BlockPos from, Direction direction) {
+  public static BlockPos findPartner(BlockGetter level, BlockPos from, Direction direction) {
+    BlockPos.MutableBlockPos cursor = from.mutable();
+    for (int i = 1; i <= MAX_SPAN - 1; i++) {
+      cursor.move(direction);
+      if (level.getBlockState(cursor).is(QuarryRegistry.LANDMARK)) {
+        return i >= MIN_SPAN - 1 ? cursor.immutable() : null;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  public static int[] rectAround(BlockGetter level, BlockPos pos) {
+    for (int dx = -1; dx <= 1; dx++) {
+      for (int dz = -1; dz <= 1; dz++) {
+        if (dx == 0 && dz == 0) {
+          continue;
+        }
+        BlockPos neighbor = pos.offset(dx, 0, dz);
+        int[] rect = rectThrough(level, neighbor);
+        if (rect != null) {
+          return rect;
+        }
+      }
+    }
+    return null;
+  }
+
+  public static boolean touchesLandmarks(BlockGetter level, BlockPos pos) {
+    for (int dx = -1; dx <= 1; dx++) {
+      for (int dz = -1; dz <= 1; dz++) {
+        if (dx == 0 && dz == 0) {
+          continue;
+        }
+        BlockPos neighbor = pos.offset(dx, 0, dz);
+        if (level.getBlockState(neighbor).is(QuarryRegistry.LANDMARK)) {
+          return true;
+        }
+        for (Direction.Axis axis : new Direction.Axis[] { Direction.Axis.X, Direction.Axis.Z }) {
+          Direction negative = Direction.fromAxisAndDirection(axis, Direction.AxisDirection.NEGATIVE);
+          if (nearestLandmark(level, neighbor, negative) != null
+              && nearestLandmark(level, neighbor, negative.getOpposite()) != null) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  @Nullable
+  private static int[] rectThrough(BlockGetter level, BlockPos spot) {
+    if (level.getBlockState(spot).is(QuarryRegistry.LANDMARK)) {
+      return resolveRect(level, spot);
+    }
+    for (Direction.Axis axis : new Direction.Axis[] { Direction.Axis.X, Direction.Axis.Z }) {
+      Direction negative = Direction.fromAxisAndDirection(axis, Direction.AxisDirection.NEGATIVE);
+      BlockPos before = nearestLandmark(level, spot, negative);
+      BlockPos after = nearestLandmark(level, spot, negative.getOpposite());
+      if (before == null || after == null || !after.equals(findPartner(level, before, negative.getOpposite()))) {
+        continue;
+      }
+      int[] rect = resolveRect(level, before);
+      if (rect != null) {
+        return rect;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  private static BlockPos nearestLandmark(BlockGetter level, BlockPos from, Direction direction) {
     BlockPos.MutableBlockPos cursor = from.mutable();
     for (int i = 1; i <= MAX_SPAN - 1; i++) {
       cursor.move(direction);
@@ -92,10 +167,52 @@ public class BlockLandmark extends Block {
     return null;
   }
 
+  @Nullable
+  public static int[] resolveRect(BlockGetter level, BlockPos start) {
+    BlockPos alongX = partnerOnAxis(level, start, Direction.EAST, Direction.WEST);
+    BlockPos alongZ = partnerOnAxis(level, start, Direction.SOUTH, Direction.NORTH);
+    BlockPos corner = start;
+    if (alongX != null && alongZ == null) {
+      corner = alongX;
+      alongX = start;
+      alongZ = partnerOnAxis(level, corner, Direction.SOUTH, Direction.NORTH);
+    } else if (alongZ != null && alongX == null) {
+      corner = alongZ;
+      alongZ = start;
+      alongX = partnerOnAxis(level, corner, Direction.EAST, Direction.WEST);
+    }
+    if (alongX == null || alongZ == null) {
+      return null;
+    }
+    return new int[] {
+        Math.min(corner.getX(), alongX.getX()), Math.max(corner.getX(), alongX.getX()),
+        Math.min(corner.getZ(), alongZ.getZ()), Math.max(corner.getZ(), alongZ.getZ()) };
+  }
+
+  public static boolean rectFits(int[] rect, BlockPos quarryPos) {
+    int width = rect[1] - rect[0] + 1;
+    int depth = rect[3] - rect[2] + 1;
+    boolean inside = quarryPos.getX() >= rect[0] && quarryPos.getX() <= rect[1]
+        && quarryPos.getZ() >= rect[2] && quarryPos.getZ() <= rect[3];
+    return width >= BlockEntityQuarry.MIN_FRAME_SPAN && depth >= BlockEntityQuarry.MIN_FRAME_SPAN
+        && width <= BlockEntityQuarry.MAX_FRAME_SPAN && depth <= BlockEntityQuarry.MAX_FRAME_SPAN && !inside;
+  }
+
+  @Nullable
+  private static BlockPos partnerOnAxis(BlockGetter level, BlockPos from, Direction first, Direction second) {
+    BlockPos partner = findPartner(level, from, first);
+    return partner != null ? partner : findPartner(level, from, second);
+  }
+
   @Override
   public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
       TooltipFlag flag) {
     tooltip.add(Component.translatable("tooltip.faktocraft.landmark").withStyle(ChatFormatting.GRAY));
     super.appendHoverText(stack, level, tooltip, flag);
+  }
+
+  @Override
+  public boolean addRunningEffects(BlockState state, Level level, BlockPos pos, Entity entity) {
+    return true;
   }
 }

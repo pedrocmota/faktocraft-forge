@@ -4,8 +4,8 @@ import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.BlockEntityProgress;
 import com.faktocraft.common.entity.block.FluidStorage;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.entity.slot.SlotBattery;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BlockEntityFluidEnricher extends IndRebBlockEntity
+public class BlockEntityFluidEnricher extends FaktocraftBlockEntity
     implements IEnergyBlock, IExpCollector, ISupportUpgrades, ITileSound {
 
   public static final int INPUT_SLOT = 0;
@@ -82,9 +82,9 @@ public class BlockEntityFluidEnricher extends IndRebBlockEntity
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
-    slots.add(new IndRebSlot(INPUT_SLOT, 13, 26, InventorySlotType.INPUT, GuiSlotType.NORMAL, 12, 25));
-    slots.add(new IndRebSlot(INPUT_SLOT_2, 13, 44, InventorySlotType.INPUT, GuiSlotType.NORMAL, 12, 43));
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
+    slots.add(new FaktocraftSlot(INPUT_SLOT, 13, 26, InventorySlotType.INPUT, GuiSlotType.NORMAL, 12, 25));
+    slots.add(new FaktocraftSlot(INPUT_SLOT_2, 13, 44, InventorySlotType.INPUT, GuiSlotType.NORMAL, 12, 43));
     return super.addInventorySlot(slots);
   }
 
@@ -110,18 +110,18 @@ public class BlockEntityFluidEnricher extends IndRebBlockEntity
     CountedIngredient second = enrichingRecipe.getCountedIngredient2().orElse(null);
     if (second == null) {
       if (fits(first, a, checkCounts)) {
-        return new int[] { INPUT_SLOT, -1 };
+        return new int[] {INPUT_SLOT, -1};
       }
       if (fits(first, b, checkCounts)) {
-        return new int[] { INPUT_SLOT_2, -1 };
+        return new int[] {INPUT_SLOT_2, -1};
       }
       return null;
     }
     if (fits(first, a, checkCounts) && fits(second, b, checkCounts)) {
-      return new int[] { INPUT_SLOT, INPUT_SLOT_2 };
+      return new int[] {INPUT_SLOT, INPUT_SLOT_2};
     }
     if (fits(first, b, checkCounts) && fits(second, a, checkCounts)) {
-      return new int[] { INPUT_SLOT_2, INPUT_SLOT };
+      return new int[] {INPUT_SLOT_2, INPUT_SLOT};
     }
     return null;
   }
@@ -136,18 +136,18 @@ public class BlockEntityFluidEnricher extends IndRebBlockEntity
     FluidIngredientData second = enrichingRecipe.getFluidInput2().orElse(null);
     if (second == null) {
       if (holds(fluidInputStorage, first, checkAmounts)) {
-        return new FluidStorage[] { fluidInputStorage, null };
+        return new FluidStorage[] {fluidInputStorage, null};
       }
       if (holds(fluidInputStorage2, first, checkAmounts)) {
-        return new FluidStorage[] { fluidInputStorage2, null };
+        return new FluidStorage[] {fluidInputStorage2, null};
       }
       return null;
     }
     if (holds(fluidInputStorage, first, checkAmounts) && holds(fluidInputStorage2, second, checkAmounts)) {
-      return new FluidStorage[] { fluidInputStorage, fluidInputStorage2 };
+      return new FluidStorage[] {fluidInputStorage, fluidInputStorage2};
     }
     if (holds(fluidInputStorage2, first, checkAmounts) && holds(fluidInputStorage, second, checkAmounts)) {
-      return new FluidStorage[] { fluidInputStorage2, fluidInputStorage };
+      return new FluidStorage[] {fluidInputStorage2, fluidInputStorage};
     }
     return null;
   }
@@ -160,8 +160,8 @@ public class BlockEntityFluidEnricher extends IndRebBlockEntity
     if (!(level instanceof ServerLevel serverLevel)) {
       return Optional.empty();
     }
-    List<FluidEnrichingRecipe> candidates =
-        serverLevel.getRecipeManager().getAllRecipesFor(ModRecipeType.FLUID_ENRICHING);
+    List<FluidEnrichingRecipe> candidates = serverLevel.getRecipeManager()
+        .getAllRecipesFor(ModRecipeType.FLUID_ENRICHING);
     for (FluidEnrichingRecipe enrichingRecipe : candidates) {
       if (itemAssignment(enrichingRecipe, false) != null && fluidAssignment(enrichingRecipe, false) != null) {
         return Optional.of(enrichingRecipe);

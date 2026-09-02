@@ -33,6 +33,9 @@ public class QuarryRegistry {
   public static final BlockEntityType<BlockEntityQuarry> QUARRY_BLOCK_ENTITY = RegistrationHandler
       .blockEntity("quarry", BlockEntityQuarry::new, QUARRY);
 
+  public static final BlockEntityType<BlockEntityLandmark> LANDMARK_BLOCK_ENTITY = RegistrationHandler
+      .blockEntity("landmark", BlockEntityLandmark::new, LANDMARK);
+
   public static final MenuType<MenuQuarry> QUARRY_MENU = MenuTypeHelper.register("quarry",
       (windowId, inv, pos) -> new MenuQuarry(windowId, inv.player.level(), pos, inv, inv.player));
 

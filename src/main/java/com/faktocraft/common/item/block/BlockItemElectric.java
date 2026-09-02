@@ -1,6 +1,6 @@
 package com.faktocraft.common.item.block;
 
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnumLang;
 import com.faktocraft.common.interfaces.block.IElectricMachine;
@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
-public class BlockItemElectric extends IndRebBlockItem {
+public class BlockItemElectric extends FaktocraftBlockItem {
 
   public BlockItemElectric(Block block, Item.Properties properties) {
     super(block, properties);
@@ -48,8 +48,8 @@ public class BlockItemElectric extends IndRebBlockItem {
     int energy = ModComponents.getEnergy(stack, 0);
     if (energy > 0 && !level.isClientSide()) {
       BlockEntity blockEntity = level.getBlockEntity(pos);
-      if (blockEntity instanceof IndRebBlockEntity indRebBlockEntity && indRebBlockEntity.hasEnergy()) {
-        indRebBlockEntity.getEnergyStorage().setEnergy(energy);
+      if (blockEntity instanceof FaktocraftBlockEntity faktocraftBlockEntity && faktocraftBlockEntity.hasEnergy()) {
+        faktocraftBlockEntity.getEnergyStorage().setEnergy(energy);
         blockEntity.setChanged();
       }
     }

@@ -35,8 +35,7 @@ public final class LogisticsItemTree {
     Map<String, Map<ResourceLocation, List<Item>>> ui = new LinkedHashMap<>();
     try {
       CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(), false, level.registryAccess());
-      for (Map.Entry<net.minecraft.resources.ResourceKey<CreativeModeTab>, CreativeModeTab> entry
-          : BuiltInRegistries.CREATIVE_MODE_TAB.entrySet()) {
+      for (var entry : BuiltInRegistries.CREATIVE_MODE_TAB.entrySet()) {
         CreativeModeTab tab = entry.getValue();
         if (tab.getType() != CreativeModeTab.Type.CATEGORY) {
           continue;

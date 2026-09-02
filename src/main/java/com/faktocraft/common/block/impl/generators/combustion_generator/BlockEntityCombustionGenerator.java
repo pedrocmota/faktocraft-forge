@@ -3,7 +3,7 @@ package com.faktocraft.common.block.impl.generators.combustion_generator;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.FluidStorage;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.entity.slot.SlotBattery;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -26,7 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
-public class BlockEntityCombustionGenerator extends IndRebBlockEntity implements ICooldown, IEnergyBlock, ITileSound {
+public class BlockEntityCombustionGenerator extends FaktocraftBlockEntity
+    implements ICooldown, IEnergyBlock, ITileSound {
 
   public final FluidStorage fluidStorage = new FluidStorage(ModConfig.server().combustion_generator_fluid_capacity,
       fluidStack -> fluidStack.getFluid() == ModFluids.BIOGAS.still()
@@ -68,8 +69,8 @@ public class BlockEntityCombustionGenerator extends IndRebBlockEntity implements
       updateState = true;
     }
 
-    if (!refilling && (long) getEnergyStorage().energyStored() * 100
-        <= (long) getEnergyStorage().maxEnergy() * ModConfig.server().generator_restart_threshold_percent) {
+    if (!refilling && (long) getEnergyStorage().energyStored() * 100 <= (long) getEnergyStorage().maxEnergy()
+        * ModConfig.server().generator_restart_threshold_percent) {
       refilling = true;
     }
     if (refilling) {

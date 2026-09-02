@@ -1,7 +1,7 @@
 package com.faktocraft.common.screen.button;
 
 import com.faktocraft.Faktocraft;
-import com.faktocraft.common.container.IndRebMenu;
+import com.faktocraft.common.container.FaktocraftMenu;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import net.minecraft.ChatFormatting;
@@ -13,15 +13,15 @@ import java.util.List;
 
 public class GuiPriorityButton extends GuiButton {
 
-  private final IndRebMenu menu;
+  private final FaktocraftMenu menu;
 
-  public GuiPriorityButton(IGuiWrapper wrapper, IndRebMenu menu, int leftOffset, int topOffset) {
+  public GuiPriorityButton(IGuiWrapper wrapper, FaktocraftMenu menu, int leftOffset, int topOffset) {
     super(wrapper, leftOffset, topOffset,
         com.faktocraft.common.util.Constants.LEFT_LAYOUT_EXPERIMENT ? GuiSprite.TOP_BUTTON : GuiSprite.LEFT_BUTTON,
         () -> {
           Minecraft minecraft = Minecraft.getInstance();
           if (minecraft.gameMode != null) {
-            minecraft.gameMode.handleInventoryButtonClick(menu.containerId, IndRebMenu.BUTTON_PRIORITY_CYCLE);
+            minecraft.gameMode.handleInventoryButtonClick(menu.containerId, FaktocraftMenu.BUTTON_PRIORITY_CYCLE);
           }
         }, null);
     this.menu = menu;

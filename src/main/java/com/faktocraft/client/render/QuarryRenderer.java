@@ -11,24 +11,46 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import java.util.function.IntUnaryOperator;
 
 public class QuarryRenderer implements BlockEntityRenderer<BlockEntityQuarry> {
 
-  private static final ResourceLocation FRAME_SPRITE = new ResourceLocation(Faktocraft.MODID,
-      "block/misc/quarry_frame");
-  private static final float CHASE_SPEED = 0.3F;
+  private static final ResourceLocation GANTRY_SPRITE = new ResourceLocation(Faktocraft.MODID,
+      "block/misc/quarry_gantry");
+  private static final ResourceLocation CARRIAGE_SPRITE = new ResourceLocation(Faktocraft.MODID,
+      "block/misc/quarry_carriage");
+  private static final ResourceLocation WHEEL_SPRITE = new ResourceLocation(Faktocraft.MODID,
+      "block/misc/quarry_wheel");
+  private static final float CATCH_UP_BOOST = 0.5F;
+  private static final float RESYNC_DISTANCE = 1.0F;
   private static final float BEAM_HALF = 0.125F;
   private static final int WHITE = 0xFFFFFFFF;
-  private static final int DARK = 0xFF6E6E6E;
+  private static final int HEAD_TINT = 0xFF9A9A9A;
 
   private static final int AXIS_X = 0;
   private static final int AXIS_Y = 1;
   private static final int AXIS_Z = 2;
+
+  private static final float PX = 1.0F / 16.0F;
+  private static final float[] STRIP_TOP = { 0.0F, 4.0F };
+  private static final float[] STRIP_SIDE = { 4.0F, 9.0F };
+  private static final float[] STRIP_CABLE = { 9.0F, 13.0F };
+
+  private static final float BOGIE_HALF = 5.0F * PX;
+  private static final float BOGIE_LENGTH_HALF = 4.0F * PX;
+  private static final float WHEEL_HALF = 3.0F * PX;
+  private static final float WHEEL_THICK = 0.5F * PX;
+  private static final float WHEEL_ALONG = BOGIE_LENGTH_HALF + WHEEL_THICK + 0.5F * PX;
+  private static final float WHEEL_SIDE = 4.8F * PX;
+  private static final float WHEEL_TEX = 6.0F;
+  private static final float TREAD_V0 = 7.0F;
+  private static final float TREAD_V1 = 8.0F;
 
   @Override
   public void render(BlockEntityQuarry quarry, float partialTick, PoseStack poseStack, MultiBufferSource buffer,
@@ -39,22 +61,21 @@ public class QuarryRenderer implements BlockEntityRenderer<BlockEntityQuarry> {
     }
 
     double now = level.getGameTime() + partialTick;
-    if (Double.isNaN(quarry.clientHeadLastTime)) {
+    if (Double.isNaN(quarry.clientHeadLastTime) || farFromSynced(quarry)) {
       quarry.clientHeadX = quarry.headX;
       quarry.clientHeadY = quarry.headY;
       quarry.clientHeadZ = quarry.headZ;
     } else {
-      float elapsed = Math.min(3.0F, (float) (now - quarry.clientHeadLastTime));
-      float step = CHASE_SPEED * Math.max(0.0F, elapsed);
-      quarry.clientHeadX = chase(quarry.clientHeadX, quarry.headX, step);
-      quarry.clientHeadY = chase(quarry.clientHeadY, quarry.headY, step);
-      quarry.clientHeadZ = chase(quarry.clientHeadZ, quarry.headZ, step);
+      float elapsed = Math.min(3.0F, Math.max(0.0F, (float) (now - quarry.clientHeadLastTime)));
+      followGoal(quarry, elapsed);
     }
     quarry.clientHeadLastTime = now;
 
-    TextureAtlasSprite sprite = Minecraft.getInstance()
-        .getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(FRAME_SPRITE);
-    if (sprite == null) {
+    var atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
+    TextureAtlasSprite gantry = atlas.apply(GANTRY_SPRITE);
+    TextureAtlasSprite carriage = atlas.apply(CARRIAGE_SPRITE);
+    TextureAtlasSprite wheel = atlas.apply(WHEEL_SPRITE);
+    if (gantry == null || carriage == null || wheel == null) {
       return;
     }
     VertexConsumer vc = buffer.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS));
@@ -81,44 +102,137 @@ public class QuarryRenderer implements BlockEntityRenderer<BlockEntityQuarry> {
 
     float railY0 = gantryY + 5.5F / 16.0F;
     float railY1 = gantryY + 10.5F / 16.0F;
+    float westEnd = innerX0 - 0.5F;
+    float eastEnd = innerX1 + 0.5F;
+    float northEnd = innerZ0 - 0.5F;
+    float southEnd = innerZ1 + 0.5F;
+    float ringY = gantryY + 0.5F;
 
-    beam(pose, vc, sprite, WHITE, gantryLight, AXIS_X,
-        innerX0 - 0.5F, innerX1 + 0.5F, railY0, railY1, clampedZ - BEAM_HALF, clampedZ + BEAM_HALF);
-    beam(pose, vc, sprite, WHITE, gantryLight, AXIS_Z,
-        innerZ0 - 0.5F, innerZ1 + 0.5F, clampedX - BEAM_HALF, clampedX + BEAM_HALF, railY0, railY1);
+    beam(pose, vc, gantry, WHITE, gantryLight, AXIS_X,
+        westEnd, eastEnd, railY0, railY1, clampedZ - BEAM_HALF, clampedZ + BEAM_HALF, STRIP_TOP, STRIP_SIDE);
+    beam(pose, vc, gantry, WHITE, gantryLight, AXIS_Z,
+        northEnd, southEnd, clampedX - BEAM_HALF, clampedX + BEAM_HALF, railY0, railY1, STRIP_SIDE, STRIP_TOP);
 
-    movingBox(pose, vc, sprite, WHITE, gantryLight,
+    movingBox(pose, vc, carriage, WHITE, gantryLight,
         clampedX - 0.3125F, gantryY + 3 / 16.0F, clampedZ - 0.3125F,
         clampedX + 0.3125F, gantryY + 13 / 16.0F, clampedZ + 0.3125F);
+
+    float travelZ = origin.getZ() + clampedZ;
+    float travelX = origin.getX() + clampedX;
+    bogie(pose, vc, carriage, wheel, lightAt(level, origin, westEnd, ringY, clampedZ),
+        Direction.Axis.Z, westEnd, ringY, clampedZ, travelZ);
+    bogie(pose, vc, carriage, wheel, lightAt(level, origin, eastEnd, ringY, clampedZ),
+        Direction.Axis.Z, eastEnd, ringY, clampedZ, travelZ);
+    bogie(pose, vc, carriage, wheel, lightAt(level, origin, clampedX, ringY, northEnd),
+        Direction.Axis.X, clampedX, ringY, northEnd, travelX);
+    bogie(pose, vc, carriage, wheel, lightAt(level, origin, clampedX, ringY, southEnd),
+        Direction.Axis.X, clampedX, ringY, southEnd, travelX);
 
     if (headY < railY0) {
       int stringX = Mth.floor(origin.getX() + clampedX);
       int stringZ = Mth.floor(origin.getZ() + clampedZ);
-      beam(pose, vc, sprite, WHITE,
+      beam(pose, vc, gantry, WHITE,
           yRel -> LevelRenderer.getLightColor(level,
               new BlockPos(stringX, Mth.clamp(origin.getY() + yRel, level.getMinBuildHeight(),
                   level.getMaxBuildHeight() - 1), stringZ)),
           AXIS_Y,
           headY - 0.15F, railY0, clampedX - BEAM_HALF, clampedX + BEAM_HALF,
-          clampedZ - BEAM_HALF, clampedZ + BEAM_HALF);
-      movingBox(pose, vc, sprite, DARK, light,
+          clampedZ - BEAM_HALF, clampedZ + BEAM_HALF, STRIP_CABLE, STRIP_CABLE);
+      movingBox(pose, vc, carriage, HEAD_TINT, light,
           clampedX - 0.22F, headY - 0.3F, clampedZ - 0.22F,
           clampedX + 0.22F, headY, clampedZ + 0.22F);
     }
   }
 
-  private static void beam(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite sprite, int color,
-      int light, int axis, float a0, float a1, float b0, float b1, float c0, float c1) {
-    beam(pose, vc, sprite, color, yRel -> light, axis, a0, a1, b0, b1, c0, c1);
+  private static int lightAt(Level level, BlockPos origin, float x, float y, float z) {
+    BlockPos pos = BlockPos.containing(origin.getX() + x, origin.getY() + y, origin.getZ() + z);
+    return LevelRenderer.getLightColor(level,
+        pos.getY() >= level.getMaxBuildHeight() ? pos.below() : pos);
+  }
+
+  private static void bogie(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite plate,
+      TextureAtlasSprite wheel, int light, Direction.Axis along, float cx, float cy, float cz, float travel) {
+    float halfX = along == Direction.Axis.X ? BOGIE_LENGTH_HALF : BOGIE_HALF;
+    float halfZ = along == Direction.Axis.X ? BOGIE_HALF : BOGIE_LENGTH_HALF;
+    movingBox(pose, vc, plate, WHITE, light,
+        cx - halfX, cy - BOGIE_HALF, cz - halfZ, cx + halfX, cy + BOGIE_HALF, cz + halfZ);
+
+    float angle = travel / WHEEL_HALF;
+    for (int a = -1; a <= 1; a += 2) {
+      for (int s = -1; s <= 1; s += 2) {
+        float offAlong = a * WHEEL_ALONG;
+        float offSide = s * WHEEL_SIDE;
+        if (along == Direction.Axis.X) {
+          wheel(pose, vc, wheel, light, along, cx + offAlong, cy, cz + offSide, a * angle);
+        } else {
+          wheel(pose, vc, wheel, light, along, cx + offSide, cy, cz + offAlong, a * angle);
+        }
+      }
+    }
+  }
+
+  private static void wheel(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite sprite, int light,
+      Direction.Axis along, float cx, float cy, float cz, float angle) {
+    float reach = WHEEL_HALF * Mth.SQRT_OF_TWO;
+    float[] ca = new float[4];
+    float[] cy4 = new float[4];
+    for (int k = 0; k < 4; k++) {
+      float theta = angle + (float) (Math.PI / 4.0 + k * Math.PI / 2.0);
+      ca[k] = reach * Mth.cos(theta);
+      cy4[k] = reach * Mth.sin(theta);
+    }
+    float[] cu = { 0.0F, WHEEL_TEX, WHEEL_TEX, 0.0F };
+    float[] cv = { 0.0F, 0.0F, WHEEL_TEX, WHEEL_TEX };
+
+    for (int side = -1; side <= 1; side += 2) {
+      for (int k = 0; k < 4; k++) {
+        int i = side > 0 ? k : 3 - k;
+        wheelVertex(pose, vc, along, cx, cy, cz, ca[i], cy4[i], side * WHEEL_THICK,
+            sprite.getU(cu[i]), sprite.getV(cv[i]), light, 0.0F, 0.0F, side);
+      }
+    }
+
+    float u0 = sprite.getU(0.0F);
+    float u1 = sprite.getU(WHEEL_TEX);
+    float v0 = sprite.getV(TREAD_V0);
+    float v1 = sprite.getV(TREAD_V1);
+    for (int k = 0; k < 4; k++) {
+      int n = (k + 1) & 3;
+      float na = (ca[k] + ca[n]) * 0.5F;
+      float ny = (cy4[k] + cy4[n]) * 0.5F;
+      float len = Mth.sqrt(na * na + ny * ny);
+      na /= len;
+      ny /= len;
+      wheelVertex(pose, vc, along, cx, cy, cz, ca[k], cy4[k], -WHEEL_THICK, u0, v0, light, na, ny, 0.0F);
+      wheelVertex(pose, vc, along, cx, cy, cz, ca[n], cy4[n], -WHEEL_THICK, u1, v0, light, na, ny, 0.0F);
+      wheelVertex(pose, vc, along, cx, cy, cz, ca[n], cy4[n], WHEEL_THICK, u1, v1, light, na, ny, 0.0F);
+      wheelVertex(pose, vc, along, cx, cy, cz, ca[k], cy4[k], WHEEL_THICK, u0, v1, light, na, ny, 0.0F);
+    }
+  }
+
+  private static void wheelVertex(PoseStack.Pose pose, VertexConsumer vc, Direction.Axis along,
+      float cx, float cy, float cz, float a, float y, float lateral, float u, float v, int light,
+      float na, float ny, float nLateral) {
+    if (along == Direction.Axis.X) {
+      CuboidRenderer.vertex(pose, vc, cx + a, cy + y, cz + lateral, u, v, WHITE, light, na, ny, nLateral);
+    } else {
+      CuboidRenderer.vertex(pose, vc, cx + lateral, cy + y, cz + a, u, v, WHITE, light, nLateral, ny, na);
+    }
   }
 
   private static void beam(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite sprite, int color,
-      java.util.function.IntUnaryOperator lightFn, int axis, float a0, float a1, float b0, float b1,
-      float c0, float c1) {
-    float vb0 = sprite.getV(fracUv(b0));
-    float vb1 = sprite.getV(fracUv(b1));
-    float vc0 = sprite.getV(fracUv(c0));
-    float vc1 = sprite.getV(fracUv(c1));
+      int light, int axis, float a0, float a1, float b0, float b1, float c0, float c1,
+      float[] stripB, float[] stripC) {
+    beam(pose, vc, sprite, color, yRel -> light, axis, a0, a1, b0, b1, c0, c1, stripB, stripC);
+  }
+
+  private static void beam(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite sprite, int color,
+      IntUnaryOperator lightFn, int axis, float a0, float a1, float b0, float b1,
+      float c0, float c1, float[] stripB, float[] stripC) {
+    float vb0 = sprite.getV(stripC[0]);
+    float vb1 = sprite.getV(stripC[1]);
+    float vc0 = sprite.getV(stripB[0]);
+    float vc1 = sprite.getV(stripB[1]);
 
     float s = a0;
     while (s < a1) {
@@ -151,8 +265,8 @@ public class QuarryRenderer implements BlockEntityRenderer<BlockEntityQuarry> {
       s = e;
     }
 
-    float ub0 = sprite.getU(fracUv(b0));
-    float ub1 = sprite.getU(fracUv(b1));
+    float ub0 = sprite.getU(0.0F);
+    float ub1 = sprite.getU((b1 - b0) * 16.0F);
     int lightA0 = lightFn.applyAsInt(Mth.floor(a0));
     int lightA1 = lightFn.applyAsInt(Mth.floor(a1 - 1.0E-4F));
     vert(pose, vc, axis, a0, b0, c0, ub0, vc0, color, lightA0, -1, 0, 0);
@@ -203,10 +317,6 @@ public class QuarryRenderer implements BlockEntityRenderer<BlockEntityQuarry> {
     CuboidRenderer.vertex(pose, vc, x, y, z, u, v, color, light, nx, ny, nz);
   }
 
-  private static float fracUv(float coord) {
-    return (coord - (float) Math.floor(coord)) * 16.0F;
-  }
-
   private static void movingBox(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite sprite, int color,
       int light, float x0, float y0, float z0, float x1, float y1, float z1) {
     float sx = (16.0F - (x1 - x0) * 16.0F) / 2.0F;
@@ -252,8 +362,36 @@ public class QuarryRenderer implements BlockEntityRenderer<BlockEntityQuarry> {
     CuboidRenderer.vertex(pose, vc, x1, y0, z0, uz0, vyBottom, color, light, 1, 0, 0);
   }
 
-  private static float chase(float current, float target, float step) {
-    return current < target ? Math.min(target, current + step) : Math.max(target, current - step);
+  private static boolean farFromSynced(BlockEntityQuarry quarry) {
+    float dx = quarry.headX - quarry.clientHeadX;
+    float dy = quarry.headY - quarry.clientHeadY;
+    float dz = quarry.headZ - quarry.clientHeadZ;
+    return dx * dx + dy * dy + dz * dz > RESYNC_DISTANCE * RESYNC_DISTANCE;
+  }
+
+  private static void followGoal(BlockEntityQuarry quarry, float elapsed) {
+    float[] goal = new float[3];
+    if (!quarry.headGoal(goal)) {
+      return;
+    }
+    float dx = goal[0] - quarry.clientHeadX;
+    float dy = goal[1] - quarry.clientHeadY;
+    float dz = goal[2] - quarry.clientHeadZ;
+    float distance = Mth.sqrt(dx * dx + dy * dy + dz * dz);
+    float sx = quarry.headX - quarry.clientHeadX;
+    float sy = quarry.headY - quarry.clientHeadY;
+    float sz = quarry.headZ - quarry.clientHeadZ;
+    float behind = Mth.sqrt(sx * sx + sy * sy + sz * sz);
+    float step = quarry.armSpeed() * elapsed * (1.0F + CATCH_UP_BOOST * Math.min(1.0F, behind));
+    if (distance <= step) {
+      quarry.clientHeadX = goal[0];
+      quarry.clientHeadY = goal[1];
+      quarry.clientHeadZ = goal[2];
+    } else {
+      quarry.clientHeadX += dx / distance * step;
+      quarry.clientHeadY += dy / distance * step;
+      quarry.clientHeadZ += dz / distance * step;
+    }
   }
 
   @Override

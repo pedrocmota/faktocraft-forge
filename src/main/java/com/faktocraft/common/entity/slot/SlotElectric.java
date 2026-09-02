@@ -4,7 +4,7 @@ import com.faktocraft.common.enums.GuiSlotType;
 import com.faktocraft.common.enums.InventorySlotType;
 import com.faktocraft.common.interfaces.entity.IElectricSlot;
 
-public class SlotElectric extends IndRebSlot implements IElectricSlot {
+public class SlotElectric extends FaktocraftSlot implements IElectricSlot {
 
   private final boolean charging;
 

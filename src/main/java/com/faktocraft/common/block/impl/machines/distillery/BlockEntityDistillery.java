@@ -2,8 +2,8 @@ package com.faktocraft.common.block.impl.machines.distillery;
 
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.FluidStorage;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.entity.slot.SlotBattery;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
-public class BlockEntityDistillery extends IndRebBlockEntity
+public class BlockEntityDistillery extends FaktocraftBlockEntity
     implements IEnergyBlock, com.faktocraft.common.interfaces.entity.ISupportUpgrades,
     com.faktocraft.common.interfaces.entity.ITileSound {
 
@@ -46,7 +46,8 @@ public class BlockEntityDistillery extends IndRebBlockEntity
   public final FluidStorage fuelTank = new FluidStorage(4000);
 
   public final com.faktocraft.common.entity.block.BlockEntityProgress progress =
-      new com.faktocraft.common.entity.block.BlockEntityProgress(0, DURATION_TICKS);
+      new com.faktocraft.common.entity.block.BlockEntityProgress(
+          0, DURATION_TICKS);
   private int healTimer = 0;
   private boolean tanksDirty = false;
 
@@ -68,8 +69,8 @@ public class BlockEntityDistillery extends IndRebBlockEntity
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
-    slots.add(new IndRebSlot(SULFUR_SLOT, 95, 69, InventorySlotType.OUTPUT, GuiSlotType.NORMAL, 94, 68));
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
+    slots.add(new FaktocraftSlot(SULFUR_SLOT, 95, 69, InventorySlotType.OUTPUT, GuiSlotType.NORMAL, 94, 68));
     return super.addInventorySlot(slots);
   }
 

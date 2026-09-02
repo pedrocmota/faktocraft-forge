@@ -1,6 +1,6 @@
 package com.faktocraft.common.block;
 
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
@@ -10,9 +10,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class IndRebEntityBlock extends IndRebBlock implements EntityBlock {
+public class FaktocraftEntityBlock extends FaktocraftBlock implements EntityBlock {
 
-  public IndRebEntityBlock(Properties properties) {
+  public FaktocraftEntityBlock(Properties properties) {
     super(properties);
   }
 
@@ -28,14 +28,14 @@ public class IndRebEntityBlock extends IndRebBlock implements EntityBlock {
       BlockEntityType<T> type) {
     if (level.isClientSide()) {
       return (lvl, pos, blockState, blockEntity) -> {
-        if (blockEntity instanceof IndRebBlockEntity indRebBlockEntity) {
-          indRebBlockEntity.tickClient(blockState);
+        if (blockEntity instanceof FaktocraftBlockEntity faktocraftBlockEntity) {
+          faktocraftBlockEntity.tickClient(blockState);
         }
       };
     }
     return (lvl, pos, blockState, blockEntity) -> {
-      if (blockEntity instanceof IndRebBlockEntity indRebBlockEntity) {
-        indRebBlockEntity.tickServer(blockState);
+      if (blockEntity instanceof FaktocraftBlockEntity faktocraftBlockEntity) {
+        faktocraftBlockEntity.tickServer(blockState);
       }
     };
   }
@@ -43,7 +43,7 @@ public class IndRebEntityBlock extends IndRebBlock implements EntityBlock {
   @Override
   public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
     if (!state.is(newState.getBlock())) {
-      if (level.getBlockEntity(pos) instanceof IndRebBlockEntity blockEntity) {
+      if (level.getBlockEntity(pos) instanceof FaktocraftBlockEntity blockEntity) {
         blockEntity.preRemoveSideEffects(pos, state);
       }
     }

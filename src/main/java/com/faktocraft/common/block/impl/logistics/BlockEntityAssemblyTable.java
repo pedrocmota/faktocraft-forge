@@ -3,8 +3,8 @@ package com.faktocraft.common.block.impl.logistics;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.BlockEntityProgress;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.enums.UpgradeType;
@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockEntityAssemblyTable extends IndRebBlockEntity
+public class BlockEntityAssemblyTable extends FaktocraftBlockEntity
     implements IEnergyBlock, ISupportUpgrades, ITileSound {
 
   public static final int ZONE_SIZE = 9;
@@ -50,6 +50,7 @@ public class BlockEntityAssemblyTable extends IndRebBlockEntity
       BlockEntityAssemblyTable.this.setChanged();
     }
   };
+
   public BlockEntityAssemblyTable(BlockPos pos, BlockState state) {
     super(LogisticsRegistry.ASSEMBLY_TABLE_BLOCK_ENTITY, pos, state);
 
@@ -286,7 +287,7 @@ public class BlockEntityAssemblyTable extends IndRebBlockEntity
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
     return super.addInventorySlot(slots);
   }
 
@@ -298,7 +299,7 @@ public class BlockEntityAssemblyTable extends IndRebBlockEntity
   @Override
   public void preRemoveSideEffects(BlockPos pos, BlockState state) {
     if (level != null && !level.isClientSide()) {
-      for (ItemStackHandler handler : new ItemStackHandler[] { ingredients, output }) {
+      for (ItemStackHandler handler : new ItemStackHandler[] {ingredients, output}) {
         for (int i = 0; i < handler.getSlots(); i++) {
           ItemStack stack = handler.getStackInSlot(i);
           if (!stack.isEmpty()) {

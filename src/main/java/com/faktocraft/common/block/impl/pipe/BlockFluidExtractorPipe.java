@@ -44,7 +44,7 @@ public class BlockFluidExtractorPipe extends BlockFluidPipe
       return null;
     }
     Level level = context.getLevel();
-    for (boolean tanksOnly : new boolean[] { true, false }) {
+    for (boolean tanksOnly : new boolean[] {true, false}) {
       for (Direction direction : Constants.DIRECTIONS) {
         if (!state.getValue(FACING_TO_PROPERTY_MAP.get(direction))) {
           continue;
@@ -86,7 +86,7 @@ public class BlockFluidExtractorPipe extends BlockFluidPipe
       }
       if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
         net.minecraftforge.network.NetworkHooks.openScreen(serverPlayer,
-            new com.faktocraft.common.container.IndRebMenuProvider(this, level, pos, getName()),
+            new com.faktocraft.common.container.FaktocraftMenuProvider(this, level, pos, getName()),
             buf -> buf.writeBlockPos(pos));
       }
       return InteractionResult.SUCCESS;

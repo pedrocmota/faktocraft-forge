@@ -24,13 +24,12 @@ public class GuiFluidBar extends GuiElement {
   private final int textureY;
 
   @org.jetbrains.annotations.Nullable
-  private final com.faktocraft.common.container.IndRebMenu menu;
+  private final com.faktocraft.common.container.FaktocraftMenu menu;
   private final int drainIndex;
   private long holdStartMs = -1;
   private int lastSoundStep = -1;
   private boolean prevPressed = false;
-  private static final long HOLD_DURATION_MS =
-      com.faktocraft.common.item.impl.tools.Plunger.USE_DURATION_TICKS * 50L;
+  private static final long HOLD_DURATION_MS = com.faktocraft.common.item.impl.tools.Plunger.USE_DURATION_TICKS * 50L;
 
   public GuiFluidBar(IGuiWrapper wrapper, int width, int height, int leftOffset, int topOffset,
       FluidStorage fluidStorage, int textureX, int textureY) {
@@ -39,15 +38,15 @@ public class GuiFluidBar extends GuiElement {
     this.textureX = textureX;
     this.textureY = textureY;
 
-    com.faktocraft.common.container.IndRebMenu foundMenu = null;
+    com.faktocraft.common.container.FaktocraftMenu foundMenu = null;
     int index = -1;
     if (wrapper instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen
-        && screen.getMenu() instanceof com.faktocraft.common.container.IndRebMenu indRebMenu
-        && indRebMenu.getBlockEntity() != null) {
-      var tanks = indRebMenu.getBlockEntity().getGuiTanks();
+        && screen.getMenu() instanceof com.faktocraft.common.container.FaktocraftMenu faktocraftMenu
+        && faktocraftMenu.getBlockEntity() != null) {
+      var tanks = faktocraftMenu.getBlockEntity().getGuiTanks();
       for (int i = 0; i < tanks.size(); i++) {
         if (tanks.get(i) == fluidStorage) {
-          foundMenu = indRebMenu;
+          foundMenu = faktocraftMenu;
           index = i;
           break;
         }
@@ -70,8 +69,8 @@ public class GuiFluidBar extends GuiElement {
     if (!(carried.getItem() instanceof com.faktocraft.common.item.impl.FluidCell)) {
       return false;
     }
-    return com.faktocraft.common.item.base.FluidItem.getFluid(carried)
-        == net.minecraft.world.level.material.Fluids.EMPTY
+    return com.faktocraft.common.item.base.FluidItem
+        .getFluid(carried) == net.minecraft.world.level.material.Fluids.EMPTY
         && fluidStorage.getFluidAmount() >= com.faktocraft.common.item.impl.FluidCell.getCapacity();
   }
 
@@ -164,8 +163,8 @@ public class GuiFluidBar extends GuiElement {
   private void renderPlungerDrain(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
 
     boolean pressed = org.lwjgl.glfw.GLFW.glfwGetMouseButton(
-        minecraft.getWindow().getWindow(), org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT)
-        == org.lwjgl.glfw.GLFW.GLFW_PRESS;
+        minecraft.getWindow().getWindow(),
+        org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT) == org.lwjgl.glfw.GLFW.GLFW_PRESS;
     boolean pressEdge = pressed && !prevPressed;
     prevPressed = pressed;
 

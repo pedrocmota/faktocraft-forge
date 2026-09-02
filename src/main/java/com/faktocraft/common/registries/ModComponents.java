@@ -72,6 +72,7 @@ public final class ModComponents {
       clearTagIfEmpty(stack, tag);
     }
   }
+
   private static void clearTagIfEmpty(ItemStack stack, CompoundTag tag) {
     if (tag.isEmpty()) {
       stack.setTag(null);

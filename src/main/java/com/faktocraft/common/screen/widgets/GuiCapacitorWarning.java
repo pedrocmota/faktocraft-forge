@@ -1,7 +1,7 @@
 package com.faktocraft.common.screen.widgets;
 
 import com.faktocraft.Faktocraft;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.GuiUtil;
@@ -18,9 +18,9 @@ public class GuiCapacitorWarning extends GuiElement {
   private static final int WARN_BORDER = 0xFFD8433B;
   private static final int WARN_MARK = 0xFFFFD75E;
 
-  private final IndRebBlockEntity blockEntity;
+  private final FaktocraftBlockEntity blockEntity;
 
-  public GuiCapacitorWarning(IGuiWrapper wrapper, int leftOffset, int topOffset, IndRebBlockEntity blockEntity) {
+  public GuiCapacitorWarning(IGuiWrapper wrapper, int leftOffset, int topOffset, FaktocraftBlockEntity blockEntity) {
     super(wrapper, 18, 49, leftOffset, topOffset);
     this.blockEntity = blockEntity;
   }

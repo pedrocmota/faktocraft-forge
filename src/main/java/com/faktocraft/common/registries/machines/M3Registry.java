@@ -91,7 +91,7 @@ public class M3Registry {
       "metal_former", BlockEntityMetalFormer::new, METAL_FORMER);
   public static final BlockEntityType<BlockEntityThermalCentrifuge> THERMAL_CENTRIFUGE_BLOCK_ENTITY =
       registerBlockEntity(
-      "thermal_centrifuge", BlockEntityThermalCentrifuge::new, THERMAL_CENTRIFUGE);
+          "thermal_centrifuge", BlockEntityThermalCentrifuge::new, THERMAL_CENTRIFUGE);
   public static final BlockEntityType<BlockEntityCanningMachine> CANNING_MACHINE_BLOCK_ENTITY = registerBlockEntity(
       "canning_machine", BlockEntityCanningMachine::new, CANNING_MACHINE);
   public static final BlockEntityType<BlockEntityPolymerizer> POLYMERIZER_BLOCK_ENTITY = registerBlockEntity(

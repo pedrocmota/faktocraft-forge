@@ -25,9 +25,6 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            // Mods de terceiros com mixins (ex.: Jade) trazem refmaps em nomes
-            // SRG; em dev o Minecraft usa nomes official, então o Mixin precisa
-            // remapear o refmap com o srg->official gerado pelo ForgeGradle.
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             mods {
@@ -48,9 +45,7 @@ minecraft {
 
         gameTestServer {
             property 'forge.enabledGameTestNamespaces', mod_id
-            // -PenergyAudit=true turns on the energy network invariant checks.
             property 'faktocraft.energyAudit', (project.findProperty('energyAudit') ?: 'false')
-            // -Ptests=a,b runs only the tests whose names contain a fragment.
             property 'faktocraft.testFilter', (project.findProperty('tests') ?: '')
         }
 
@@ -63,7 +58,6 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-// Garante o srg->official antes de qualquer run (usado pelo remap de refmaps).
 tasks.matching { it.name == 'prepareRuns' }.configureEach { dependsOn 'createSrgToMcp' }
 
 checkstyle {
@@ -93,15 +87,10 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    // JEI for Forge 1.20.1 — optional integration (compila contra a API;
-    // o jar completo entra deobfuscado no runClient para testar em dev).
-    // Jars de produção NÃO funcionam em run/mods (mixins com nomes SRG);
-    // dependências de runtime precisam vir por aqui via fg.deobf.
     compileOnly(fg.deobf("mezz.jei:jei-1.20.1-common-api:15.20.0.106"))
     compileOnly(fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.20.0.106"))
     runtimeOnly(fg.deobf("mezz.jei:jei-1.20.1-forge:15.20.0.106"))
 
-    // Jade for Forge 1.20.1 (Jade 11.x) — optional integration (compile+runtime)
     implementation(fg.deobf("maven.modrinth:jade:11.13.3+forge"))
 }
 

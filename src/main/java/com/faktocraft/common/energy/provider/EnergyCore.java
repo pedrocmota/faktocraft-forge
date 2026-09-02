@@ -4,7 +4,7 @@ import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.EnergyLookup;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.energy.interfaces.IEnergyCore;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.interfaces.entity.IChargePad;
@@ -360,14 +360,14 @@ public class EnergyCore extends SavedData implements IEnergyCore {
         continue;
       }
       BlockEntity be = level.getBlockEntity(pos);
-      if (!(be instanceof IndRebBlockEntity indRebBe) || !indRebBe.hasEnergy()) {
+      if (!(be instanceof FaktocraftBlockEntity faktocraftBe) || !faktocraftBe.hasEnergy()) {
         continue;
       }
 
-      IEnergy machineEnergy = indRebBe.getEnergyStorage();
+      IEnergy machineEnergy = faktocraftBe.getEnergyStorage();
 
-      if (indRebBe.hasBattery()) {
-        ItemStackHandler batteryHandler = indRebBe.getBatteryStackHandler();
+      if (faktocraftBe.hasBattery()) {
+        ItemStackHandler batteryHandler = faktocraftBe.getBatteryStackHandler();
         ArrayList<ItemTransfer> chargeList = new ArrayList<>();
         ArrayList<ItemTransfer> dischargeList = new ArrayList<>();
         boolean exploded = false;
@@ -382,7 +382,8 @@ public class EnergyCore extends SavedData implements IEnergyCore {
             continue;
           }
 
-          IElectricSlot slotDef = i < indRebBe.getElectricSlot().size() ? indRebBe.getElectricSlot().get(i) : null;
+          IElectricSlot slotDef = i < faktocraftBe.getElectricSlot().size() ? faktocraftBe.getElectricSlot().get(i)
+              : null;
           boolean charging = slotDef != null && slotDef.isCharging();
 
           if (charging) {
@@ -417,13 +418,14 @@ public class EnergyCore extends SavedData implements IEnergyCore {
         }
       }
 
-      if (indRebBe instanceof IChargePad chargePad) {
-        tickChargePad(indRebBe, chargePad, pos, machineEnergy);
+      if (faktocraftBe instanceof IChargePad chargePad) {
+        tickChargePad(faktocraftBe, chargePad, pos, machineEnergy);
       }
     }
   }
 
-  private void tickChargePad(IndRebBlockEntity blockEntity, IChargePad chargePad, BlockPos pos, IEnergy machineEnergy) {
+  private void tickChargePad(FaktocraftBlockEntity blockEntity, IChargePad chargePad, BlockPos pos,
+      IEnergy machineEnergy) {
     AABB area = new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1);
     ArrayList<ItemTransfer> chargeList = new ArrayList<>();
     for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, area)) {
@@ -548,8 +550,8 @@ public class EnergyCore extends SavedData implements IEnergyCore {
           createExplosion(relative, senderTier.getLvl() - maxAcceptedLvl(receiverEnergy, receiverTransformer));
           exploded = true;
           break;
-        } else if (receiverBe instanceof IndRebBlockEntity receiverIndReb) {
-          receiverIndReb.markUndervoltage();
+        } else if (receiverBe instanceof FaktocraftBlockEntity receiverFaktocraft) {
+          receiverFaktocraft.markUndervoltage();
         }
       }
 
@@ -589,9 +591,9 @@ public class EnergyCore extends SavedData implements IEnergyCore {
     HashMap<BlockPos, Integer> priorities = new HashMap<>();
     for (BlockPos pos : ordered) {
       if (level.isLoaded(pos)
-          && level.getBlockEntity(pos) instanceof IndRebBlockEntity indRebBe
-          && indRebBe.isGenerator()) {
-        priorities.put(pos, indRebBe.effectiveGeneratorPriority());
+          && level.getBlockEntity(pos) instanceof FaktocraftBlockEntity faktocraftBe
+          && faktocraftBe.isGenerator()) {
+        priorities.put(pos, faktocraftBe.effectiveGeneratorPriority());
       }
     }
     ordered.sort(Comparator.comparingInt((BlockPos pos) -> priorities.getOrDefault(pos, 0))
@@ -717,8 +719,8 @@ public class EnergyCore extends SavedData implements IEnergyCore {
             createExplosion(relative, current.getLvl() - maxAcceptedLvl(energy, transformer));
             exploded = true;
             break;
-          } else if (be instanceof IndRebBlockEntity receiverIndReb) {
-            receiverIndReb.markUndervoltage();
+          } else if (be instanceof FaktocraftBlockEntity receiverFaktocraft) {
+            receiverFaktocraft.markUndervoltage();
           }
         }
         if (exploded) {

@@ -1,0 +1,16 @@
+{
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "pipe": "faktocraft:block/misc/quarry_frame_pipe",
+    "particle": "faktocraft:block/misc/quarry_frame_pipe"
+  },
+  "elements": [
+    {
+      "from": [4, 4, 4],
+      "to": [12, 12, 4],
+      "faces": {
+        "north": { "texture": "#pipe", "uv": [4, 4, 12, 12] }
+      }
+    }
+  ]
+}

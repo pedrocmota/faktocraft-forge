@@ -3,6 +3,22 @@
     {
       "type": "minecraft:single",
       "resource": "faktocraft:block/pipe/pump_tube"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "faktocraft:block/misc/quarry_gantry"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "faktocraft:block/misc/quarry_carriage"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "faktocraft:block/misc/quarry_wheel"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "faktocraft:block/misc/landmark_beam"
     }
   ]
 }

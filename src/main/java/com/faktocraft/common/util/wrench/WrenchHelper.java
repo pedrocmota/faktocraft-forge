@@ -1,7 +1,7 @@
 package com.faktocraft.common.util.wrench;
 
 import com.faktocraft.common.energy.interfaces.IEnergy;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.interfaces.block.IStateFacing;
 import com.faktocraft.common.interfaces.item.IElectricItem;
 import com.faktocraft.common.interfaces.wrench.IWrenchAction;
@@ -73,8 +73,8 @@ public class WrenchHelper {
 
     ItemStack drop = new ItemStack(state.getBlock());
     BlockEntity be = level.getBlockEntity(pos);
-    if (be instanceof IndRebBlockEntity indRebBe && indRebBe.hasEnergy()) {
-      ModComponents.setEnergy(drop, indRebBe.getEnergyStorage().energyStored());
+    if (be instanceof FaktocraftBlockEntity faktocraftBe && faktocraftBe.hasEnergy()) {
+      ModComponents.setEnergy(drop, faktocraftBe.getEnergyStorage().energyStored());
     }
     Block.popResource(level, pos, drop);
     level.removeBlock(pos, false);
@@ -97,12 +97,11 @@ public class WrenchHelper {
     if (player.isCrouching()) {
       boolean cycled = false;
       boolean docking = false;
-      if (level.getBlockEntity(pos)
-          instanceof com.faktocraft.common.block.impl.logistics.BlockEntityChassis chassis) {
+      if (level.getBlockEntity(pos) instanceof com.faktocraft.common.block.impl.logistics.BlockEntityChassis chassis) {
         docking = true;
         cycled = chassis.cycleInventory(player);
-      } else if (level.getBlockEntity(pos)
-          instanceof com.faktocraft.common.block.impl.logistics.BlockEntityDockingPipe pipe) {
+      } else if (level
+          .getBlockEntity(pos) instanceof com.faktocraft.common.block.impl.logistics.BlockEntityDockingPipe pipe) {
         docking = true;
         cycled = pipe.cycleInventory(player);
       }

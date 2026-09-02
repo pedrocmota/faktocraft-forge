@@ -3,7 +3,7 @@ package com.faktocraft.common.screen.bar;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.impl.BasicEnergyStorage;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.progress.GuiProgress;
@@ -16,10 +16,10 @@ import net.minecraft.resources.ResourceLocation;
 
 public class GuiElectricBarVertical extends GuiProgress {
 
-  private final IndRebBlockEntity blockEntity;
+  private final FaktocraftBlockEntity blockEntity;
 
   public GuiElectricBarVertical(IGuiWrapper wrapper, int leftOffset, int topOffset, BasicEnergyStorage progress,
-      IndRebBlockEntity blockEntity) {
+      FaktocraftBlockEntity blockEntity) {
     super(wrapper, leftOffset, topOffset, progress, GuiSprite.ELECTRIC_VERTICAL, Direction.VERTICAL, true);
     this.blockEntity = blockEntity;
   }

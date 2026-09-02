@@ -1,12 +1,12 @@
 package com.faktocraft.common.block.impl.machines.distillery;
 
-import com.faktocraft.common.container.IndRebMenu;
+import com.faktocraft.common.container.FaktocraftMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class MenuDistillery extends IndRebMenu {
+public class MenuDistillery extends FaktocraftMenu {
 
   public MenuDistillery(int windowId, Inventory inv, BlockPos pos) {
     this(windowId, inv.player.level(), pos, inv, inv.player);

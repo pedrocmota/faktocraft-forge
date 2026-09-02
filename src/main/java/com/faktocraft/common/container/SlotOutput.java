@@ -1,6 +1,6 @@
 package com.faktocraft.common.container;
 
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.interfaces.entity.IExpCollector;
 import com.faktocraft.common.interfaces.entity.ISlot;
 import net.minecraft.world.Container;
@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class SlotOutput extends MachineSlot {
 
-  public SlotOutput(IndRebBlockEntity blockEntity, Container container, ISlot slotDescriptor) {
+  public SlotOutput(FaktocraftBlockEntity blockEntity, Container container, ISlot slotDescriptor) {
     super(blockEntity, container, slotDescriptor);
   }
 

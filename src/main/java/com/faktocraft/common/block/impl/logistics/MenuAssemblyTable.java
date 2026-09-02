@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
-import com.faktocraft.common.container.IndRebMenu;
+import com.faktocraft.common.container.FaktocraftMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -8,7 +8,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class MenuAssemblyTable extends IndRebMenu {
+public class MenuAssemblyTable extends FaktocraftMenu {
 
   public static final int INGREDIENTS_START = 0;
   public static final int OUTPUT_START = 9;

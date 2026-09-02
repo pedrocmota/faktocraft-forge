@@ -1,7 +1,7 @@
 package com.faktocraft.common.container;
 
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.entity.slot.SlotUpgrade;
 import com.faktocraft.common.interfaces.entity.IElectricSlot;
 import net.minecraft.core.BlockPos;
@@ -15,9 +15,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import java.util.ArrayList;
 
-public abstract class IndRebMenu extends AbstractContainerMenu {
+public abstract class FaktocraftMenu extends AbstractContainerMenu {
 
-  private final IndRebBlockEntity blockEntity;
+  private final FaktocraftBlockEntity blockEntity;
   private final Player viewer;
   private long lastGuiSyncSent = Long.MIN_VALUE;
   private final ArrayList<MachineSlot> machineSlots = new ArrayList<>();
@@ -34,10 +34,10 @@ public abstract class IndRebMenu extends AbstractContainerMenu {
   private final net.minecraft.world.inventory.DataSlot priorityModeData;
   private final net.minecraft.world.inventory.DataSlot priorityDefaultData;
 
-  protected IndRebMenu(MenuType<?> menuType, int windowId, Level level, BlockPos pos, Inventory playerInventory,
+  protected FaktocraftMenu(MenuType<?> menuType, int windowId, Level level, BlockPos pos, Inventory playerInventory,
       Player player) {
     super(menuType, windowId);
-    this.blockEntity = (IndRebBlockEntity) level.getBlockEntity(pos);
+    this.blockEntity = (FaktocraftBlockEntity) level.getBlockEntity(pos);
     this.viewer = player;
     this.redstoneOnlyData = addDataSlot(blockEntity != null ? new net.minecraft.world.inventory.DataSlot() {
       @Override
@@ -118,7 +118,7 @@ public abstract class IndRebMenu extends AbstractContainerMenu {
     }
 
     if (blockEntity.hasInventory()) {
-      for (IndRebSlot slot : blockEntity.getSlots()) {
+      for (FaktocraftSlot slot : blockEntity.getSlots()) {
         MachineSlot menuSlot = switch (slot.getInventorySlotType()) {
           case OUTPUT, BONUS -> new SlotOutput(blockEntity, blockEntity.getItemStackHandler(), slot);
           case DISABLED -> new SlotDisabled(blockEntity, blockEntity.getItemStackHandler(), slot);
@@ -159,7 +159,7 @@ public abstract class IndRebMenu extends AbstractContainerMenu {
     }
   }
 
-  public IndRebBlockEntity getBlockEntity() {
+  public FaktocraftBlockEntity getBlockEntity() {
     return blockEntity;
   }
 

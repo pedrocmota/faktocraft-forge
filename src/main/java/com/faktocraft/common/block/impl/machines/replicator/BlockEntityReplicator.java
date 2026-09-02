@@ -5,8 +5,8 @@ import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.BlockEntityProgress;
 import com.faktocraft.common.entity.block.FluidStorage;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.entity.slot.SlotBattery;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockEntityReplicator extends IndRebBlockEntity
+public class BlockEntityReplicator extends FaktocraftBlockEntity
     implements IEnergyBlock, ISupportUpgrades, ITileSound, IMachineActions.IReplicatorActions {
 
   public static final int MEMORY_SLOT = 0;
@@ -126,9 +126,9 @@ public class BlockEntityReplicator extends IndRebBlockEntity
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
-    slots.add(new IndRebSlot(MEMORY_SLOT, 68, 24, InventorySlotType.INPUT, GuiSlotType.NORMAL_BLANK, 67, 23));
-    slots.add(new IndRebSlot(OUTPUT_SLOT, 120, 23, InventorySlotType.OUTPUT, GuiSlotType.LARGE, 115, 18));
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
+    slots.add(new FaktocraftSlot(MEMORY_SLOT, 68, 24, InventorySlotType.INPUT, GuiSlotType.NORMAL_BLANK, 67, 23));
+    slots.add(new FaktocraftSlot(OUTPUT_SLOT, 120, 23, InventorySlotType.OUTPUT, GuiSlotType.LARGE, 115, 18));
     return super.addInventorySlot(slots);
   }
 
@@ -281,8 +281,8 @@ public class BlockEntityReplicator extends IndRebBlockEntity
     }
 
     this.result = tag.contains("result") ? ScannerResult.load(tag.getCompound("result")) : ScannerResult.EMPTY;
-    this.mode = ReplicatorMode.getModeFromId(tag.contains("mode") ? tag.getInt("mode") : ReplicatorMode.WAITING.getId(
-        ));
+    this.mode = ReplicatorMode
+        .getModeFromId(tag.contains("mode") ? tag.getInt("mode") : ReplicatorMode.WAITING.getId());
   }
 
   @Override

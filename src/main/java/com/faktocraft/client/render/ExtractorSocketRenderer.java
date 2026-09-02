@@ -11,16 +11,16 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 public final class ExtractorSocketRenderer {
 
-  public static final ResourceLocation SOCKET_MODEL =
-      new ResourceLocation(com.faktocraft.Faktocraft.MODID, "block/pipe/extractor_cable_socket");
+  public static final ResourceLocation SOCKET_MODEL = new ResourceLocation(com.faktocraft.Faktocraft.MODID,
+      "block/pipe/extractor_cable_socket");
 
   private ExtractorSocketRenderer() {
   }
 
   public static boolean cableAt(net.minecraft.world.level.LevelAccessor level,
       net.minecraft.core.BlockPos pos, Direction direction) {
-    return level.getBlockState(pos.relative(direction)).getBlock()
-        instanceof com.faktocraft.common.block.impl.cable.BlockCable;
+    return level.getBlockState(pos.relative(direction))
+        .getBlock() instanceof com.faktocraft.common.block.impl.cable.BlockCable;
   }
 
   public static void render(BlockEntity pipe, PoseStack poseStack, MultiBufferSource buffer,

@@ -1,7 +1,7 @@
 package com.faktocraft.common.block.impl.charge_pad;
 
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.entity.slot.SlotElectric;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
-public class BlockEntityChargePad extends IndRebBlockEntity implements IEnergyBlock, ITileSound, IChargePad {
+public class BlockEntityChargePad extends FaktocraftBlockEntity implements IEnergyBlock, ITileSound, IChargePad {
 
   private final ChargePadTier chargePadTier;
 

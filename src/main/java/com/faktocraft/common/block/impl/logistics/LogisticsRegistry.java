@@ -78,7 +78,7 @@ public class LogisticsRegistry {
 
   public static final BlockEntityType<BlockEntityLogisticsController> LOGISTICS_CONTROLLER_BLOCK_ENTITY =
       RegistrationHandler
-      .blockEntity("logistics_controller", BlockEntityLogisticsController::new, LOGISTICS_CONTROLLER);
+          .blockEntity("logistics_controller", BlockEntityLogisticsController::new, LOGISTICS_CONTROLLER);
 
   public static final BlockEntityType<BlockEntityRequestTable> REQUEST_TABLE_BLOCK_ENTITY = RegistrationHandler
       .blockEntity("request_table", BlockEntityRequestTable::new, REQUEST_TABLE);

@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.rubber_wood;
 
-import com.faktocraft.common.block.IndRebBlock;
+import com.faktocraft.common.block.FaktocraftBlock;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.interfaces.block.IStateAxis;
 import com.faktocraft.common.interfaces.block.IStateRubberLog;
@@ -30,7 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class RubberLog extends IndRebBlock implements IStateRubberLog, IStateAxis {
+public class RubberLog extends FaktocraftBlock implements IStateRubberLog, IStateAxis {
 
   public RubberLog(Properties properties) {
     super(properties);

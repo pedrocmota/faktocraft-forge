@@ -1,6 +1,7 @@
 package com.faktocraft.common.block.impl.machines.distillery;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -72,5 +73,10 @@ public class BlockDistilleryGuard extends Block {
     if (findBase(level, pos) == null) {
       level.removeBlock(pos, false);
     }
+  }
+
+  @Override
+  public boolean addRunningEffects(BlockState state, Level level, BlockPos pos, Entity entity) {
+    return true;
   }
 }

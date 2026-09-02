@@ -3,8 +3,8 @@ package com.faktocraft.common.block.impl.machines.alloy_smelter;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.BlockEntityProgress;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.entity.slot.SlotBattery;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BlockEntityAlloySmelter extends IndRebBlockEntity
+public class BlockEntityAlloySmelter extends FaktocraftBlockEntity
     implements IEnergyBlock, IExpCollector, ISupportUpgrades, ITileSound {
 
   public static final int INPUT_SLOT_0 = 0;
@@ -65,11 +65,11 @@ public class BlockEntityAlloySmelter extends IndRebBlockEntity
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
-    slots.add(new IndRebSlot(INPUT_SLOT_0, 16, 33, InventorySlotType.INPUT, GuiSlotType.NORMAL, 15, 32));
-    slots.add(new IndRebSlot(INPUT_SLOT_1, 37, 21, InventorySlotType.INPUT, GuiSlotType.NORMAL, 36, 20));
-    slots.add(new IndRebSlot(INPUT_SLOT_2, 58, 33, InventorySlotType.INPUT, GuiSlotType.NORMAL, 57, 32));
-    slots.add(new IndRebSlot(OUTPUT_SLOT, 118, 33, InventorySlotType.OUTPUT, GuiSlotType.LARGE, 113, 28));
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
+    slots.add(new FaktocraftSlot(INPUT_SLOT_0, 16, 33, InventorySlotType.INPUT, GuiSlotType.NORMAL, 15, 32));
+    slots.add(new FaktocraftSlot(INPUT_SLOT_1, 37, 21, InventorySlotType.INPUT, GuiSlotType.NORMAL, 36, 20));
+    slots.add(new FaktocraftSlot(INPUT_SLOT_2, 58, 33, InventorySlotType.INPUT, GuiSlotType.NORMAL, 57, 32));
+    slots.add(new FaktocraftSlot(OUTPUT_SLOT, 118, 33, InventorySlotType.OUTPUT, GuiSlotType.LARGE, 113, 28));
     return super.addInventorySlot(slots);
   }
 

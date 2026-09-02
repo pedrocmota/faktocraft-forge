@@ -2,7 +2,7 @@ package com.faktocraft.common.network.packet;
 
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.entity.block.FluidStorage;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.item.impl.tools.Plunger;
 import com.faktocraft.common.network.ModNetworking;
 import net.minecraft.core.BlockPos;
@@ -34,7 +34,7 @@ public record PacketPlungerDrain(BlockPos blockPos, int tankIndex) {
         return;
       }
       ModNetworking.withBlockEntity(sender, msg.blockPos(), (player, be) -> {
-        if (!(be instanceof IndRebBlockEntity machine)) {
+        if (!(be instanceof FaktocraftBlockEntity machine)) {
           return;
         }
         var tanks = machine.getGuiTanks();

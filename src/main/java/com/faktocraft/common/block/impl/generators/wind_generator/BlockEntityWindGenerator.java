@@ -3,8 +3,8 @@ package com.faktocraft.common.block.impl.generators.wind_generator;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.WindSim;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.enums.GuiSlotType;
@@ -24,7 +24,7 @@ import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
-public class BlockEntityWindGenerator extends IndRebBlockEntity implements IEnergyBlock, ITileSound {
+public class BlockEntityWindGenerator extends FaktocraftBlockEntity implements IEnergyBlock, ITileSound {
 
   public static final int ROTOR_SLOT = 0;
   public static final int MIN_GENERATOR_DISTANCE = 18;
@@ -53,8 +53,8 @@ public class BlockEntityWindGenerator extends IndRebBlockEntity implements IEner
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
-    slots.add(new IndRebSlot(ROTOR_SLOT, 35, 36, InventorySlotType.INPUT, GuiSlotType.NORMAL, 34, 35));
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
+    slots.add(new FaktocraftSlot(ROTOR_SLOT, 35, 36, InventorySlotType.INPUT, GuiSlotType.NORMAL, 34, 35));
     return super.addInventorySlot(slots);
   }
 

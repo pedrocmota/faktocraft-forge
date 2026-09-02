@@ -14,8 +14,8 @@ public class NightVisionHandler {
   public static final int COST_PER_SECOND = 20;
 
   private static final net.minecraft.world.entity.EquipmentSlot[] ARMOR_SLOTS = {
-      net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
-      net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET
+    net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
+    net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET
   };
 
   public static Iterable<ItemStack> armorItems(Player player) {

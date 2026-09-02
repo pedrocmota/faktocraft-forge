@@ -19,8 +19,7 @@ public class BlockDistillery extends BlockElectricMachine implements IHasMenu {
 
   public static final int TOWER_HEIGHT = 4;
 
-  private static final net.minecraft.world.phys.shapes.VoxelShape BASE_OUTLINE =
-      box(0, 0, 0, 16, 15.5, 16);
+  private static final net.minecraft.world.phys.shapes.VoxelShape BASE_OUTLINE = box(0, 0, 0, 16, 15.5, 16);
 
   public BlockDistillery(Properties properties) {
     super(EnergyTier.MEDIUM, properties);

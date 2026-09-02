@@ -66,8 +66,7 @@ public class PumpGameTest {
   private static String columnReport(GameTestHelper helper) {
     for (int y = PUMP_POS.getY() - 1; y >= 1; y--) {
       BlockPos pos = new BlockPos(PUMP_POS.getX(), y, PUMP_POS.getZ());
-      net.minecraft.world.level.material.FluidState fluid =
-          helper.getLevel().getFluidState(helper.absolutePos(pos));
+      net.minecraft.world.level.material.FluidState fluid = helper.getLevel().getFluidState(helper.absolutePos(pos));
       if (!fluid.isEmpty()) {
         return "fluid at y=" + y + " source=" + fluid.isSource();
       }
@@ -186,8 +185,7 @@ public class PumpGameTest {
     helper.setBlock(tank, PipeRegistry.TANK.defaultBlockState());
 
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(tank)
-          instanceof com.faktocraft.common.block.impl.pipe.BlockEntityTank neighbour)) {
+      if (!(helper.getBlockEntity(tank) instanceof com.faktocraft.common.block.impl.pipe.BlockEntityTank neighbour)) {
         helper.fail("no tank next to the pump");
         return;
       }

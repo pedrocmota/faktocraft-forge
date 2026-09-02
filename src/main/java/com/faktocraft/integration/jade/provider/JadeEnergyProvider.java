@@ -77,7 +77,7 @@ public class JadeEnergyProvider implements IBlockComponentProvider {
     int[] levels = data.contains(JadeEnergyDataProvider.TAG_TIERS)
         ? data.getIntArray(JadeEnergyDataProvider.TAG_TIERS)
         : new int[] {
-            data.contains(JadeEnergyDataProvider.TAG_TIER) ? data.getInt(JadeEnergyDataProvider.TAG_TIER) : 1 };
+          data.contains(JadeEnergyDataProvider.TAG_TIER) ? data.getInt(JadeEnergyDataProvider.TAG_TIER) : 1};
     if (levels.length == 0) {
       return;
     }

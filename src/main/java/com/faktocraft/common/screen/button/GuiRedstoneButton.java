@@ -1,7 +1,7 @@
 package com.faktocraft.common.screen.button;
 
 import com.faktocraft.Faktocraft;
-import com.faktocraft.common.container.IndRebMenu;
+import com.faktocraft.common.container.FaktocraftMenu;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import net.minecraft.ChatFormatting;
@@ -18,15 +18,15 @@ public class GuiRedstoneButton extends GuiButton {
   private static final ItemStack ICON_ON = new ItemStack(Items.REDSTONE_TORCH);
   private static final ItemStack ICON_OFF = new ItemStack(Items.REDSTONE);
 
-  private final IndRebMenu menu;
+  private final FaktocraftMenu menu;
 
-  public GuiRedstoneButton(IGuiWrapper wrapper, IndRebMenu menu, int leftOffset, int topOffset) {
+  public GuiRedstoneButton(IGuiWrapper wrapper, FaktocraftMenu menu, int leftOffset, int topOffset) {
     super(wrapper, leftOffset, topOffset,
         com.faktocraft.common.util.Constants.LEFT_LAYOUT_EXPERIMENT ? GuiSprite.TOP_BUTTON : GuiSprite.LEFT_BUTTON,
         () -> {
           Minecraft minecraft = Minecraft.getInstance();
           if (minecraft.gameMode != null) {
-            minecraft.gameMode.handleInventoryButtonClick(menu.containerId, IndRebMenu.BUTTON_REDSTONE_TOGGLE);
+            minecraft.gameMode.handleInventoryButtonClick(menu.containerId, FaktocraftMenu.BUTTON_REDSTONE_TOGGLE);
           }
         }, null);
     this.menu = menu;

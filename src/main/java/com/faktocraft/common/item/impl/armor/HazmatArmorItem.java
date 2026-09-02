@@ -35,7 +35,10 @@ public class HazmatArmorItem extends BaseArmor implements DyeableLeatherItem {
 
   public static void wearFullSuit(LivingEntity living, int amount) {
     for (EquipmentSlot slot : new EquipmentSlot[] {
-        EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET }) {
+        EquipmentSlot.HEAD,
+        EquipmentSlot.CHEST,
+        EquipmentSlot.LEGS,
+        EquipmentSlot.FEET }) {
       ItemStack piece = living.getItemBySlot(slot);
       if (piece.getItem() instanceof HazmatArmorItem) {
         piece.hurtAndBreak(amount, living, entity -> entity.broadcastBreakEvent(slot));

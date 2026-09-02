@@ -41,7 +41,7 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
   }
 
   @Override
-  public com.faktocraft.common.entity.block.IndRebBlockEntity getBlockEntity() {
+  public com.faktocraft.common.entity.block.FaktocraftBlockEntity getBlockEntity() {
     return null;
   }
 

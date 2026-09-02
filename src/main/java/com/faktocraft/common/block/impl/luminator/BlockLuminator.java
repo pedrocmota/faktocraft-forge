@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.luminator;
 
-import com.faktocraft.common.block.IndRebEntityBlock;
+import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.interfaces.block.IElectricMachine;
 import com.faktocraft.common.interfaces.block.IStateActive;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class BlockLuminator extends IndRebEntityBlock implements IStateActive, IElectricMachine {
+public class BlockLuminator extends FaktocraftEntityBlock implements IStateActive, IElectricMachine {
 
   private static final Set<EnergyTier> TIERS = Set.of(EnergyTier.LOW, EnergyTier.MEDIUM);
 

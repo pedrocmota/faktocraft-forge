@@ -62,8 +62,10 @@ public class ScannerCategory extends AbstractRecipeCategory<ScannerRecipe> {
     GuiUtil.renderScaled(graphics,
         Component.translatable("gui." + Faktocraft.MODID + ".scanner.replication_cost").getString(), 67, 18, 0.65f,
         0x00a200, false);
-    GuiUtil.renderScaled(graphics, Component.translatable("gui." + Faktocraft.MODID + ".scanner.matter_cost").getString()
-        + " " + recipe.getMatterCost() + " mB", 67, 25, 0.65f, 0x00a200, false);
+    GuiUtil.renderScaled(graphics,
+        Component.translatable("gui." + Faktocraft.MODID + ".scanner.matter_cost").getString()
+            + " " + recipe.getMatterCost() + " mB",
+        67, 25, 0.65f, 0x00a200, false);
     GuiUtil
         .renderScaled(graphics,
             Component.translatable("gui." + Faktocraft.MODID + ".scanner.energy_cost").getString() + " "

@@ -1,7 +1,7 @@
 package com.faktocraft.common.block.impl.battery_box;
 
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.entity.slot.SlotElectric;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.enums.GuiSlotType;
@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
-public class BlockEntityBatteryBox extends IndRebBlockEntity implements IEnergyBlock {
+public class BlockEntityBatteryBox extends FaktocraftBlockEntity implements IEnergyBlock {
 
   public BlockEntityBatteryBox(BlockPos pos, BlockState state) {
     super(M1Registry.BATTERY_BOX_BE, pos, state);

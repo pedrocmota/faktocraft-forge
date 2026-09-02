@@ -3,8 +3,8 @@ package com.faktocraft.common.block.impl.generators.generator;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.BlockEntityProgress;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.entity.slot.SlotBattery;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -27,7 +27,7 @@ import net.minecraftforge.common.ForgeHooks;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
-public class BlockEntityGenerator extends IndRebBlockEntity implements ICooldown, IEnergyBlock, ITileSound {
+public class BlockEntityGenerator extends FaktocraftBlockEntity implements ICooldown, IEnergyBlock, ITileSound {
 
   public static final int INPUT_SLOT = 0;
 
@@ -44,8 +44,8 @@ public class BlockEntityGenerator extends IndRebBlockEntity implements ICooldown
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
-    slots.add(new IndRebSlot(INPUT_SLOT, 80, 35, InventorySlotType.INPUT, GuiSlotType.NORMAL, 79, 34));
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
+    slots.add(new FaktocraftSlot(INPUT_SLOT, 80, 35, InventorySlotType.INPUT, GuiSlotType.NORMAL, 79, 34));
     return super.addInventorySlot(slots);
   }
 
@@ -99,8 +99,8 @@ public class BlockEntityGenerator extends IndRebBlockEntity implements ICooldown
   }
 
   private boolean belowRestartThreshold() {
-    return (long) getEnergyStorage().energyStored() * 100
-        <= (long) getEnergyStorage().maxEnergy() * ModConfig.server().generator_restart_threshold_percent;
+    return (long) getEnergyStorage().energyStored() * 100 <= (long) getEnergyStorage().maxEnergy()
+        * ModConfig.server().generator_restart_threshold_percent;
   }
 
   @Override

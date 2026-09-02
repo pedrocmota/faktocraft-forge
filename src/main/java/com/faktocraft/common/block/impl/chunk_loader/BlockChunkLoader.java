@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.chunk_loader;
 
-import com.faktocraft.common.block.IndRebEntityBlock;
+import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.interfaces.block.IHasMenu;
 import com.faktocraft.common.util.wrench.WrenchHelper;
 import net.minecraft.ChatFormatting;
@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
-public class BlockChunkLoader extends IndRebEntityBlock implements IHasMenu {
+public class BlockChunkLoader extends FaktocraftEntityBlock implements IHasMenu {
 
   public BlockChunkLoader(Properties properties) {
     super(properties);

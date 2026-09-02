@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.pipe;
 
-import com.faktocraft.common.block.IndRebBlock;
+import com.faktocraft.common.block.FaktocraftBlock;
 import com.faktocraft.common.util.TextComponentUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,7 +33,7 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockTank extends IndRebBlock implements EntityBlock {
+public class BlockTank extends FaktocraftBlock implements EntityBlock {
 
   @Override
   public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {

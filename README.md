@@ -2,7 +2,7 @@
 
 <img src="docs/banners/main.png" alt="Faktocraft" width="700">
 
-Faktocraft is a modern port of several classic tech mods - **Industrial Reborn**, **IndustrialCraft 2**, **BuildCraft** and **Logistics Pipes** - brought together into a single mod: electrical machines, tiered power grids, item and fluid pipes, quarries and a full logistics system.
+Faktocraft is a modern port of several classic tech mods - **IndustrialCraft 2**, **BuildCraft** and **Logistics Pipes** - brought together into a single mod: electrical machines, tiered power grids, item and fluid pipes, quarries and a full logistics system.
 
 > ⚠️ The mod is in its **first alpha version** - bugs may occur.
 

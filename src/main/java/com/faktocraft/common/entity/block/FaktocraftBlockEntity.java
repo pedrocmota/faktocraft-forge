@@ -1,7 +1,7 @@
 package com.faktocraft.common.entity.block;
 
 import com.faktocraft.common.energy.impl.BasicEnergyStorage;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.entity.slot.SlotUpgrade;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -47,7 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class IndRebBlockEntity extends BlockEntity {
+public class FaktocraftBlockEntity extends BlockEntity {
 
   protected boolean isActivate;
   protected boolean hasCooldown;
@@ -59,7 +59,7 @@ public class IndRebBlockEntity extends BlockEntity {
   protected boolean hasBattery;
 
   protected ItemStackHandler itemStackHandler;
-  protected final ArrayList<IndRebSlot> slots = new ArrayList<>();
+  protected final ArrayList<FaktocraftSlot> slots = new ArrayList<>();
 
   protected ItemStackHandler batteryStackHandler;
   protected final ArrayList<IElectricSlot> electricSlot = new ArrayList<>();
@@ -88,7 +88,7 @@ public class IndRebBlockEntity extends BlockEntity {
 
   private LazyOptional<IItemHandler> itemHandlerCap = LazyOptional.empty();
 
-  public IndRebBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+  public FaktocraftBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
     super(type, pos, state);
     init();
   }
@@ -130,10 +130,10 @@ public class IndRebBlockEntity extends BlockEntity {
         @Override
         protected void onContentsChanged(int slot) {
           checkInputSlotChange(slot);
-          IndRebBlockEntity.this.setChanged();
+          FaktocraftBlockEntity.this.setChanged();
         }
       };
-      for (IndRebSlot slot : slots) {
+      for (FaktocraftSlot slot : slots) {
         if (slot.getInventorySlotType() == InventorySlotType.INPUT) {
           cachedInput.put(slot.getSlotId(), ItemStack.EMPTY);
         }
@@ -149,7 +149,7 @@ public class IndRebBlockEntity extends BlockEntity {
   }
 
   private boolean isAutomationExtractable(int slotId) {
-    for (IndRebSlot slot : slots) {
+    for (FaktocraftSlot slot : slots) {
       if (slot.getSlotId() == slotId) {
         return slot.getInventorySlotType() == InventorySlotType.OUTPUT;
       }
@@ -157,7 +157,7 @@ public class IndRebBlockEntity extends BlockEntity {
     return false;
   }
 
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
     return slots;
   }
 
@@ -169,7 +169,7 @@ public class IndRebBlockEntity extends BlockEntity {
     return 64;
   }
 
-  public ArrayList<IndRebSlot> getSlots() {
+  public ArrayList<FaktocraftSlot> getSlots() {
     return slots;
   }
 
@@ -244,7 +244,7 @@ public class IndRebBlockEntity extends BlockEntity {
         @Override
         protected void onContentsChanged(int slot) {
           onBatteryDockChanged();
-          IndRebBlockEntity.this.setChanged();
+          FaktocraftBlockEntity.this.setChanged();
         }
       };
       onBatteryDockChanged();
@@ -256,7 +256,7 @@ public class IndRebBlockEntity extends BlockEntity {
       batteryStackHandler = new ItemStackHandler(electricSlot.size()) {
         @Override
         protected void onContentsChanged(int slot) {
-          IndRebBlockEntity.this.setChanged();
+          FaktocraftBlockEntity.this.setChanged();
         }
       };
     }
@@ -324,7 +324,7 @@ public class IndRebBlockEntity extends BlockEntity {
       upgradeStackHandler = new ItemStackHandler(4) {
         @Override
         protected void onContentsChanged(int slot) {
-          IndRebBlockEntity.this.setChanged();
+          FaktocraftBlockEntity.this.setChanged();
         }
       };
     }
@@ -535,7 +535,7 @@ public class IndRebBlockEntity extends BlockEntity {
     private final List<Integer> slotIds = new ArrayList<>();
 
     SlotTypeContainer(List<InventorySlotType> types) {
-      for (IndRebSlot slot : slots) {
+      for (FaktocraftSlot slot : slots) {
         if (types.contains(slot.getInventorySlotType())) {
           slotIds.add(slot.getSlotId());
         }
@@ -584,7 +584,7 @@ public class IndRebBlockEntity extends BlockEntity {
 
     @Override
     public void setChanged() {
-      IndRebBlockEntity.this.setChanged();
+      FaktocraftBlockEntity.this.setChanged();
     }
 
     @Override
@@ -849,7 +849,7 @@ public class IndRebBlockEntity extends BlockEntity {
     }
     List<ItemStack> drops = new ArrayList<>();
     if (hasInventory) {
-      for (IndRebSlot slot : slots) {
+      for (FaktocraftSlot slot : slots) {
         if (slot.getInventorySlotType() != InventorySlotType.DISABLED) {
           drops.add(itemStackHandler.getStackInSlot(slot.getSlotId()));
         }

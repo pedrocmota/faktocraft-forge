@@ -22,7 +22,8 @@ public class GuiScannerResult extends GuiElement {
   @Override
   protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
     GuiUtil.renderScaled(graphics,
-        Component.translatable("gui." + Faktocraft.MODID + ".scanner.replication_cost").getString(), getLeftOffset() + 3,
+        Component.translatable("gui." + Faktocraft.MODID + ".scanner.replication_cost").getString(),
+        getLeftOffset() + 3,
         getTopOffset(), 0.65f, 0x00a200, false);
     GuiUtil.renderScaled(graphics,
         Component.translatable("gui." + Faktocraft.MODID + ".scanner.matter_cost").getString() + " "

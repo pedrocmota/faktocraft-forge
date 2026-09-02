@@ -1,8 +1,8 @@
 package com.faktocraft.common.block.impl.machines.iron_furnace;
 
 import com.faktocraft.common.entity.block.BlockEntityProgress;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.enums.GuiSlotType;
 import com.faktocraft.common.enums.InventorySlotType;
 import com.faktocraft.common.interfaces.entity.IExpCollector;
@@ -36,7 +36,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class BlockEntityIronFurnace extends IndRebBlockEntity implements IExpCollector {
+public class BlockEntityIronFurnace extends FaktocraftBlockEntity implements IExpCollector {
 
   public static final int FUEL_SLOT = 0;
   public static final int INPUT_SLOT = 1;
@@ -173,10 +173,10 @@ public class BlockEntityIronFurnace extends IndRebBlockEntity implements IExpCol
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
-    slots.add(new IndRebSlot(INPUT_SLOT, 56, 17, InventorySlotType.INPUT, GuiSlotType.NORMAL, 55, 16));
-    slots.add(new IndRebSlot(FUEL_SLOT, 56, 53, InventorySlotType.NORMAL, GuiSlotType.NORMAL, 55, 52));
-    slots.add(new IndRebSlot(OUTPUT_SLOT, 116, 35, InventorySlotType.OUTPUT, GuiSlotType.LARGE, 111, 30));
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
+    slots.add(new FaktocraftSlot(INPUT_SLOT, 56, 17, InventorySlotType.INPUT, GuiSlotType.NORMAL, 55, 16));
+    slots.add(new FaktocraftSlot(FUEL_SLOT, 56, 53, InventorySlotType.NORMAL, GuiSlotType.NORMAL, 55, 52));
+    slots.add(new FaktocraftSlot(OUTPUT_SLOT, 116, 35, InventorySlotType.OUTPUT, GuiSlotType.LARGE, 111, 30));
     return super.addInventorySlot(slots);
   }
 

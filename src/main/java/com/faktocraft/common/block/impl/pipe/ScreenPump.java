@@ -13,7 +13,7 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
     implements com.faktocraft.common.interfaces.screen.IGuiWrapper {
 
   @Override
-  public com.faktocraft.common.entity.block.IndRebBlockEntity getBlockEntity() {
+  public com.faktocraft.common.entity.block.FaktocraftBlockEntity getBlockEntity() {
     return menu.getPump();
   }
 

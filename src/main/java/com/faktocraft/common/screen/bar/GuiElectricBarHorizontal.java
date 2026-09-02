@@ -16,14 +16,14 @@ import net.minecraft.resources.ResourceLocation;
 public class GuiElectricBarHorizontal extends GuiProgress {
 
   @org.jetbrains.annotations.Nullable
-  private final com.faktocraft.common.entity.block.IndRebBlockEntity blockEntity;
+  private final com.faktocraft.common.entity.block.FaktocraftBlockEntity blockEntity;
 
   public GuiElectricBarHorizontal(IGuiWrapper wrapper, int leftOffset, int topOffset, IProgress progress) {
     this(wrapper, leftOffset, topOffset, progress, null);
   }
 
   public GuiElectricBarHorizontal(IGuiWrapper wrapper, int leftOffset, int topOffset, IProgress progress,
-      @org.jetbrains.annotations.Nullable com.faktocraft.common.entity.block.IndRebBlockEntity blockEntity) {
+      @org.jetbrains.annotations.Nullable com.faktocraft.common.entity.block.FaktocraftBlockEntity blockEntity) {
     super(wrapper, leftOffset, topOffset, progress, GuiSprite.ELECTRIC_HORIZONTAL, Direction.HORIZONTAL, false);
     this.blockEntity = blockEntity;
   }

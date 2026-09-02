@@ -1,11 +1,23 @@
 {
   "multipart": [
-    { "apply": { "model": "faktocraft:block/quarry_frame_core" } },
-    { "when": { "north": "true" }, "apply": { "model": "faktocraft:block/quarry_frame_arm" } },
-    { "when": { "east": "true" }, "apply": { "model": "faktocraft:block/quarry_frame_arm", "y": 90 } },
-    { "when": { "south": "true" }, "apply": { "model": "faktocraft:block/quarry_frame_arm", "y": 180 } },
-    { "when": { "west": "true" }, "apply": { "model": "faktocraft:block/quarry_frame_arm", "y": 270 } },
-    { "when": { "up": "true" }, "apply": { "model": "faktocraft:block/quarry_frame_arm", "x": 270 } },
-    { "when": { "down": "true" }, "apply": { "model": "faktocraft:block/quarry_frame_arm", "x": 90 } }
+    {"when": {"north": "false", "connector": "none"}, "apply": {"model": "faktocraft:block/quarry_frame_center_cap"}},
+    {"when": {"east": "false", "connector": "none"}, "apply": {"model": "faktocraft:block/quarry_frame_center_cap", "y": 90}},
+    {"when": {"south": "false", "connector": "none"}, "apply": {"model": "faktocraft:block/quarry_frame_center_cap", "y": 180}},
+    {"when": {"west": "false", "connector": "none"}, "apply": {"model": "faktocraft:block/quarry_frame_center_cap", "y": 270}},
+    {"when": {"up": "false", "connector": "none"}, "apply": {"model": "faktocraft:block/quarry_frame_center_cap", "x": -90}},
+    {"when": {"down": "false", "connector": "none"}, "apply": {"model": "faktocraft:block/quarry_frame_center_cap", "x": 90}},
+    {"when": {"north": "true", "connector": "none|east|south|west|up|down"}, "apply": {"model": "faktocraft:block/quarry_frame_side"}},
+    {"when": {"east": "true", "connector": "none|north|south|west|up|down"}, "apply": {"model": "faktocraft:block/quarry_frame_side", "y": 90}},
+    {"when": {"south": "true", "connector": "none|north|east|west|up|down"}, "apply": {"model": "faktocraft:block/quarry_frame_side", "y": 180}},
+    {"when": {"west": "true", "connector": "none|north|east|south|up|down"}, "apply": {"model": "faktocraft:block/quarry_frame_side", "y": 270}},
+    {"when": {"up": "true", "connector": "none|north|east|south|west|down"}, "apply": {"model": "faktocraft:block/quarry_frame_side", "x": -90}},
+    {"when": {"down": "true", "connector": "none|north|east|south|west|up"}, "apply": {"model": "faktocraft:block/quarry_frame_side", "x": 90}},
+    {"when": {"connector": "north"}, "apply": {"model": "faktocraft:block/quarry_frame_connector"}},
+    {"when": {"connector": "east"}, "apply": {"model": "faktocraft:block/quarry_frame_connector", "y": 90}},
+    {"when": {"connector": "south"}, "apply": {"model": "faktocraft:block/quarry_frame_connector", "y": 180}},
+    {"when": {"connector": "west"}, "apply": {"model": "faktocraft:block/quarry_frame_connector", "y": 270}},
+    {"when": {"connector": "up"}, "apply": {"model": "faktocraft:block/quarry_frame_connector", "x": -90}},
+    {"when": {"connector": "down"}, "apply": {"model": "faktocraft:block/quarry_frame_connector", "x": 90}},
+    {"when": {"foot": "true"}, "apply": {"model": "faktocraft:block/quarry_frame_foot"}}
   ]
 }

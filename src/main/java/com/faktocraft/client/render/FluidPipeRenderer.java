@@ -137,8 +137,8 @@ public class FluidPipeRenderer implements BlockEntityRenderer<BlockEntityFluidPi
 
   private static boolean neighborHasFluid(BlockEntityFluidPipe pipe, Direction direction) {
     return pipe.getLevel() != null
-        && pipe.getLevel().getBlockEntity(pipe.getBlockPos().relative(direction))
-            instanceof BlockEntityFluidPipe neighbor
+        && pipe.getLevel()
+            .getBlockEntity(pipe.getBlockPos().relative(direction)) instanceof BlockEntityFluidPipe neighbor
         && !neighbor.tank.isEmpty();
   }
 
@@ -150,8 +150,9 @@ public class FluidPipeRenderer implements BlockEntityRenderer<BlockEntityFluidPi
     }
     for (Direction.AxisDirection axisDirection : Direction.AxisDirection.values()) {
       Direction direction = Direction.fromAxisAndDirection(runAxis, axisDirection);
-      if (pipe.getLevel().getBlockEntity(pipe.getBlockPos().relative(direction))
-          instanceof BlockEntityFluidPipe neighbor && !neighbor.tank.isEmpty()) {
+      if (pipe.getLevel()
+          .getBlockEntity(pipe.getBlockPos().relative(direction)) instanceof BlockEntityFluidPipe neighbor
+          && !neighbor.tank.isEmpty()) {
         return neighbor.tank.getFluid();
       }
     }
@@ -160,16 +161,16 @@ public class FluidPipeRenderer implements BlockEntityRenderer<BlockEntityFluidPi
 
   private static boolean neighborHasSameFluid(BlockEntityFluidPipe pipe, Direction direction, Fluid fluid) {
     return pipe.getLevel() != null
-        && pipe.getLevel().getBlockEntity(pipe.getBlockPos().relative(direction))
-            instanceof BlockEntityFluidPipe neighbor
+        && pipe.getLevel()
+            .getBlockEntity(pipe.getBlockPos().relative(direction)) instanceof BlockEntityFluidPipe neighbor
         && !neighbor.tank.isEmpty()
         && neighbor.tank.getFluid().isSame(fluid);
   }
 
   private static float halfLevel(BlockEntityFluidPipe pipe, Direction direction, float ownLevel, Fluid fluid) {
     if (pipe.getLevel() != null
-        && pipe.getLevel().getBlockEntity(pipe.getBlockPos().relative(direction))
-            instanceof BlockEntityFluidPipe neighbor
+        && pipe.getLevel()
+            .getBlockEntity(pipe.getBlockPos().relative(direction)) instanceof BlockEntityFluidPipe neighbor
         && !neighbor.tank.isEmpty()
         && neighbor.tank.getFluid().isSame(fluid)) {
       float fraction = (float) neighbor.tank.getFluidAmount() / neighbor.tank.getCapacityMb();

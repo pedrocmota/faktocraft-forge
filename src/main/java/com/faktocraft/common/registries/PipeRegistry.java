@@ -65,30 +65,31 @@ public class PipeRegistry {
   public static final Item VALVE_GATE = RegistrationHandler.item("valve_gate",
       new Item(new Item.Properties()));
 
-  public static final BlockEntityType<com.faktocraft.common.block.impl.pipe.BlockEntityFluidPipe>
-      FLUID_PIPE_BLOCK_ENTITY = RegistrationHandler
-      .blockEntity("fluid_pipe", com.faktocraft.common.block.impl.pipe.BlockEntityFluidPipe::new,
-          FLUID_STONE_PIPE, FLUID_GOLD_PIPE);
+  public static final BlockEntityType<
+      com.faktocraft.common.block.impl.pipe.BlockEntityFluidPipe> FLUID_PIPE_BLOCK_ENTITY = RegistrationHandler
+          .blockEntity("fluid_pipe", com.faktocraft.common.block.impl.pipe.BlockEntityFluidPipe::new,
+              FLUID_STONE_PIPE, FLUID_GOLD_PIPE);
 
-  public static final BlockEntityType<com.faktocraft.common.block.impl.pipe.BlockEntityFluidExtractorPipe>
-      FLUID_EXTRACTOR_PIPE_BLOCK_ENTITY = RegistrationHandler
-      .blockEntity("fluid_extractor_pipe",
-          com.faktocraft.common.block.impl.pipe.BlockEntityFluidExtractorPipe::new,
-          FLUID_EXTRACTOR_PIPE);
+  public static final BlockEntityType<
+      com.faktocraft.common.block.impl.pipe.BlockEntityFluidExtractorPipe> FLUID_EXTRACTOR_PIPE_BLOCK_ENTITY =
+          RegistrationHandler
+              .blockEntity("fluid_extractor_pipe",
+                  com.faktocraft.common.block.impl.pipe.BlockEntityFluidExtractorPipe::new,
+                  FLUID_EXTRACTOR_PIPE);
 
   public static final BlockEntityType<com.faktocraft.common.block.impl.pipe.BlockEntityPump> PUMP_BLOCK_ENTITY =
       RegistrationHandler
-      .blockEntity("pump", com.faktocraft.common.block.impl.pipe.BlockEntityPump::new, PUMP);
+          .blockEntity("pump", com.faktocraft.common.block.impl.pipe.BlockEntityPump::new, PUMP);
 
   public static final BlockEntityType<com.faktocraft.common.block.impl.pipe.BlockEntityTank> TANK_BLOCK_ENTITY =
       RegistrationHandler
-      .blockEntity("tank", com.faktocraft.common.block.impl.pipe.BlockEntityTank::new, TANK);
+          .blockEntity("tank", com.faktocraft.common.block.impl.pipe.BlockEntityTank::new, TANK);
 
   public static final MenuType<com.faktocraft.common.block.impl.pipe.MenuExtractorPipe> EXTRACTOR_PIPE_MENU =
       MenuTypeHelper
-      .register("extractor_pipe",
-          (windowId, inv, pos) -> new com.faktocraft.common.block.impl.pipe.MenuExtractorPipe(windowId,
-              inv.player.level(), pos, inv, inv.player));
+          .register("extractor_pipe",
+              (windowId, inv, pos) -> new com.faktocraft.common.block.impl.pipe.MenuExtractorPipe(windowId,
+                  inv.player.level(), pos, inv, inv.player));
   public static final MenuType<com.faktocraft.common.block.impl.pipe.MenuPump> PUMP_MENU = MenuTypeHelper
       .register("pump",
           (windowId, inv, pos) -> new com.faktocraft.common.block.impl.pipe.MenuPump(windowId,

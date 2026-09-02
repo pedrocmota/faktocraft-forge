@@ -1,7 +1,7 @@
 package com.faktocraft.common.block.impl.transformer;
 
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.enums.TransformerMode;
@@ -18,7 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEntityTransformer extends IndRebBlockEntity
+public class BlockEntityTransformer extends FaktocraftBlockEntity
     implements IEnergyBlock, ITransformer, IMachineActions.ITransformerActions {
 
   private final TransformerTier tier;

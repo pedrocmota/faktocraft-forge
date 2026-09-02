@@ -97,7 +97,7 @@ public class ElectricArmorItem extends ArmorItem implements IElectricItem {
           com.faktocraft.common.util.NightVisionHandler.COST_PER_SECOND).withStyle(ChatFormatting.GRAY));
     }
     tooltip.add(EnumLang.POWER_TIER.getTranslationComponent(
-            energyTier.getLang().getTranslationComponent().withStyle(energyTier.getColor()))
+        energyTier.getLang().getTranslationComponent().withStyle(energyTier.getColor()))
         .withStyle(ChatFormatting.GRAY)
         .append(Component.literal(" (" + TextComponentUtil.getFormattedLong(energyTier.getBasicTransfer()) + " IE/t)")
             .withStyle(ChatFormatting.DARK_GRAY)));
@@ -108,7 +108,8 @@ public class ElectricArmorItem extends ArmorItem implements IElectricItem {
             .withStyle(energyTier.getColor()),
         Component.literal(" / ").withStyle(ChatFormatting.GRAY),
         EnumLang.POWER.getTranslationComponent(TextComponentUtil.getFormattedEnergyUnit(maxEnergy))
-            .withStyle(energyTier.getColor()))).withStyle(ChatFormatting.GRAY));
+            .withStyle(energyTier.getColor())))
+        .withStyle(ChatFormatting.GRAY));
 
     super.appendHoverText(stack, level, tooltip, flag);
   }

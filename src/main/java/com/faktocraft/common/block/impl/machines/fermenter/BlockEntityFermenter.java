@@ -4,10 +4,10 @@ import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.BlockEntityProgress;
 import com.faktocraft.common.entity.block.FluidStorage;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.interfaces.entity.ITileSound;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.entity.slot.SlotBattery;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockEntityFermenter extends IndRebBlockEntity implements IEnergyBlock, ISupportUpgrades, ITileSound {
+public class BlockEntityFermenter extends FaktocraftBlockEntity implements IEnergyBlock, ISupportUpgrades, ITileSound {
 
   public static final int BIOGAS_PER_OP = 250;
 
@@ -76,9 +76,9 @@ public class BlockEntityFermenter extends IndRebBlockEntity implements IEnergyBl
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
-    slots.add(new IndRebSlot(INPUT_SLOT, 13, 35, InventorySlotType.INPUT, GuiSlotType.NORMAL, 12, 34));
-    slots.add(new IndRebSlot(WASTE_SLOT, 51, 73, InventorySlotType.OUTPUT, GuiSlotType.NORMAL, 50, 72));
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
+    slots.add(new FaktocraftSlot(INPUT_SLOT, 13, 35, InventorySlotType.INPUT, GuiSlotType.NORMAL, 12, 34));
+    slots.add(new FaktocraftSlot(WASTE_SLOT, 51, 73, InventorySlotType.OUTPUT, GuiSlotType.NORMAL, 50, 72));
     return super.addInventorySlot(slots);
   }
 

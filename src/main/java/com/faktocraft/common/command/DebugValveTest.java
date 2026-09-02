@@ -35,8 +35,8 @@ public final class DebugValveTest {
     ServerLevel level = event.getServer().overworld();
     base = new BlockPos(0, 200, 0);
     level.getChunk(0, 0);
-    freshWorld = !(level.getBlockState(base).getBlock() instanceof
-        com.faktocraft.common.block.impl.pipe.BlockFluidPipe);
+    freshWorld = !(level.getBlockState(base)
+        .getBlock() instanceof com.faktocraft.common.block.impl.pipe.BlockFluidPipe);
 
     if (freshWorld) {
       var pipe = PipeRegistry.FLUID_STONE_PIPE;
@@ -66,7 +66,7 @@ public final class DebugValveTest {
       log("MUNDO RECARREGADO (relog real). estado: manual{" + amounts(level, 0)
           + "} redstone{" + amounts(level, 10) + "}");
     }
-    for (int z : new int[] { 0, 10 }) {
+    for (int z : new int[] {0, 10}) {
       BlockEntityFluidPipe pipeA = pipeAt(level, 0, z);
       BlockEntityFluidPipe pipeB = pipeAt(level, 1, z);
       BlockEntityFluidPipe pipeC = pipeAt(level, 2, z);

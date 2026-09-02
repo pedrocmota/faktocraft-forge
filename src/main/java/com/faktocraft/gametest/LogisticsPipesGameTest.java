@@ -7,7 +7,7 @@ import com.faktocraft.common.block.impl.logistics.Endpoint;
 import com.faktocraft.common.block.impl.logistics.LogisticsRegistry;
 import com.faktocraft.common.block.impl.logistics.ModuleSettings;
 import com.faktocraft.common.config.ModConfig;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.registries.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -53,7 +53,7 @@ public class LogisticsPipesGameTest {
   }
 
   private static void fillCore(GameTestHelper helper, BlockPos rel) {
-    if (helper.getBlockEntity(rel) instanceof IndRebBlockEntity be) {
+    if (helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be) {
       be.getBatteryStackHandler().setStackInSlot(0, new ItemStack(ModItems.BASIC_CAPACITOR));
       be.getEnergyStorage().setEnergy(be.getEnergyStorage().maxEnergy());
     }

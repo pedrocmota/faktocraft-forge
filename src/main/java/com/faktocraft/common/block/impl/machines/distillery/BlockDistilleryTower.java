@@ -3,6 +3,7 @@ package com.faktocraft.common.block.impl.machines.distillery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -19,8 +20,9 @@ import org.jetbrains.annotations.Nullable;
 public class BlockDistilleryTower extends Block implements net.minecraft.world.level.block.EntityBlock {
 
   public static final net.minecraft.world.level.block.state.properties.IntegerProperty SEGMENT =
-      net.minecraft.world.level.block.state.properties.IntegerProperty.create("segment", 1,
-          BlockDistillery.TOWER_HEIGHT + 1);
+      net.minecraft.world.level.block.state.properties.IntegerProperty
+          .create("segment", 1,
+              BlockDistillery.TOWER_HEIGHT + 1);
 
   private static final VoxelShape OUTLINE = Block.box(2.4, 0, 2.4, 13.6, 16, 13.6);
   private static final VoxelShape CHIMNEY = Block.box(3.8, 0, 3.8, 12.2, 13, 12.2);
@@ -107,5 +109,10 @@ public class BlockDistilleryTower extends Block implements net.minecraft.world.l
     if (findBase(level, pos) == null) {
       level.removeBlock(pos, false);
     }
+  }
+
+  @Override
+  public boolean addRunningEffects(BlockState state, Level level, BlockPos pos, Entity entity) {
+    return true;
   }
 }

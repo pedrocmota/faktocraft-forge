@@ -5,10 +5,10 @@ import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.BlockEntityProgress;
 import com.faktocraft.common.entity.block.FluidStorage;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.interfaces.entity.ITileSound;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.entity.slot.SlotBattery;
 import com.faktocraft.common.enums.CanningMachineMode;
 import com.faktocraft.common.enums.EnergyTier;
@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockEntityCanningMachine extends IndRebBlockEntity
+public class BlockEntityCanningMachine extends FaktocraftBlockEntity
     implements IEnergyBlock, ISupportUpgrades, IMachineActions.IModeSwitcher, ITileSound {
 
   public static final int CELL_UP = 0;
@@ -59,9 +59,9 @@ public class BlockEntityCanningMachine extends IndRebBlockEntity
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
-    slots.add(new IndRebSlot(CELL_UP, 127, 19, InventorySlotType.INPUT, GuiSlotType.NORMAL, 126, 18));
-    slots.add(new IndRebSlot(CELL_DOWN, 127, 50, InventorySlotType.OUTPUT, GuiSlotType.NORMAL, 126, 49));
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
+    slots.add(new FaktocraftSlot(CELL_UP, 127, 19, InventorySlotType.INPUT, GuiSlotType.NORMAL, 126, 18));
+    slots.add(new FaktocraftSlot(CELL_DOWN, 127, 50, InventorySlotType.OUTPUT, GuiSlotType.NORMAL, 126, 49));
     return super.addInventorySlot(slots);
   }
 

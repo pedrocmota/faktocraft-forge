@@ -1,7 +1,7 @@
 package com.faktocraft.common.screen;
 
-import com.faktocraft.common.container.IndRebMenu;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.container.FaktocraftMenu;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public class BaseScreen<T extends IndRebMenu> extends AbstractContainerScreen<T> implements IGuiWrapper {
+public class BaseScreen<T extends FaktocraftMenu> extends AbstractContainerScreen<T> implements IGuiWrapper {
 
   private final T container;
 
@@ -38,7 +38,7 @@ public class BaseScreen<T extends IndRebMenu> extends AbstractContainerScreen<T>
   }
 
   @Override
-  public IndRebBlockEntity getBlockEntity() {
+  public FaktocraftBlockEntity getBlockEntity() {
     return container.getBlockEntity();
   }
 

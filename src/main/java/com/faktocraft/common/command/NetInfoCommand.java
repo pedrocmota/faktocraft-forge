@@ -4,7 +4,7 @@ import com.faktocraft.common.energy.EnergyLookup;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.energy.provider.EnergyCore;
 import com.faktocraft.common.energy.provider.EnergyNetwork;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.interfaces.entity.ITransformer;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.ChatFormatting;
@@ -87,7 +87,7 @@ public final class NetInfoCommand {
 
     say(source, "=== maquina em " + fmt(pos) + " ===", ChatFormatting.GOLD);
     StringBuilder status = new StringBuilder();
-    if (be instanceof IndRebBlockEntity ir) {
+    if (be instanceof FaktocraftBlockEntity ir) {
       if (ir.isRedstoneOnly()) {
         status.append(ir.isRedstoneBlocked() ? "   [BLOQUEADA: modo redstone sem sinal]"
             : "   [modo redstone, com sinal]");
@@ -147,7 +147,7 @@ public final class NetInfoCommand {
         + ", precisa=" + receiveTier + " tem=" + network.getCurrentTier()
         + (aceita ? " OK" : " *** TENSAO NAO BATE ***")
         + ", faces que aceitam cabo: " + (faces.length() == 0 ? "*** NENHUMA ***" : faces)
-        + (be instanceof IndRebBlockEntity ir && ir.isUndervoltage() ? ", subtensao" : ""),
+        + (be instanceof FaktocraftBlockEntity ir && ir.isUndervoltage() ? ", subtensao" : ""),
         aceita && faces.length() > 0 ? ChatFormatting.GREEN : ChatFormatting.RED);
   }
 

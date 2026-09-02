@@ -47,8 +47,7 @@ public record PacketTaskHistoryOp(BlockPos blockPos, String dimension, int mode,
           || !(level.getBlockEntity(msg.blockPos) instanceof BlockEntityRequestTable table)) {
         return;
       }
-      if (!(player.containerMenu instanceof
-          com.faktocraft.common.block.impl.logistics.MenuRequestTable menu)
+      if (!(player.containerMenu instanceof com.faktocraft.common.block.impl.logistics.MenuRequestTable menu)
           || !menu.getTablePos().equals(msg.blockPos)) {
         return;
       }

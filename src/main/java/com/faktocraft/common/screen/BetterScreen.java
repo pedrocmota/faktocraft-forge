@@ -1,6 +1,6 @@
 package com.faktocraft.common.screen;
 
-import com.faktocraft.common.container.IndRebMenu;
+import com.faktocraft.common.container.FaktocraftMenu;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.interfaces.entity.ICooldown;
 import com.faktocraft.common.interfaces.entity.IExpCollector;
@@ -15,7 +15,7 @@ import com.faktocraft.common.screen.widgets.GuiUpgrades;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-public class BetterScreen<T extends IndRebMenu> extends PanelScreen<T> {
+public class BetterScreen<T extends FaktocraftMenu> extends PanelScreen<T> {
 
   public BetterScreen(T container, Inventory inventory, Component component) {
     super(container, inventory, component);

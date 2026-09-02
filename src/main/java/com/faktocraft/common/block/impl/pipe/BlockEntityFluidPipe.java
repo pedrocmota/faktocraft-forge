@@ -231,7 +231,8 @@ public class BlockEntityFluidPipe extends BlockEntity implements IValveHolder, I
   }
 
   private final com.faktocraft.common.util.NeighborFluidCache neighborFluidCache =
-      new com.faktocraft.common.util.NeighborFluidCache(this);
+      new com.faktocraft.common.util.NeighborFluidCache(
+          this);
 
   private int settledMb;
 
@@ -303,8 +304,8 @@ public class BlockEntityFluidPipe extends BlockEntity implements IValveHolder, I
 
   @Nullable
   @Override
-  public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener>
-      getUpdatePacket() {
+  public net.minecraft.network.protocol.Packet<
+      net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
     return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
   }
 

@@ -17,7 +17,7 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
 
   private static final String[] STATUS_KEYS = {
       "off", "invalid_area", "clearing", "framing", "mining", "obstructed", "full", "no_energy",
-      "waiting_chunks", "done"};
+      "waiting_chunks", "done" };
 
   private com.faktocraft.common.screen.bar.GuiElectricBarVertical energyBar;
   private com.faktocraft.common.screen.widgets.GuiCapacitorWarning capacitorWarning;
@@ -32,7 +32,7 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
   }
 
   @Override
-  public com.faktocraft.common.entity.block.IndRebBlockEntity getBlockEntity() {
+  public com.faktocraft.common.entity.block.FaktocraftBlockEntity getBlockEntity() {
     return menu.getQuarry();
   }
 
@@ -139,8 +139,8 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
         4210752, false);
     int code = Math.max(0, Math.min(menu.getStatus(), STATUS_KEYS.length - 1));
     int color = switch (code) {
-      case BlockEntityQuarry.STATUS_CLEARING, BlockEntityQuarry.STATUS_FRAMING,
-          BlockEntityQuarry.STATUS_MINING -> 0x2E7D32;
+      case BlockEntityQuarry.STATUS_CLEARING, BlockEntityQuarry.STATUS_FRAMING, BlockEntityQuarry.STATUS_MINING
+          -> 0x2E7D32;
       case BlockEntityQuarry.STATUS_DONE -> 0x1565C0;
       case BlockEntityQuarry.STATUS_OFF -> 4210752;
       default -> 0xB71C1C;

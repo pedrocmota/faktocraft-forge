@@ -3,7 +3,7 @@ package com.faktocraft.common.block.impl.logistics;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import net.minecraft.core.BlockPos;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class BlockEntityLogisticsController extends IndRebBlockEntity implements IEnergyBlock {
+public class BlockEntityLogisticsController extends FaktocraftBlockEntity implements IEnergyBlock {
 
   private LogisticsGraph graph;
   private boolean graphDirty = true;
@@ -87,8 +87,7 @@ public class BlockEntityLogisticsController extends IndRebBlockEntity implements
   public GuiSnapshot guiSnapshot(net.minecraft.world.level.Level level, LogisticsGraph currentGraph) {
     if (guiSnapshotCache == null || level.getGameTime() != guiSnapshotTick) {
       guiSnapshotTick = level.getGameTime();
-      java.util.Map<ItemKey, Integer> stock =
-          BlockEntityChassis.stockSnapshot(level, currentGraph, ledger);
+      java.util.Map<ItemKey, Integer> stock = BlockEntityChassis.stockSnapshot(level, currentGraph, ledger);
       List<LogisticsPlanner.CraftDecl> decls = collectDecls(currentGraph);
       guiSnapshotCache = new GuiSnapshot(stock, decls, List.copyOf(configErrors),
           LogisticsPlanner.craftableSet(stock, decls), LogisticsPlanner.producibleSet(stock, decls));
@@ -351,8 +350,8 @@ public class BlockEntityLogisticsController extends IndRebBlockEntity implements
     if (level == null || !level.isLoaded(docked)) {
       return null;
     }
-    String blockId = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(level.getBlockState(docked).getBlock(
-        )).toString();
+    String blockId = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(level.getBlockState(docked).getBlock())
+        .toString();
     net.minecraftforge.items.IItemHandler handler = com.faktocraft.common.util.TransferUtil
         .findItemHandler(level, docked, null);
     if (!blockId.equals(io.bindBlock) || handler == null || handler.getSlots() != io.bindSlots

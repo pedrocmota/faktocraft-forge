@@ -1,7 +1,7 @@
 package com.faktocraft.common.entity.block;
 
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.entity.slot.SlotBattery;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class BlockEntityStandardMachine extends IndRebBlockEntity
+public abstract class BlockEntityStandardMachine extends FaktocraftBlockEntity
     implements IEnergyBlock, ITileSound, IExpCollector, ISupportUpgrades {
 
   public static final int INPUT_SLOT = 0;
@@ -51,10 +51,10 @@ public abstract class BlockEntityStandardMachine extends IndRebBlockEntity
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
-    slots.add(new IndRebSlot(INPUT_SLOT, 48, 35, InventorySlotType.INPUT, GuiSlotType.NORMAL, 47, 34));
-    slots.add(new IndRebSlot(OUTPUT_SLOT, 108, 24, InventorySlotType.OUTPUT, GuiSlotType.LARGE, 103, 19));
-    slots.add(new IndRebSlot(BONUS_SLOT, 108, 50, InventorySlotType.BONUS, GuiSlotType.NORMAL, 107, 49));
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
+    slots.add(new FaktocraftSlot(INPUT_SLOT, 48, 35, InventorySlotType.INPUT, GuiSlotType.NORMAL, 47, 34));
+    slots.add(new FaktocraftSlot(OUTPUT_SLOT, 108, 24, InventorySlotType.OUTPUT, GuiSlotType.LARGE, 103, 19));
+    slots.add(new FaktocraftSlot(BONUS_SLOT, 108, 50, InventorySlotType.BONUS, GuiSlotType.NORMAL, 107, 49));
     return slots;
   }
 

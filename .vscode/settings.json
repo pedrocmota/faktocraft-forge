@@ -2,5 +2,18 @@
   "java.compile.nullAnalysis.mode": "disabled",
   "java.configuration.updateBuildConfiguration": "interactive",
   "java.checkstyle.configuration": "${workspaceFolder}/config/checkstyle/checkstyle.xml",
-  "java.checkstyle.version": "10.12.4"
+  "java.checkstyle.version": "10.12.4",
+  "java.format.enabled": true,
+  "java.format.settings.url": ".vscode/eclipse-formatter.xml",
+  "java.format.settings.profile": "Faktocraft",
+  "java.format.comments.enabled": false,
+  "java.saveActions.organizeImports": true,
+  "java.completion.importOrder": ["com", "net", "org", "", "java", "javax", "#"],
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.rulers": [120]
+  }
 }

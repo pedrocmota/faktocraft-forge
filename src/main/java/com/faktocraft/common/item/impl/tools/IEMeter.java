@@ -6,7 +6,7 @@ import com.faktocraft.common.energy.EnergyLookup;
 import com.faktocraft.common.energy.impl.BasicEnergyStorage;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.energy.provider.EnergyNetwork;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.item.base.BaseItem;
 import com.faktocraft.common.network.ModNetworking;
@@ -74,8 +74,8 @@ public class IEMeter extends BaseItem {
       }
     }
 
-    if (blockEntity instanceof IndRebBlockEntity indRebBlockEntity && indRebBlockEntity.hasEnergy()) {
-      BasicEnergyStorage storage = indRebBlockEntity.getEnergyStorage();
+    if (blockEntity instanceof FaktocraftBlockEntity faktocraftBlockEntity && faktocraftBlockEntity.hasEnergy()) {
+      BasicEnergyStorage storage = faktocraftBlockEntity.getEnergyStorage();
       ModNetworking.sendToPlayer(serverPlayer, new PacketIEMeterInfo(false,
           storage.energyTier().getLvl(), -1,
           storage.energyTier().getBasicTransfer(),

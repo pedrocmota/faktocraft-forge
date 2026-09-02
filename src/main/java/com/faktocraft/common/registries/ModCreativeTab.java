@@ -1,7 +1,7 @@
 package com.faktocraft.common.registries;
 
 import net.minecraftforge.registries.ForgeRegistries;
-import com.faktocraft.common.block.IndRebEntityBlock;
+import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.block.impl.battery_box.BlockBatteryBox;
 import com.faktocraft.common.block.impl.cable.BlockCable;
 import com.faktocraft.common.block.impl.charge_pad.BlockChargePad;
@@ -256,7 +256,7 @@ public class ModCreativeTab {
           || block instanceof BlockChargePad) {
         return Group.ENERGY;
       }
-      if (block instanceof IndRebEntityBlock) {
+      if (block instanceof FaktocraftEntityBlock) {
         return Group.MACHINES;
       }
       if (path.endsWith("_ore") || STORAGE_BLOCKS.contains(path) || RUBBER_NATURE.contains(path)) {

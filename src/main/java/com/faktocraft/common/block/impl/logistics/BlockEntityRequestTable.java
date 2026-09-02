@@ -1,8 +1,8 @@
 package com.faktocraft.common.block.impl.logistics;
 
 import com.faktocraft.Faktocraft;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.enums.GuiSlotType;
 import com.faktocraft.common.enums.InventorySlotType;
 import net.minecraft.core.BlockPos;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
-public class BlockEntityRequestTable extends IndRebBlockEntity {
+public class BlockEntityRequestTable extends FaktocraftBlockEntity {
 
   public static final int STORAGE_SLOTS = 27;
 
@@ -27,7 +27,8 @@ public class BlockEntityRequestTable extends IndRebBlockEntity {
   private boolean autoExtract;
   private int extractCooldown;
   private final com.faktocraft.common.util.ItemStackHandler craftMatrix =
-      new com.faktocraft.common.util.ItemStackHandler(9) {
+      new com.faktocraft.common.util.ItemStackHandler(
+          9) {
         @Override
         protected void onContentsChanged(int slot) {
           BlockEntityRequestTable.this.setChanged();
@@ -43,9 +44,9 @@ public class BlockEntityRequestTable extends IndRebBlockEntity {
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
     for (int i = 0; i < STORAGE_SLOTS; i++) {
-      slots.add(new IndRebSlot(i, 8 + (i % 9) * 18, 105 + (i / 9) * 18, InventorySlotType.INPUT,
+      slots.add(new FaktocraftSlot(i, 8 + (i % 9) * 18, 105 + (i / 9) * 18, InventorySlotType.INPUT,
           GuiSlotType.NORMAL, 7 + (i % 9) * 18, 104 + (i / 9) * 18));
     }
     return super.addInventorySlot(slots);

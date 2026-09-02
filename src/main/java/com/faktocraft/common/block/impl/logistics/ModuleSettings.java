@@ -35,8 +35,8 @@ public final class ModuleSettings {
       return switch (mode) {
         case ITEM -> matchesItem(stack);
         case TAG -> stack.is(TagKey.create(Registries.ITEM, new ResourceLocation(text)));
-        case NAMESPACE -> net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(stack.getItem()).getNamespace(
-            ).equals(text);
+        case NAMESPACE -> net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(stack.getItem()).getNamespace()
+            .equals(text);
       };
     }
 

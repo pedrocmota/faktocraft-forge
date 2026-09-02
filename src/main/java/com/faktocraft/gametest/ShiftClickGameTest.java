@@ -2,7 +2,7 @@ package com.faktocraft.gametest;
 
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.recycler.MenuRecycler;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.registries.machines.M2Registry;
 import net.minecraft.core.BlockPos;
@@ -42,7 +42,7 @@ public class ShiftClickGameTest {
   public static void shiftClickPrefersTheSideBays(GameTestHelper helper) {
     BlockPos rel = new BlockPos(1, 1, 1);
     helper.setBlock(rel, M2Registry.RECYCLER.defaultBlockState());
-    if (!(helper.getBlockEntity(rel) instanceof IndRebBlockEntity machine)) {
+    if (!(helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity machine)) {
       helper.fail("no recycler block entity");
       return;
     }
@@ -87,8 +87,8 @@ public class ShiftClickGameTest {
     BlockPos rel = new BlockPos(1, 1, 1);
     helper.setBlock(rel,
         com.faktocraft.common.block.impl.logistics.LogisticsRegistry.ASSEMBLY_TABLE.defaultBlockState());
-    if (!(helper.getBlockEntity(rel)
-        instanceof com.faktocraft.common.block.impl.logistics.BlockEntityAssemblyTable table)) {
+    if (!(helper
+        .getBlockEntity(rel) instanceof com.faktocraft.common.block.impl.logistics.BlockEntityAssemblyTable table)) {
       helper.fail("no assembly table");
       return;
     }

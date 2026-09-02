@@ -10,14 +10,14 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-public class IndRebMenuProvider implements MenuProvider {
+public class FaktocraftMenuProvider implements MenuProvider {
 
   private final IHasMenu hasMenu;
   private final Level level;
   private final BlockPos pos;
   private final Component displayName;
 
-  public IndRebMenuProvider(IHasMenu hasMenu, Level level, BlockPos pos, Component displayName) {
+  public FaktocraftMenuProvider(IHasMenu hasMenu, Level level, BlockPos pos, Component displayName) {
     this.hasMenu = hasMenu;
     this.level = level;
     this.pos = pos;

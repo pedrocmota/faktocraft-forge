@@ -34,7 +34,7 @@ public final class ModRecipeSerializer {
       AlloySmeltingRecipe.SERIALIZER);
   public static final RecipeSerializer<com.faktocraft.common.recipe.impl.CircuitAssemblingRecipe> CIRCUIT_ASSEMBLING =
       register(
-      "circuit_assembling", com.faktocraft.common.recipe.impl.CircuitAssemblingRecipe.SERIALIZER);
+          "circuit_assembling", com.faktocraft.common.recipe.impl.CircuitAssemblingRecipe.SERIALIZER);
   public static final RecipeSerializer<RecyclingRecipe> RECYCLING = register("recycling", RecyclingRecipe.SERIALIZER);
   public static final RecipeSerializer<FluidEnrichingRecipe> FLUID_ENRICHING = register("fluid_enriching",
       FluidEnrichingRecipe.SERIALIZER);

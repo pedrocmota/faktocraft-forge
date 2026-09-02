@@ -1,7 +1,7 @@
 package com.faktocraft.common.network.packet;
 
 import com.faktocraft.common.entity.block.FluidStorage;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.item.base.FluidItem;
 import com.faktocraft.common.item.impl.FluidCell;
 import com.faktocraft.common.network.ModNetworking;
@@ -34,7 +34,7 @@ public record PacketCellDrain(BlockPos blockPos, int tankIndex, boolean all) {
         return;
       }
       ModNetworking.withBlockEntity(sender, msg.blockPos(), (player, be) -> {
-        if (!(be instanceof IndRebBlockEntity machine)) {
+        if (!(be instanceof FaktocraftBlockEntity machine)) {
           return;
         }
         var tanks = machine.getGuiTanks();

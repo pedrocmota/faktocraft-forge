@@ -8,7 +8,7 @@ import com.faktocraft.common.item.base.EnergyStorageItem;
 import com.faktocraft.common.item.base.MaterialItem;
 import com.faktocraft.common.item.base.ToolItem;
 import com.faktocraft.common.item.block.BlockItemElectric;
-import com.faktocraft.common.item.block.IndRebBlockItem;
+import com.faktocraft.common.item.block.FaktocraftBlockItem;
 import com.faktocraft.common.item.impl.ChargingBattery;
 import com.faktocraft.common.item.impl.Fertilizer;
 import com.faktocraft.common.item.impl.FluidCell;
@@ -385,7 +385,7 @@ public final class ModItems {
   }
 
   public static Item registerBlockItem(Block block, Rarity rarity) {
-    return registerBlockItemInternal(block, rarity, IndRebBlockItem::new);
+    return registerBlockItemInternal(block, rarity, FaktocraftBlockItem::new);
   }
 
   public static Item registerElectricBlockItem(Block block) {

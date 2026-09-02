@@ -18,39 +18,43 @@ import org.jetbrains.annotations.Nullable;
 public class BlockSolarGenerator extends BlockElectricMachine implements IHasMenu {
 
   private static final java.util.Map<net.minecraft.core.Direction,
-      net.minecraft.world.level.block.state.properties.BooleanProperty> CABLE_ADAPTER_PROPS =
-      java.util.Map.of(
-          net.minecraft.core.Direction.NORTH,
-          net.minecraft.world.level.block.state.properties.BlockStateProperties.NORTH,
-          net.minecraft.core.Direction.EAST,
-          net.minecraft.world.level.block.state.properties.BlockStateProperties.EAST,
-          net.minecraft.core.Direction.SOUTH,
-          net.minecraft.world.level.block.state.properties.BlockStateProperties.SOUTH,
-          net.minecraft.core.Direction.WEST,
-          net.minecraft.world.level.block.state.properties.BlockStateProperties.WEST,
-          net.minecraft.core.Direction.DOWN,
-          net.minecraft.world.level.block.state.properties.BlockStateProperties.DOWN);
+      net.minecraft.world.level.block.state.properties.BooleanProperty> CABLE_ADAPTER_PROPS = java.util.Map
+          .of(
+              net.minecraft.core.Direction.NORTH,
+              net.minecraft.world.level.block.state.properties.BlockStateProperties.NORTH,
+              net.minecraft.core.Direction.EAST,
+              net.minecraft.world.level.block.state.properties.BlockStateProperties.EAST,
+              net.minecraft.core.Direction.SOUTH,
+              net.minecraft.world.level.block.state.properties.BlockStateProperties.SOUTH,
+              net.minecraft.core.Direction.WEST,
+              net.minecraft.world.level.block.state.properties.BlockStateProperties.WEST,
+              net.minecraft.core.Direction.DOWN,
+              net.minecraft.world.level.block.state.properties.BlockStateProperties.DOWN);
 
   private static final java.util.Map<net.minecraft.core.Direction,
-      net.minecraft.world.level.block.state.properties.BooleanProperty> PANEL_CONNECT_PROPS =
-      java.util.Map.of(
-          net.minecraft.core.Direction.NORTH,
-          net.minecraft.world.level.block.state.properties.BooleanProperty.create("panel_north"),
-          net.minecraft.core.Direction.EAST,
-          net.minecraft.world.level.block.state.properties.BooleanProperty.create("panel_east"),
-          net.minecraft.core.Direction.SOUTH,
-          net.minecraft.world.level.block.state.properties.BooleanProperty.create("panel_south"),
-          net.minecraft.core.Direction.WEST,
-          net.minecraft.world.level.block.state.properties.BooleanProperty.create("panel_west"));
+      net.minecraft.world.level.block.state.properties.BooleanProperty> PANEL_CONNECT_PROPS = java.util.Map
+          .of(
+              net.minecraft.core.Direction.NORTH,
+              net.minecraft.world.level.block.state.properties.BooleanProperty.create("panel_north"),
+              net.minecraft.core.Direction.EAST,
+              net.minecraft.world.level.block.state.properties.BooleanProperty.create("panel_east"),
+              net.minecraft.core.Direction.SOUTH,
+              net.minecraft.world.level.block.state.properties.BooleanProperty.create("panel_south"),
+              net.minecraft.core.Direction.WEST,
+              net.minecraft.world.level.block.state.properties.BooleanProperty.create("panel_west"));
 
   private static final net.minecraft.world.level.block.state.properties.BooleanProperty CORNER_NE =
-      net.minecraft.world.level.block.state.properties.BooleanProperty.create("corner_ne");
+      net.minecraft.world.level.block.state.properties.BooleanProperty
+          .create("corner_ne");
   private static final net.minecraft.world.level.block.state.properties.BooleanProperty CORNER_SE =
-      net.minecraft.world.level.block.state.properties.BooleanProperty.create("corner_se");
+      net.minecraft.world.level.block.state.properties.BooleanProperty
+          .create("corner_se");
   private static final net.minecraft.world.level.block.state.properties.BooleanProperty CORNER_SW =
-      net.minecraft.world.level.block.state.properties.BooleanProperty.create("corner_sw");
+      net.minecraft.world.level.block.state.properties.BooleanProperty
+          .create("corner_sw");
   private static final net.minecraft.world.level.block.state.properties.BooleanProperty CORNER_NW =
-      net.minecraft.world.level.block.state.properties.BooleanProperty.create("corner_nw");
+      net.minecraft.world.level.block.state.properties.BooleanProperty
+          .create("corner_nw");
 
   private final SolarGeneratorTier solarTier;
   protected final VoxelShape shape;

@@ -3,7 +3,7 @@ package com.faktocraft.common.command;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.provider.EnergyCore;
 import com.faktocraft.common.energy.provider.EnergyNetwork;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.registries.ModBlocks;
 import com.faktocraft.common.registries.machines.M1Registry;
 import net.minecraft.core.BlockPos;
@@ -56,7 +56,7 @@ public final class DebugCableTest {
     place(level, TRANSFORMER, M1Registry.HIGH_TRANSFORMER.defaultBlockState().setValue(
         com.faktocraft.common.util.BlockStateHelper.facingProperty, net.minecraft.core.Direction.EAST));
 
-    IndRebBlockEntity mfe = beAt(level, MFE);
+    FaktocraftBlockEntity mfe = beAt(level, MFE);
     if (mfe != null) {
       mfe.getEnergyStorage().setEnergy(mfe.getEnergyStorage().maxEnergy());
       log("MFE carregado: " + mfe.getEnergyStorage().energyStored() + " IE");
@@ -83,7 +83,7 @@ public final class DebugCableTest {
             .append("/").append(n.maxEnergy())
             .append(" maxExtract=").append(n.maxExtract()).append("  ");
       }
-      IndRebBlockEntity t = beAt(level, TRANSFORMER);
+      FaktocraftBlockEntity t = beAt(level, TRANSFORMER);
       sb.append("| transformador=").append(t == null ? "?" : t.getEnergyStorage().energyStored());
       log(sb.toString());
     }
@@ -104,7 +104,7 @@ public final class DebugCableTest {
   }
 
   private static void relatorio(ServerLevel level) {
-    IndRebBlockEntity transformer = beAt(level, TRANSFORMER);
+    FaktocraftBlockEntity transformer = beAt(level, TRANSFORMER);
     log("  transformador: " + (transformer == null ? "ausente"
         : transformer.getEnergyStorage().energyStored() + " / "
             + transformer.getEnergyStorage().maxEnergy() + " IE"
@@ -119,8 +119,8 @@ public final class DebugCableTest {
     }
   }
 
-  private static IndRebBlockEntity beAt(ServerLevel level, int dx) {
-    return level.getBlockEntity(base.offset(dx, 0, 0)) instanceof IndRebBlockEntity be ? be : null;
+  private static FaktocraftBlockEntity beAt(ServerLevel level, int dx) {
+    return level.getBlockEntity(base.offset(dx, 0, 0)) instanceof FaktocraftBlockEntity be ? be : null;
   }
 
   private static void place(ServerLevel level, int dx, BlockState state) {

@@ -1,7 +1,9 @@
 package com.faktocraft.common.block.impl.pipe;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,5 +39,10 @@ public class BlockPumpTube extends Block {
       net.minecraft.world.entity.player.Player player, boolean willHarvest,
       net.minecraft.world.level.material.FluidState fluid) {
     return false;
+  }
+
+  @Override
+  public boolean addRunningEffects(BlockState state, Level level, BlockPos pos, Entity entity) {
+    return true;
   }
 }

@@ -1,6 +1,6 @@
 package com.faktocraft.common.screen;
 
-import com.faktocraft.common.container.IndRebMenu;
+import com.faktocraft.common.container.FaktocraftMenu;
 import com.faktocraft.common.screen.button.GuiExpButton;
 import com.faktocraft.common.screen.button.GuiInfoButton;
 import com.faktocraft.common.screen.widgets.GuiElement;
@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PanelScreen<T extends IndRebMenu> extends BaseScreen<T> {
+public class PanelScreen<T extends FaktocraftMenu> extends BaseScreen<T> {
 
   private final List<AbstractWidget> component;
 

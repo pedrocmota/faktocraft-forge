@@ -2,7 +2,7 @@ package com.faktocraft.common.network.packet;
 
 import com.faktocraft.common.block.impl.logistics.BlockEntityLogisticsController;
 import com.faktocraft.common.block.impl.logistics.MenuCoreTasks;
-import com.faktocraft.common.container.IndRebMenuProvider;
+import com.faktocraft.common.container.FaktocraftMenuProvider;
 import com.faktocraft.common.interfaces.block.IHasMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -29,8 +29,7 @@ public record PacketOpenCoreView(BlockPos blockPos, boolean taskBook) {
     ctx.get().enqueueWork(() -> {
       ServerPlayer player = ctx.get().getSender();
       if (player == null || !player.serverLevel().isLoaded(msg.blockPos)
-          || !(player.serverLevel().getBlockEntity(msg.blockPos)
-              instanceof BlockEntityLogisticsController)
+          || !(player.serverLevel().getBlockEntity(msg.blockPos) instanceof BlockEntityLogisticsController)
           || player.distanceToSqr(msg.blockPos.getCenter()) > 64.0) {
         return;
       }
@@ -42,7 +41,7 @@ public record PacketOpenCoreView(BlockPos blockPos, boolean taskBook) {
             buf -> buf.writeBlockPos(msg.blockPos));
       } else if (block instanceof IHasMenu hasMenu) {
         NetworkHooks.openScreen(player,
-            new IndRebMenuProvider(hasMenu, player.serverLevel(), msg.blockPos, block.getName()),
+            new FaktocraftMenuProvider(hasMenu, player.serverLevel(), msg.blockPos, block.getName()),
             buf -> buf.writeBlockPos(msg.blockPos));
       }
     });

@@ -4,9 +4,9 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
-public class IndRebBlockItem extends BlockItem {
+public class FaktocraftBlockItem extends BlockItem {
 
-  public IndRebBlockItem(Block block, Item.Properties properties) {
+  public FaktocraftBlockItem(Block block, Item.Properties properties) {
     super(block, properties);
   }
 }

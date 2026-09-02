@@ -41,7 +41,7 @@ public class MenuQuarry extends AbstractContainerMenu {
         });
       }
       addSlot(new Slot(quarry.getBatteryStackHandler(),
-          com.faktocraft.common.entity.block.IndRebBlockEntity.TENSION_DOCK_SLOT, -20, 45) {
+          com.faktocraft.common.entity.block.FaktocraftBlockEntity.TENSION_DOCK_SLOT, -20, 45) {
         @Override
         public boolean mayPlace(ItemStack stack) {
           return stack.getItem() instanceof com.faktocraft.common.item.impl.upgrade.TensionUpgrade;

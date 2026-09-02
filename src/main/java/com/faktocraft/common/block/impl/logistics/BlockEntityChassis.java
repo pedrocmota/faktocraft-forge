@@ -86,8 +86,8 @@ public class BlockEntityChassis extends BlockEntity {
     return false;
   }
 
-  private static final Direction[] EJECT_ORDER = {Direction.UP, Direction.NORTH, Direction.SOUTH,
-      Direction.WEST, Direction.EAST, Direction.DOWN};
+  private static final Direction[] EJECT_ORDER = { Direction.UP, Direction.NORTH, Direction.SOUTH,
+      Direction.WEST, Direction.EAST, Direction.DOWN };
 
   @Nullable
   public Direction freeFace() {
@@ -158,7 +158,8 @@ public class BlockEntityChassis extends BlockEntity {
       if (player != null) {
         player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
             "logistics." + com.faktocraft.Faktocraft.MODID
-                + (candidates.isEmpty() ? ".chassis.inventory_none" : ".chassis.inventory_single")), true);
+                + (candidates.isEmpty() ? ".chassis.inventory_none" : ".chassis.inventory_single")),
+            true);
       }
       return false;
     }
@@ -212,8 +213,8 @@ public class BlockEntityChassis extends BlockEntity {
     if (level == null || direction == null) {
       return null;
     }
-    return level.getBlockEntity(worldPosition.relative(direction))
-        instanceof BlockEntityAssemblyTable assembly ? assembly : null;
+    return level.getBlockEntity(worldPosition.relative(direction)) instanceof BlockEntityAssemblyTable assembly
+        ? assembly : null;
   }
 
   public List<ItemStack> modulesOf(ModuleType type) {
@@ -349,8 +350,8 @@ public class BlockEntityChassis extends BlockEntity {
         continue;
       }
       var box = new net.minecraft.world.phys.AABB(worldPosition.relative(direction)).inflate(0.25);
-      for (net.minecraft.world.entity.item.ItemEntity entity
-          : level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, box)) {
+      for (net.minecraft.world.entity.item.ItemEntity entity : level
+          .getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, box)) {
         if (!entity.isAlive() || entity.getItem().isEmpty()) {
           continue;
         }
@@ -749,8 +750,8 @@ public class BlockEntityChassis extends BlockEntity {
   }
 
   @Override
-  public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener>
-      getUpdatePacket() {
+  public net.minecraft.network.protocol.Packet<
+      net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
     return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(
         this, entity -> ((BlockEntityChassis) entity).getUpdateTag());
   }

@@ -24,11 +24,11 @@ public class FuelingStationRegistry {
 
   public static final Item FUELING_STATION_ITEM = ModItems.registerElectricBlockItem(FUELING_STATION);
 
-  public static final BlockEntityType<BlockEntityFuelingStation> FUELING_STATION_BLOCK_ENTITY =
-      RegistrationHandler.blockEntity("fueling_station", BlockEntityFuelingStation::new, FUELING_STATION);
+  public static final BlockEntityType<BlockEntityFuelingStation> FUELING_STATION_BLOCK_ENTITY = RegistrationHandler
+      .blockEntity("fueling_station", BlockEntityFuelingStation::new, FUELING_STATION);
 
-  public static final MenuType<MenuFuelingStation> FUELING_STATION_MENU =
-      MenuTypeHelper.register("fueling_station", MenuFuelingStation::new);
+  public static final MenuType<MenuFuelingStation> FUELING_STATION_MENU = MenuTypeHelper.register("fueling_station",
+      MenuFuelingStation::new);
 
   public static void register() {
   }

@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.quarry;
 
-import com.faktocraft.common.block.IndRebEntityBlock;
+import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.interfaces.block.IHasMenu;
 import com.faktocraft.common.interfaces.block.IStateActive;
 import com.faktocraft.common.interfaces.block.IStateFacing;
@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
-public class BlockQuarry extends IndRebEntityBlock implements IStateFacing, IStateActive, IHasMenu {
+public class BlockQuarry extends FaktocraftEntityBlock implements IStateFacing, IStateActive, IHasMenu {
 
   public BlockQuarry(Properties properties) {
     super(properties);
@@ -31,6 +32,32 @@ public class BlockQuarry extends IndRebEntityBlock implements IStateFacing, ISta
   @Override
   public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
     return new BlockEntityQuarry(pos, state);
+  }
+
+  @Nullable
+  @Override
+  public BlockState getStateForPlacement(BlockPlaceContext context) {
+    BlockState state = super.getStateForPlacement(context);
+    if (state == null) {
+      return null;
+    }
+    Level level = context.getLevel();
+    BlockPos pos = context.getClickedPos();
+    int[] rect = BlockLandmark.rectAround(level, pos);
+    String problem = null;
+    if (rect == null) {
+      problem = "chat.faktocraft.quarry_needs_landmarks";
+    } else if (!BlockLandmark.rectFits(rect, pos)) {
+      problem = "chat.faktocraft.quarry_area_invalid";
+    }
+    if (problem == null) {
+      return state;
+    }
+    Player player = context.getPlayer();
+    if (player != null && !level.isClientSide()) {
+      player.displayClientMessage(Component.translatable(problem).withStyle(ChatFormatting.RED), true);
+    }
+    return null;
   }
 
   @Override

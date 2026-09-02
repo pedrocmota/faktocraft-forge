@@ -1,6 +1,6 @@
 package com.faktocraft.common.container;
 
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.interfaces.entity.ISlot;
 import com.faktocraft.common.interfaces.item.IUpgradeItem;
 import net.minecraft.world.Container;
@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class SlotUpgradeMenu extends MachineSlot {
 
-  public SlotUpgradeMenu(IndRebBlockEntity blockEntity, Container container, ISlot slotDescriptor) {
+  public SlotUpgradeMenu(FaktocraftBlockEntity blockEntity, Container container, ISlot slotDescriptor) {
     super(blockEntity, container, slotDescriptor);
   }
 

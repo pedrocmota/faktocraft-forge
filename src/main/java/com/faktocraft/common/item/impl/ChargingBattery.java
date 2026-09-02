@@ -65,8 +65,8 @@ public class ChargingBattery extends ElectricItem {
       if (invStack == stack || invStack.isEmpty()) {
         continue;
       }
-      if (!(invStack.getItem() instanceof IElectricItem electricItem) || invStack.getItem(
-          ) instanceof ChargingBattery) {
+      if (!(invStack.getItem() instanceof IElectricItem electricItem)
+          || invStack.getItem() instanceof ChargingBattery) {
         continue;
       }
 

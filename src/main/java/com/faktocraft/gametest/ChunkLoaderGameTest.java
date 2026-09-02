@@ -38,7 +38,7 @@ public class ChunkLoaderGameTest {
   }
 
   private static void fillEnergy(GameTestHelper helper, BlockPos rel) {
-    if (helper.getBlockEntity(rel) instanceof com.faktocraft.common.entity.block.IndRebBlockEntity be) {
+    if (helper.getBlockEntity(rel) instanceof com.faktocraft.common.entity.block.FaktocraftBlockEntity be) {
       be.getEnergyStorage().setEnergy(be.getEnergyStorage().maxEnergy());
     }
   }

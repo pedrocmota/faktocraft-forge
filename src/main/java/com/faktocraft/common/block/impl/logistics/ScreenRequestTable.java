@@ -402,9 +402,9 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
   private static final String PAGER_CHARS = "0123456789/";
 
   private static final int[][] PAGER_GLYPHS = {
-      {7, 5, 5, 5, 7}, {2, 6, 2, 2, 7}, {7, 1, 7, 4, 7}, {7, 1, 7, 1, 7}, {5, 5, 7, 1, 1},
-      {7, 4, 7, 1, 7}, {7, 4, 7, 5, 7}, {7, 1, 2, 2, 2}, {7, 5, 7, 5, 7}, {7, 5, 7, 1, 7},
-      {1, 1, 2, 4, 4}
+    {7, 5, 5, 5, 7}, {2, 6, 2, 2, 7}, {7, 1, 7, 4, 7}, {7, 1, 7, 1, 7}, {5, 5, 7, 1, 1},
+    {7, 4, 7, 1, 7}, {7, 4, 7, 5, 7}, {7, 1, 2, 2, 2}, {7, 5, 7, 5, 7}, {7, 5, 7, 1, 7},
+    {1, 1, 2, 4, 4}
   };
 
   private void drawTinyText(GuiGraphics graphics, String text, int x, int y, int color) {
@@ -451,7 +451,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     int rightButton = left + PANEL_RIGHT - 4 - 8;
     int numberX = rightButton - 3 - numberWidth;
     int leftButton = numberX - 3 - 8;
-    return new int[] { leftButton, rightButton, top + 19, numberX };
+    return new int[] {leftButton, rightButton, top + 19, numberX};
   }
 
   private void renderPagination(GuiGraphics graphics, int mouseX, int mouseY) {

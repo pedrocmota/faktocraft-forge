@@ -551,8 +551,8 @@ public final class TaskLedger {
       sub.count = step.times * step.resultCount;
       sub.stateKey = job.stage > i ? "done"
           : job.stage != i ? "pending"
-          : job.stations.isEmpty() && !job.steps.isEmpty() ? "waiting"
-          : job.producing ? "producing" : "collecting";
+              : job.stations.isEmpty() && !job.steps.isEmpty() ? "waiting"
+                  : job.producing ? "producing" : "collecting";
       if (step.surplus > 0 && job.stage > i) {
         sub.leftoverItem = step.result.copy();
         sub.leftoverCount = step.surplus;
@@ -1317,7 +1317,7 @@ public final class TaskLedger {
     userHistory.clear();
     systemHistory.clear();
 
-    for (String key : new String[] { "historyUser", "historySystem", "history" }) {
+    for (String key : new String[] {"historyUser", "historySystem", "history"}) {
       for (Tag element : tag.getList(key, Tag.TAG_COMPOUND)) {
         HistoryRecord record = HistoryRecord.load((CompoundTag) element);
         List<HistoryRecord> list = record.system ? systemHistory : userHistory;

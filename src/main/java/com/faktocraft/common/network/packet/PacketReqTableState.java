@@ -48,8 +48,7 @@ public record PacketReqTableState(BlockPos blockPos, String dimension) {
         return;
       }
 
-      if (!(player.containerMenu instanceof
-          com.faktocraft.common.block.impl.logistics.MenuRequestTable menu)
+      if (!(player.containerMenu instanceof com.faktocraft.common.block.impl.logistics.MenuRequestTable menu)
           || !menu.getTablePos().equals(msg.blockPos)) {
         return;
       }

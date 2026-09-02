@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.teleport_anchor;
 
-import com.faktocraft.common.block.IndRebEntityBlock;
+import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.registries.ModComponents;
 import com.faktocraft.common.util.TextComponentUtil;
 import com.faktocraft.common.util.wrench.WrenchHelper;
@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockTeleportAnchor extends IndRebEntityBlock {
+public class BlockTeleportAnchor extends FaktocraftEntityBlock {
 
   public BlockTeleportAnchor(Properties properties) {
     super(properties);

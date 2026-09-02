@@ -83,6 +83,7 @@ public final class ModComponentsFluids {
   public static void setChargingMode(ItemStack stack, int mode) {
     stack.getOrCreateTag().putInt(KEY_CHARGING_MODE, mode);
   }
+
   private static void clearTagIfEmpty(ItemStack stack, CompoundTag tag) {
     if (tag.isEmpty()) {
       stack.setTag(null);

@@ -168,11 +168,11 @@ public class ModFluids {
 
     ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(
         () -> fluidType, () -> holder[0], () -> holder[1])
-        .slopeFindDistance(2)
-        .levelDecreasePerBlock(2)
-        .tickRate(tickRate)
-        .explosionResistance(100.0F)
-        .block(() -> (LiquidBlock) blockHolder[0]);
+            .slopeFindDistance(2)
+            .levelDecreasePerBlock(2)
+            .tickRate(tickRate)
+            .explosionResistance(100.0F)
+            .block(() -> (LiquidBlock) blockHolder[0]);
 
     FlowingFluid still = new BaseFluid.Source(properties);
     FlowingFluid flowing = new BaseFluid.Flowing(properties);

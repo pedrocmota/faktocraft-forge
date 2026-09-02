@@ -1,7 +1,7 @@
 package com.faktocraft.common.block.impl.generators.solar_panels;
 
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.registries.machines.M1Registry;
 import com.faktocraft.common.tier.SolarGeneratorTier;
@@ -11,7 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEntitySolarGenerator extends IndRebBlockEntity
+public class BlockEntitySolarGenerator extends FaktocraftBlockEntity
     implements IEnergyBlock, com.faktocraft.common.energy.ICableSideFilter {
 
   @Override

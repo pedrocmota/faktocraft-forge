@@ -47,7 +47,7 @@ public final class ValveWheelRenderer {
     float target = valve.isOpen() ? OPEN_ANGLE : 0.0F;
     double now = level.getGameTime() + partialTick;
     float[] anim = ANGLES.computeIfAbsent(pipe.getBlockPos().immutable(),
-        key -> new float[] { target, (float) now });
+        key -> new float[] {target, (float) now});
     float elapsed = Math.min(3.0F, (float) (now - anim[1]));
     if (elapsed > 0) {
       float step = WHEEL_SPEED * elapsed;

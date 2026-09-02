@@ -305,8 +305,8 @@ public class JEIPlugin implements IModPlugin {
             recipe.getResultItem(level.registryAccess())));
         mezz.jei.api.recipe.IRecipeManager manager = activeRuntime.getRecipeManager();
 
-        List<net.minecraft.world.item.crafting.CraftingRecipe> found =
-            manager.createRecipeLookup(RecipeTypes.CRAFTING).limitFocus(focuses).get().toList();
+        List<net.minecraft.world.item.crafting.CraftingRecipe> found = manager.createRecipeLookup(RecipeTypes.CRAFTING)
+            .limitFocus(focuses).get().toList();
         List<net.minecraft.world.item.crafting.CraftingRecipe> ordered = new java.util.ArrayList<>();
         found.stream().filter(other -> other.getId().equals(recipe.getId())).forEach(ordered::add);
         found.stream().filter(other -> !other.getId().equals(recipe.getId())).forEach(ordered::add);
@@ -430,8 +430,7 @@ public class JEIPlugin implements IModPlugin {
             if (!screen.isEditing()) {
               return List.of();
             }
-            mezz.jei.api.recipe.RecipeIngredientRole role =
-                mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT;
+            mezz.jei.api.recipe.RecipeIngredientRole role = mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT;
             net.minecraft.world.item.ItemStack stack = screen.declaredOutput();
             if (stack.isEmpty()) {
 

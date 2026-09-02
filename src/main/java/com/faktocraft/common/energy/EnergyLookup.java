@@ -1,7 +1,7 @@
 package com.faktocraft.common.energy;
 
 import com.faktocraft.common.energy.interfaces.IEnergy;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -30,8 +30,8 @@ public final class EnergyLookup {
         return energy;
       }
     }
-    if (be instanceof IndRebBlockEntity indRebBlockEntity && indRebBlockEntity.hasEnergy()) {
-      return indRebBlockEntity.getEnergyStorage();
+    if (be instanceof FaktocraftBlockEntity faktocraftBlockEntity && faktocraftBlockEntity.hasEnergy()) {
+      return faktocraftBlockEntity.getEnergyStorage();
     }
     return null;
   }

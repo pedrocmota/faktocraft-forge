@@ -1,13 +1,13 @@
 package com.faktocraft.common.block.impl.machines.fluid_enricher;
 
-import com.faktocraft.common.container.IndRebMenu;
+import com.faktocraft.common.container.FaktocraftMenu;
 import com.faktocraft.common.registries.machines.M3Registry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class MenuFluidEnricher extends IndRebMenu {
+public class MenuFluidEnricher extends FaktocraftMenu {
 
   public MenuFluidEnricher(int windowId, Inventory inv, BlockPos pos) {
     this(windowId, inv.player.level(), pos, inv, inv.player);

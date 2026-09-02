@@ -2,7 +2,7 @@ package com.faktocraft.common.block.impl.luminator;
 
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.registries.ModBlockEntities;
@@ -11,7 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEntityLuminator extends IndRebBlockEntity implements IEnergyBlock {
+public class BlockEntityLuminator extends FaktocraftBlockEntity implements IEnergyBlock {
 
   public BlockEntityLuminator(BlockPos pos, BlockState state) {
     super(ModBlockEntities.LUMINATOR, pos, state);

@@ -10,6 +10,8 @@ import com.faktocraft.client.screens.M1Screens;
 import com.faktocraft.client.screens.M2Screens;
 import com.faktocraft.client.screens.M3Screens;
 import com.faktocraft.client.screens.M4Screens;
+import com.faktocraft.common.block.impl.machines.fueling_station.BlockEntityFuelingStation;
+import com.faktocraft.common.block.impl.machines.fueling_station.FuelingStationRegistry;
 import com.faktocraft.common.fluid.ModFluids;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketNightVision;
@@ -40,7 +42,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
 
 @Mod.EventBusSubscriber(modid = Faktocraft.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class IndRebClient {
+public class FaktocraftClient {
 
   public static KeyMapping NIGHT_VISION_KEY;
   public static KeyMapping JETPACK_MODE_KEY;
@@ -50,6 +52,8 @@ public class IndRebClient {
   public static void onRegisterAdditionalModels(net.minecraftforge.client.event.ModelEvent.RegisterAdditional event) {
     event.register(com.faktocraft.client.render.PipeSupportRenderer.CLAMP_MODEL);
     event.register(com.faktocraft.client.render.ExtractorSocketRenderer.SOCKET_MODEL);
+    event.register(com.faktocraft.client.render.ExtractorRingRenderer.BAR_MODEL);
+    event.register(com.faktocraft.client.render.ExtractorRingRenderer.CORNERS_MODEL);
   }
 
   @SubscribeEvent
@@ -162,6 +166,8 @@ public class IndRebClient {
     event.registerBlockEntityRenderer(PipeRegistry.PUMP_BLOCK_ENTITY, context -> new PumpRenderer());
     event.registerBlockEntityRenderer(com.faktocraft.common.block.impl.quarry.QuarryRegistry.QUARRY_BLOCK_ENTITY,
         context -> new com.faktocraft.client.render.QuarryRenderer());
+    event.registerBlockEntityRenderer(com.faktocraft.common.block.impl.quarry.QuarryRegistry.LANDMARK_BLOCK_ENTITY,
+        context -> new com.faktocraft.client.render.LandmarkRenderer());
     event.registerBlockEntityRenderer(PipeRegistry.TANK_BLOCK_ENTITY, context -> new TankRenderer());
     event.registerBlockEntityRenderer(PipeRegistry.FLUID_PIPE_BLOCK_ENTITY, context -> new FluidPipeRenderer());
     event.registerBlockEntityRenderer(com.faktocraft.common.registries.machines.M1Registry.WIND_GENERATOR_BE,
@@ -186,15 +192,15 @@ public class IndRebClient {
     event.register(foliage, ModBlocks.RUBBER_LEAVES);
     event.register((state, getter, pos, tintIndex) -> {
       if (tintIndex == 1 && getter != null && pos != null
-          && getter.getBlockEntity(pos) instanceof
-              com.faktocraft.common.block.impl.machines.fueling_station.BlockEntityFuelingStation station
+          && getter.getBlockEntity(
+              pos) instanceof BlockEntityFuelingStation station
           && !station.tank.isEmpty()) {
         int tint = net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
             .of(station.tank.getFluid()).getTintColor();
         return 0xFF000000 | tint;
       }
       return 0xFFFFFFFF;
-    }, com.faktocraft.common.block.impl.machines.fueling_station.FuelingStationRegistry.FUELING_STATION);
+    }, FuelingStationRegistry.FUELING_STATION);
   }
 
   @Mod.EventBusSubscriber(modid = Faktocraft.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)

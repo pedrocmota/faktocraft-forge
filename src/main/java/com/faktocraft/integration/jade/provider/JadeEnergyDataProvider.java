@@ -2,7 +2,7 @@ package com.faktocraft.integration.jade.provider;
 
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.impl.BasicEnergyStorage;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.BlockAccessor;
@@ -41,7 +41,7 @@ public class JadeEnergyDataProvider implements IServerDataProvider<BlockAccessor
           .toArray());
       return;
     }
-    if (accessor.getBlockEntity() instanceof IndRebBlockEntity entity && entity.hasEnergy()) {
+    if (accessor.getBlockEntity() instanceof FaktocraftBlockEntity entity && entity.hasEnergy()) {
       BasicEnergyStorage energy = entity.getEnergyStorage();
       if (energy != null) {
         tag.putInt(TAG_ENERGY, energy.energyStored());

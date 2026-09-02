@@ -68,8 +68,8 @@ public final class PipeSupportRenderer {
     poseStack.popPose();
   }
 
-  public static final ResourceLocation CLAMP_MODEL =
-      new ResourceLocation(com.faktocraft.Faktocraft.MODID, "block/pipe/pipe_clamp");
+  public static final ResourceLocation CLAMP_MODEL = new ResourceLocation(com.faktocraft.Faktocraft.MODID,
+      "block/pipe/pipe_clamp");
 
   private static void renderClamp(BlockEntity blockEntity, PoseStack poseStack,
       MultiBufferSource buffer, int packedOverlay) {

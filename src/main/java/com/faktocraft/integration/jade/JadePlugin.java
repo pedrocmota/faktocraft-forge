@@ -1,9 +1,9 @@
 package com.faktocraft.integration.jade;
 
-import com.faktocraft.common.block.IndRebEntityBlock;
+import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.block.impl.cable.BlockCable;
 import com.faktocraft.common.block.impl.cable.BlockEntityCable;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.integration.jade.provider.JadeCableDataProvider;
 import com.faktocraft.integration.jade.provider.JadeCableProvider;
 import com.faktocraft.integration.jade.provider.JadeEnergyDataProvider;
@@ -18,7 +18,7 @@ public class JadePlugin implements IWailaPlugin {
 
   @Override
   public void register(IWailaCommonRegistration registration) {
-    registration.registerBlockDataProvider(JadeEnergyDataProvider.INSTANCE, IndRebBlockEntity.class);
+    registration.registerBlockDataProvider(JadeEnergyDataProvider.INSTANCE, FaktocraftBlockEntity.class);
     registration.registerBlockDataProvider(JadeEnergyDataProvider.INSTANCE,
         com.faktocraft.common.block.impl.pipe.BlockEntityFluidExtractorPipe.class);
     registration.registerBlockDataProvider(JadeCableDataProvider.INSTANCE, BlockEntityCable.class);
@@ -26,7 +26,7 @@ public class JadePlugin implements IWailaPlugin {
 
   @Override
   public void registerClient(IWailaClientRegistration registration) {
-    registration.registerBlockComponent(JadeEnergyProvider.INSTANCE, IndRebEntityBlock.class);
+    registration.registerBlockComponent(JadeEnergyProvider.INSTANCE, FaktocraftEntityBlock.class);
     registration.registerBlockComponent(JadeEnergyProvider.INSTANCE,
         com.faktocraft.common.block.impl.pipe.BlockFluidExtractorPipe.class);
     registration.registerBlockComponent(JadeCableProvider.INSTANCE, BlockCable.class);

@@ -40,7 +40,7 @@ public class GuiInfoButton extends GuiButton {
         elements.add(ut.getLang().getTranslationComponent());
       }
 
-      if (supportUpgrades instanceof com.faktocraft.common.entity.block.IndRebBlockEntity be
+      if (supportUpgrades instanceof com.faktocraft.common.entity.block.FaktocraftBlockEntity be
           && be.hasBatteryDock()) {
         elements.add(Component.translatable("gui.faktocraft.discharge_hint")
             .withStyle(ChatFormatting.DARK_GRAY));

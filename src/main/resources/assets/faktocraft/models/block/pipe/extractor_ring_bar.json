@@ -1,0 +1,77 @@
+{
+ "parent": "minecraft:block/block",
+ "textures": {
+  "ring": "faktocraft:block/pipe/extractor_ring",
+  "particle": "faktocraft:block/pipe/extractor_ring"
+ },
+ "elements": [
+  {
+   "from": [
+    3.8,
+    12.2,
+    6
+   ],
+   "to": [
+    12.2,
+    14.2,
+    10
+   ],
+   "faces": {
+    "north": {
+     "texture": "#ring",
+     "uv": [
+      4,
+      0,
+      12,
+      2
+     ]
+    },
+    "south": {
+     "texture": "#ring",
+     "uv": [
+      4,
+      0,
+      12,
+      2
+     ]
+    },
+    "up": {
+     "texture": "#ring",
+     "uv": [
+      4,
+      0,
+      12,
+      4
+     ]
+    },
+    "down": {
+     "texture": "#ring",
+     "uv": [
+      4,
+      0,
+      12,
+      4
+     ]
+    },
+    "east": {
+     "texture": "#ring",
+     "uv": [
+      2,
+      0,
+      6,
+      2
+     ]
+    },
+    "west": {
+     "texture": "#ring",
+     "uv": [
+      2,
+      0,
+      6,
+      2
+     ]
+    }
+   }
+  }
+ ]
+}

@@ -55,7 +55,7 @@ public class ProspectorScreen extends Screen {
     graphics.fill(left, top, left + 2, top + h, 0xFF5C626A);
     graphics.fill(left, top + h - 2, left + w, top + h, 0xFF23262B);
     graphics.fill(left + w - 2, top, left + w, top + h, 0xFF2B2F35);
-    for (int[] corner : new int[][] { { 3, 3 }, { w - 5, 3 }, { 3, h - 5 }, { w - 5, h - 5 } }) {
+    for (int[] corner : new int[][] {{3, 3}, {w - 5, 3}, {3, h - 5}, {w - 5, h - 5}}) {
       int sx = left + corner[0];
       int sy = top + corner[1];
       graphics.fill(sx, sy, sx + 2, sy + 2, 0xFF9AA0A8);

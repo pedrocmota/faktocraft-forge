@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.chunk_loader;
 
-import com.faktocraft.common.container.IndRebMenu;
+import com.faktocraft.common.container.FaktocraftMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 import java.util.function.ObjIntConsumer;
 import java.util.function.ToIntFunction;
 
-public class MenuChunkLoader extends IndRebMenu {
+public class MenuChunkLoader extends FaktocraftMenu {
 
   public static final int BUTTON_TOGGLE = 1;
   public static final int BUTTON_MORE_CHUNKS = 2;

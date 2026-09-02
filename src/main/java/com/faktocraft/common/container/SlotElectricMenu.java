@@ -1,6 +1,6 @@
 package com.faktocraft.common.container;
 
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.interfaces.entity.IElectricSlot;
 import com.faktocraft.common.interfaces.item.IElectricItem;
@@ -12,7 +12,7 @@ public class SlotElectricMenu extends MachineSlot {
 
   private final IElectricSlot electricSlot;
 
-  public SlotElectricMenu(IndRebBlockEntity blockEntity, Container container, IElectricSlot slotDescriptor) {
+  public SlotElectricMenu(FaktocraftBlockEntity blockEntity, Container container, IElectricSlot slotDescriptor) {
     super(blockEntity, container, slotDescriptor);
     this.electricSlot = slotDescriptor;
   }

@@ -16,8 +16,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class JetpackModel extends HumanoidModel<LivingEntity> {
 
-  public static final ModelLayerLocation LAYER =
-      new ModelLayerLocation(new ResourceLocation(Faktocraft.MODID, "jetpack"), "main");
+  public static final ModelLayerLocation LAYER = new ModelLayerLocation(
+      new ResourceLocation(Faktocraft.MODID, "jetpack"), "main");
 
   private static JetpackModel instance;
 

@@ -1,7 +1,7 @@
 package com.faktocraft.common.block.impl.logistics;
 
 import com.faktocraft.Faktocraft;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.enums.GuiSlotType;
 import com.faktocraft.common.enums.InventorySlotType;
 import com.faktocraft.common.screen.BetterScreen;
@@ -89,7 +89,7 @@ public class ScreenAssemblyTable extends BetterScreen<MenuAssemblyTable> {
 
   private void frame(int x, int y, boolean recipe) {
     GuiSlotElement element = new GuiSlotElement(this,
-        new IndRebSlot(0, x + 1, y + 1, InventorySlotType.INPUT, GuiSlotType.NORMAL, x, y));
+        new FaktocraftSlot(0, x + 1, y + 1, InventorySlotType.INPUT, GuiSlotType.NORMAL, x, y));
     if (recipe) {
       recipeWidgets.add(element);
     }

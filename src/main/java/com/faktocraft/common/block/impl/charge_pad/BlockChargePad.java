@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.charge_pad;
 
-import com.faktocraft.common.block.IndRebEntityBlock;
+import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.interfaces.block.IHasMenu;
 import com.faktocraft.common.interfaces.block.IStateActive;
 import com.faktocraft.common.interfaces.block.IStateFacing;
@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockChargePad extends IndRebEntityBlock implements IStateFacing, IHasMenu, IStateActive {
+public class BlockChargePad extends FaktocraftEntityBlock implements IStateFacing, IHasMenu, IStateActive {
 
   private final ChargePadTier chargePadTier;
 

@@ -17,7 +17,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class VoxelBlock extends IndRebBlock implements net.minecraft.world.level.block.SimpleWaterloggedBlock {
+public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.level.block.SimpleWaterloggedBlock {
 
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
@@ -107,12 +107,12 @@ public class VoxelBlock extends IndRebBlock implements net.minecraft.world.level
     VoxelShape core = Block.box(min, min, min, max, max, max);
 
     VoxelShape[] directionShapes = new VoxelShape[] {
-        Block.box(min, 0, min, max, max, max),
-        Block.box(min, min, min, max, 16, max),
-        Block.box(min, min, 0, max, max, max),
-        Block.box(min, min, min, max, max, 16),
-        Block.box(0, min, min, max, max, max),
-        Block.box(min, min, min, 16, max, max)
+      Block.box(min, 0, min, max, max, max),
+      Block.box(min, min, min, max, 16, max),
+      Block.box(min, min, 0, max, max, max),
+      Block.box(min, min, min, max, max, 16),
+      Block.box(0, min, min, max, max, max),
+      Block.box(min, min, min, 16, max, max)
     };
 
     VoxelShape[] result = new VoxelShape[64];

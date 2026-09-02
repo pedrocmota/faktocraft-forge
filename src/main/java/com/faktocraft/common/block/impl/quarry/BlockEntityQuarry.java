@@ -3,7 +3,7 @@ package com.faktocraft.common.block.impl.quarry;
 import com.faktocraft.common.block.impl.pipe.PipeExtractor;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.interfaces.block.IStateFacing;
@@ -29,14 +29,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockEntityQuarry extends IndRebBlockEntity implements IEnergyBlock {
+public class BlockEntityQuarry extends FaktocraftBlockEntity implements IEnergyBlock {
 
   public static final int INVENTORY_SLOTS = 27;
   public static final int UPGRADE_SLOTS = 4;
   public static final int FRAME_HEIGHT_ABOVE = 4;
   public static final int DEFAULT_FRAME_SPAN = 11;
-  public static final int MAX_FRAME_SPAN = 64;
-  public static final int MIN_FRAME_SPAN = 3;
+  public static final int MAX_FRAME_SPAN = 30;
+  public static final int MIN_FRAME_SPAN = 10;
 
   public static final TagKey<Block> QUARRY_MINEABLE = TagKey.create(Registries.BLOCK,
       new ResourceLocation("faktocraft", "quarry_mineable"));
@@ -62,8 +62,10 @@ public class BlockEntityQuarry extends IndRebBlockEntity implements IEnergyBlock
   private static final int REPLACEABLE_BUDGET = 16;
   private static final int AREA_RETRY_TICKS = 60;
   private static final float ARM_BASE_SPEED = 0.25F;
+  private static final float GLOBAL_SPEED = 1.1F;
 
   private static final float HEAD_HOVER = 1.03F;
+  private static final int DRILL_DWELL_TICKS = 2;
   private static final ItemStack MINING_TOOL = new ItemStack(Items.DIAMOND_PICKAXE);
 
   private final com.faktocraft.common.util.ItemStackHandler inventory = new com.faktocraft.common.util.ItemStackHandler(
@@ -132,6 +134,7 @@ public class BlockEntityQuarry extends IndRebBlockEntity implements IEnergyBlock
   private int syncTick = 0;
 
   private boolean targetValid = false;
+  private int drillTicks = 0;
   private int targetX;
   private int targetY;
   private int targetZ;
@@ -250,12 +253,12 @@ public class BlockEntityQuarry extends IndRebBlockEntity implements IEnergyBlock
   }
 
   public int maxDrawPerTick() {
-    return (int) Math.ceil(Math.max(1, ModConfig.server().quarry_max_draw_per_tick)
-        * Math.pow(1.6 / 0.7, boostPoints()) * Math.pow(0.85, efficiencyPoints()));
+    return (int) Math.ceil(Math.max(1, ModConfig.server().quarry_max_draw_per_tick) * GLOBAL_SPEED
+        * Math.pow(1.6 / 0.65, boostPoints()) * Math.pow(0.85, efficiencyPoints()));
   }
 
-  private float armSpeed() {
-    return Math.min(1.2F, ARM_BASE_SPEED * (1.0F + 0.3F * boostPoints()));
+  public float armSpeed() {
+    return GLOBAL_SPEED * Math.min(1.2F, ARM_BASE_SPEED * (1.0F + 0.35F * boostPoints()));
   }
 
   @Override
@@ -311,17 +314,17 @@ public class BlockEntityQuarry extends IndRebBlockEntity implements IEnergyBlock
     }
     areaRetry = AREA_RETRY_TICKS;
 
-    BlockPos landmark = findAdjacentLandmark(serverLevel);
+    int[] rect = BlockLandmark.rectAround(serverLevel, worldPosition);
+    boolean marked = rect != null;
+    if (!marked && BlockLandmark.touchesLandmarks(serverLevel, worldPosition)) {
+      return false;
+    }
 
     int rectMinX;
     int rectMaxX;
     int rectMinZ;
     int rectMaxZ;
-    if (landmark != null) {
-      int[] rect = resolveRect(serverLevel, landmark);
-      if (rect == null) {
-        return false;
-      }
+    if (marked) {
       rectMinX = rect[0];
       rectMaxX = rect[1];
       rectMinZ = rect[2];
@@ -360,7 +363,7 @@ public class BlockEntityQuarry extends IndRebBlockEntity implements IEnergyBlock
     clearIndex = 0;
     framePositions = null;
 
-    if (landmark != null) {
+    if (marked) {
       popLandmarks(serverLevel);
     }
     setChanged();
@@ -384,51 +387,6 @@ public class BlockEntityQuarry extends IndRebBlockEntity implements IEnergyBlock
       }
     }
     return false;
-  }
-
-  @Nullable
-  private BlockPos findAdjacentLandmark(ServerLevel serverLevel) {
-    for (int dx = -1; dx <= 1; dx++) {
-      for (int dz = -1; dz <= 1; dz++) {
-        if (dx == 0 && dz == 0) {
-          continue;
-        }
-        BlockPos neighbor = worldPosition.offset(dx, 0, dz);
-        if (serverLevel.getBlockState(neighbor).is(QuarryRegistry.LANDMARK)) {
-          return neighbor;
-        }
-      }
-    }
-    return null;
-  }
-
-  @Nullable
-  private int[] resolveRect(ServerLevel serverLevel, BlockPos start) {
-    BlockPos alongX = partnerOnAxis(serverLevel, start, Direction.EAST, Direction.WEST);
-    BlockPos alongZ = partnerOnAxis(serverLevel, start, Direction.SOUTH, Direction.NORTH);
-    BlockPos corner = start;
-    if (alongX != null && alongZ == null) {
-      corner = alongX;
-      alongX = start;
-      alongZ = partnerOnAxis(serverLevel, corner, Direction.SOUTH, Direction.NORTH);
-    } else if (alongZ != null && alongX == null) {
-      corner = alongZ;
-      alongZ = start;
-      alongX = partnerOnAxis(serverLevel, corner, Direction.EAST, Direction.WEST);
-    }
-    if (alongX == null || alongZ == null) {
-      return null;
-    }
-    return new int[] {
-        Math.min(corner.getX(), alongX.getX()), Math.max(corner.getX(), alongX.getX()),
-        Math.min(corner.getZ(), alongZ.getZ()), Math.max(corner.getZ(), alongZ.getZ()) };
-  }
-
-  @Nullable
-  private static BlockPos partnerOnAxis(ServerLevel serverLevel, BlockPos from, Direction first,
-      Direction second) {
-    BlockPos partner = BlockLandmark.findPartner(serverLevel, from, first);
-    return partner != null ? partner : BlockLandmark.findPartner(serverLevel, from, second);
   }
 
   private void popLandmarks(ServerLevel serverLevel) {
@@ -625,11 +583,17 @@ public class BlockEntityQuarry extends IndRebBlockEntity implements IEnergyBlock
     }
 
     if (progress >= cost && headAtTarget()) {
+      if (drillTicks < DRILL_DWELL_TICKS) {
+        drillTicks++;
+        return STATUS_MINING;
+      }
       return mineAt(serverLevel, pos, state, STATUS_MINING, () -> {
         targetValid = false;
         mineIndex++;
+        drillTicks = 0;
       });
     }
+    drillTicks = 0;
     return result;
   }
 
@@ -707,21 +671,33 @@ public class BlockEntityQuarry extends IndRebBlockEntity implements IEnergyBlock
     return dx * dx + dy * dy + dz * dz < 0.05F;
   }
 
+  public boolean headGoal(float[] out) {
+    if (stage == STAGE_MINE) {
+      if (!targetValid) {
+        return false;
+      }
+      out[0] = targetX + 0.5F;
+      out[1] = targetY + HEAD_HOVER;
+      out[2] = targetZ + 0.5F;
+      return true;
+    }
+    if (areaSet) {
+      out[0] = (minX + maxX + 1) / 2.0F;
+      out[1] = worldPosition.getY() + FRAME_HEIGHT_ABOVE - 0.5F;
+      out[2] = (minZ + maxZ + 1) / 2.0F;
+      return true;
+    }
+    return false;
+  }
+
   private void moveHead() {
-    float goalX;
-    float goalY;
-    float goalZ;
-    if (stage == STAGE_MINE && targetValid) {
-      goalX = targetX + 0.5F;
-      goalY = targetY + HEAD_HOVER;
-      goalZ = targetZ + 0.5F;
-    } else if (areaSet) {
-      goalX = (minX + maxX + 1) / 2.0F;
-      goalY = worldPosition.getY() + FRAME_HEIGHT_ABOVE - 0.5F;
-      goalZ = (minZ + maxZ + 1) / 2.0F;
-    } else {
+    float[] goal = new float[3];
+    if (!headGoal(goal)) {
       return;
     }
+    float goalX = goal[0];
+    float goalY = goal[1];
+    float goalZ = goal[2];
     float dx = goalX - headX;
     float dy = goalY - headY;
     float dz = goalZ - headZ;

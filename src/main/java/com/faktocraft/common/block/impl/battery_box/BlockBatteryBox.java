@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.battery_box;
 
-import com.faktocraft.common.block.IndRebEntityBlock;
+import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.interfaces.block.IElectricMachine;
 import com.faktocraft.common.interfaces.block.IHasMenu;
@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockBatteryBox extends IndRebEntityBlock implements IStateFacing, IHasMenu, IElectricMachine {
+public class BlockBatteryBox extends FaktocraftEntityBlock implements IStateFacing, IHasMenu, IElectricMachine {
 
   private final BatteryBoxTier batteryBoxTier;
 

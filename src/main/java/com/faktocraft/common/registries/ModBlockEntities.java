@@ -19,10 +19,10 @@ public class ModBlockEntities {
   public static final BlockEntityType<BlockEntityLuminator> LUMINATOR = register("luminator", BlockEntityLuminator::new,
       ModBlocks.LUMINATOR);
 
-  public static final BlockEntityType<com.faktocraft.common.block.impl.teleport_anchor.BlockEntityTeleportAnchor>
-      TELEPORT_ANCHOR = register(
-      "teleport_anchor", com.faktocraft.common.block.impl.teleport_anchor.BlockEntityTeleportAnchor::new,
-      ModBlocks.TELEPORT_ANCHOR);
+  public static final BlockEntityType<
+      com.faktocraft.common.block.impl.teleport_anchor.BlockEntityTeleportAnchor> TELEPORT_ANCHOR = register(
+          "teleport_anchor", com.faktocraft.common.block.impl.teleport_anchor.BlockEntityTeleportAnchor::new,
+          ModBlocks.TELEPORT_ANCHOR);
 
   private static <T extends BlockEntity> BlockEntityType<T> register(String name,
       BlockEntityType.BlockEntitySupplier<T> factory, Block... blocks) {

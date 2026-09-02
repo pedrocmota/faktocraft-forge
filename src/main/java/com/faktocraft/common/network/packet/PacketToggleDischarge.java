@@ -1,6 +1,6 @@
 package com.faktocraft.common.network.packet;
 
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.network.ModNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -25,7 +25,7 @@ public record PacketToggleDischarge(BlockPos blockPos) {
         return;
       }
       ModNetworking.withBlockEntity(sender, msg.blockPos(), (player, be) -> {
-        if (be instanceof IndRebBlockEntity faktocraft && faktocraft.hasBatteryDock()) {
+        if (be instanceof FaktocraftBlockEntity faktocraft && faktocraft.hasBatteryDock()) {
           faktocraft.toggleDischargeMode();
         }
       });

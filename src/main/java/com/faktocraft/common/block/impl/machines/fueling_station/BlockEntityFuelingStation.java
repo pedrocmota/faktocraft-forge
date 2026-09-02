@@ -2,8 +2,8 @@ package com.faktocraft.common.block.impl.machines.fueling_station;
 
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.FluidStorage;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
-import com.faktocraft.common.entity.slot.IndRebSlot;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
+import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.entity.slot.SlotBattery;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
-public class BlockEntityFuelingStation extends IndRebBlockEntity implements IEnergyBlock {
+public class BlockEntityFuelingStation extends FaktocraftBlockEntity implements IEnergyBlock {
 
   public static final int ITEM_SLOT = 0;
 
@@ -49,8 +49,8 @@ public class BlockEntityFuelingStation extends IndRebBlockEntity implements IEne
   }
 
   @Override
-  public ArrayList<IndRebSlot> addInventorySlot(ArrayList<IndRebSlot> slots) {
-    slots.add(new IndRebSlot(ITEM_SLOT, 81, 47, InventorySlotType.INPUT, GuiSlotType.NORMAL, 80, 46));
+  public ArrayList<FaktocraftSlot> addInventorySlot(ArrayList<FaktocraftSlot> slots) {
+    slots.add(new FaktocraftSlot(ITEM_SLOT, 81, 47, InventorySlotType.INPUT, GuiSlotType.NORMAL, 80, 46));
     return super.addInventorySlot(slots);
   }
 
@@ -200,16 +200,15 @@ public class BlockEntityFuelingStation extends IndRebBlockEntity implements IEne
         return LazyOptional.empty();
       }
       if (!finishedCellCap.isPresent()) {
-        finishedCellCap = LazyOptional.of(() ->
-            new net.minecraftforge.items.wrapper.InvWrapper(getItemStackHandler()) {
-              @NotNull
-              @Override
-              public ItemStack extractItem(int slot, int amount, boolean simulate) {
-                return slot == ITEM_SLOT && isFinished(getStackInSlot(slot))
-                    ? super.extractItem(slot, amount, simulate)
-                    : ItemStack.EMPTY;
-              }
-            });
+        finishedCellCap = LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(getItemStackHandler()) {
+          @NotNull
+          @Override
+          public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return slot == ITEM_SLOT && isFinished(getStackInSlot(slot))
+                ? super.extractItem(slot, amount, simulate)
+                : ItemStack.EMPTY;
+          }
+        });
       }
       return finishedCellCap.cast();
     }

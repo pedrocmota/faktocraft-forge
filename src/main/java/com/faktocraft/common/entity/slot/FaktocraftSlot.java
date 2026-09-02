@@ -4,7 +4,7 @@ import com.faktocraft.common.enums.GuiSlotType;
 import com.faktocraft.common.enums.InventorySlotType;
 import com.faktocraft.common.interfaces.entity.ISlot;
 
-public class IndRebSlot implements ISlot {
+public class FaktocraftSlot implements ISlot {
 
   private final int slotId;
   private final int xPosition;
@@ -14,7 +14,7 @@ public class IndRebSlot implements ISlot {
   private final int guiX;
   private final int guiY;
 
-  public IndRebSlot(int slotId, int xPosition, int yPosition, InventorySlotType inventorySlotType,
+  public FaktocraftSlot(int slotId, int xPosition, int yPosition, InventorySlotType inventorySlotType,
       GuiSlotType guiSlotType, int guiX, int guiY) {
     this.slotId = slotId;
     this.xPosition = xPosition;

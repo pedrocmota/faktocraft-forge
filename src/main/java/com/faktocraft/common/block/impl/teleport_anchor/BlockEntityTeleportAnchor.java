@@ -2,7 +2,7 @@ package com.faktocraft.common.block.impl.teleport_anchor;
 
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.network.ModNetworking;
@@ -22,7 +22,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
-public class BlockEntityTeleportAnchor extends IndRebBlockEntity implements IEnergyBlock {
+public class BlockEntityTeleportAnchor extends FaktocraftBlockEntity implements IEnergyBlock {
 
   public static final int MIN_BUFFER = 1_000;
   public static final int DEFAULT_BUFFER = 50_000;
@@ -125,12 +125,12 @@ public class BlockEntityTeleportAnchor extends IndRebBlockEntity implements IEne
     List<ServerPlayer> toTeleport = (redstoneTrigger
         ? standing.stream()
         : standing.stream().filter(ServerPlayer::isCrouching))
-        .filter(player -> {
-          long last = LAST_PLAYER_TELEPORT.getOrDefault(player.getUUID(), -1_000_000L);
+            .filter(player -> {
+              long last = LAST_PLAYER_TELEPORT.getOrDefault(player.getUUID(), -1_000_000L);
 
-          return last > gameTime || gameTime - last >= cooldownTicks;
-        })
-        .toList();
+              return last > gameTime || gameTime - last >= cooldownTicks;
+            })
+            .toList();
     if (toTeleport.isEmpty()) {
       return;
     }

@@ -89,7 +89,7 @@ public class ElectricItem extends BaseItem implements IElectricItem {
   @Override
   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
     tooltip.add(EnumLang.POWER_TIER.getTranslationComponent(
-            energyTier.getLang().getTranslationComponent().withStyle(energyTier.getColor()))
+        energyTier.getLang().getTranslationComponent().withStyle(energyTier.getColor()))
         .withStyle(ChatFormatting.GRAY)
         .append(Component.literal(" (" + TextComponentUtil.getFormattedLong(energyTier.getBasicTransfer()) + " IE/t)")
             .withStyle(ChatFormatting.DARK_GRAY)));
@@ -100,7 +100,8 @@ public class ElectricItem extends BaseItem implements IElectricItem {
             .withStyle(energyTier.getColor()),
         Component.literal(" / ").withStyle(ChatFormatting.GRAY),
         EnumLang.POWER.getTranslationComponent(TextComponentUtil.getFormattedEnergyUnit(maxEnergy))
-            .withStyle(energyTier.getColor()))).withStyle(ChatFormatting.GRAY));
+            .withStyle(energyTier.getColor())))
+        .withStyle(ChatFormatting.GRAY));
 
     super.appendHoverText(stack, level, tooltip, flag);
   }

@@ -22,8 +22,8 @@ public class GeoScannerRegistry {
 
   public static final Item GEO_SCANNER_ITEM = ModItems.registerElectricBlockItem(GEO_SCANNER);
 
-  public static final BlockEntityType<BlockEntityGeoScanner> GEO_SCANNER_BLOCK_ENTITY =
-      RegistrationHandler.blockEntity("geological_scanner", BlockEntityGeoScanner::new, GEO_SCANNER);
+  public static final BlockEntityType<BlockEntityGeoScanner> GEO_SCANNER_BLOCK_ENTITY = RegistrationHandler
+      .blockEntity("geological_scanner", BlockEntityGeoScanner::new, GEO_SCANNER);
 
   public static void register() {
   }

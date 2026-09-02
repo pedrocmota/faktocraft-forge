@@ -11,5 +11,6 @@ public class FluidExtractorPipeRenderer extends FluidPipeRenderer {
       MultiBufferSource buffer, int packedLight, int packedOverlay) {
     super.render(pipe, partialTick, poseStack, buffer, packedLight, packedOverlay);
     ExtractorSocketRenderer.render(pipe, poseStack, buffer, packedOverlay);
+    ExtractorRingRenderer.render(pipe, poseStack, buffer, packedOverlay);
   }
 }

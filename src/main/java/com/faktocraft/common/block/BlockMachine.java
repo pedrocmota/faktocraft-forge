@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
-public class BlockMachine extends IndRebEntityBlock implements IStateFacing, IStateActive {
+public class BlockMachine extends FaktocraftEntityBlock implements IStateFacing, IStateActive {
 
   public BlockMachine(Properties properties) {
     super(properties);

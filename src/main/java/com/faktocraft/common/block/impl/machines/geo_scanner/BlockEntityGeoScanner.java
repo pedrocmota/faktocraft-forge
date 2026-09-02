@@ -1,7 +1,7 @@
 package com.faktocraft.common.block.impl.machines.geo_scanner;
 
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.item.impl.tools.Prospector;
@@ -13,7 +13,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEntityGeoScanner extends IndRebBlockEntity implements IEnergyBlock {
+public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEnergyBlock {
 
   public static final int RADIUS = 14;
   public static final int TOTAL_CHUNKS = (2 * RADIUS + 1) * (2 * RADIUS + 1);
@@ -151,7 +151,7 @@ public class BlockEntityGeoScanner extends IndRebBlockEntity implements IEnergyB
         revision++;
         setChanged();
       } else {
-        next = new int[] { manualCx, manualCz };
+        next = new int[] {manualCx, manualCz};
       }
     }
     if (next == null) {
@@ -229,7 +229,7 @@ public class BlockEntityGeoScanner extends IndRebBlockEntity implements IEnergyB
           int cx = center.x + dx;
           int cz = center.z + dz;
           if (!scans.contains(scanKey(cx, cz))) {
-            return new int[] { cx, cz };
+            return new int[] {cx, cz};
           }
         }
       }

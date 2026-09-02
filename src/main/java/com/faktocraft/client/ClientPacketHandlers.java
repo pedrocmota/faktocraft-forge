@@ -65,14 +65,12 @@ public class ClientPacketHandlers {
   }
 
   public static void handleTableState(com.faktocraft.common.network.packet.PacketTableState payload) {
-    if (Minecraft.getInstance().screen instanceof
-        com.faktocraft.common.block.impl.logistics.ScreenCoreTasks coreScreen
+    if (Minecraft.getInstance().screen instanceof com.faktocraft.common.block.impl.logistics.ScreenCoreTasks coreScreen
         && coreScreen.matches(payload.blockPos())) {
       coreScreen.applyState(payload);
       return;
     }
-    if (Minecraft.getInstance().screen instanceof
-        com.faktocraft.common.block.impl.logistics.ScreenRequestTable screen
+    if (Minecraft.getInstance().screen instanceof com.faktocraft.common.block.impl.logistics.ScreenRequestTable screen
         && screen.matches(payload.blockPos())) {
       screen.applyState(payload);
     }

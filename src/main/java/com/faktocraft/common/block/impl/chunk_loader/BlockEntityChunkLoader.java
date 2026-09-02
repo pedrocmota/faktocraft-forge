@@ -3,7 +3,7 @@ package com.faktocraft.common.block.impl.chunk_loader;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import net.minecraft.core.BlockPos;
@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.world.ForgeChunkManager;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEntityChunkLoader extends IndRebBlockEntity implements IEnergyBlock {
+public class BlockEntityChunkLoader extends FaktocraftBlockEntity implements IEnergyBlock {
 
   public static final int MIN_CHUNKS = 1;
   public static final int DEFAULT_CHUNKS = 4;
@@ -30,8 +30,8 @@ public class BlockEntityChunkLoader extends IndRebBlockEntity implements IEnergy
   private static final int REENGAGE_SECONDS = 30;
 
   public static final int[][] CHUNK_OFFSETS = {
-      {0, 0}, {0, -1}, {1, 0}, {0, 1}, {-1, 0},
-      {1, -1}, {1, 1}, {-1, 1}, {-1, -1}};
+    {0, 0}, {0, -1}, {1, 0}, {0, 1}, {-1, 0},
+    {1, -1}, {1, 1}, {-1, 1}, {-1, -1}};
 
   private boolean enabledByPlayer = false;
   private int chunkCount = DEFAULT_CHUNKS;

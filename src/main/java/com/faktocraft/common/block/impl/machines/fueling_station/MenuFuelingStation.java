@@ -1,12 +1,12 @@
 package com.faktocraft.common.block.impl.machines.fueling_station;
 
-import com.faktocraft.common.container.IndRebMenu;
+import com.faktocraft.common.container.FaktocraftMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class MenuFuelingStation extends IndRebMenu {
+public class MenuFuelingStation extends FaktocraftMenu {
 
   public MenuFuelingStation(int windowId, Inventory inv, BlockPos pos) {
     this(windowId, inv.player.level(), pos, inv, inv.player);

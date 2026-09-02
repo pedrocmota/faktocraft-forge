@@ -1,7 +1,8 @@
 package com.faktocraft.gametest;
 
 import com.faktocraft.Faktocraft;
-import com.faktocraft.common.entity.block.IndRebBlockEntity;
+import com.faktocraft.common.block.impl.generators.combustion_generator.BlockEntityCombustionGenerator;
+import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.interfaces.block.IStateFacing;
 import com.faktocraft.common.registries.ModBlocks;
 import com.faktocraft.common.registries.machines.M1Registry;
@@ -38,20 +39,20 @@ public class EnergyNetworkGameTest {
 
   private static void placeTransformer(GameTestHelper helper, BlockPos rel, Block block, Direction facing) {
     place(helper, rel, block, facing);
-    if (helper.getBlockEntity(rel) instanceof IndRebBlockEntity be) {
+    if (helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be) {
       be.setRedstoneOnly(false);
     }
   }
 
   private static void fillEnergy(GameTestHelper helper, BlockPos rel) {
-    if (helper.getBlockEntity(rel) instanceof IndRebBlockEntity be) {
+    if (helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be) {
       be.getEnergyStorage().setEnergy(be.getEnergyStorage().maxEnergy());
     }
   }
 
   private static void succeedWhenCharged(GameTestHelper helper, BlockPos rel) {
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(rel) instanceof IndRebBlockEntity be)) {
+      if (!(helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be)) {
         helper.fail("no transformer block entity");
         return;
       }
@@ -65,7 +66,7 @@ public class EnergyNetworkGameTest {
   private static String describe(GameTestHelper helper) {
     StringBuilder sb = new StringBuilder("transformer has no energy;");
     BlockPos origin = helper.absolutePos(BlockPos.ZERO);
-    if (helper.getBlockEntity(new BlockPos(1, 1, 1)) instanceof IndRebBlockEntity mfe) {
+    if (helper.getBlockEntity(new BlockPos(1, 1, 1)) instanceof FaktocraftBlockEntity mfe) {
       sb.append(" mfe=").append(mfe.getEnergyStorage().energyStored())
           .append('/').append(mfe.getEnergyStorage().maxEnergy())
           .append(" ext=").append(mfe.getEnergyStorage().maxExtract());
@@ -108,8 +109,7 @@ public class EnergyNetworkGameTest {
 
   private static void fuelCombustionGenerator(GameTestHelper helper, BlockPos rel) {
     if (helper.getBlockEntity(
-        rel) instanceof com.faktocraft.common.block.impl.generators.combustion_generator.BlockEntityCombustionGenerator
-            be) {
+        rel) instanceof BlockEntityCombustionGenerator be) {
       be.fluidStorage.fillFluid(new net.minecraftforge.fluids.FluidStack(
           com.faktocraft.common.fluid.ModFluids.BIOGAS.still(), 8000), 8000, false);
     }
@@ -145,7 +145,7 @@ public class EnergyNetworkGameTest {
     }
 
     helper.runAfterDelay(300, () -> {
-      if (!(helper.getBlockEntity(gen) instanceof IndRebBlockEntity be)) {
+      if (!(helper.getBlockEntity(gen) instanceof FaktocraftBlockEntity be)) {
         helper.fail("no generator block entity");
         return;
       }
@@ -184,7 +184,7 @@ public class EnergyNetworkGameTest {
     }
 
     helper.runAfterDelay(125, () -> {
-      if (!(helper.getBlockEntity(gen) instanceof IndRebBlockEntity genBe)) {
+      if (!(helper.getBlockEntity(gen) instanceof FaktocraftBlockEntity genBe)) {
         helper.fail("no generator block entity");
         return;
       }
@@ -192,13 +192,13 @@ public class EnergyNetworkGameTest {
         helper.fail("saturated chain drew charge: generator at " + genBe.getEnergyStorage().energyStored());
         return;
       }
-      if (helper.getBlockEntity(mfe) instanceof IndRebBlockEntity mfeBe) {
+      if (helper.getBlockEntity(mfe) instanceof FaktocraftBlockEntity mfeBe) {
         mfeBe.getEnergyStorage().setEnergy(mfeBe.getEnergyStorage().maxEnergy() - 500);
       }
     });
 
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(mfe) instanceof IndRebBlockEntity be)) {
+      if (!(helper.getBlockEntity(mfe) instanceof FaktocraftBlockEntity be)) {
         helper.fail("no mfe block entity");
         return;
       }
@@ -221,7 +221,7 @@ public class EnergyNetworkGameTest {
     fuelCombustionGenerator(helper, gen);
 
     helper.runAfterDelay(60, () -> {
-      if (!(helper.getBlockEntity(gen) instanceof IndRebBlockEntity be)) {
+      if (!(helper.getBlockEntity(gen) instanceof FaktocraftBlockEntity be)) {
         helper.fail("no generator block entity");
         return;
       }
@@ -233,7 +233,7 @@ public class EnergyNetworkGameTest {
     });
 
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(machine) instanceof IndRebBlockEntity be)) {
+      if (!(helper.getBlockEntity(machine) instanceof FaktocraftBlockEntity be)) {
         helper.fail("machine not placed yet");
         return;
       }
@@ -264,8 +264,7 @@ public class EnergyNetworkGameTest {
     fillEnergy(helper, gen);
     fillEnergy(helper, mfe);
     if (helper.getBlockEntity(
-        gen) instanceof com.faktocraft.common.block.impl.generators.combustion_generator.BlockEntityCombustionGenerator
-            be) {
+        gen) instanceof BlockEntityCombustionGenerator be) {
       be.fluidStorage.fillFluid(new net.minecraftforge.fluids.FluidStack(
           com.faktocraft.common.fluid.ModFluids.BIOGAS.still(), 8000), 8000, false);
     }
@@ -291,7 +290,7 @@ public class EnergyNetworkGameTest {
     }
 
     helper.runAfterDelay(460, () -> {
-      if (!(helper.getBlockEntity(gen) instanceof IndRebBlockEntity be)) {
+      if (!(helper.getBlockEntity(gen) instanceof FaktocraftBlockEntity be)) {
         helper.fail("no generator block entity");
         return;
       }
@@ -422,12 +421,13 @@ public class EnergyNetworkGameTest {
     BlockPos shared = helper.absolutePos(new BlockPos(1, 1, 1));
     BlockPos onlyMine = helper.absolutePos(new BlockPos(2, 1, 1));
 
-    com.faktocraft.common.energy.provider.EnergyNetwork first =
-        new com.faktocraft.common.energy.provider.EnergyNetwork(shared,
-            com.faktocraft.common.enums.EnergyTier.VERY_HIGH);
+    com.faktocraft.common.energy.provider.EnergyNetwork first = new com.faktocraft.common.energy.provider.EnergyNetwork(
+        shared,
+        com.faktocraft.common.enums.EnergyTier.VERY_HIGH);
     first.getConnections().add(onlyMine);
     com.faktocraft.common.energy.provider.EnergyNetwork second =
-        new com.faktocraft.common.energy.provider.EnergyNetwork(shared,
+        new com.faktocraft.common.energy.provider.EnergyNetwork(
+            shared,
             com.faktocraft.common.enums.EnergyTier.VERY_HIGH);
 
     net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
@@ -435,7 +435,8 @@ public class EnergyNetworkGameTest {
     tag.put("2", second.serializeNBT());
 
     com.faktocraft.common.energy.provider.EnergyNetworks networks =
-        new com.faktocraft.common.energy.provider.EnergyNetworks(helper.getLevel());
+        new com.faktocraft.common.energy.provider.EnergyNetworks(
+            helper.getLevel());
     networks.deserializeNBT(tag);
 
     int claims = 0;
@@ -466,9 +467,9 @@ public class EnergyNetworkGameTest {
     placeCable(helper, new BlockPos(2, 1, 1), ModBlocks.GOLD_CABLE_INSULATED);
 
     BlockPos haunted = helper.absolutePos(new BlockPos(4, 1, 1));
-    com.faktocraft.common.energy.provider.EnergyNetwork ghost =
-        new com.faktocraft.common.energy.provider.EnergyNetwork(haunted,
-            com.faktocraft.common.enums.EnergyTier.VERY_HIGH);
+    com.faktocraft.common.energy.provider.EnergyNetwork ghost = new com.faktocraft.common.energy.provider.EnergyNetwork(
+        haunted,
+        com.faktocraft.common.enums.EnergyTier.VERY_HIGH);
     com.faktocraft.common.energy.provider.EnergyCore.get(helper.getLevel()).getNetworks()
         .getNetworks().add(ghost);
 
@@ -478,9 +479,9 @@ public class EnergyNetworkGameTest {
     placeCable(helper, new BlockPos(5, 1, 1), ModBlocks.HV_CABLE_INSULATED);
 
     int claims = 0;
-    for (com.faktocraft.common.energy.provider.EnergyNetwork network
-        : com.faktocraft.common.energy.provider.EnergyCore.get(helper.getLevel()).getNetworks()
-            .getNetworks()) {
+    for (com.faktocraft.common.energy.provider.EnergyNetwork network : com.faktocraft.common.energy.provider.EnergyCore
+        .get(helper.getLevel()).getNetworks()
+        .getNetworks()) {
       if (network.getConnections().contains(haunted)) {
         claims++;
       }
@@ -628,12 +629,12 @@ public class EnergyNetworkGameTest {
     placeBreaker(helper, breaker, Direction.Axis.X, Direction.UP);
     helper.runAfterDelay(40, () -> toggleBreaker(helper, breaker, false));
     helper.runAfterDelay(45, () -> {
-      if (helper.getBlockEntity(transformer) instanceof IndRebBlockEntity be) {
+      if (helper.getBlockEntity(transformer) instanceof FaktocraftBlockEntity be) {
         be.getEnergyStorage().setEnergy(0);
       }
     });
     helper.runAfterDelay(80, () -> {
-      if (helper.getBlockEntity(transformer) instanceof IndRebBlockEntity be
+      if (helper.getBlockEntity(transformer) instanceof FaktocraftBlockEntity be
           && be.getEnergyStorage().energyStored() > 0) {
         helper.fail("breaker off did not cut the flow");
       }
@@ -709,7 +710,7 @@ public class EnergyNetworkGameTest {
 
   private static void failIfChargedAt(GameTestHelper helper, BlockPos rel, int tick) {
     helper.runAfterDelay(tick, () -> {
-      if (helper.getBlockEntity(rel) instanceof IndRebBlockEntity be
+      if (helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be
           && be.getEnergyStorage().energyStored() > 0) {
         helper.fail("corruption did not block the flow — test setup is not sharp");
       }
@@ -759,7 +760,7 @@ public class EnergyNetworkGameTest {
     placeCable(helper, new BlockPos(2, 1, 2), ModBlocks.GOLD_CABLE_INSULATED);
     placeCable(helper, new BlockPos(3, 1, 2), ModBlocks.GOLD_CABLE_INSULATED);
     helper.runAfterDelay(5, () -> helper.destroyBlock(new BlockPos(2, 1, 1)));
-    BlockPos[] rest = {new BlockPos(3, 1, 1), new BlockPos(2, 1, 2), new BlockPos(3, 1, 2)};
+    BlockPos[] rest = { new BlockPos(3, 1, 1), new BlockPos(2, 1, 2), new BlockPos(3, 1, 2) };
     helper.succeedWhen(() -> {
       if (!helper.getBlockState(new BlockPos(2, 1, 1)).isAir()) {
         helper.fail("cable not removed yet");
@@ -799,7 +800,7 @@ public class EnergyNetworkGameTest {
     placeCable(helper, new BlockPos(4, 1, 1), ModBlocks.GOLD_CABLE_INSULATED);
     placeCable(helper, new BlockPos(4, 1, 2), ModBlocks.GOLD_CABLE_INSULATED);
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(receiver) instanceof IndRebBlockEntity be)
+      if (!(helper.getBlockEntity(receiver) instanceof FaktocraftBlockEntity be)
           || be.getEnergyStorage().energyStored() <= 0) {
         helper.fail("receiver MFE not charged; " + describe(helper));
       }
@@ -807,7 +808,7 @@ public class EnergyNetworkGameTest {
   }
 
   private static int stored(GameTestHelper helper, BlockPos rel) {
-    return helper.getBlockEntity(rel) instanceof IndRebBlockEntity be
+    return helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be
         ? be.getEnergyStorage().energyStored()
         : -1;
   }
@@ -825,16 +826,16 @@ public class EnergyNetworkGameTest {
     placeCable(helper, new BlockPos(3, 1, 3), ModBlocks.TIN_CABLE_INSULATED);
     fillEnergy(helper, genHigh);
     fillEnergy(helper, genLow);
-    if (helper.getBlockEntity(genHigh) instanceof IndRebBlockEntity highBe) {
+    if (helper.getBlockEntity(genHigh) instanceof FaktocraftBlockEntity highBe) {
       highBe.setGeneratorPriorityMode(5);
     }
-    if (helper.getBlockEntity(genLow) instanceof IndRebBlockEntity lowBe) {
+    if (helper.getBlockEntity(genLow) instanceof FaktocraftBlockEntity lowBe) {
       lowBe.setGeneratorPriorityMode(1);
     }
     helper.runAfterDelay(30, () -> {
       int high = stored(helper, genHigh);
       int low = stored(helper, genLow);
-      int max = helper.getBlockEntity(genLow) instanceof IndRebBlockEntity be
+      int max = helper.getBlockEntity(genLow) instanceof FaktocraftBlockEntity be
           ? be.getEnergyStorage().maxEnergy()
           : -1;
       if (high >= max) {
@@ -856,20 +857,20 @@ public class EnergyNetworkGameTest {
     placeCable(helper, new BlockPos(3, 1, 1), ModBlocks.TIN_CABLE_INSULATED);
     fillEnergy(helper, gen);
     final int initialLava = 1000;
-    if (helper.getBlockEntity(gen) instanceof
-        com.faktocraft.common.block.impl.generators.geo_generator.BlockEntityGeoGenerator geoBe) {
+    if (helper.getBlockEntity(
+        gen) instanceof com.faktocraft.common.block.impl.generators.geo_generator.BlockEntityGeoGenerator geoBe) {
       geoBe.fluidStorage.fillFluid(new net.minecraftforge.fluids.FluidStack(
           net.minecraft.world.level.material.Fluids.LAVA, initialLava), initialLava, false);
     }
     helper.runAfterDelay(8, () -> {
-      int lava = helper.getBlockEntity(gen) instanceof
-          com.faktocraft.common.block.impl.generators.geo_generator.BlockEntityGeoGenerator geoBe
+      int lava = helper.getBlockEntity(
+          gen) instanceof com.faktocraft.common.block.impl.generators.geo_generator.BlockEntityGeoGenerator geoBe
               ? geoBe.fluidStorage.getFluidAmount()
               : -1;
       if (lava != initialLava) {
         helper.fail("lava consumed above the restart threshold: " + lava + "/" + initialLava);
       }
-      int max = helper.getBlockEntity(gen) instanceof IndRebBlockEntity be
+      int max = helper.getBlockEntity(gen) instanceof FaktocraftBlockEntity be
           ? be.getEnergyStorage().maxEnergy()
           : -1;
       if (stored(helper, gen) >= max) {
@@ -877,8 +878,8 @@ public class EnergyNetworkGameTest {
       }
     });
     helper.runAfterDelay(120, () -> {
-      int lava = helper.getBlockEntity(gen) instanceof
-          com.faktocraft.common.block.impl.generators.geo_generator.BlockEntityGeoGenerator geoBe
+      int lava = helper.getBlockEntity(
+          gen) instanceof com.faktocraft.common.block.impl.generators.geo_generator.BlockEntityGeoGenerator geoBe
               ? geoBe.fluidStorage.getFluidAmount()
               : -1;
       if (lava >= initialLava) {

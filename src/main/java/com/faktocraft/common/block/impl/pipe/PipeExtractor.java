@@ -62,8 +62,7 @@ public class PipeExtractor {
   private void applyDock() {
     int cap = 0;
     for (int i = 0; i < DOCK_TENSION_SLOT; i++) {
-      if (dock.getStackInSlot(i).getItem()
-          instanceof com.faktocraft.common.item.impl.CapacitorItem capacitor) {
+      if (dock.getStackInSlot(i).getItem() instanceof com.faktocraft.common.item.impl.CapacitorItem capacitor) {
         cap += capacitor.getCapacity();
       }
     }
@@ -72,8 +71,8 @@ public class PipeExtractor {
   }
 
   public int getDockTensionLevel() {
-    return dock.getStackInSlot(DOCK_TENSION_SLOT).getItem()
-        instanceof com.faktocraft.common.item.impl.upgrade.TensionUpgrade tension
+    return dock.getStackInSlot(DOCK_TENSION_SLOT)
+        .getItem() instanceof com.faktocraft.common.item.impl.upgrade.TensionUpgrade tension
             ? tension.getMkLevel()
             : 0;
   }

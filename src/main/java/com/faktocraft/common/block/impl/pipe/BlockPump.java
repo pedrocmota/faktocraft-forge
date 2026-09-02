@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.pipe;
 
-import com.faktocraft.common.block.IndRebEntityBlock;
+import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.interfaces.block.IHasMenu;
 import com.faktocraft.common.interfaces.block.IStateActive;
 import net.minecraft.core.BlockPos;
@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockPump extends IndRebEntityBlock implements IStateActive, IHasMenu {
+public class BlockPump extends FaktocraftEntityBlock implements IStateActive, IHasMenu {
 
   public BlockPump(Properties properties) {
     super(properties);
