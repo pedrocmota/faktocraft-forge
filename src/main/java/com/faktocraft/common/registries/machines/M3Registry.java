@@ -2,8 +2,14 @@ package com.faktocraft.common.registries.machines;
 
 import com.faktocraft.common.block.BlockMachine;
 import com.faktocraft.common.block.impl.machines.alloy_smelter.BlockAlloySmelter;
+import com.faktocraft.common.block.impl.machines.alloy_smelter.BlockCoalAlloySmelter;
+import com.faktocraft.common.block.impl.machines.alloy_smelter.BlockCombustionAlloySmelter;
 import com.faktocraft.common.block.impl.machines.alloy_smelter.BlockEntityAlloySmelter;
+import com.faktocraft.common.block.impl.machines.alloy_smelter.BlockEntityCoalAlloySmelter;
+import com.faktocraft.common.block.impl.machines.alloy_smelter.BlockEntityCombustionAlloySmelter;
 import com.faktocraft.common.block.impl.machines.alloy_smelter.MenuAlloySmelter;
+import com.faktocraft.common.block.impl.machines.alloy_smelter.MenuCoalAlloySmelter;
+import com.faktocraft.common.block.impl.machines.alloy_smelter.MenuCombustionAlloySmelter;
 import com.faktocraft.common.block.impl.machines.canning_machine.BlockCanningMachine;
 import com.faktocraft.common.block.impl.machines.canning_machine.BlockEntityCanningMachine;
 import com.faktocraft.common.block.impl.machines.canning_machine.MenuCanningMachine;
@@ -49,6 +55,10 @@ public class M3Registry {
       BlockMachine.machineProperties(0, 0));
   public static final Block ALLOY_SMELTER = ModBlocks.register("alloy_smelter", BlockAlloySmelter::new,
       BlockMachine.machineProperties(12, 0));
+  public static final Block COAL_ALLOY_SMELTER = ModBlocks.register("coal_alloy_smelter",
+      BlockCoalAlloySmelter::new, BlockMachine.machineProperties(12, 0));
+  public static final Block COMBUSTION_ALLOY_SMELTER = ModBlocks.register("combustion_alloy_smelter",
+      BlockCombustionAlloySmelter::new, BlockMachine.machineProperties(12, 0));
   public static final Block CIRCUIT_ASSEMBLER = ModBlocks.register("circuit_assembler", BlockCircuitAssembler::new,
       BlockMachine.machineProperties(8, 0));
   public static final Block FERMENTER = ModBlocks.register("fermenter", BlockFermenter::new,
@@ -67,6 +77,8 @@ public class M3Registry {
   public static final Item EXTRUDER_ITEM = ModItems.registerElectricBlockItem(EXTRUDER);
   public static final Item FLUID_ENRICHER_ITEM = ModItems.registerElectricBlockItem(FLUID_ENRICHER);
   public static final Item ALLOY_SMELTER_ITEM = ModItems.registerElectricBlockItem(ALLOY_SMELTER);
+  public static final Item COAL_ALLOY_SMELTER_ITEM = ModItems.registerBlockItem(COAL_ALLOY_SMELTER);
+  public static final Item COMBUSTION_ALLOY_SMELTER_ITEM = ModItems.registerBlockItem(COMBUSTION_ALLOY_SMELTER);
   public static final Item CIRCUIT_ASSEMBLER_ITEM = ModItems.registerElectricBlockItem(CIRCUIT_ASSEMBLER);
   public static final Item FERMENTER_ITEM = ModItems.registerElectricBlockItem(FERMENTER);
   public static final Item ORE_WASHING_PLANT_ITEM = ModItems.registerElectricBlockItem(ORE_WASHING_PLANT);
@@ -81,6 +93,11 @@ public class M3Registry {
       "fluid_enricher", BlockEntityFluidEnricher::new, FLUID_ENRICHER);
   public static final BlockEntityType<BlockEntityAlloySmelter> ALLOY_SMELTER_BLOCK_ENTITY = registerBlockEntity(
       "alloy_smelter", BlockEntityAlloySmelter::new, ALLOY_SMELTER);
+  public static final BlockEntityType<BlockEntityCoalAlloySmelter> COAL_ALLOY_SMELTER_BLOCK_ENTITY =
+      registerBlockEntity("coal_alloy_smelter", BlockEntityCoalAlloySmelter::new, COAL_ALLOY_SMELTER);
+  public static final BlockEntityType<BlockEntityCombustionAlloySmelter> COMBUSTION_ALLOY_SMELTER_BLOCK_ENTITY =
+      registerBlockEntity("combustion_alloy_smelter", BlockEntityCombustionAlloySmelter::new,
+          COMBUSTION_ALLOY_SMELTER);
   public static final BlockEntityType<BlockEntityCircuitAssembler> CIRCUIT_ASSEMBLER_BLOCK_ENTITY = registerBlockEntity(
       "circuit_assembler", BlockEntityCircuitAssembler::new, CIRCUIT_ASSEMBLER);
   public static final BlockEntityType<BlockEntityFermenter> FERMENTER_BLOCK_ENTITY = registerBlockEntity("fermenter",
@@ -103,6 +120,10 @@ public class M3Registry {
       (windowId, inv, pos) -> new MenuFluidEnricher(windowId, inv.player.level(), pos, inv, inv.player));
   public static final MenuType<MenuAlloySmelter> ALLOY_SMELTER_MENU = MenuTypeHelper.register("alloy_smelter",
       (windowId, inv, pos) -> new MenuAlloySmelter(windowId, inv.player.level(), pos, inv, inv.player));
+  public static final MenuType<MenuCoalAlloySmelter> COAL_ALLOY_SMELTER_MENU = MenuTypeHelper.register(
+      "coal_alloy_smelter", MenuCoalAlloySmelter::new);
+  public static final MenuType<MenuCombustionAlloySmelter> COMBUSTION_ALLOY_SMELTER_MENU = MenuTypeHelper.register(
+      "combustion_alloy_smelter", MenuCombustionAlloySmelter::new);
   public static final MenuType<MenuCircuitAssembler> CIRCUIT_ASSEMBLER_MENU = MenuTypeHelper.register(
       "circuit_assembler",
       (windowId, inv, pos) -> new MenuCircuitAssembler(windowId, inv.player.level(), pos, inv, inv.player));

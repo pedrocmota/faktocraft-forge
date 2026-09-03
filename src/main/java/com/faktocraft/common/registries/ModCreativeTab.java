@@ -54,7 +54,7 @@ public class ModCreativeTab {
       "circuit_assembler", "fluid_enricher", "ore_washing_plant", "distillery", "fueling_station",
       "polymerizer",
       "geological_scanner", "quarry", "landmark",
-      "alloy_smelter", "fermenter", "thermal_centrifuge",
+      "coal_alloy_smelter", "combustion_alloy_smelter", "alloy_smelter", "fermenter", "thermal_centrifuge",
       "luminator",
       "matter_fabricator", "scanner", "replicator", "teleport_anchor", "chunk_loader",
       "overclocker_upgrade", "advanced_overclocker_upgrade",

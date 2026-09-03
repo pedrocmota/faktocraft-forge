@@ -262,7 +262,8 @@ public class JEIPlugin implements IModPlugin {
     registration.addRecipeCatalysts(ExtractingCategory.TYPE, M2Registry.EXTRACTOR);
     registration.addRecipeCatalysts(FluidExtrudingCategory.TYPE, M3Registry.EXTRUDER);
     registration.addRecipeCatalysts(SawingCategory.TYPE, M2Registry.SAWMILL);
-    registration.addRecipeCatalysts(AlloySmeltingCategory.TYPE, M3Registry.ALLOY_SMELTER);
+    registration.addRecipeCatalysts(AlloySmeltingCategory.TYPE, M3Registry.ALLOY_SMELTER,
+        M3Registry.COAL_ALLOY_SMELTER, M3Registry.COMBUSTION_ALLOY_SMELTER);
     registration.addRecipeCatalysts(CircuitAssemblingCategory.TYPE, M3Registry.CIRCUIT_ASSEMBLER);
     registration.addRecipeCatalysts(RecyclingCategory.TYPE, M2Registry.RECYCLER);
     registration.addRecipeCatalysts(FluidEnrichingCategory.TYPE, M3Registry.FLUID_ENRICHER);
@@ -349,6 +350,12 @@ public class JEIPlugin implements IModPlugin {
     registration.addRecipeClickArea(ScreenExtruder.class, 78, 35, 24, 16, FluidExtrudingCategory.TYPE);
     registration.addRecipeClickArea(ScreenSawmill.class, 71, 35, 24, 16, SawingCategory.TYPE);
     registration.addRecipeClickArea(ScreenAlloySmelter.class, 82, 33, 24, 16, AlloySmeltingCategory.TYPE);
+    registration.addRecipeClickArea(
+        com.faktocraft.common.block.impl.machines.alloy_smelter.ScreenCoalAlloySmelter.class, 82, 33, 24, 16,
+        AlloySmeltingCategory.TYPE);
+    registration.addRecipeClickArea(
+        com.faktocraft.common.block.impl.machines.alloy_smelter.ScreenCombustionAlloySmelter.class, 82, 33, 24, 16,
+        AlloySmeltingCategory.TYPE);
     registration.addRecipeClickArea(ScreenCircuitAssembler.class, 81, 33, 24, 16, CircuitAssemblingCategory.TYPE);
     registration.addRecipeClickArea(ScreenRecycler.class, 71, 35, 24, 16, RecyclingCategory.TYPE);
     registration.addRecipeClickArea(ScreenFluidEnricher.class, 76, 35, 24, 16, FluidEnrichingCategory.TYPE);
@@ -485,6 +492,14 @@ public class JEIPlugin implements IModPlugin {
         BlockEntitySawmill.INPUT_SLOT, 1, 1, 37);
     registration.addRecipeTransferHandler(MenuAlloySmelter.class, M3Registry.ALLOY_SMELTER_MENU,
         AlloySmeltingCategory.TYPE, BlockEntityAlloySmelter.INPUT_SLOT_0, 3, 0, 37);
+    registration.addRecipeTransferHandler(
+        com.faktocraft.common.block.impl.machines.alloy_smelter.MenuCoalAlloySmelter.class,
+        M3Registry.COAL_ALLOY_SMELTER_MENU, AlloySmeltingCategory.TYPE, BlockEntityAlloySmelter.INPUT_SLOT_0, 3, 0,
+        37);
+    registration.addRecipeTransferHandler(
+        com.faktocraft.common.block.impl.machines.alloy_smelter.MenuCombustionAlloySmelter.class,
+        M3Registry.COMBUSTION_ALLOY_SMELTER_MENU, AlloySmeltingCategory.TYPE, BlockEntityAlloySmelter.INPUT_SLOT_0, 3,
+        0, 37);
     registration.addRecipeTransferHandler(MenuCircuitAssembler.class, M3Registry.CIRCUIT_ASSEMBLER_MENU,
         CircuitAssemblingCategory.TYPE, BlockEntityCircuitAssembler.INPUT_SLOT_0, 3, 0, 37);
     registration.addRecipeTransferHandler(MenuRecycler.class, M2Registry.RECYCLER_MENU, RecyclingCategory.TYPE,

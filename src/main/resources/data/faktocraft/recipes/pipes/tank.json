@@ -3,7 +3,7 @@
   "group": "faktocraft_pipes",
   "key": {
     "g": {
-      "tag": "forge:glass_blocks/colorless"
+      "tag": "forge:glass/colorless"
     }
   },
   "pattern": [

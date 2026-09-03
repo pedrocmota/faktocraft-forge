@@ -55,7 +55,7 @@ public class BlockEntityCircuitAssembler extends FaktocraftBlockEntity
 
   public BlockEntityCircuitAssembler(BlockPos pos, BlockState state) {
     super(M3Registry.CIRCUIT_ASSEMBLER_BLOCK_ENTITY, pos, state);
-    createEnergyStorage(0, ModConfig.server().circuit_assembler_energy_capacity, EnergyType.RECEIVE, EnergyTier.MEDIUM);
+    createEnergyStorage(0, ModConfig.server().circuit_assembler_energy_capacity, EnergyType.RECEIVE, EnergyTier.LOW);
     initBatterySlots();
   }
 

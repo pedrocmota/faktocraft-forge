@@ -9,7 +9,7 @@
    "tag": "forge:dusts/redstone"
   },
   {
-   "item": "minecraft:dispenser"
+   "item": "minecraft:dropper"
   }
  ],
  "result": {

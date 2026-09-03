@@ -6,7 +6,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:glass_blocks/colorless"
+            "tag": "forge:glass/colorless"
           }
         ]
       }

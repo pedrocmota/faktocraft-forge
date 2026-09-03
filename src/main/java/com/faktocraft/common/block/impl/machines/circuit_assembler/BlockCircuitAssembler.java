@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class BlockCircuitAssembler extends BlockElectricMachine implements IHasMenu {
 
   public BlockCircuitAssembler(Properties properties) {
-    super(EnergyTier.MEDIUM, properties);
+    super(EnergyTier.LOW, properties);
   }
 
   @Override

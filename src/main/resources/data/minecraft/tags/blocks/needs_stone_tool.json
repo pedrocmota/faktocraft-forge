@@ -20,6 +20,8 @@
     "faktocraft:fluid_enricher",
     "faktocraft:recycler",
     "faktocraft:alloy_smelter",
+    "faktocraft:combustion_alloy_smelter",
+    "faktocraft:coal_alloy_smelter",
     "faktocraft:fermenter",
     "faktocraft:ore_washing_plant",
     "faktocraft:thermal_centrifuge",

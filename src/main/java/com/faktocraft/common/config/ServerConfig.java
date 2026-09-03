@@ -69,6 +69,9 @@ public class ServerConfig {
 
   public int alloy_smelter_energy_capacity = 2400;
   public int alloy_smelter_energy_heat_cost = 50;
+  public int combustion_alloy_smelter_fluid_capacity = 8000;
+  public int combustion_alloy_smelter_fuel_ticks_per_mb = 2;
+  public int combustion_alloy_smelter_biogas_ticks_per_mb = 1;
 
   public int fermenter_energy_capacity = 2400;
   public int fermenter_biomass_capacity = 10_000;

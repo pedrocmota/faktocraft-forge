@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "faktocraft:block/machines/basic/combustion_alloy_smelter_bottom",
+    "front": "faktocraft:block/machines/basic/combustion_alloy_smelter_front",
+    "side": "faktocraft:block/machines/basic/combustion_alloy_smelter_side",
+    "top": "faktocraft:block/machines/basic/combustion_alloy_smelter_top"
+  }
+}

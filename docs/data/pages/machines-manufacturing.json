@@ -61,8 +61,42 @@
         },
         {
           "name": {
-            "en": "Alloy Smelter",
-            "pt": "Fundidora de Ligas"
+            "en": "Coal Alloy Smelter",
+            "pt": "Forno de fundição a carvão"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/coal_alloy_smelter_top",
+              "front": "block/machines/basic/coal_alloy_smelter_front",
+              "side": "block/machines/basic/coal_alloy_smelter_side"
+            }
+          },
+          "desc": {
+            "en": "Cheap alloy smelter that burns coal and other furnace fuels. Slow, but needs no power.",
+            "pt": "Forno de fundição barato que queima carvão e outros combustíveis de fornalha. Lento, mas dispensa energia."
+          }
+        },
+        {
+          "name": {
+            "en": "Combustion Alloy Smelter",
+            "pt": "Forno de fundição a combustão"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/combustion_alloy_smelter_top",
+              "front": "block/machines/basic/combustion_alloy_smelter_front",
+              "side": "block/machines/basic/combustion_alloy_smelter_side"
+            }
+          },
+          "desc": {
+            "en": "Burns fuel or biogas to smelt alloys at full speed with no warm-up and no cables. The most efficient way to make alloys.",
+            "pt": "Queima combustível ou biogás para fundir ligas na velocidade máxima, sem aquecimento nem cabos. A forma mais eficiente de produzir ligas."
+          }
+        },
+        {
+          "name": {
+            "en": "Electric Alloy Smelter",
+            "pt": "Forno de fundição elétrico"
           },
           "icon": {
             "block": {
@@ -72,8 +106,8 @@
             }
           },
           "desc": {
-            "en": "Combines up to three inputs into alloys like bronze.",
-            "pt": "Combina até três entradas em ligas como o bronze."
+            "en": "Combines up to three inputs into alloys like bronze. Heats up over time and accepts overclockers.",
+            "pt": "Combina até três entradas em ligas como o bronze. Aquece com o tempo e aceita overclocks."
           }
         },
         {

@@ -1,6 +1,8 @@
 package com.faktocraft.client.screens;
 
 import com.faktocraft.common.block.impl.machines.alloy_smelter.ScreenAlloySmelter;
+import com.faktocraft.common.block.impl.machines.alloy_smelter.ScreenCoalAlloySmelter;
+import com.faktocraft.common.block.impl.machines.alloy_smelter.ScreenCombustionAlloySmelter;
 import com.faktocraft.common.block.impl.machines.canning_machine.ScreenCanningMachine;
 import com.faktocraft.common.block.impl.machines.circuit_assembler.ScreenCircuitAssembler;
 import com.faktocraft.common.block.impl.machines.extruder.ScreenExtruder;
@@ -25,6 +27,8 @@ public class M3Screens {
         com.faktocraft.common.block.impl.machines.fueling_station.FuelingStationRegistry.FUELING_STATION_MENU,
         com.faktocraft.common.block.impl.machines.fueling_station.ScreenFuelingStation::new);
     MenuScreens.register(M3Registry.ALLOY_SMELTER_MENU, ScreenAlloySmelter::new);
+    MenuScreens.register(M3Registry.COAL_ALLOY_SMELTER_MENU, ScreenCoalAlloySmelter::new);
+    MenuScreens.register(M3Registry.COMBUSTION_ALLOY_SMELTER_MENU, ScreenCombustionAlloySmelter::new);
     MenuScreens.register(M3Registry.CIRCUIT_ASSEMBLER_MENU, ScreenCircuitAssembler::new);
     MenuScreens.register(M3Registry.FERMENTER_MENU, ScreenFermenter::new);
     MenuScreens.register(M3Registry.ORE_WASHING_PLANT_MENU, ScreenOreWashingPlant::new);
