@@ -120,8 +120,9 @@ public class ModFluids {
         float fogR = ((fogSource >> 16) & 0xFF) / 255.0F;
         float fogG = ((fogSource >> 8) & 0xFF) / 255.0F;
         float fogB = (fogSource & 0xFF) / 255.0F;
-        float fogEnd = fogEndOverride != null ? fogEndOverride
-            : net.minecraft.util.Mth.lerp(((tint >>> 24) & 0xFF) / 255.0F, 16.0F, 3.0F);
+        float opacity = ((tint >>> 24) & 0xFF) / 255.0F;
+        float fogEnd = fogEndOverride != null ? fogEndOverride : net.minecraft.util.Mth.lerp(opacity, 16.0F, 3.0F);
+        com.faktocraft.client.render.FluidFogVolume.register(this, fogR, fogG, fogB, fogEnd);
         consumer.accept(new IClientFluidTypeExtensions() {
           @Override
           public ResourceLocation getStillTexture() {

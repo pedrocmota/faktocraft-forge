@@ -275,6 +275,7 @@ public class FaktocraftClient {
     public static void onRenderLevelStage(net.minecraftforge.client.event.RenderLevelStageEvent event) {
       LogisticsGhosts.render(event);
       com.faktocraft.client.render.ChunkBorderOverlay.render(event);
+      com.faktocraft.client.render.FluidFogVolume.render(event);
     }
 
     @SubscribeEvent

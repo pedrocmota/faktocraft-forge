@@ -1,18 +1,16 @@
 package com.faktocraft.client.render;
 
 import com.faktocraft.common.block.impl.chunk_loader.BlockEntityChunkLoader;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.PauseScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -32,6 +30,10 @@ public final class ChunkBorderOverlay {
 
   private static final ResourceLocation FORCEFIELD = new ResourceLocation("textures/misc/forcefield.png");
   private static final float TEX_SCALE = 0.5F;
+  private static final int COLOR_R = 64;
+  private static final int COLOR_G = 217;
+  private static final int COLOR_B = 209;
+  private static final int COLOR_A = 140;
 
   private static boolean active = false;
   private static ResourceKey<Level> dimension;
@@ -115,35 +117,39 @@ public final class ChunkBorderOverlay {
     poseStack.translate(-camera.x, -camera.y, -camera.z);
     Matrix4f matrix = poseStack.last().pose();
 
-    RenderSystem.enableBlend();
-    RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
-        GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-    RenderSystem.disableCull();
-    RenderSystem.depthMask(false);
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
-    RenderSystem.setShaderTexture(0, FORCEFIELD);
-    RenderSystem.setShaderColor(0.25F, 0.85F, 0.82F, 0.55F);
-
-    Tesselator tesselator = Tesselator.getInstance();
-    BufferBuilder buffer = tesselator.getBuilder();
-    buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+    MultiBufferSource.BufferSource buffers = minecraft.renderBuffers().bufferSource();
+    VertexConsumer buffer = buffers.getBuffer(RenderType.beaconBeam(FORCEFIELD, true));
     for (double[] wall : walls) {
       float length = (float) Math.abs(wall[2] - wall[0] + wall[3] - wall[1]);
       float u0 = anim + (float) ((wall[0] + wall[1]) * TEX_SCALE);
       float u1 = u0 + length * TEX_SCALE;
-      buffer.vertex(matrix, (float) wall[0], (float) minY, (float) wall[1]).uv(u0, v0).endVertex();
-      buffer.vertex(matrix, (float) wall[2], (float) minY, (float) wall[3]).uv(u1, v0).endVertex();
-      buffer.vertex(matrix, (float) wall[2], (float) maxY, (float) wall[3]).uv(u1, v1).endVertex();
-      buffer.vertex(matrix, (float) wall[0], (float) maxY, (float) wall[1]).uv(u0, v1).endVertex();
+      float x0 = (float) wall[0];
+      float z0 = (float) wall[1];
+      float x1 = (float) wall[2];
+      float z1 = (float) wall[3];
+      float y0 = (float) minY;
+      float y1 = (float) maxY;
+      vertex(buffer, matrix, x0, y0, z0, u0, v0);
+      vertex(buffer, matrix, x1, y0, z1, u1, v0);
+      vertex(buffer, matrix, x1, y1, z1, u1, v1);
+      vertex(buffer, matrix, x0, y1, z0, u0, v1);
+      vertex(buffer, matrix, x0, y1, z0, u0, v1);
+      vertex(buffer, matrix, x1, y1, z1, u1, v1);
+      vertex(buffer, matrix, x1, y0, z1, u1, v0);
+      vertex(buffer, matrix, x0, y0, z0, u0, v0);
     }
-    tesselator.end();
-
-    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    RenderSystem.depthMask(true);
-    RenderSystem.enableCull();
-    RenderSystem.defaultBlendFunc();
-    RenderSystem.disableBlend();
+    buffers.endBatch();
     poseStack.popPose();
+  }
+
+  private static void vertex(VertexConsumer buffer, Matrix4f matrix, float x, float y, float z, float u, float v) {
+    buffer.vertex(matrix, x, y, z)
+        .color(COLOR_R, COLOR_G, COLOR_B, COLOR_A)
+        .uv(u, v)
+        .overlayCoords(OverlayTexture.NO_OVERLAY)
+        .uv2(LightTexture.FULL_BRIGHT)
+        .normal(0.0F, 1.0F, 0.0F)
+        .endVertex();
   }
 
   public static void renderHud(GuiGraphics graphics) {
