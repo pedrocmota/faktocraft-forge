@@ -109,8 +109,8 @@
             }
           },
           "desc": {
-            "en": "8 E/t by day, 1 E/t at night.",
-            "pt": "8 E/t de dia, 1 E/t à noite."
+            "en": "6 E/t in sunlight, 1 E/t in rain, nothing at night.",
+            "pt": "6 E/t sob o sol, 1 E/t na chuva, nada à noite."
           }
         },
         {
@@ -126,8 +126,8 @@
             }
           },
           "desc": {
-            "en": "64 E/t by day, 8 E/t at night.",
-            "pt": "64 E/t de dia, 8 E/t à noite."
+            "en": "32 E/t in sunlight, 4 E/t in rain, nothing at night.",
+            "pt": "32 E/t sob o sol, 4 E/t na chuva, nada à noite."
           }
         },
         {
@@ -143,8 +143,25 @@
             }
           },
           "desc": {
-            "en": "384 E/t by day, 48 at night, +16 under moonlight.",
-            "pt": "384 E/t de dia, 48 à noite, +16 sob luar."
+            "en": "192 E/t in sunlight, 24 E/t in rain, 8 E/t under moonlight.",
+            "pt": "192 E/t sob o sol, 24 E/t na chuva, 8 E/t sob luar."
+          }
+        },
+        {
+          "name": {
+            "en": "Stellar Solar",
+            "pt": "Solar Estelar"
+          },
+          "icon": {
+            "block": {
+              "top": "block/generator/stellar_solar_generator_top_cells",
+              "front": "block/generator/stellar_solar_generator_side",
+              "side": "block/generator/stellar_solar_generator_side"
+            }
+          },
+          "desc": {
+            "en": "576 E/t in sunlight, 72 E/t in rain, 24 E/t under moonlight. Ultra voltage output.",
+            "pt": "576 E/t sob o sol, 72 E/t na chuva, 24 E/t sob luar. Saída em tensão ultra."
           }
         }
       ]

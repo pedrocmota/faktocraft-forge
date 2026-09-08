@@ -283,5 +283,12 @@
         "volume": 0.6
       }
     ]
+  },
+  "item.hole_drill": {
+    "sounds": [
+      {
+        "name": "faktocraft:hole_drill"
+      }
+    ]
   }
 }

@@ -138,11 +138,23 @@ public class BlockEntityLogisticsController extends FaktocraftBlockEntity implem
       recordFailure(player, target, quantity, "no_energy_short", "", destNode);
       return;
     }
+    if (system && hasPendingPlanFor(dest)) {
+      return;
+    }
     Map<ItemKey, Integer> stock = BlockEntityChassis.stockSnapshot(level, current, ledger);
     List<LogisticsPlanner.CraftDecl> decls = allowCrafts ? collectDecls(current) : List.of();
     LogisticsPlanner.PlanRequest request = new LogisticsPlanner.PlanRequest(target, quantity, stock, decls);
     CompletableFuture<LogisticsPlanner.Plan> future = LogisticsEngine.submit(() -> LogisticsPlanner.plan(request));
     pendingPlans.add(new PendingPlan(future, target, quantity, dest, destNode, player, system));
+  }
+
+  public boolean hasPendingPlanFor(Endpoint dest) {
+    for (PendingPlan pending : pendingPlans) {
+      if (pending.dest().equals(dest)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public String originLabel(BlockPos pos) {
@@ -372,8 +384,8 @@ public class BlockEntityLogisticsController extends FaktocraftBlockEntity implem
       return;
     }
     ledger.addRecord(target.stack(), quantity, "error." + errorKey, detail, origin, originLabel(origin));
-    player.displayClientMessage(
-        Component.translatable("logistics." + Faktocraft.MODID + ".state.error." + errorKey, detail), true);
+    LogisticsMessages.error(player,
+        Component.translatable("logistics." + Faktocraft.MODID + ".state.error." + errorKey, detail));
   }
 
   @Override
@@ -414,6 +426,13 @@ public class BlockEntityLogisticsController extends FaktocraftBlockEntity implem
   protected void saveAdditional(CompoundTag tag) {
     super.saveAdditional(tag);
     tag.put("ledger", ledger.save());
+  }
+
+  @Override
+  public CompoundTag getUpdateTag() {
+    CompoundTag tag = super.getUpdateTag();
+    tag.remove("ledger");
+    return tag;
   }
 
   @Override

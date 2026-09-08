@@ -20,6 +20,7 @@ public class MenuChunkLoader extends FaktocraftMenu {
   private final DataSlot statusData;
   private final DataSlot activeCountData;
   private final DataSlot maxActiveData;
+  private final DataSlot chargePercentData;
 
   public MenuChunkLoader(int windowId, Inventory inv, BlockPos pos) {
     this(windowId, inv.player.level(), pos, inv, inv.player);
@@ -38,6 +39,8 @@ public class MenuChunkLoader extends FaktocraftMenu {
         BlockEntityChunkLoader::setActiveCountClient));
     maxActiveData = addDataSlot(slot(loader, BlockEntityChunkLoader::getMaxActive,
         BlockEntityChunkLoader::setMaxActiveClient));
+    chargePercentData = addDataSlot(slot(loader, BlockEntityChunkLoader::getChargePercent,
+        BlockEntityChunkLoader::setChargePercentClient));
     init(playerInventory);
   }
 
@@ -77,6 +80,10 @@ public class MenuChunkLoader extends FaktocraftMenu {
 
   public int getMaxActive() {
     return maxActiveData.get();
+  }
+
+  public int getChargePercent() {
+    return chargePercentData.get();
   }
 
   @Override

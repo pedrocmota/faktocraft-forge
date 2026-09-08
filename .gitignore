@@ -8,6 +8,7 @@ src/generated/resources/.cache/
 
 run/
 run-data/
+run-gametest/
 runs/
 logs/
 crash-reports/

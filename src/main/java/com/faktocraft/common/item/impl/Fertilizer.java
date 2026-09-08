@@ -1,6 +1,7 @@
 package com.faktocraft.common.item.impl;
 
 import com.faktocraft.common.item.base.BaseItem;
+import com.faktocraft.common.util.BoneMealHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BoneMealItem;
@@ -16,7 +17,6 @@ public class Fertilizer extends BaseItem {
     super(properties);
   }
 
-  @SuppressWarnings("deprecation")
   @Override
   public InteractionResult useOn(UseOnContext context) {
     Level level = context.getLevel();
@@ -24,7 +24,7 @@ public class Fertilizer extends BaseItem {
     BlockPos relative = pos.relative(context.getClickedFace());
     ItemStack stack = context.getItemInHand();
 
-    if (BoneMealItem.growCrop(stack, level, pos)) {
+    if (BoneMealHelper.grow(stack, level, pos)) {
       if (!level.isClientSide()) {
         level.gameEvent(context.getPlayer(), GameEvent.ITEM_INTERACT_FINISH, pos);
         level.levelEvent(1505, pos, 15);

@@ -5,6 +5,9 @@ import com.faktocraft.common.recipe.impl.FluidEnrichingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -24,8 +27,8 @@ public class FluidEnrichingCategory extends AbstractRecipeCategory<FluidEnrichin
   public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "fluid_enriching");
   public static final RecipeType<FluidEnrichingRecipe> TYPE = new RecipeType<>(UID, FluidEnrichingRecipe.class);
 
-  private IDrawableAnimated progress;
-  private IDrawableAnimated energy;
+  private final LoadingCache<Integer, IDrawableAnimated> progress;
+  private final IDrawableAnimated energy;
 
   private final mezz.jei.api.gui.drawable.IDrawableStatic tankFrame;
   private final mezz.jei.api.gui.drawable.IDrawableStatic slotFrame;
@@ -41,6 +44,10 @@ public class FluidEnrichingCategory extends AbstractRecipeCategory<FluidEnrichin
     this.tankFrame = guiHelper.createDrawable(JEI_LARGE, 160, 165, 16, 37);
     this.slotFrame = guiHelper.createDrawable(JEI_LARGE, 180, 165, 18, 18);
     this.mixArrow = guiHelper.createDrawable(JEI_LARGE, 200, 165, 15, 13);
+    this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
+        (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(duration,
+            IDrawableAnimated.StartDirection.LEFT, false)));
+    this.energy = createEnergyDrawable();
   }
 
   private static boolean isDual(FluidEnrichingRecipe recipe) {
@@ -49,10 +56,6 @@ public class FluidEnrichingCategory extends AbstractRecipeCategory<FluidEnrichin
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, FluidEnrichingRecipe recipe, IFocusGroup focuses) {
-    this.progress = guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(recipe.getDuration(),
-        IDrawableAnimated.StartDirection.LEFT, false);
-    this.energy = createEnergyDrawable();
-
     if (!isDual(recipe)) {
       builder.addSlot(RecipeIngredientRole.INPUT, 8, 19)
           .addItemStacks(stacks(recipe.getIngredient(), recipe.getIngredientCount()));
@@ -96,7 +99,7 @@ public class FluidEnrichingCategory extends AbstractRecipeCategory<FluidEnrichin
       }
     }
 
-    this.progress.draw(graphics, halfX - 6, 19);
+    this.progress.getUnchecked(recipe.getDuration()).draw(graphics, halfX - 6, 19);
     this.energy.draw(graphics, halfX + 58, 7);
 
     if (recipe.getExperience() > 0) {

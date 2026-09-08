@@ -68,7 +68,9 @@ public class BlockEntitySolarGenerator extends FaktocraftBlockEntity
       super.updateBlockState();
     }
 
-    if (this.setActive(active)) {
+    boolean wasActive = activeState;
+    setActive(active);
+    if (wasActive != active) {
       super.updateBlockState();
     }
   }

@@ -121,8 +121,13 @@ public class BlockEntityThermalCentrifuge extends FaktocraftBlockEntity
     final ItemStack outputSlot2 = getItemStackHandler().getStackInSlot(OUTPUT_SLOT_2);
 
     if (cachedInputStack.getItem() != inputStack.getItem()) {
+      boolean hadInput = !cachedInputStack.isEmpty();
+      ThermalCentrifugingRecipe oldRecipe = recipe;
       cachedInputStack = inputStack.copy();
       recipe = inputStack.getItem() != Items.AIR ? getRecipe(inputStack).orElse(null) : null;
+      if (hadInput || (oldRecipe != null && oldRecipe != recipe)) {
+        progress.setBoth(-1);
+      }
     }
 
     if (recipe != null) {

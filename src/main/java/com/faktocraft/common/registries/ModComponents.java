@@ -1,8 +1,12 @@
 package com.faktocraft.common.registries;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public final class ModComponents {
@@ -11,6 +15,7 @@ public final class ModComponents {
   private static final String KEY_ACTIVE = "active";
   private static final String KEY_DIRECTION = "direction";
   private static final String KEY_TELEPORT_TARGET = "teleport_target";
+  private static final String KEY_TELEPORT_DIMENSION = "teleport_dimension";
 
   private ModComponents() {
   }
@@ -61,14 +66,27 @@ public final class ModComponents {
     return null;
   }
 
-  public static void setTeleportTarget(ItemStack stack, BlockPos pos) {
-    stack.getOrCreateTag().putLong(KEY_TELEPORT_TARGET, pos.asLong());
+  @Nullable
+  public static ResourceKey<Level> getTeleportTargetDimension(ItemStack stack,
+      @Nullable ResourceKey<Level> fallback) {
+    CompoundTag tag = stack.getTag();
+    if (tag != null && tag.contains(KEY_TELEPORT_DIMENSION)) {
+      return ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString(KEY_TELEPORT_DIMENSION)));
+    }
+    return fallback;
+  }
+
+  public static void setTeleportTarget(ItemStack stack, BlockPos pos, ResourceKey<Level> dimension) {
+    CompoundTag tag = stack.getOrCreateTag();
+    tag.putLong(KEY_TELEPORT_TARGET, pos.asLong());
+    tag.putString(KEY_TELEPORT_DIMENSION, dimension.location().toString());
   }
 
   public static void removeTeleportTarget(ItemStack stack) {
     CompoundTag tag = stack.getTag();
     if (tag != null) {
       tag.remove(KEY_TELEPORT_TARGET);
+      tag.remove(KEY_TELEPORT_DIMENSION);
       clearTagIfEmpty(stack, tag);
     }
   }

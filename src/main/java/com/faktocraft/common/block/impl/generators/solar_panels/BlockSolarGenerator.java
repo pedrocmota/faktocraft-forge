@@ -1,6 +1,7 @@
 package com.faktocraft.common.block.impl.generators.solar_panels;
 
 import com.faktocraft.common.block.BlockElectricMachine;
+import com.faktocraft.common.interfaces.block.IGenerationInfo;
 import com.faktocraft.common.interfaces.block.IHasMenu;
 import com.faktocraft.common.tier.SolarGeneratorTier;
 import net.minecraft.core.BlockPos;
@@ -15,7 +16,18 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockSolarGenerator extends BlockElectricMachine implements IHasMenu {
+public class BlockSolarGenerator extends BlockElectricMachine implements IHasMenu, IGenerationInfo {
+
+  @Override
+  public void appendGenerationInfo(java.util.List<net.minecraft.network.chat.Component> tooltip) {
+    tooltip.add(IGenerationInfo.line("generation_sun", IGenerationInfo.rate(solarTier.getDayGenerate())));
+    if (solarTier.getNightGenerate() > 0) {
+      tooltip.add(IGenerationInfo.line("generation_rain", IGenerationInfo.rate(solarTier.getNightGenerate())));
+    }
+    if (solarTier.getMoonlightGenerate() > 0) {
+      tooltip.add(IGenerationInfo.line("generation_moon", IGenerationInfo.rate(solarTier.getMoonlightGenerate())));
+    }
+  }
 
   private static final java.util.Map<net.minecraft.core.Direction,
       net.minecraft.world.level.block.state.properties.BooleanProperty> CABLE_ADAPTER_PROPS = java.util.Map

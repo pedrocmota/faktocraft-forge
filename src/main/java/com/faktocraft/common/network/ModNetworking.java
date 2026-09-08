@@ -8,10 +8,8 @@ import com.faktocraft.common.network.packet.PacketMetalFormerChangeMode;
 import com.faktocraft.common.network.packet.PacketNightVision;
 import com.faktocraft.common.network.packet.PacketParticle;
 import com.faktocraft.common.network.packet.PacketReplicatorAction;
-import com.faktocraft.common.network.packet.PacketReqSyncEnergy;
 import com.faktocraft.common.network.packet.PacketScannerCleanScan;
 import com.faktocraft.common.network.packet.PacketScannerSaveScan;
-import com.faktocraft.common.network.packet.PacketSyncEnergy;
 import com.faktocraft.common.network.packet.PacketTeleportFx;
 import com.faktocraft.common.network.packet.PacketTransformerMode;
 import com.faktocraft.common.network.packet.PacketWindInfo;
@@ -38,8 +36,6 @@ public class ModNetworking {
         PacketExtruderRecipe::encode, PacketExtruderRecipe::decode, PacketExtruderRecipe::handle);
     CHANNEL.registerMessage(id++, PacketTransformerMode.class,
         PacketTransformerMode::encode, PacketTransformerMode::decode, PacketTransformerMode::handle);
-    CHANNEL.registerMessage(id++, PacketReqSyncEnergy.class,
-        PacketReqSyncEnergy::encode, PacketReqSyncEnergy::decode, PacketReqSyncEnergy::handle);
     CHANNEL.registerMessage(id++, PacketScannerCleanScan.class,
         PacketScannerCleanScan::encode, PacketScannerCleanScan::decode, PacketScannerCleanScan::handle);
     CHANNEL.registerMessage(id++, PacketScannerSaveScan.class,
@@ -73,10 +69,12 @@ public class ModNetworking {
 
     CHANNEL.registerMessage(id++, PacketParticle.class,
         PacketParticle::encode, PacketParticle::decode, PacketParticle::handle);
-    CHANNEL.registerMessage(id++, PacketSyncEnergy.class,
-        PacketSyncEnergy::encode, PacketSyncEnergy::decode, PacketSyncEnergy::handle);
     CHANNEL.registerMessage(id++, PacketTeleportFx.class,
         PacketTeleportFx::encode, PacketTeleportFx::decode, PacketTeleportFx::handle);
+    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketTeleportCharge.class,
+        com.faktocraft.common.network.packet.PacketTeleportCharge::encode,
+        com.faktocraft.common.network.packet.PacketTeleportCharge::decode,
+        com.faktocraft.common.network.packet.PacketTeleportCharge::handle);
     CHANNEL.registerMessage(id++, PacketIEMeterInfo.class,
         PacketIEMeterInfo::encode, PacketIEMeterInfo::decode, PacketIEMeterInfo::handle);
     CHANNEL.registerMessage(id++, PacketWindInfo.class,
@@ -142,6 +140,18 @@ public class ModNetworking {
         com.faktocraft.common.network.packet.PacketRequestTarget::encode,
         com.faktocraft.common.network.packet.PacketRequestTarget::decode,
         com.faktocraft.common.network.packet.PacketRequestTarget::handle);
+    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketTableMessage.class,
+        com.faktocraft.common.network.packet.PacketTableMessage::encode,
+        com.faktocraft.common.network.packet.PacketTableMessage::decode,
+        com.faktocraft.common.network.packet.PacketTableMessage::handle);
+    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketEnderTankCode.class,
+        com.faktocraft.common.network.packet.PacketEnderTankCode::encode,
+        com.faktocraft.common.network.packet.PacketEnderTankCode::decode,
+        com.faktocraft.common.network.packet.PacketEnderTankCode::handle);
+    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketRecipePipeRecipes.class,
+        com.faktocraft.common.network.packet.PacketRecipePipeRecipes::encode,
+        com.faktocraft.common.network.packet.PacketRecipePipeRecipes::decode,
+        com.faktocraft.common.network.packet.PacketRecipePipeRecipes::handle);
     CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketTaskHistoryOp.class,
         com.faktocraft.common.network.packet.PacketTaskHistoryOp::encode,
         com.faktocraft.common.network.packet.PacketTaskHistoryOp::decode,

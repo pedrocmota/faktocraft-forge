@@ -1317,7 +1317,7 @@ public final class TaskLedger {
     userHistory.clear();
     systemHistory.clear();
 
-    for (String key : new String[] {"historyUser", "historySystem", "history"}) {
+    for (String key : new String[] { "historyUser", "historySystem", "history" }) {
       for (Tag element : tag.getList(key, Tag.TAG_COMPOUND)) {
         HistoryRecord record = HistoryRecord.load((CompoundTag) element);
         List<HistoryRecord> list = record.system ? systemHistory : userHistory;

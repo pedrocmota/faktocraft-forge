@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "faktocraft:block/ender_tank"
+    },
+    "facing=east": {
+      "model": "faktocraft:block/ender_tank",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "faktocraft:block/ender_tank",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "faktocraft:block/ender_tank",
+      "y": 270
+    }
+  }
+}

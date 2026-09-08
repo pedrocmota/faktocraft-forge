@@ -18,6 +18,10 @@ public final class WindFarmRegistry {
     GENERATORS.computeIfAbsent(level.dimension(), key -> ConcurrentHashMap.newKeySet()).add(pos.immutable());
   }
 
+  public static void clear(ResourceKey<Level> dimension) {
+    GENERATORS.remove(dimension);
+  }
+
   public static void remove(Level level, BlockPos pos) {
     Set<BlockPos> set = GENERATORS.get(level.dimension());
     if (set != null) {

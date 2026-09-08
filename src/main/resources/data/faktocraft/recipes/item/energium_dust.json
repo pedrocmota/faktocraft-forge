@@ -6,7 +6,7 @@
       "tag": "forge:dusts/diamond"
     },
     "r": {
-      "item": "minecraft:redstone"
+      "tag": "forge:dusts/redstone"
     }
   },
   "pattern": [

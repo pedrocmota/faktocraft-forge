@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
-public class BlockQuarry extends FaktocraftEntityBlock implements IStateFacing, IStateActive, IHasMenu {
+public class BlockQuarry extends FaktocraftEntityBlock implements IStateFacing, IStateActive, IHasMenu, IGantryHost {
 
   public BlockQuarry(Properties properties) {
     super(properties);

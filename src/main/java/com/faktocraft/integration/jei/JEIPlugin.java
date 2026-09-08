@@ -384,6 +384,14 @@ public class JEIPlugin implements IModPlugin {
             return screen.extraAreas();
           }
         });
+    registration.addGuiContainerHandler(com.faktocraft.common.block.impl.forester.ScreenForester.class,
+        new mezz.jei.api.gui.handlers.IGuiContainerHandler<>() {
+          @Override
+          public List<net.minecraft.client.renderer.Rect2i> getGuiExtraAreas(
+              com.faktocraft.common.block.impl.forester.ScreenForester screen) {
+            return screen.extraAreas();
+          }
+        });
     registration.addGuiContainerHandler(com.faktocraft.common.block.impl.logistics.ScreenChassis.class,
         new mezz.jei.api.gui.handlers.IGuiContainerHandler<>() {
           @Override
@@ -481,45 +489,47 @@ public class JEIPlugin implements IModPlugin {
         com.faktocraft.common.block.impl.logistics.LogisticsRegistry.REQUEST_TABLE_MENU,
         RecipeTypes.CRAFTING,
         com.faktocraft.common.block.impl.logistics.MenuRequestTable.MATRIX_START, 9,
-        com.faktocraft.common.block.impl.logistics.MenuRequestTable.PLAYER_START, 36);
-    registration.addRecipeTransferHandler(MenuCrusher.class, M2Registry.CRUSHER_MENU, CrushingCategory.TYPE,
-        BlockEntityCrusher.INPUT_SLOT, 1, 1, 37);
-    registration.addRecipeTransferHandler(MenuCompressor.class, M2Registry.COMPRESSOR_MENU, CompressingCategory.TYPE,
-        BlockEntityCompressor.INPUT_SLOT, 1, 1, 37);
-    registration.addRecipeTransferHandler(MenuExtractor.class, M2Registry.EXTRACTOR_MENU, ExtractingCategory.TYPE,
-        BlockEntityExtractor.INPUT_SLOT, 1, 1, 37);
-    registration.addRecipeTransferHandler(MenuSawmill.class, M2Registry.SAWMILL_MENU, SawingCategory.TYPE,
-        BlockEntitySawmill.INPUT_SLOT, 1, 1, 37);
-    registration.addRecipeTransferHandler(MenuAlloySmelter.class, M3Registry.ALLOY_SMELTER_MENU,
-        AlloySmeltingCategory.TYPE, BlockEntityAlloySmelter.INPUT_SLOT_0, 3, 0, 37);
-    registration.addRecipeTransferHandler(
+        com.faktocraft.common.block.impl.logistics.MenuRequestTable.STORAGE_START,
+        com.faktocraft.common.block.impl.logistics.BlockEntityRequestTable.STORAGE_SLOTS + 36);
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuCrusher.class, M2Registry.CRUSHER_MENU,
+        CrushingCategory.TYPE, BlockEntityCrusher.INPUT_SLOT, 1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuCompressor.class,
+        M2Registry.COMPRESSOR_MENU, CompressingCategory.TYPE, BlockEntityCompressor.INPUT_SLOT, 1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuExtractor.class, M2Registry.EXTRACTOR_MENU,
+        ExtractingCategory.TYPE, BlockEntityExtractor.INPUT_SLOT, 1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuSawmill.class, M2Registry.SAWMILL_MENU,
+        SawingCategory.TYPE, BlockEntitySawmill.INPUT_SLOT, 1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuAlloySmelter.class,
+        M3Registry.ALLOY_SMELTER_MENU, AlloySmeltingCategory.TYPE, BlockEntityAlloySmelter.INPUT_SLOT_0, 3));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(
         com.faktocraft.common.block.impl.machines.alloy_smelter.MenuCoalAlloySmelter.class,
-        M3Registry.COAL_ALLOY_SMELTER_MENU, AlloySmeltingCategory.TYPE, BlockEntityAlloySmelter.INPUT_SLOT_0, 3, 0,
-        37);
-    registration.addRecipeTransferHandler(
+        M3Registry.COAL_ALLOY_SMELTER_MENU, AlloySmeltingCategory.TYPE, BlockEntityAlloySmelter.INPUT_SLOT_0, 3));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(
         com.faktocraft.common.block.impl.machines.alloy_smelter.MenuCombustionAlloySmelter.class,
-        M3Registry.COMBUSTION_ALLOY_SMELTER_MENU, AlloySmeltingCategory.TYPE, BlockEntityAlloySmelter.INPUT_SLOT_0, 3,
-        0, 37);
-    registration.addRecipeTransferHandler(MenuCircuitAssembler.class, M3Registry.CIRCUIT_ASSEMBLER_MENU,
-        CircuitAssemblingCategory.TYPE, BlockEntityCircuitAssembler.INPUT_SLOT_0, 3, 0, 37);
-    registration.addRecipeTransferHandler(MenuRecycler.class, M2Registry.RECYCLER_MENU, RecyclingCategory.TYPE,
-        BlockEntityRecycler.INPUT_SLOT, 1, 1, 37);
-    registration.addRecipeTransferHandler(MenuFluidEnricher.class, M3Registry.FLUID_ENRICHER_MENU,
-        FluidEnrichingCategory.TYPE, BlockEntityFluidEnricher.INPUT_SLOT, 1, 1, 37);
-    registration.addRecipeTransferHandler(MenuOreWashingPlant.class, M3Registry.ORE_WASHING_PLANT_MENU,
-        OreWashingCategory.TYPE, BlockEntityOreWashingPlant.INPUT_SLOT, 1, 1, 37);
-    registration.addRecipeTransferHandler(MenuPolymerizer.class, M3Registry.POLYMERIZER_MENU,
-        PolymerizingCategory.TYPE, BlockEntityPolymerizer.INPUT_SLOT, 1, 1, 37);
-    registration.addRecipeTransferHandler(MenuThermalCentrifuge.class, M3Registry.THERMAL_CENTRIFUGE_MENU,
-        ThermalCentrifugingCategory.TYPE, BlockEntityThermalCentrifuge.INPUT_SLOT, 1, 1, 37);
-    registration.addRecipeTransferHandler(MenuScanner.class, M4Registry.SCANNER_MENU, ScannerCategory.TYPE,
-        BlockEntityScanner.INPUT_SLOT, 1, 1, 37);
-    registration.addRecipeTransferHandler(MenuMetalFormer.class, M3Registry.METAL_FORMER_MENU, RollingCategory.TYPE,
-        BlockEntityMetalFormer.INPUT_SLOT, 1, 1, 37);
-    registration.addRecipeTransferHandler(MenuMetalFormer.class, M3Registry.METAL_FORMER_MENU, CuttingCategory.TYPE,
-        BlockEntityMetalFormer.INPUT_SLOT, 1, 1, 37);
-    registration.addRecipeTransferHandler(MenuMetalFormer.class, M3Registry.METAL_FORMER_MENU, ExtrudingCategory.TYPE,
-        BlockEntityMetalFormer.INPUT_SLOT, 1, 1, 37);
+        M3Registry.COMBUSTION_ALLOY_SMELTER_MENU, AlloySmeltingCategory.TYPE, BlockEntityAlloySmelter.INPUT_SLOT_0,
+        3));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuCircuitAssembler.class,
+        M3Registry.CIRCUIT_ASSEMBLER_MENU, CircuitAssemblingCategory.TYPE, BlockEntityCircuitAssembler.INPUT_SLOT_0,
+        3));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuRecycler.class, M2Registry.RECYCLER_MENU,
+        RecyclingCategory.TYPE, BlockEntityRecycler.INPUT_SLOT, 1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuFluidEnricher.class,
+        M3Registry.FLUID_ENRICHER_MENU, FluidEnrichingCategory.TYPE, BlockEntityFluidEnricher.INPUT_SLOT, 1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuOreWashingPlant.class,
+        M3Registry.ORE_WASHING_PLANT_MENU, OreWashingCategory.TYPE, BlockEntityOreWashingPlant.INPUT_SLOT, 1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuPolymerizer.class,
+        M3Registry.POLYMERIZER_MENU, PolymerizingCategory.TYPE, BlockEntityPolymerizer.INPUT_SLOT, 1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuThermalCentrifuge.class,
+        M3Registry.THERMAL_CENTRIFUGE_MENU, ThermalCentrifugingCategory.TYPE, BlockEntityThermalCentrifuge.INPUT_SLOT,
+        1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuScanner.class, M4Registry.SCANNER_MENU,
+        ScannerCategory.TYPE, BlockEntityScanner.INPUT_SLOT, 1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuMetalFormer.class,
+        M3Registry.METAL_FORMER_MENU, RollingCategory.TYPE, BlockEntityMetalFormer.INPUT_SLOT, 1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuMetalFormer.class,
+        M3Registry.METAL_FORMER_MENU, CuttingCategory.TYPE, BlockEntityMetalFormer.INPUT_SLOT, 1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuMetalFormer.class,
+        M3Registry.METAL_FORMER_MENU, ExtrudingCategory.TYPE, BlockEntityMetalFormer.INPUT_SLOT, 1));
   }
 
   @Override

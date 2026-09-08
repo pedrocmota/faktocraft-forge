@@ -6,7 +6,7 @@
    "item": "faktocraft:electronic_circuit"
   },
   "h": {
-   "item": "minecraft:chest"
+   "tag": "forge:chests/wooden"
   },
   "p": {
    "item": "faktocraft:stone_pipe"

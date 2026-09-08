@@ -812,19 +812,23 @@ public class FaktocraftBlockEntity extends BlockEntity {
     return total;
   }
 
+  protected void awardStoredExperience(ServerLevel serverLevel) {
+    float storedExp = getStoredExperience();
+    if (storedExp > 0) {
+      Vec3 pos = Vec3.atCenterOf(getBlockPos());
+      int fullExp = Mth.floor(storedExp);
+      float fraction = Mth.frac(storedExp);
+      if (fraction != 0.0F && Math.random() < fraction) {
+        fullExp++;
+      }
+      ExperienceOrb.award(serverLevel, pos, fullExp);
+    }
+    recipesUsed.clear();
+  }
+
   public void collectExp(Player player) {
     if (level instanceof ServerLevel serverLevel) {
-      float storedExp = getStoredExperience();
-      if (storedExp > 0) {
-        Vec3 pos = Vec3.atCenterOf(getBlockPos());
-        int fullExp = Mth.floor(storedExp);
-        float fraction = Mth.frac(storedExp);
-        if (fraction != 0.0F && Math.random() < fraction) {
-          fullExp++;
-        }
-        ExperienceOrb.award(serverLevel, pos, fullExp);
-      }
-      recipesUsed.clear();
+      awardStoredExperience(serverLevel);
       updateBlockState();
     }
   }
@@ -846,6 +850,9 @@ public class FaktocraftBlockEntity extends BlockEntity {
   public void onBreakServer() {
     if (level == null) {
       return;
+    }
+    if (hasExp && !recipesUsed.isEmpty() && level instanceof ServerLevel serverLevel) {
+      awardStoredExperience(serverLevel);
     }
     List<ItemStack> drops = new ArrayList<>();
     if (hasInventory) {

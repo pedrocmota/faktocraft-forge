@@ -9,7 +9,7 @@
       "item": "minecraft:glass"
     },
     "r": {
-      "item": "faktocraft:rubber"
+      "tag": "forge:rubber"
     },
     "e": {
       "item": "faktocraft:electric_motor"

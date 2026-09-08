@@ -66,7 +66,7 @@ public final class DebugValveTest {
       log("MUNDO RECARREGADO (relog real). estado: manual{" + amounts(level, 0)
           + "} redstone{" + amounts(level, 10) + "}");
     }
-    for (int z : new int[] {0, 10}) {
+    for (int z : new int[] { 0, 10 }) {
       BlockEntityFluidPipe pipeA = pipeAt(level, 0, z);
       BlockEntityFluidPipe pipeB = pipeAt(level, 1, z);
       BlockEntityFluidPipe pipeC = pipeAt(level, 2, z);

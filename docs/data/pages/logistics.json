@@ -185,6 +185,11 @@
       "style": "tip",
       "en": "Pipes are transparent **on purpose**: watching the flow is the best debugging tool the network has.",
       "pt": "Os tubos são transparentes **de propósito**: ver o fluxo é a melhor ferramenta de depuração da rede."
+    },
+    {
+      "type": "callout",
+      "en": "Logistics pipes and chassis can run inside walls: bore the block with the [Hole Drill](#/energy) and place the pipe on the bored block.",
+      "pt": "Tubos e chassis logísticos podem correr por dentro de paredes: fure o bloco com a [Furadeira](#/energy) e coloque o tubo no bloco furado."
     }
   ]
 }

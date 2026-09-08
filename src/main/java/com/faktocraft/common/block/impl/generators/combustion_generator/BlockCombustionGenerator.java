@@ -3,6 +3,7 @@ package com.faktocraft.common.block.impl.generators.combustion_generator;
 import com.faktocraft.common.block.BlockElectricMachine;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.fluid.ModFluids;
+import com.faktocraft.common.interfaces.block.IGenerationInfo;
 import com.faktocraft.common.interfaces.block.IHasMenu;
 import com.faktocraft.common.util.FluidInteractionHelper;
 import net.minecraft.core.BlockPos;
@@ -17,7 +18,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockCombustionGenerator extends BlockElectricMachine implements IHasMenu {
+public class BlockCombustionGenerator extends BlockElectricMachine implements IHasMenu, IGenerationInfo {
+
+  @Override
+  public void appendGenerationInfo(java.util.List<net.minecraft.network.chat.Component> tooltip) {
+    com.faktocraft.common.config.ServerConfig config = com.faktocraft.common.config.ModConfig.server();
+    tooltip.add(IGenerationInfo.line("generation_with",
+        net.minecraft.network.chat.Component.translatable("fluid_type.faktocraft.fuel"),
+        IGenerationInfo.rate(config.combustion_generator_fuel_tick_generate)));
+    tooltip.add(IGenerationInfo.line("generation_with",
+        net.minecraft.network.chat.Component.translatable("fluid_type.faktocraft.biogas"),
+        IGenerationInfo.rate(config.combustion_generator_biogas_tick_generate)));
+  }
 
   public BlockCombustionGenerator(Properties properties) {
     super(EnergyTier.MEDIUM, properties);

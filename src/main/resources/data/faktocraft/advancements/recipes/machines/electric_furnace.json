@@ -30,9 +30,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "minecraft:redstone"
-            ]
+            "tag": "forge:dusts/redstone"
           }
         ]
       }

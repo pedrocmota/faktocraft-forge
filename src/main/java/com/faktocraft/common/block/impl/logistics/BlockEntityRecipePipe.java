@@ -16,7 +16,7 @@ import java.util.List;
 
 public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
 
-  public static final int MAX_RECIPES = 4096;
+  public static final int MAX_RECIPES = 256;
   public static final int MAX_INPUTS = 12;
   public static final int MAX_OUTPUTS = 4;
   public static final int MIN_INPUTS = 3;
@@ -34,6 +34,12 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
 
   public static int outputIndex(int io) {
     return -1 - io;
+  }
+
+  public static boolean isValidIo(int io) {
+    return isOutputId(io)
+        ? io >= outputId(MAX_OUTPUTS - 1) && io <= outputId(0)
+        : io < MAX_INPUTS;
   }
 
   public static final class Io {
@@ -106,7 +112,11 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
       }
     }
 
+    @Nullable
     public Io io(int ioId) {
+      if (!isValidIo(ioId)) {
+        return null;
+      }
       return isOutputId(ioId) ? outputs[outputIndex(ioId)] : inputs[ioId];
     }
 
@@ -154,6 +164,7 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
   }
 
   private final List<MachineRecipe> recipes = new ArrayList<>();
+  private int recipesVersion;
 
   public BlockEntityRecipePipe(BlockPos pos, BlockState state) {
     super(LogisticsRegistry.RECIPE_PIPE_BLOCK_ENTITY, pos, state);
@@ -166,6 +177,10 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
 
   public int recipeCount() {
     return recipes.size();
+  }
+
+  public int recipesVersion() {
+    return recipesVersion;
   }
 
   @Nullable
@@ -206,10 +221,10 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
 
   public void setIo(int recipe, int ioId, ItemStack stack) {
     MachineRecipe entry = recipe(recipe);
-    if (entry == null) {
+    Io io = entry != null ? entry.io(ioId) : null;
+    if (io == null) {
       return;
     }
-    Io io = entry.io(ioId);
     if (stack.isEmpty()) {
       io.clear();
     } else {
@@ -224,19 +239,17 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
   public void setIo(int recipe, int ioId, ItemStack stack, int count) {
     setIo(recipe, ioId, stack);
     MachineRecipe entry = recipe(recipe);
-    if (entry != null && !stack.isEmpty()) {
-      entry.io(ioId).count = Math.max(1, Math.min(6400, count));
+    Io io = entry != null ? entry.io(ioId) : null;
+    if (io != null && !stack.isEmpty()) {
+      io.count = Math.max(1, Math.min(6400, count));
       changed();
     }
   }
 
   public void adjustCount(int recipe, int ioId, int delta) {
     MachineRecipe entry = recipe(recipe);
-    if (entry == null) {
-      return;
-    }
-    Io io = entry.io(ioId);
-    if (!io.isEmpty()) {
+    Io io = entry != null ? entry.io(ioId) : null;
+    if (io != null && !io.isEmpty()) {
       io.count = Math.max(1, Math.min(6400, io.count + delta));
       changed();
     }
@@ -248,7 +261,7 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
       return;
     }
     Io io = entry.io(ioId);
-    if (io.isEmpty()) {
+    if (io == null || io.isEmpty()) {
       return;
     }
     List<String> tags = io.stack.getTags().map(key -> key.location().toString()).sorted().toList();
@@ -278,10 +291,10 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
 
   public void bind(int recipe, int ioId, int slot, String blockId, int slotCount) {
     MachineRecipe entry = recipe(recipe);
-    if (entry == null) {
+    Io io = entry != null ? entry.io(ioId) : null;
+    if (io == null) {
       return;
     }
-    Io io = entry.io(ioId);
     if (slot < 0) {
       io.clearBinding();
     } else {
@@ -293,13 +306,12 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
   }
 
   public void changed() {
+    recipesVersion++;
     setChanged();
     sync();
   }
 
-  @Override
-  protected void saveAdditional(CompoundTag tag) {
-    super.saveAdditional(tag);
+  public void saveRecipes(CompoundTag tag) {
     ListTag list = new ListTag();
     for (MachineRecipe recipe : recipes) {
       list.add(recipe.save());
@@ -307,13 +319,33 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
     tag.put("recipes", list);
   }
 
-  @Override
-  public void load(CompoundTag tag) {
-    super.load(tag);
+  public void loadRecipes(CompoundTag tag) {
     recipes.clear();
     ListTag list = tag.getList("recipes", Tag.TAG_COMPOUND);
     for (int i = 0; i < Math.min(list.size(), MAX_RECIPES); i++) {
       recipes.add(MachineRecipe.load(list.getCompound(i)));
     }
+    recipesVersion++;
+  }
+
+  @Override
+  protected void saveAdditional(CompoundTag tag) {
+    super.saveAdditional(tag);
+    saveRecipes(tag);
+  }
+
+  @Override
+  public void load(CompoundTag tag) {
+    super.load(tag);
+    if (tag.contains("recipes")) {
+      loadRecipes(tag);
+    }
+  }
+
+  @Override
+  public CompoundTag getUpdateTag() {
+    CompoundTag tag = new CompoundTag();
+    super.saveAdditional(tag);
+    return tag;
   }
 }

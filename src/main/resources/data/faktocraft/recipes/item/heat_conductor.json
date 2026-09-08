@@ -6,7 +6,7 @@
       "tag": "forge:plates/copper"
     },
     "r": {
-      "item": "faktocraft:rubber"
+      "tag": "forge:rubber"
     }
   },
   "pattern": [

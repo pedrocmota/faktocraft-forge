@@ -404,7 +404,7 @@ public final class LogisticsPlanner {
           remaining[d]--;
         } else {
           for (ItemKey option : ingredients.get(c).options()) {
-            waiting.computeIfAbsent(option, key -> new ArrayList<>()).add(new int[] {d, c});
+            waiting.computeIfAbsent(option, key -> new ArrayList<>()).add(new int[] { d, c });
           }
         }
       }

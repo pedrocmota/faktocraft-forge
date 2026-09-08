@@ -15,13 +15,13 @@
       "en": [
         "Place two or more anchors and power them.",
         "Link them using a **Teleport Card**: register the destination on the card and bind it to the anchor.",
-        "Stand on an anchor and activate it to jump to its destination.",
+        "Stand on an anchor and crouch (or pulse it with redstone) to start the jump: particles rise around you while the portal builds up for about 5 seconds, then you are sent through. Moving or taking damage cancels it.",
         "The anchor refuses to send you into a blocked destination - no teleporting into walls."
       ],
       "pt": [
         "Coloque duas ou mais âncoras e alimente-as.",
         "Vincule-as com um **Cartão de Teleporte**: registre o destino no cartão e associe-o à âncora.",
-        "Fique sobre uma âncora e ative-a para saltar ao destino.",
+        "Fique sobre uma âncora e agache (ou dê um pulso de redstone) para iniciar o salto: partículas sobem ao seu redor enquanto o portal carrega por uns 5 segundos, e então você é enviado. Mover-se ou tomar dano cancela.",
         "A âncora se recusa a te mandar para um destino obstruído - nada de teleportar para dentro de parede."
       ]
     },
@@ -43,6 +43,19 @@
         },
         {
           "name": {
+            "en": "Dimensional Teleport Anchor",
+            "pt": "Âncora de Teleporte Dimensional"
+          },
+          "icon": {
+            "block": {
+              "top": "block/misc/dimensional_teleport_anchor_top",
+              "front": "block/misc/dimensional_teleport_anchor_side",
+              "side": "block/misc/dimensional_teleport_anchor_side"
+            }
+          }
+        },
+        {
+          "name": {
             "en": "Teleport Card",
             "pt": "Cartão de Teleporte"
           },
@@ -50,6 +63,31 @@
             "item": "item/crafting/teleport_card"
           }
         }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Crossing dimensions",
+      "pt": "Atravessando dimensões"
+    },
+    {
+      "type": "p",
+      "en": "A regular anchor only links to anchors in its own dimension. The **Dimensional Teleport Anchor** - an upgrade of the regular anchor built with natural uranium, an iridium plate and an eye of ender - can also link to anchors in the Nether or the End. The teleport card remembers the dimension it was recorded in, so the linking steps are exactly the same.",
+      "pt": "Uma âncora comum só se vincula a âncoras da própria dimensão. A **Âncora de Teleporte Dimensional** - um aprimoramento da âncora comum feito com urânio natural, uma placa de irídio e um olho de ender - também se vincula a âncoras no Nether ou no End. O cartão de teleporte lembra a dimensão em que foi gravado, então os passos de vinculação são exatamente os mesmos."
+    },
+    {
+      "type": "list",
+      "en": [
+        "Jumps between dimensions cost a flat amount of energy instead of a distance price (configurable).",
+        "Both ends must be dimensional anchors for the link to work in both directions; otherwise the far side is one-way and has to be linked from there.",
+        "While someone stands on an anchor, the area around its destination is pre-loaded for a few seconds, so you arrive with the chunks already rendered - no chunk loader needed on the far side.",
+        "The dimensional anchor charges and flashes in purple instead of cyan."
+      ],
+      "pt": [
+        "Saltos entre dimensões custam um valor fixo de energia em vez de preço por distância (configurável).",
+        "As duas pontas precisam ser âncoras dimensionais para o vínculo funcionar nos dois sentidos; senão o lado de lá fica em mão única e precisa ser vinculado de lá.",
+        "Enquanto alguém está sobre uma âncora, a área em volta do destino é pré-carregada por alguns segundos, então você chega com os chunks já renderizados - sem precisar de carregador de chunks do outro lado.",
+        "A âncora dimensional carrega e brilha em roxo em vez de ciano."
       ]
     },
     {

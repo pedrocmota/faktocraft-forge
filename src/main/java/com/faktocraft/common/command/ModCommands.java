@@ -51,7 +51,7 @@ public final class ModCommands {
                     IntegerArgumentType.getInteger(c, "raioChunks")))))
         .then(Commands.literal("locatepocket")
             .executes(c -> locatePocket(c.getSource(), 1000))
-            .then(Commands.argument("raioChunks", IntegerArgumentType.integer(16, 5000))
+            .then(Commands.argument("raioChunks", IntegerArgumentType.integer(16, 1024))
                 .executes(c -> locatePocket(c.getSource(),
                     IntegerArgumentType.getInteger(c, "raioChunks")))))
         .then(Commands.literal("locateore")
@@ -142,7 +142,8 @@ public final class ModCommands {
     }
     List<Predicted> found = new ArrayList<>();
 
-    outer: for (int r = 0; r <= chunkRadius; r++) {
+    outer:
+    for (int r = 0; r <= chunkRadius; r++) {
       for (int cx = centerChunk.x - r; cx <= centerChunk.x + r; cx++) {
         for (int cz = centerChunk.z - r; cz <= centerChunk.z + r; cz++) {
           if (Math.max(Math.abs(cx - centerChunk.x), Math.abs(cz - centerChunk.z)) != r) {

@@ -87,6 +87,8 @@ public final class ModItems {
   public static final Item RUBBER_SHEET = fromBlock(ModBlocks.RUBBER_SHEET);
 
   public static final Item TELEPORT_ANCHOR = registerBlockItem(ModBlocks.TELEPORT_ANCHOR, Rarity.RARE);
+  public static final Item DIMENSIONAL_TELEPORT_ANCHOR = registerBlockItem(ModBlocks.DIMENSIONAL_TELEPORT_ANCHOR,
+      Rarity.EPIC);
 
   public static final Item RUBBER_LOG = fromBlock(ModBlocks.RUBBER_LOG);
   public static final Item RUBBER_WOOD = fromBlock(ModBlocks.RUBBER_WOOD);
@@ -117,7 +119,6 @@ public final class ModItems {
   public static final Item MIXED_METAL_INGOT = register("mixed_metal_ingot", MaterialItem::new);
   public static final Item SILVER_INGOT = register("silver_ingot", MaterialItem::new);
   public static final Item LEAD_INGOT = register("lead_ingot", MaterialItem::new);
-  public static final Item URANIUM_INGOT = register("uranium_ingot", MaterialItem::new);
 
   public static final Item TIN_DUST = register("tin_dust", MaterialItem::new);
   public static final Item COPPER_DUST = register("copper_dust", MaterialItem::new);
@@ -133,7 +134,6 @@ public final class ModItems {
   public static final Item PURIFIED_IRON = register("purified_iron", MaterialItem::new);
   public static final Item PURIFIED_GOLD = register("purified_gold", MaterialItem::new);
   public static final Item PURIFIED_LEAD = register("purified_lead", MaterialItem::new);
-  public static final Item PURIFIED_URANIUM = register("purified_uranium", MaterialItem::new);
   public static final Item PURIFIED_SILVER = register("purified_silver", MaterialItem::new);
 
   public static final Item TIN_CHUNK = register("tin_chunk", MaterialItem::new);
@@ -141,7 +141,6 @@ public final class ModItems {
   public static final Item IRON_CHUNK = register("iron_chunk", MaterialItem::new);
   public static final Item GOLD_CHUNK = register("gold_chunk", MaterialItem::new);
   public static final Item LEAD_CHUNK = register("lead_chunk", MaterialItem::new);
-  public static final Item URANIUM_CHUNK = register("uranium_chunk", MaterialItem::new);
   public static final Item SILVER_CHUNK = register("silver_chunk", MaterialItem::new);
 
   public static final Item COAL_DUST = register("coal_dust", MaterialItem::new);
@@ -303,6 +302,8 @@ public final class ModItems {
   public static final Item IRIDIUM_DRILL = register("iridium_drill", p -> new MiningDrill(ModTiers.IRIDIUM, 1, -2.8F,
       p.rarity(Rarity.RARE), 0, 300000, 200, 400, EnergyType.RECEIVE, EnergyTier.HIGH));
 
+  public static final Item HOLE_DRILL = register("hole_drill",
+      com.faktocraft.common.item.impl.tools.HoleDrill::new);
   public static final Item ELECTRIC_HOE = register("electric_hoe", p -> new ElectricHoe(Tiers.IRON, -2, -1.0F, p,
       0, 10000, 50, 100, 50, EnergyType.RECEIVE, EnergyTier.LOW));
   public static final Item WIND_METER = register("wind_meter",

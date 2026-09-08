@@ -41,6 +41,7 @@ public class ModSounds {
   public static final SoundEvent WRENCH = register("item.wrench");
   public static final SoundEvent ELECTRIC_WRENCH = register("item.electric_wrench");
   public static final SoundEvent PLUNGER = register("item.plunger");
+  public static final SoundEvent HOLE_DRILL = register("item.hole_drill");
 
   public static final SoundEvent NIGHT_VISION = register("player.night_vision");
   public static final SoundEvent MATTER_FABRICATOR_AMPLIFIED = register("extra.matter_fabricator_amplified");

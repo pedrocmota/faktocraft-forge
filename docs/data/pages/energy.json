@@ -159,6 +159,35 @@
     },
     {
       "type": "h",
+      "en": "Running cables through walls",
+      "pt": "Passando cabos por paredes"
+    },
+    {
+      "type": "p",
+      "en": "The **Hole Drill** opens one side of any plain solid block: hold right-click on that side for a few seconds and the block becomes a bored block that keeps its looks. Each extra side you drill joins the first at the center, so top and bottom make a straight passage while top and one side make an elbow. Once two or more sides are open, place a cable or pipe on the bored block and it slots inside - the wall shows the cable coming out of a neat hole on each open side. Break the cable and the bored block stays; break the bored block itself to get the original block back.",
+      "pt": "A **Furadeira** abre um lado de qualquer bloco sólido comum: segure o botão direito nesse lado por alguns segundos e o bloco vira um bloco furado que mantém a aparência. Cada lado extra que você fura se encontra com o primeiro no centro: cima e baixo formam uma passagem reta, cima e um lado formam um L. Com dois ou mais lados abertos, coloque um cabo ou tubo no bloco furado e ele encaixa por dentro - a parede mostra o cabo saindo por um furo limpo em cada lado aberto. Quebre o cabo e o bloco furado fica; quebre o próprio bloco furado para recuperar o bloco original."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Hole Drill",
+            "pt": "Furadeira"
+          },
+          "icon": {
+            "item": "item/tool/electric/hole_drill"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "Works with energy cables, fluid pipes and logistics pipes. Blocks with inventories, bedrock, obsidian, ice and other special blocks refuse the drill.",
+      "pt": "Funciona com cabos de energia, tubos de fluido e tubos logísticos. Blocos com inventário, bedrock, obsidiana, gelo e outros blocos especiais recusam a furadeira."
+    },
+    {
+      "type": "h",
       "en": "Electrical hazards",
       "pt": "Perigos elétricos"
     },

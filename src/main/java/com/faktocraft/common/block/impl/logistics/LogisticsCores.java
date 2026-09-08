@@ -1,7 +1,9 @@
 package com.faktocraft.common.block.impl.logistics;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.event.level.LevelEvent;
 import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +28,12 @@ public final class LogisticsCores {
       if (set != null) {
         set.remove(core);
       }
+    }
+  }
+
+  public static void onLevelUnload(LevelEvent.Unload event) {
+    if (event.getLevel() instanceof ServerLevel serverLevel) {
+      CORES.remove(serverLevel);
     }
   }
 

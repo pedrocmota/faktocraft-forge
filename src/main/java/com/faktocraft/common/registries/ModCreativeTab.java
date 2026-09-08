@@ -53,10 +53,10 @@ public class ModCreativeTab {
       "metal_former", "extruder", "canning_machine",
       "circuit_assembler", "fluid_enricher", "ore_washing_plant", "distillery", "fueling_station",
       "polymerizer",
-      "geological_scanner", "quarry", "landmark",
+      "geological_scanner", "quarry", "landmark", "forester",
       "coal_alloy_smelter", "combustion_alloy_smelter", "alloy_smelter", "fermenter", "thermal_centrifuge",
       "luminator",
-      "matter_fabricator", "scanner", "replicator", "teleport_anchor", "chunk_loader",
+      "matter_fabricator", "scanner", "replicator", "teleport_anchor", "dimensional_teleport_anchor", "chunk_loader",
       "overclocker_upgrade", "advanced_overclocker_upgrade",
       "efficiency_upgrade", "advanced_efficiency_upgrade",
       "tension_upgrade_mk1", "tension_upgrade_mk2", "tension_upgrade_mk3",
@@ -65,6 +65,7 @@ public class ModCreativeTab {
   private static final List<String> ENERGY_PROGRESSION = List.of(
       "generator", "wind_generator", "geo_generator", "combustion_generator",
       "solar_generator", "advanced_solar_generator", "hybrid_solar_generator", "quantum_solar_generator",
+      "stellar_solar_generator",
       "wind_rotor", "advanced_wind_rotor",
       "battery_box", "cesu", "mfe", "mfsu",
       "charge_pad_battery_box", "charge_pad_cesu", "charge_pad_mfe", "charge_pad_mfsu",
@@ -82,7 +83,7 @@ public class ModCreativeTab {
       "hammer", "cutter", "treetap", "wrench", "toolbox",
       "electric_treetap", "electric_wrench",
       "bronze_sword", "bronze_pickaxe", "bronze_axe", "bronze_shovel", "bronze_hoe",
-      "mining_drill", "diamond_drill", "iridium_drill",
+      "mining_drill", "diamond_drill", "iridium_drill", "hole_drill",
       "chainsaw", "diamond_chainsaw", "iridium_chainsaw",
       "electric_hoe", "multi_tool", "nano_saber",
       "wind_meter", "ie_meter", "prospector", "plunger",
@@ -220,6 +221,7 @@ public class ModCreativeTab {
 
   private static final Map<String, BooleanSupplier> CONTENT_TOGGLES = Map.of(
       "teleport_anchor", BasicConfig::teleportAnchorEnabled,
+      "dimensional_teleport_anchor", BasicConfig::teleportAnchorEnabled,
       "chunk_loader", BasicConfig::chunkLoaderEnabled);
 
   public static boolean isUnreleased(Item item) {

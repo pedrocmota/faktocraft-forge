@@ -888,4 +888,54 @@ public class EnergyNetworkGameTest {
       helper.succeed();
     });
   }
+
+  @GameTest(template = TEMPLATE, timeoutTicks = 300)
+  public static void breakerSideCableIsNotBurned(GameTestHelper helper) {
+    BlockPos mfe = new BlockPos(1, 1, 1);
+    BlockPos transformer = new BlockPos(6, 1, 1);
+    BlockPos breaker = new BlockPos(5, 1, 1);
+    BlockPos side = new BlockPos(5, 1, 2);
+    BlockPos sideEnd = new BlockPos(5, 1, 3);
+    place(helper, mfe, M1Registry.MFE, Direction.EAST);
+    placeTransformer(helper, transformer, M1Registry.HIGH_TRANSFORMER, Direction.EAST);
+    placeCable(helper, new BlockPos(2, 1, 1), ModBlocks.GOLD_CABLE_INSULATED);
+    placeCable(helper, new BlockPos(3, 1, 1), ModBlocks.HV_CABLE_INSULATED);
+    placeCable(helper, new BlockPos(4, 1, 1), ModBlocks.HV_CABLE_INSULATED);
+    placeBreaker(helper, breaker, Direction.Axis.X, Direction.UP);
+    placeCable(helper, side, ModBlocks.COPPER_CABLE);
+    placeCable(helper, sideEnd, ModBlocks.COPPER_CABLE);
+    helper.runAfterDelay(10, () -> {
+      BlockPos abs = helper.absolutePos(side);
+      BlockState wet = helper.getLevel().getBlockState(abs)
+          .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED, true);
+      helper.getLevel().setBlock(abs, wet, 3);
+    });
+    helper.runAfterDelay(15, () -> {
+      var network = com.faktocraft.common.energy.provider.EnergyCore.get(helper.getLevel()).getNetworks()
+          .getNetwork(helper.absolutePos(breaker));
+      if (network == null) {
+        helper.fail("breaker has no network");
+        return;
+      }
+      if (network.getTransmitters().contains(helper.absolutePos(side))) {
+        helper.fail("breaker network lists the side cable as a transmitter");
+      }
+    });
+    helper.runAfterDelay(20, () -> fillEnergy(helper, mfe));
+    helper.runAfterDelay(150, () -> {
+      for (BlockPos rel : new BlockPos[] { side, sideEnd }) {
+        BlockState sideState = helper.getLevel().getBlockState(helper.absolutePos(rel));
+        if (!(sideState.getBlock() instanceof com.faktocraft.common.block.impl.cable.BlockCable)) {
+          helper.fail("low tier cable on the breaker side face was burned: " + sideState);
+          return;
+        }
+      }
+      if (!(helper.getBlockEntity(transformer) instanceof FaktocraftBlockEntity be)
+          || be.getEnergyStorage().energyStored() <= 0) {
+        helper.fail("transformer behind the breaker never charged");
+        return;
+      }
+      helper.succeed();
+    });
+  }
 }

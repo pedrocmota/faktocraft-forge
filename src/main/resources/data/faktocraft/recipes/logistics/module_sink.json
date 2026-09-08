@@ -9,7 +9,7 @@
    "tag": "forge:dusts/redstone"
   },
   {
-   "item": "minecraft:chest"
+   "tag": "forge:chests/wooden"
   }
  ],
  "result": {

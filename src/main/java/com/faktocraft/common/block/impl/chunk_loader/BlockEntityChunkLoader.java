@@ -26,12 +26,13 @@ public class BlockEntityChunkLoader extends FaktocraftBlockEntity implements IEn
   public static final int STATUS_ACTIVE = 1;
   public static final int STATUS_NO_ENERGY = 2;
   public static final int STATUS_LIMIT = 3;
+  public static final int STATUS_CHARGING = 4;
 
   private static final int REENGAGE_SECONDS = 30;
 
   public static final int[][] CHUNK_OFFSETS = {
-    {0, 0}, {0, -1}, {1, 0}, {0, 1}, {-1, 0},
-    {1, -1}, {1, 1}, {-1, 1}, {-1, -1}};
+      { 0, 0 }, { 0, -1 }, { 1, 0 }, { 0, 1 }, { -1, 0 },
+      { 1, -1 }, { 1, 1 }, { -1, 1 }, { -1, -1 } };
 
   private boolean enabledByPlayer = false;
   private int chunkCount = DEFAULT_CHUNKS;
@@ -41,6 +42,7 @@ public class BlockEntityChunkLoader extends FaktocraftBlockEntity implements IEn
   private boolean ticketsVerified = false;
   private int syncedActiveCount = 0;
   private int syncedMaxActive = 0;
+  private int syncedChargePercent = 0;
 
   public BlockEntityChunkLoader(BlockPos pos, BlockState state) {
     super(ChunkLoaderRegistry.CHUNK_LOADER_BLOCK_ENTITY, pos, state);
@@ -121,6 +123,18 @@ public class BlockEntityChunkLoader extends FaktocraftBlockEntity implements IEn
     syncedMaxActive = value;
   }
 
+  public int getChargePercent() {
+    if (level != null && level.isClientSide()) {
+      return syncedChargePercent;
+    }
+    long floor = Math.max(1, reengageFloor(tickCost()));
+    return (int) Math.min(100, getEnergyStorage().energyStored() * 100L / floor);
+  }
+
+  public void setChargePercentClient(int value) {
+    syncedChargePercent = value;
+  }
+
   @Override
   public void tickWork(BlockState state) {
     if (!(level instanceof ServerLevel serverLevel)) {
@@ -150,7 +164,8 @@ public class BlockEntityChunkLoader extends FaktocraftBlockEntity implements IEn
         newStatus = STATUS_LIMIT;
       } else {
         int cost = tickCost();
-        boolean paying = getEnergyStorage().consumeEnergy(cost, true) == cost
+        boolean affordable = getEnergyStorage().consumeEnergy(cost, true) == cost;
+        boolean paying = affordable
             && (forcedCount > 0 || getEnergyStorage().energyStored() >= reengageFloor(cost));
         if (paying) {
           getEnergyStorage().consumeEnergy(cost, false);
@@ -159,7 +174,7 @@ public class BlockEntityChunkLoader extends FaktocraftBlockEntity implements IEn
           newStatus = STATUS_ACTIVE;
         } else {
           stopForcing(serverLevel, false);
-          newStatus = STATUS_NO_ENERGY;
+          newStatus = affordable ? STATUS_CHARGING : STATUS_NO_ENERGY;
         }
       }
     }

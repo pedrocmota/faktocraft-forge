@@ -151,7 +151,7 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
         revision++;
         setChanged();
       } else {
-        next = new int[] {manualCx, manualCz};
+        next = new int[] { manualCx, manualCz };
       }
     }
     if (next == null) {
@@ -229,7 +229,7 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
           int cx = center.x + dx;
           int cz = center.z + dz;
           if (!scans.contains(scanKey(cx, cz))) {
-            return new int[] {cx, cz};
+            return new int[] { cx, cz };
           }
         }
       }

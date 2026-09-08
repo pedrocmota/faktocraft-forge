@@ -121,9 +121,9 @@ public class BlockQuarryFrame extends Block {
     Connector connector = Connector.NONE;
     for (Direction direction : Direction.values()) {
       BlockState neighbor = level.getBlockState(pos.relative(direction));
-      boolean linked = neighbor.is(QuarryRegistry.QUARRY_FRAME) || neighbor.is(QuarryRegistry.QUARRY);
+      boolean linked = neighbor.is(state.getBlock()) || IGantryHost.isHost(neighbor);
       state = state.setValue(CONNECTIONS.get(direction), linked);
-      if (connector == Connector.NONE && neighbor.is(QuarryRegistry.QUARRY)) {
+      if (connector == Connector.NONE && IGantryHost.isHost(neighbor)) {
         connector = Connector.of(direction);
       }
     }
@@ -136,7 +136,7 @@ public class BlockQuarryFrame extends Block {
   }
 
   private static boolean hasGround(LevelAccessor level, BlockPos below, BlockState ground) {
-    if (ground.isAir() || ground.hasBlockEntity() || ground.is(QuarryRegistry.QUARRY_FRAME)) {
+    if (ground.isAir() || ground.hasBlockEntity() || ground.getBlock() instanceof BlockQuarryFrame) {
       return false;
     }
     return ground.isFaceSturdy(level, below, Direction.UP);
@@ -162,9 +162,9 @@ public class BlockQuarryFrame extends Block {
   @Override
   public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
       LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-    boolean linked = neighborState.is(QuarryRegistry.QUARRY_FRAME) || neighborState.is(QuarryRegistry.QUARRY);
+    boolean linked = neighborState.is(state.getBlock()) || IGantryHost.isHost(neighborState);
     state = state.setValue(CONNECTIONS.get(direction), linked);
-    if (neighborState.is(QuarryRegistry.QUARRY)) {
+    if (IGantryHost.isHost(neighborState)) {
       state = state.setValue(CONNECTOR, Connector.of(direction));
     } else if (state.getValue(CONNECTOR).direction == direction) {
       state = state.setValue(CONNECTOR, Connector.NONE);

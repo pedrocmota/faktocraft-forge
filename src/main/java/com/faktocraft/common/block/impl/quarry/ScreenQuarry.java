@@ -139,8 +139,8 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
         4210752, false);
     int code = Math.max(0, Math.min(menu.getStatus(), STATUS_KEYS.length - 1));
     int color = switch (code) {
-      case BlockEntityQuarry.STATUS_CLEARING, BlockEntityQuarry.STATUS_FRAMING, BlockEntityQuarry.STATUS_MINING
-          -> 0x2E7D32;
+      case BlockEntityQuarry.STATUS_CLEARING, BlockEntityQuarry.STATUS_FRAMING -> 0x2E7D32;
+      case BlockEntityQuarry.STATUS_MINING -> 0x2E7D32;
       case BlockEntityQuarry.STATUS_DONE -> 0x1565C0;
       case BlockEntityQuarry.STATUS_OFF -> 4210752;
       default -> 0xB71C1C;

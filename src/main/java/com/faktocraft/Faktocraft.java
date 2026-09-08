@@ -37,6 +37,10 @@ public class Faktocraft {
     com.faktocraft.common.network.ModNetworking.init();
 
     MinecraftForge.EVENT_BUS.addListener(Faktocraft::onLevelTick);
+    MinecraftForge.EVENT_BUS.addListener(com.faktocraft.common.registries.LegacyItemRemaps::onMissingMappings);
+    MinecraftForge.EVENT_BUS.addListener(com.faktocraft.common.block.impl.forester.ForesterAreas::onSaplingGrow);
+    MinecraftForge.EVENT_BUS.addListener(com.faktocraft.common.block.impl.forester.ForesterAreas::onLevelUnload);
+    MinecraftForge.EVENT_BUS.addListener(com.faktocraft.common.block.impl.logistics.LogisticsCores::onLevelUnload);
 
     net.minecraftforge.common.world.ForgeChunkManager.setForcedChunkLoadingCallback(MODID,
         com.faktocraft.common.block.impl.chunk_loader.ChunkLoaderManager::validateTickets);
@@ -57,6 +61,7 @@ public class Faktocraft {
     com.faktocraft.common.block.impl.machines.geo_scanner.GeoScannerRegistry.register();
     com.faktocraft.common.block.impl.chunk_loader.ChunkLoaderRegistry.register();
     com.faktocraft.common.block.impl.quarry.QuarryRegistry.register();
+    com.faktocraft.common.block.impl.forester.ForesterRegistry.register();
     com.faktocraft.common.block.impl.logistics.LogisticsRegistry.register();
     com.faktocraft.common.worldgen.ModFeatures.register();
     com.faktocraft.common.registries.ModCreativeTab.register();

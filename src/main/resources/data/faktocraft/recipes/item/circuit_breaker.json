@@ -3,13 +3,13 @@
   "group": "faktocraft",
   "key": {
     "p": {
-      "item": "faktocraft:iron_plate"
+      "tag": "forge:plates/iron"
     },
     "l": {
       "item": "minecraft:lever"
     },
     "r": {
-      "item": "minecraft:redstone"
+      "tag": "forge:dusts/redstone"
     },
     "c": {
       "item": "faktocraft:copper_cable"

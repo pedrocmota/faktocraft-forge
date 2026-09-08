@@ -4,9 +4,6 @@ import com.faktocraft.common.block.impl.logistics.BlockEntityLogisticsController
 import com.faktocraft.common.block.impl.logistics.BlockEntityRequestTable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
@@ -41,14 +38,12 @@ public record PacketTaskHistoryOp(BlockPos blockPos, String dimension, int mode,
         return;
       }
 
-      ServerLevel level = player.server.getLevel(ResourceKey.create(
-          net.minecraft.core.registries.Registries.DIMENSION, new ResourceLocation(msg.dimension)));
-      if (level == null || !level.isLoaded(msg.blockPos)
-          || !(level.getBlockEntity(msg.blockPos) instanceof BlockEntityRequestTable table)) {
-        return;
-      }
       if (!(player.containerMenu instanceof com.faktocraft.common.block.impl.logistics.MenuRequestTable menu)
           || !menu.getTablePos().equals(msg.blockPos)) {
+        return;
+      }
+      BlockEntityRequestTable table = menu.getTable();
+      if (table == null || table.isRemoved()) {
         return;
       }
       BlockEntityLogisticsController core = table.findCore();

@@ -5,6 +5,9 @@ import com.faktocraft.common.recipe.impl.PolymerizingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -25,8 +28,8 @@ public class PolymerizingCategory extends AbstractRecipeCategory<PolymerizingRec
   public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "polymerizing");
   public static final RecipeType<PolymerizingRecipe> TYPE = new RecipeType<>(UID, PolymerizingRecipe.class);
 
-  private IDrawableAnimated progress;
-  private IDrawableAnimated energy;
+  private final LoadingCache<Integer, IDrawableAnimated> progress;
+  private final IDrawableAnimated energy;
 
   private final mezz.jei.api.gui.drawable.IDrawableStatic tankFrame;
   private final mezz.jei.api.gui.drawable.IDrawableStatic slotFrame;
@@ -42,14 +45,14 @@ public class PolymerizingCategory extends AbstractRecipeCategory<PolymerizingRec
     this.tankFrame = guiHelper.createDrawable(JEI_LARGE, 160, 165, 16, 37);
     this.slotFrame = guiHelper.createDrawable(JEI_LARGE, 180, 165, 18, 18);
     this.arrowBase = guiHelper.createDrawable(PROCESS, 0, 0, 24, 16);
+    this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
+        (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(duration,
+            IDrawableAnimated.StartDirection.LEFT, false)));
+    this.energy = createEnergyDrawable();
   }
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, PolymerizingRecipe recipe, IFocusGroup focuses) {
-    this.progress = guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(recipe.getDuration(),
-        IDrawableAnimated.StartDirection.LEFT, false);
-    this.energy = createEnergyDrawable();
-
     builder.addSlot(RecipeIngredientRole.INPUT, 38, 12)
         .setFluidRenderer(recipe.getFluidInput().amountMb(), false, 8, 29)
         .addFluidStack(recipe.getFluidInput().getFluid(), recipe.getFluidInput().amountMb());
@@ -70,7 +73,7 @@ public class PolymerizingCategory extends AbstractRecipeCategory<PolymerizingRec
     slotFrame.draw(graphics, 105, 18);
     arrowBase.draw(graphics, 80, 19);
 
-    this.progress.draw(graphics, 80, 19);
+    this.progress.getUnchecked(recipe.getDuration()).draw(graphics, 80, 19);
     this.energy.draw(graphics, halfX + 58, 7);
 
     if (recipe.getExperience() > 0) {

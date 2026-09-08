@@ -57,6 +57,9 @@ public class BlockEntityReplicator extends FaktocraftBlockEntity
 
   protected ScannerResult result = ScannerResult.EMPTY;
 
+  private ItemStack cachedMemoryStack = ItemStack.EMPTY;
+  private ScannerResult cachedCardResult = ScannerResult.EMPTY;
+
   public BlockEntityReplicator(BlockPos pos, BlockState state) {
     super(M4Registry.REPLICATOR_BE, pos, state);
     createEnergyStorage(0, ModConfig.server().replicator_energy_capacity, EnergyType.RECEIVE, EnergyTier.ULTRA);
@@ -68,7 +71,12 @@ public class BlockEntityReplicator extends FaktocraftBlockEntity
   public void tickWork(BlockState state) {
     boolean active = false;
 
-    ScannerResult cardResult = readCardPattern();
+    ItemStack memoryStack = getItemStackHandler().getStackInSlot(MEMORY_SLOT);
+    if (!ItemStack.matches(cachedMemoryStack, memoryStack)) {
+      cachedMemoryStack = memoryStack.copy();
+      cachedCardResult = readCardPattern(memoryStack);
+    }
+    ScannerResult cardResult = cachedCardResult;
     if (!cardResult.equals(result)) {
       result = cardResult;
       progress.setBoth(-1);
@@ -170,8 +178,7 @@ public class BlockEntityReplicator extends FaktocraftBlockEntity
     return slot == MEMORY_SLOT ? 1 : super.getCustomSlotLimit(slot);
   }
 
-  private ScannerResult readCardPattern() {
-    ItemStack memoryStack = getItemStackHandler().getStackInSlot(MEMORY_SLOT);
+  private static ScannerResult readCardPattern(ItemStack memoryStack) {
     if (memoryStack.getItem() == ModItems.MEMORY_CARD) {
       ScannerResult cardResult = ModComponentsFluids.getScannerResult(memoryStack);
       if (cardResult != null && !cardResult.isEmpty()) {

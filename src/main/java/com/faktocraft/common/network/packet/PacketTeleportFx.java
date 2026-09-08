@@ -6,15 +6,14 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
-public record PacketTeleportFx() {
-
-  public static final PacketTeleportFx INSTANCE = new PacketTeleportFx();
+public record PacketTeleportFx(boolean dimensional) {
 
   public static void encode(PacketTeleportFx msg, FriendlyByteBuf buf) {
+    buf.writeBoolean(msg.dimensional);
   }
 
   public static PacketTeleportFx decode(FriendlyByteBuf buf) {
-    return INSTANCE;
+    return new PacketTeleportFx(buf.readBoolean());
   }
 
   public static void handle(PacketTeleportFx msg, Supplier<NetworkEvent.Context> ctx) {

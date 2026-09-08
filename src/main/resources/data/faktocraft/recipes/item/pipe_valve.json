@@ -3,7 +3,7 @@
   "group": "faktocraft",
   "key": {
     "i": {
-      "item": "faktocraft:iron_plate"
+      "tag": "forge:plates/iron"
     },
     "c": {
       "item": "faktocraft:copper_plate"

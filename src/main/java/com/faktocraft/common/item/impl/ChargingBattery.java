@@ -60,7 +60,7 @@ public class ChargingBattery extends ElectricItem {
     Inventory inventory = player.getInventory();
 
     List<IEnergy> targets = new ArrayList<>();
-    for (int i = 0; i <= 9 && i < inventory.getContainerSize(); i++) {
+    for (int i = 0; i < 9 && i < inventory.getContainerSize(); i++) {
       ItemStack invStack = inventory.getItem(i);
       if (invStack == stack || invStack.isEmpty()) {
         continue;

@@ -22,6 +22,7 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
   private static final int COLOR_ACTIVE = 0xFF2E7D32;
   private static final int COLOR_NO_ENERGY = 0xFFB71C1C;
   private static final int COLOR_LIMIT = 0xFFB26A00;
+  private static final int COLOR_CHARGING = 0xFF1565C0;
 
   public ScreenChunkLoader(MenuChunkLoader container, Inventory inv, Component name) {
     super(container, inv, name);
@@ -50,20 +51,31 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
     MenuChunkLoader menu = getMenu();
 
     drawChunkGrid(graphics, menu.getChunkCount());
+    if (getBlockEntity() instanceof BlockEntityChunkLoader loader && this.minecraft != null
+        && this.minecraft.level != null
+        && com.faktocraft.client.render.ChunkBorderOverlay.isShowing(loader.getBlockPos())
+        && com.faktocraft.client.render.ChunkBorderOverlay.shownChunkCount() != menu.getChunkCount()) {
+      com.faktocraft.client.render.ChunkBorderOverlay.show(loader.getBlockPos(), menu.getChunkCount(),
+          this.minecraft.level.dimension());
+    }
 
     GuiUtil.renderScaledToFit(graphics, menu.getChunkCount() + "/" + BlockEntityChunkLoader.MAX_CHUNKS,
         127, 54, 18, COLOR_TEXT);
 
-    Component statusText = Component.translatable("gui.faktocraft.chunk_loader.status_" + switch (menu.getStatus()) {
-      case BlockEntityChunkLoader.STATUS_ACTIVE -> "active";
-      case BlockEntityChunkLoader.STATUS_NO_ENERGY -> "no_energy";
-      case BlockEntityChunkLoader.STATUS_LIMIT -> "limit";
-      default -> "off";
-    });
+    Component statusText = switch (menu.getStatus()) {
+      case BlockEntityChunkLoader.STATUS_ACTIVE -> Component.translatable("gui.faktocraft.chunk_loader.status_active");
+      case BlockEntityChunkLoader.STATUS_NO_ENERGY ->
+        Component.translatable("gui.faktocraft.chunk_loader.status_no_energy");
+      case BlockEntityChunkLoader.STATUS_LIMIT -> Component.translatable("gui.faktocraft.chunk_loader.status_limit");
+      case BlockEntityChunkLoader.STATUS_CHARGING ->
+        Component.translatable("gui.faktocraft.chunk_loader.status_charging", menu.getChargePercent());
+      default -> Component.translatable("gui.faktocraft.chunk_loader.status_off");
+    };
     int statusColor = switch (menu.getStatus()) {
       case BlockEntityChunkLoader.STATUS_ACTIVE -> COLOR_ACTIVE & 0xFFFFFF;
       case BlockEntityChunkLoader.STATUS_NO_ENERGY -> COLOR_NO_ENERGY & 0xFFFFFF;
       case BlockEntityChunkLoader.STATUS_LIMIT -> COLOR_LIMIT & 0xFFFFFF;
+      case BlockEntityChunkLoader.STATUS_CHARGING -> COLOR_CHARGING & 0xFFFFFF;
       default -> COLOR_TEXT;
     };
     GuiUtil.renderScaledToFit(graphics, statusText.getString(), 8, 48, 62, statusColor);
@@ -138,12 +150,14 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
     @Override
     protected boolean onLeftClick() {
       Minecraft minecraft = Minecraft.getInstance();
-      if (minecraft.player != null && minecraft.level != null
-          && getBlockEntity() instanceof BlockEntityChunkLoader loader) {
-        com.faktocraft.client.render.ChunkBorderOverlay.show(loader.getBlockPos(), getMenu().getChunkCount(),
-            minecraft.level.dimension());
+      if (minecraft.level != null && getBlockEntity() instanceof BlockEntityChunkLoader loader) {
+        if (com.faktocraft.client.render.ChunkBorderOverlay.isShowing(loader.getBlockPos())) {
+          com.faktocraft.client.render.ChunkBorderOverlay.hide();
+        } else {
+          com.faktocraft.client.render.ChunkBorderOverlay.show(loader.getBlockPos(), getMenu().getChunkCount(),
+              minecraft.level.dimension());
+        }
         playDownSound(minecraft.getSoundManager());
-        minecraft.player.closeContainer();
       }
       return true;
     }
@@ -160,8 +174,11 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
     @Override
     public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
       if (isMouseOver(mouseX, mouseY)) {
-        graphics.renderTooltip(GuiUtil.getFont(),
-            Component.translatable("gui.faktocraft.chunk_loader.show_border"), mouseX, mouseY);
+        boolean showing = getBlockEntity() instanceof BlockEntityChunkLoader loader
+            && com.faktocraft.client.render.ChunkBorderOverlay.isShowing(loader.getBlockPos());
+        graphics.renderTooltip(GuiUtil.getFont(), Component.translatable(showing
+            ? "gui.faktocraft.chunk_loader.hide_border"
+            : "gui.faktocraft.chunk_loader.show_border"), mouseX, mouseY);
       }
       super.renderWidgetToolTip(screen, graphics, mouseX, mouseY);
     }

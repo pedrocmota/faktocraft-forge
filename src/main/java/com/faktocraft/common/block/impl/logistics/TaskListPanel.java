@@ -119,6 +119,7 @@ public class TaskListPanel {
 
   private List<TaskRow> rowsCache = List.of();
   private final List<RowText> measureCache = new ArrayList<>();
+  private boolean dirty = true;
 
   public TaskListPanel(Minecraft minecraft, Font font, boolean showOrigin, Host host) {
     this.minecraft = minecraft;
@@ -142,6 +143,7 @@ public class TaskListPanel {
     search.setResponder(text -> {
       query = text;
       scrollOffset = 0;
+      dirty = true;
     });
     adder.accept(search);
 
@@ -150,6 +152,7 @@ public class TaskListPanel {
         typeFilter = TypeFilter.values()[(typeFilter.ordinal() + 1) % TypeFilter.values().length];
         typeButton.setMessage(typeLabel());
         scrollOffset = 0;
+        dirty = true;
       }).bounds(left + 108, top + TASKBAR_Y, 66, TASKBAR_H).build();
       adder.accept(typeButton);
     }
@@ -159,6 +162,7 @@ public class TaskListPanel {
       statusFilter = StatusFilter.values()[(statusFilter.ordinal() + 1) % StatusFilter.values().length];
       statusButton.setMessage(statusLabel());
       scrollOffset = 0;
+      dirty = true;
     }).bounds(left + statusX, top + TASKBAR_Y, statusW, TASKBAR_H).build();
     adder.accept(statusButton);
 
@@ -198,6 +202,7 @@ public class TaskListPanel {
   public void setData(List<PacketTableState.TaskLine> tasks, List<String> errors) {
     this.tasks = tasks;
     this.errors = errors;
+    dirty = true;
   }
 
   private CardType typeOf(String stateKey) {
@@ -354,7 +359,10 @@ public class TaskListPanel {
     graphics.fill(left + CARD_X + 1, top + TASKBAR_Y + 1, left + searchRight - 1,
         top + TASKBAR_Y + TASKBAR_H - 1, 0xFF1E1E1E);
 
-    refreshRowCache();
+    if (dirty) {
+      refreshRowCache();
+      dirty = false;
+    }
     int maxScroll = maxScroll();
     scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
 
@@ -503,6 +511,7 @@ public class TaskListPanel {
       if (!expanded.remove(card.id())) {
         expanded.add(card.id());
       }
+      dirty = true;
       click();
       return true;
     }

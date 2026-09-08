@@ -1,5 +1,7 @@
 package com.faktocraft.common.block;
 
+import com.faktocraft.common.cover.CoverSupport;
+import com.faktocraft.common.registries.ModBlocks;
 import com.faktocraft.common.util.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -56,11 +58,61 @@ public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.l
         state = state.setValue(ext, false);
       }
     }
+    if (coverable()) {
+      state = state.setValue(CoverSupport.COVERED, false);
+    }
     registerDefaultState(state);
   }
 
   public float getApothem() {
     return apothem;
+  }
+
+  public boolean coverable() {
+    return true;
+  }
+
+  @Override
+  @SuppressWarnings("deprecation")
+  public int getLightBlock(BlockState state, BlockGetter level, BlockPos pos) {
+    return CoverSupport.isCovered(state) ? CoverSupport.HOLE_LIGHT_BLOCK : super.getLightBlock(state, level, pos);
+  }
+
+  @Override
+  public void playerWillDestroy(net.minecraft.world.level.Level level, BlockPos pos, BlockState state,
+      net.minecraft.world.entity.player.Player player) {
+    if (CoverSupport.isCovered(state) && CoverSupport.coverAt(level, pos) != null) {
+      spawnDestroyParticles(level, player, pos, state);
+      level.gameEvent(player, net.minecraft.world.level.gameevent.GameEvent.BLOCK_DESTROY, pos);
+      return;
+    }
+    super.playerWillDestroy(level, pos, state, player);
+  }
+
+  @Override
+  public boolean onDestroyedByPlayer(BlockState state, net.minecraft.world.level.Level level, BlockPos pos,
+      net.minecraft.world.entity.player.Player player, boolean willHarvest,
+      net.minecraft.world.level.material.FluidState fluid) {
+    if (CoverSupport.isCovered(state) && CoverSupport.coverAt(level, pos) != null) {
+      if (level.isClientSide()) {
+        return false;
+      }
+      if (willHarvest && !player.isCreative()) {
+        dropResources(state, level, pos, level.getBlockEntity(pos), player, player.getMainHandItem());
+      }
+      CoverSupport.releaseToDrilled(level, pos, state);
+      return false;
+    }
+    return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+  }
+
+  @Override
+  public void onRemove(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, BlockState newState,
+      boolean isMoving) {
+    if (CoverSupport.isCovered(state) && !newState.is(this) && !newState.is(ModBlocks.DRILLED_BLOCK)) {
+      CoverSupport.dropCover(level, pos, CoverSupport.coverAt(level, pos));
+    }
+    super.onRemove(state, level, pos, newState, isMoving);
   }
 
   protected boolean connectionExtensions() {
@@ -107,12 +159,12 @@ public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.l
     VoxelShape core = Block.box(min, min, min, max, max, max);
 
     VoxelShape[] directionShapes = new VoxelShape[] {
-      Block.box(min, 0, min, max, max, max),
-      Block.box(min, min, min, max, 16, max),
-      Block.box(min, min, 0, max, max, max),
-      Block.box(min, min, min, max, max, 16),
-      Block.box(0, min, min, max, max, max),
-      Block.box(min, min, min, 16, max, max)
+        Block.box(min, 0, min, max, max, max),
+        Block.box(min, min, min, max, 16, max),
+        Block.box(min, min, 0, max, max, max),
+        Block.box(min, min, min, max, max, 16),
+        Block.box(0, min, min, max, max, max),
+        Block.box(min, min, min, 16, max, max)
     };
 
     VoxelShape[] result = new VoxelShape[64];
@@ -140,7 +192,7 @@ public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.l
 
   @Override
   public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-    return shapes[getShapeIndex(state)];
+    return CoverSupport.isCovered(state) ? Shapes.block() : shapes[getShapeIndex(state)];
   }
 
   @Override
@@ -149,6 +201,9 @@ public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.l
     builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN, WATERLOGGED);
     if (connectionExtensions()) {
       builder.add(EXT_NORTH, EXT_EAST, EXT_SOUTH, EXT_WEST, EXT_UP, EXT_DOWN);
+    }
+    if (coverable()) {
+      builder.add(CoverSupport.COVERED);
     }
   }
 

@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MenuRequestTable extends AbstractContainerMenu {
@@ -28,7 +29,7 @@ public class MenuRequestTable extends AbstractContainerMenu {
 
   public static final int BUTTON_AUTO_EXTRACT = 1;
   public static final int BUTTON_REQUEST_BASE = 1000;
-  public static final int MAX_REQUEST = 6400;
+  public static final int MAX_REQUEST = 1728;
 
   private final BlockEntityRequestTable table;
   private final BlockPos tablePos;
@@ -128,17 +129,45 @@ public class MenuRequestTable extends AbstractContainerMenu {
     return remote;
   }
 
+  @Nullable
+  public BlockEntityRequestTable getTable() {
+    return table;
+  }
+
   public ItemStack getGhostStack() {
     return ghostView.getStackInSlot(0);
   }
 
   public void setGhostFromPacket(ItemStack stack) {
-    if (table == null) {
+    if (table == null || !isKnownTarget(stack)) {
       return;
     }
     table.setGhostTarget(stack);
     ghostView.setStackInSlot(0, table.getGhostTarget());
     broadcastChanges();
+  }
+
+  private boolean isKnownTarget(ItemStack stack) {
+    if (stack.isEmpty()) {
+      return true;
+    }
+    BlockEntityLogisticsController core = table.findCore();
+    LogisticsGraph graph = core != null ? core.graph() : null;
+    Level tableLevel = table.getLevel();
+    if (graph == null || tableLevel == null) {
+      return false;
+    }
+    BlockEntityLogisticsController.GuiSnapshot snapshot = core.guiSnapshot(tableLevel, graph);
+    ItemKey key = ItemKey.of(stack);
+    if (snapshot.stock().containsKey(key) || snapshot.known().contains(key)) {
+      return true;
+    }
+    for (LogisticsPlanner.CraftDecl decl : snapshot.decls()) {
+      if (decl.result().equals(key)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   void matrixChanged() {

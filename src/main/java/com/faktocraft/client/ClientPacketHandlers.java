@@ -1,9 +1,7 @@
 package com.faktocraft.client;
 
-import com.faktocraft.common.energy.provider.EnergyCore;
 import com.faktocraft.common.network.packet.PacketIEMeterInfo;
 import com.faktocraft.common.network.packet.PacketParticle;
-import com.faktocraft.common.network.packet.PacketSyncEnergy;
 import com.faktocraft.common.network.packet.PacketTeleportFx;
 import com.faktocraft.common.network.packet.PacketWindInfo;
 import net.minecraft.client.Minecraft;
@@ -34,17 +32,16 @@ public class ClientPacketHandlers {
     }
   }
 
-  public static void handleSyncEnergy(PacketSyncEnergy payload) {
-    Minecraft minecraft = Minecraft.getInstance();
-    Level level = minecraft.level;
-    if (level == null) {
-      return;
-    }
-    EnergyCore.get(level).setNetworkTag(payload.tag());
+  public static void handleTeleportFx(PacketTeleportFx payload) {
+    TeleportFxOverlay.trigger(payload.dimensional());
   }
 
-  public static void handleTeleportFx(PacketTeleportFx payload) {
-    TeleportFxOverlay.trigger();
+  public static void handleTeleportCharge(com.faktocraft.common.network.packet.PacketTeleportCharge payload) {
+    if (payload.active()) {
+      TeleportFxOverlay.startCharge(payload.durationTicks(), payload.dimensional());
+    } else {
+      TeleportFxOverlay.cancelCharge();
+    }
   }
 
   public static void handleGeoScannerState(com.faktocraft.common.network.packet.PacketGeoScannerState payload) {
@@ -62,6 +59,24 @@ public class ClientPacketHandlers {
 
   public static void handleIEMeterInfo(PacketIEMeterInfo payload) {
     Minecraft.getInstance().setScreen(new IEMeterScreen(payload));
+  }
+
+  public static void handleTableMessage(com.faktocraft.common.network.packet.PacketTableMessage payload) {
+    if (Minecraft
+        .getInstance().screen instanceof com.faktocraft.common.block.impl.logistics.ScreenRequestTable screen) {
+      screen.showMessage(payload.message(), payload.error());
+    } else {
+      Minecraft.getInstance().gui.setOverlayMessage(payload.message(), false);
+    }
+  }
+
+  public static void handleRecipePipeRecipes(
+      com.faktocraft.common.network.packet.PacketRecipePipeRecipes payload) {
+    Level level = Minecraft.getInstance().level;
+    if (level != null && level.getBlockEntity(
+        payload.blockPos()) instanceof com.faktocraft.common.block.impl.logistics.BlockEntityRecipePipe pipe) {
+      pipe.loadRecipes(payload.recipes());
+    }
   }
 
   public static void handleTableState(com.faktocraft.common.network.packet.PacketTableState payload) {

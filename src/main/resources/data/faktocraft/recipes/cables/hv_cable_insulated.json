@@ -3,7 +3,7 @@
   "group": "faktocraft",
   "ingredients": [
     {
-      "item": "faktocraft:rubber"
+      "tag": "forge:rubber"
     },
     {
       "item": "faktocraft:hv_cable"

@@ -6,7 +6,7 @@
       "tag": "forge:plates/iron"
     },
     "r": {
-      "item": "faktocraft:rubber"
+      "tag": "forge:rubber"
     },
     "b": {
       "item": "faktocraft:basic_machine_casing"

@@ -49,6 +49,28 @@ public class FaktocraftClient {
   public static KeyMapping SLOT_IDS_KEY;
 
   @SubscribeEvent
+  public static void onModifyBakingResult(net.minecraftforge.client.event.ModelEvent.ModifyBakingResult event) {
+    com.faktocraft.client.model.CoverQuads.clear();
+    java.util.Map<ResourceLocation, net.minecraft.client.resources.model.BakedModel> models = event.getModels();
+    java.util.List<ResourceLocation> keys = new java.util.ArrayList<>(models.keySet());
+    for (ResourceLocation key : keys) {
+      if (!(key instanceof net.minecraft.client.resources.model.ModelResourceLocation location)
+          || "inventory".equals(location.getVariant())) {
+        continue;
+      }
+      net.minecraft.world.level.block.Block block = net.minecraftforge.registries.ForgeRegistries.BLOCKS
+          .getValue(new ResourceLocation(location.getNamespace(), location.getPath()));
+      if (block == null) {
+        continue;
+      }
+      boolean drilled = block == ModBlocks.DRILLED_BLOCK;
+      if (drilled || com.faktocraft.common.cover.CoverSupport.isCoverable(block)) {
+        models.put(key, new com.faktocraft.client.model.CoverBakedModel(models.get(key), drilled));
+      }
+    }
+  }
+
+  @SubscribeEvent
   public static void onRegisterAdditionalModels(net.minecraftforge.client.event.ModelEvent.RegisterAdditional event) {
     event.register(com.faktocraft.client.render.PipeSupportRenderer.CLAMP_MODEL);
     event.register(com.faktocraft.client.render.ExtractorSocketRenderer.SOCKET_MODEL);
@@ -68,8 +90,12 @@ public class FaktocraftClient {
           com.faktocraft.common.block.impl.pipe.ScreenExtractorPipe::new);
       MenuScreens.register(PipeRegistry.PUMP_MENU,
           com.faktocraft.common.block.impl.pipe.ScreenPump::new);
+      MenuScreens.register(PipeRegistry.ENDER_TANK_MENU,
+          com.faktocraft.common.block.impl.pipe.ScreenEnderTank::new);
       MenuScreens.register(com.faktocraft.common.block.impl.quarry.QuarryRegistry.QUARRY_MENU,
           com.faktocraft.common.block.impl.quarry.ScreenQuarry::new);
+      MenuScreens.register(com.faktocraft.common.block.impl.forester.ForesterRegistry.FORESTER_MENU,
+          com.faktocraft.common.block.impl.forester.ScreenForester::new);
       MenuScreens.register(com.faktocraft.common.block.impl.logistics.LogisticsRegistry.CHASSIS_MENU,
           com.faktocraft.common.block.impl.logistics.ScreenChassis::new);
       MenuScreens.register(com.faktocraft.common.block.impl.logistics.LogisticsRegistry.MODULE_MENU,
@@ -165,10 +191,15 @@ public class FaktocraftClient {
         context -> new com.faktocraft.client.render.FluidExtractorPipeRenderer());
     event.registerBlockEntityRenderer(PipeRegistry.PUMP_BLOCK_ENTITY, context -> new PumpRenderer());
     event.registerBlockEntityRenderer(com.faktocraft.common.block.impl.quarry.QuarryRegistry.QUARRY_BLOCK_ENTITY,
-        context -> new com.faktocraft.client.render.QuarryRenderer());
+        context -> new com.faktocraft.client.render.GantryRenderer<>());
+    event.registerBlockEntityRenderer(
+        com.faktocraft.common.block.impl.forester.ForesterRegistry.FORESTER_BLOCK_ENTITY,
+        context -> new com.faktocraft.client.render.GantryRenderer<>());
     event.registerBlockEntityRenderer(com.faktocraft.common.block.impl.quarry.QuarryRegistry.LANDMARK_BLOCK_ENTITY,
         context -> new com.faktocraft.client.render.LandmarkRenderer());
     event.registerBlockEntityRenderer(PipeRegistry.TANK_BLOCK_ENTITY, context -> new TankRenderer());
+    event.registerBlockEntityRenderer(PipeRegistry.ENDER_TANK_BLOCK_ENTITY,
+        com.faktocraft.client.render.EnderTankRenderer::new);
     event.registerBlockEntityRenderer(PipeRegistry.FLUID_PIPE_BLOCK_ENTITY, context -> new FluidPipeRenderer());
     event.registerBlockEntityRenderer(com.faktocraft.common.registries.machines.M1Registry.WIND_GENERATOR_BE,
         context -> new com.faktocraft.client.render.WindRotorRenderer());
@@ -186,6 +217,20 @@ public class FaktocraftClient {
 
   @SubscribeEvent
   public static void onRegisterBlockColors(RegisterColorHandlersEvent.Block event) {
+    BlockColor coverColor = (state, getter, pos, tintIndex) -> {
+      if (getter == null || pos == null) {
+        return -1;
+      }
+      net.minecraft.world.level.block.state.BlockState cover = getter
+          .getBlockEntity(pos) instanceof com.faktocraft.common.cover.ICoverHost host ? host.getCover() : null;
+      return cover == null ? -1 : Minecraft.getInstance().getBlockColors().getColor(cover, getter, pos, tintIndex);
+    };
+    net.minecraft.world.level.block.Block[] coverBlocks = net.minecraftforge.registries.ForgeRegistries.BLOCKS
+        .getValues().stream()
+        .filter(block -> block == ModBlocks.DRILLED_BLOCK
+            || com.faktocraft.common.cover.CoverSupport.isCoverable(block))
+        .toArray(net.minecraft.world.level.block.Block[]::new);
+    event.register(coverColor, coverBlocks);
     BlockColor foliage = (state, level, pos, tintIndex) -> level != null && pos != null
         ? BiomeColors.getAverageFoliageColor(level, pos)
         : FoliageColor.getDefaultColor();
@@ -276,11 +321,23 @@ public class FaktocraftClient {
       LogisticsGhosts.render(event);
       com.faktocraft.client.render.ChunkBorderOverlay.render(event);
       com.faktocraft.client.render.FluidFogVolume.render(event);
+      com.faktocraft.client.render.DrillCrackOverlay.render(event);
+    }
+
+    @SubscribeEvent
+    public static void onLeftClickBlock(
+        net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event) {
+      CoverBreakRestart.onLeftClickBlock(event);
     }
 
     @SubscribeEvent
     public static void onScreenOpening(net.minecraftforge.client.event.ScreenEvent.Opening event) {
       com.faktocraft.client.render.ChunkBorderOverlay.onScreenOpening(event);
+    }
+
+    @SubscribeEvent
+    public static void onLoggingOut(net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
+      com.faktocraft.client.render.ChunkBorderOverlay.reset();
     }
 
     @SubscribeEvent
@@ -306,6 +363,7 @@ public class FaktocraftClient {
       NanoSaberSoundHandler.tick(Minecraft.getInstance());
       JetpackSoundHandler.tick(Minecraft.getInstance());
       LogisticsGhosts.tick(Minecraft.getInstance());
+      com.faktocraft.client.render.DrillCrackOverlay.tick(Minecraft.getInstance());
       if (NIGHT_VISION_KEY == null) {
         return;
       }

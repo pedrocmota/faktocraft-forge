@@ -100,6 +100,11 @@ public class ModBlocks {
   public static final Block TELEPORT_ANCHOR = register("teleport_anchor",
       com.faktocraft.common.block.impl.teleport_anchor.BlockTeleportAnchor::new,
       com.faktocraft.common.block.BlockMachine.machineProperties());
+  public static final Block DRILLED_BLOCK = register("drilled_block",
+      com.faktocraft.common.cover.BlockDrilled::new, com.faktocraft.common.cover.BlockDrilled.drilledProperties());
+  public static final Block DIMENSIONAL_TELEPORT_ANCHOR = register("dimensional_teleport_anchor",
+      properties -> new com.faktocraft.common.block.impl.teleport_anchor.BlockTeleportAnchor(properties, true),
+      com.faktocraft.common.block.BlockMachine.machineProperties());
 
   public static final Block RUBBER_LOG = register("rubber_log", RubberLog::new, RubberLog.logProperties());
   public static final Block RUBBER_WOOD = register("rubber_wood", RubberWood::new, RubberWood.woodProperties());

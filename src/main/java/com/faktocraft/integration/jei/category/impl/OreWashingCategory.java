@@ -5,6 +5,9 @@ import com.faktocraft.common.recipe.impl.OreWashingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -24,8 +27,8 @@ public class OreWashingCategory extends AbstractRecipeCategory<OreWashingRecipe>
   public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "ore_washing");
   public static final RecipeType<OreWashingRecipe> TYPE = new RecipeType<>(UID, OreWashingRecipe.class);
 
-  private IDrawableAnimated progress;
-  private IDrawableAnimated energy;
+  private final LoadingCache<Integer, IDrawableAnimated> progress;
+  private final IDrawableAnimated energy;
 
   public OreWashingCategory(IGuiHelper guiHelper) {
     super(
@@ -34,14 +37,14 @@ public class OreWashingCategory extends AbstractRecipeCategory<OreWashingRecipe>
         guiHelper,
         guiHelper.createDrawable(JEI_LARGE_2, 0, 0, 152, 54),
         guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M3Registry.ORE_WASHING_PLANT)));
+    this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
+        (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 20, 102, 19, 19).buildAnimated(duration,
+            IDrawableAnimated.StartDirection.LEFT, false)));
+    this.energy = createEnergyDrawable();
   }
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, OreWashingRecipe recipe, IFocusGroup focuses) {
-    this.progress = guiHelper.drawableBuilder(PROCESS, 20, 102, 19, 19).buildAnimated(recipe.getDuration(),
-        IDrawableAnimated.StartDirection.LEFT, false);
-    this.energy = createEnergyDrawable();
-
     builder.addSlot(RecipeIngredientRole.INPUT, 49, 19)
         .addItemStacks(stacks(recipe.getIngredient(), recipe.getIngredientCount()));
 
@@ -74,7 +77,7 @@ public class OreWashingCategory extends AbstractRecipeCategory<OreWashingRecipe>
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 
-    this.progress.draw(graphics, halfX - 2, 17);
+    this.progress.getUnchecked(recipe.getDuration()).draw(graphics, halfX - 2, 17);
     this.energy.draw(graphics, halfX + 58, 7);
 
     if (recipe.getExperience() > 0) {

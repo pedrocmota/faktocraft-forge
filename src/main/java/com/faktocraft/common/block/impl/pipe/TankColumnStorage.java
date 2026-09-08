@@ -14,6 +14,8 @@ public class TankColumnStorage implements IFluidHandler {
   private static final int MAX_COLUMN = 64;
 
   private final BlockEntityTank anchor;
+  private long partsTick = Long.MIN_VALUE;
+  private List<BlockEntityTank> partsCache = List.of();
 
   public TankColumnStorage(BlockEntityTank anchor) {
     this.anchor = anchor;
@@ -24,6 +26,21 @@ public class TankColumnStorage implements IFluidHandler {
     if (level == null) {
       return List.of(anchor.tank);
     }
+    long now = level.getGameTime();
+    if (now != partsTick || partsCache.isEmpty()) {
+      partsTick = now;
+      partsCache = collectParts(level);
+    }
+    List<FluidStorage> list = new ArrayList<>(partsCache.size());
+    for (BlockEntityTank tankEntity : partsCache) {
+      if (!tankEntity.isRemoved()) {
+        list.add(tankEntity.tank);
+      }
+    }
+    return list.isEmpty() ? List.of(anchor.tank) : list;
+  }
+
+  private List<BlockEntityTank> collectParts(Level level) {
     FluidStack known = anchor.tank.isEmpty() ? FluidStack.EMPTY : anchor.tank.getFluidStack();
     BlockPos base = anchor.getBlockPos();
     int guard = 0;
@@ -36,7 +53,7 @@ public class TankColumnStorage implements IFluidHandler {
       }
       base = base.below();
     }
-    List<FluidStorage> list = new ArrayList<>();
+    List<BlockEntityTank> list = new ArrayList<>();
     FluidStack columnFluid = FluidStack.EMPTY;
     BlockPos pos = base;
     guard = 0;
@@ -47,10 +64,10 @@ public class TankColumnStorage implements IFluidHandler {
         }
         columnFluid = tankEntity.tank.getFluidStack();
       }
-      list.add(tankEntity.tank);
+      list.add(tankEntity);
       pos = pos.above();
     }
-    return list.isEmpty() ? List.of(anchor.tank) : list;
+    return list.isEmpty() ? List.of(anchor) : list;
   }
 
   public FluidStack variant() {

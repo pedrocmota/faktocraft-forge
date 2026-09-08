@@ -9,6 +9,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
@@ -20,8 +22,10 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.lang.reflect.Field;
 import java.util.List;
 
 public class JetpackItem extends BaseArmor {
@@ -35,6 +39,13 @@ public class JetpackItem extends BaseArmor {
   public static final int VERTICAL_MB_PER_TICK = 2;
   public static final int GLIDE_MB_PER_4_TICKS = 1;
   public static final int BOOST_MB_PER_TICK = 6;
+
+  @Nullable
+  private static final Field ABOVE_GROUND_TICKS = findFloatingField("f_9737_", "aboveGroundTickCount");
+
+  @Nullable
+  private static final Field ABOVE_GROUND_VEHICLE_TICKS = findFloatingField("f_9739_",
+      "aboveGroundVehicleTickCount");
 
   private final int capacityMb;
 
@@ -85,6 +96,45 @@ public class JetpackItem extends BaseArmor {
             player.getPersistentData().getInt(TAG_AIR_TICKS) + 1);
       }
       jetpackTick(stack, level, player);
+      if (player instanceof ServerPlayer serverPlayer && (player.getPersistentData().getBoolean(TAG_THRUST)
+          || player.getPersistentData().getBoolean(TAG_GLIDE))) {
+        resetFloatingTicks(serverPlayer);
+      }
+    }
+  }
+
+  @Nullable
+  private static Field findFloatingField(String srgName, String mojangName) {
+    try {
+      return ObfuscationReflectionHelper.findField(ServerGamePacketListenerImpl.class, srgName);
+    } catch (Exception srgFailure) {
+      try {
+        Field field = ServerGamePacketListenerImpl.class.getDeclaredField(mojangName);
+        field.setAccessible(true);
+        return field;
+      } catch (Exception mojangFailure) {
+        return null;
+      }
+    }
+  }
+
+  private static void resetFloatingTicks(ServerPlayer player) {
+    ServerGamePacketListenerImpl connection = player.connection;
+    if (connection == null) {
+      return;
+    }
+    resetFloatingField(ABOVE_GROUND_TICKS, connection);
+    resetFloatingField(ABOVE_GROUND_VEHICLE_TICKS, connection);
+  }
+
+  private static void resetFloatingField(@Nullable Field field, ServerGamePacketListenerImpl connection) {
+    if (field == null) {
+      return;
+    }
+    try {
+      field.setInt(connection, 0);
+    } catch (Exception failure) {
+      return;
     }
   }
 

@@ -1,0 +1,9 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "front": "faktocraft:block/machines/forester_front_active",
+    "top": "faktocraft:block/machines/forester_top",
+    "bottom": "faktocraft:block/advanced_machine_casing",
+    "side": "faktocraft:block/machines/forester_side"
+  }
+}

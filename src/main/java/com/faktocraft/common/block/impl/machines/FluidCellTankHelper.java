@@ -30,62 +30,79 @@ public final class FluidCellTankHelper {
     return stored == fluid && FluidItem.getFluidAmount(stack) < getCellCapacity(stack);
   }
 
+  private static int fillAmount(ItemStack stack) {
+    return Math.min(1000, getCellCapacity(stack) - FluidItem.getFluidAmount(stack));
+  }
+
+  private static boolean fillsCell(ItemStack stack) {
+    return FluidItem.getFluidAmount(stack) + fillAmount(stack) >= getCellCapacity(stack);
+  }
+
   public static boolean hasEnoughToFill(ItemStack stack, FluidStorage tank) {
     if (tank.isEmpty() || !canReceiveFluid(stack, tank.getFluid())) {
       return false;
     }
-    int amount = Math.min(1000, getCellCapacity(stack) - FluidItem.getFluidAmount(stack));
-    return amount > 0 && tank.getFluidAmount() >= amount;
+    int amount = fillAmount(stack);
+    if (amount <= 0 || tank.getFluidAmount() < amount) {
+      return false;
+    }
+    return fillsCell(stack) || stack.getCount() <= 1;
+  }
+
+  private static boolean outputAccepts(ItemStack down, ItemStack result) {
+    if (down.isEmpty()) {
+      return true;
+    }
+    return down.getCount() + 1 <= down.getMaxStackSize() && ItemStack.isSameItemSameTags(down, result);
+  }
+
+  private static ItemStack filledCopy(ItemStack up, Fluid fluid) {
+    ItemStack filled = up.copy();
+    filled.setCount(1);
+    FluidItem.setFluid(filled, fluid, FluidItem.getFluidAmount(up) + fillAmount(up));
+    return filled;
+  }
+
+  private static ItemStack emptiedCopy(ItemStack up) {
+    ItemStack emptied = up.copy();
+    emptied.setCount(1);
+    FluidItem.setFluid(emptied, Fluids.EMPTY, 0);
+    return emptied;
+  }
+
+  public static boolean canDrainToCell(ItemStack up, ItemStack down, FluidStorage tank) {
+    if (!hasEnoughToFill(up, tank)) {
+      return false;
+    }
+    if (!down.isEmpty() && down.getCount() + 1 > down.getMaxStackSize()) {
+      return false;
+    }
+    return !fillsCell(up) || outputAccepts(down, filledCopy(up, tank.getFluid()));
   }
 
   public static boolean drainToCell(ItemStackHandler handler, int slotUp, int slotDown, FluidStorage tank) {
     ItemStack up = handler.getStackInSlot(slotUp);
     ItemStack down = handler.getStackInSlot(slotDown);
 
-    if (up.isEmpty() || !(up.getItem() instanceof FluidItem)) {
-      return false;
-    }
-    if (!down.isEmpty() && down.getCount() + 1 > down.getMaxStackSize()) {
-      return false;
-    }
-    if (tank.isEmpty()) {
+    if (!canDrainToCell(up, down, tank)) {
       return false;
     }
 
     Fluid tankFluid = tank.getFluid();
-    Fluid cellFluid = FluidItem.getFluid(up);
-    if (cellFluid != Fluids.EMPTY && cellFluid != tankFluid) {
-      return false;
-    }
-
-    int capacity = getCellCapacity(up);
-    int current = FluidItem.getFluidAmount(up);
-    int amount = Math.min(1000, capacity - current);
-    if (amount <= 0 || tank.getFluidAmount() < amount) {
-      return false;
-    }
-
-    if (current + amount < capacity && up.getCount() > 1) {
-      return false;
-    }
-
-    ItemStack filled = up.copy();
-    filled.setCount(1);
-    FluidItem.setFluid(filled, tankFluid, current + amount);
+    int amount = fillAmount(up);
+    boolean full = fillsCell(up);
+    ItemStack filled = filledCopy(up, tankFluid);
     tank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
 
-    if (current + amount >= capacity) {
+    if (full) {
       ItemStack remaining = up.copy();
       remaining.shrink(1);
       handler.setStackInSlot(slotUp, remaining.isEmpty() ? ItemStack.EMPTY : remaining);
       if (down.isEmpty()) {
         handler.setStackInSlot(slotDown, filled);
-      } else if (ItemStack.isSameItemSameTags(down, filled)) {
+      } else {
         down.grow(1);
         handler.setStackInSlot(slotDown, down);
-      } else {
-        tank.fill(new FluidStack(tankFluid, amount), IFluidHandler.FluidAction.EXECUTE);
-        return false;
       }
     } else {
       handler.setStackInSlot(slotUp, filled);
@@ -93,10 +110,7 @@ public final class FluidCellTankHelper {
     return true;
   }
 
-  public static boolean fillFromCell(ItemStackHandler handler, int slotUp, int slotDown, FluidStorage tank) {
-    ItemStack up = handler.getStackInSlot(slotUp);
-    ItemStack down = handler.getStackInSlot(slotDown);
-
+  public static boolean canFillFromCell(ItemStack up, ItemStack down, FluidStorage tank) {
     if (up.isEmpty() || !(up.getItem() instanceof FluidItem)) {
       return false;
     }
@@ -110,19 +124,22 @@ public final class FluidCellTankHelper {
       return false;
     }
 
-    FluidStack cellStack = new FluidStack(cellFluid, amount);
-    if (tank.fill(cellStack, IFluidHandler.FluidAction.SIMULATE) != amount) {
+    if (tank.fill(new FluidStack(cellFluid, amount), IFluidHandler.FluidAction.SIMULATE) != amount) {
+      return false;
+    }
+    return outputAccepts(down, emptiedCopy(up));
+  }
+
+  public static boolean fillFromCell(ItemStackHandler handler, int slotUp, int slotDown, FluidStorage tank) {
+    ItemStack up = handler.getStackInSlot(slotUp);
+    ItemStack down = handler.getStackInSlot(slotDown);
+
+    if (!canFillFromCell(up, down, tank)) {
       return false;
     }
 
-    ItemStack emptied = up.copy();
-    emptied.setCount(1);
-    FluidItem.setFluid(emptied, Fluids.EMPTY, 0);
-
-    if (!down.isEmpty() && !ItemStack.isSameItemSameTags(down, emptied)) {
-      return false;
-    }
-
+    FluidStack cellStack = new FluidStack(FluidItem.getFluid(up), FluidItem.getFluidAmount(up));
+    ItemStack emptied = emptiedCopy(up);
     tank.fill(cellStack, IFluidHandler.FluidAction.EXECUTE);
 
     ItemStack remaining = up.copy();

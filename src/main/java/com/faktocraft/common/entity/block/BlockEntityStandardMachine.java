@@ -91,15 +91,26 @@ public abstract class BlockEntityStandardMachine extends FaktocraftBlockEntity
 
     ItemStack inputStack = itemStackHandler.getStackInSlot(INPUT_SLOT);
 
-    if (!ItemStack.isSameItemSameTags(cachedInputItem, inputStack) || !recipeResolved) {
+    boolean inputChanged = !ItemStack.isSameItemSameTags(cachedInputItem, inputStack);
+    if (inputChanged || !recipeResolved) {
+      boolean hadInput = !cachedInputItem.isEmpty();
+      IChanceRecipe oldRecipe = cachedRecipe;
       cachedInputItem = inputStack.copy();
       cachedRecipe = inputStack.isEmpty() ? null : getRecipe(inputStack).orElse(null);
       recipeResolved = true;
       if (cachedRecipe != null) {
         cachedResult = getRecipeResult(inputStack);
         IChanceRecipe recipe = cachedRecipe;
-        rolledChance = recipe.rollChanceResult(level.getRandom());
-        progress.setData(0, getSpeedFactor() * recipe.getDuration());
+        boolean sameJob = (oldRecipe == null || oldRecipe == recipe) && !(hadInput && inputChanged);
+        boolean keepProgress = sameJob && progress.getProgress() >= 0 && progress.getProgressMax() > 0;
+        if (oldRecipe != recipe) {
+          rolledChance = recipe.rollChanceResult(level.getRandom());
+        }
+        if (keepProgress) {
+          progress.rescaleMax(getSpeedFactor() * recipe.getDuration());
+        } else {
+          progress.setData(0, getSpeedFactor() * recipe.getDuration());
+        }
       } else {
         cachedResult = ItemStack.EMPTY;
         rolledChance = ItemStack.EMPTY;

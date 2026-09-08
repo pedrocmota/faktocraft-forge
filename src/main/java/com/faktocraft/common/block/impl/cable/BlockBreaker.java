@@ -29,6 +29,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class BlockBreaker extends BlockCable {
 
+  @Override
+  public boolean coverable() {
+    return false;
+  }
+
   public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.AXIS;
   public static final BooleanProperty ON = BlockStateProperties.ENABLED;
   public static final net.minecraft.world.level.block.state.properties.DirectionProperty HANDLE =

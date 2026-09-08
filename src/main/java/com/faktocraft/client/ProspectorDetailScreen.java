@@ -12,10 +12,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class ProspectorDetailScreen extends Screen {
@@ -29,6 +31,9 @@ public class ProspectorDetailScreen extends Screen {
   private int panelLeft;
   private int panelTop;
   private int scroll;
+  private boolean linesCached;
+  private CompoundTag cachedScan;
+  private List<Component> cachedLines = List.of();
 
   public ProspectorDetailScreen(int chunkX, int chunkZ) {
     super(Component.translatable("gui." + Faktocraft.MODID + ".prospector.report", chunkX, chunkZ));
@@ -112,6 +117,16 @@ public class ProspectorDetailScreen extends Screen {
     }
     CompoundTag scan = Prospector.getScan(stack,
         Prospector.chunkKey(minecraft.player.level(), chunkX, chunkZ));
+    if (linesCached && Objects.equals(scan, cachedScan)) {
+      return cachedLines;
+    }
+    linesCached = true;
+    cachedScan = scan == null ? null : scan.copy();
+    cachedLines = linesFor(scan);
+    return cachedLines;
+  }
+
+  private static List<Component> linesFor(@Nullable CompoundTag scan) {
     if (scan == null) {
       return List.of(Component.translatable("gui." + Faktocraft.MODID + ".prospector.not_scanned")
           .withStyle(ChatFormatting.DARK_GRAY));

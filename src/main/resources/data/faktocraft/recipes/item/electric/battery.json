@@ -9,7 +9,7 @@
       "tag": "forge:plates/tin"
     },
     "r": {
-      "item": "minecraft:redstone"
+      "tag": "forge:dusts/redstone"
     }
   },
   "pattern": [

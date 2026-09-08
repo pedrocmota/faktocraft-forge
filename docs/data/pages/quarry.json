@@ -61,13 +61,13 @@
       "type": "list",
       "en": [
         "Mined items go to the quarry's **27-slot internal inventory** - pull them out with [logistics pipes](#/logistics).",
-        "It **never breaks** spawners, structures or fluids - it mines around them.",
+        "It mines **any ordinary block, including blocks from other mods**. It spares fluids, blocks with an inventory or mechanism (chests, spawners, machines), Faktocraft's own blocks and anything in the `faktocraft:quarry_blacklist` tag; `faktocraft:quarry_mineable` forces a block back in.",
         "Supports **overclocker** (faster, hungrier) and **efficiency** (cheaper) upgrades, four slots total.",
         "Breaking the quarry removes the whole frame cleanly."
       ],
       "pt": [
         "Itens minerados vão para o **inventário interno de 27 slots** - retire com os [tubos de logística](#/logistics).",
-        "Ela **nunca quebra** spawners, estruturas ou fluidos - minera ao redor deles.",
+        "Ela minera **qualquer bloco comum, inclusive de outros mods**. Poupa fluidos, blocos com inventário ou mecanismo (baús, spawners, máquinas), os blocos do próprio Faktocraft e o que estiver na tag `faktocraft:quarry_blacklist`; a tag `faktocraft:quarry_mineable` força um bloco de volta.",
         "Suporta melhorias de **overclocker** (mais rápida e faminta) e **eficiência** (mais barata), quatro slots no total.",
         "Quebrar a mineradora remove a moldura inteira de forma limpa."
       ]

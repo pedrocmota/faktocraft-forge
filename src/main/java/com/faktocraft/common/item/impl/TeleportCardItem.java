@@ -34,6 +34,12 @@ public class TeleportCardItem extends BaseItem {
           Component.literal(target.getX() + ", " + target.getY() + ", " + target.getZ())
               .withStyle(ChatFormatting.AQUA),
           Component.literal(" >").withStyle(ChatFormatting.GRAY)));
+      net.minecraft.resources.ResourceKey<Level> dimension = ModComponents.getTeleportTargetDimension(stack, null);
+      if (dimension != null) {
+        tooltip.add(Component.translatable("tooltip.faktocraft.teleport_card_dimension",
+            com.faktocraft.common.block.impl.teleport_anchor.BlockTeleportAnchor.dimensionText(dimension))
+            .withStyle(ChatFormatting.GRAY));
+      }
     }
 
     super.appendHoverText(stack, level, tooltip, flag);

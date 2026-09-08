@@ -7,6 +7,9 @@ import com.faktocraft.common.recipe.impl.ExtractingRecipe;
 import com.faktocraft.common.registries.machines.M2Registry;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -29,8 +32,8 @@ public class ExtractingCategory extends AbstractRecipeCategory<ExtractingRecipe>
   public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "extracting");
   public static final RecipeType<ExtractingRecipe> TYPE = new RecipeType<>(UID, ExtractingRecipe.class);
 
-  private IDrawableAnimated progress;
-  private IDrawableAnimated energy;
+  private final LoadingCache<Integer, IDrawableAnimated> progress;
+  private final IDrawableAnimated energy;
 
   public ExtractingCategory(IGuiHelper guiHelper) {
     super(
@@ -39,14 +42,14 @@ public class ExtractingCategory extends AbstractRecipeCategory<ExtractingRecipe>
         guiHelper,
         guiHelper.createDrawable(JEI, 0, 110, 114, 54),
         guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M2Registry.EXTRACTOR)));
+    this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
+        (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 25, 51, 24, 16).buildAnimated(duration,
+            IDrawableAnimated.StartDirection.LEFT, false)));
+    this.energy = createEnergyDrawable();
   }
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, ExtractingRecipe recipe, IFocusGroup focuses) {
-    this.progress = guiHelper.drawableBuilder(PROCESS, 25, 51, 24, 16).buildAnimated(recipe.getDuration(),
-        IDrawableAnimated.StartDirection.LEFT, false);
-    this.energy = createEnergyDrawable();
-
     builder.addSlot(RecipeIngredientRole.INPUT, 9, 19)
         .addItemStacks(stacks(recipe.getIngredient(), recipe.getIngredientCount()));
     builder.addSlot(RecipeIngredientRole.OUTPUT, halfX + 8, 6).addItemStack(recipe.getResultItem());
@@ -66,7 +69,7 @@ public class ExtractingCategory extends AbstractRecipeCategory<ExtractingRecipe>
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 
-    this.progress.draw(graphics, halfX - 24, 19);
+    this.progress.getUnchecked(recipe.getDuration()).draw(graphics, halfX - 24, 19);
     this.energy.draw(graphics, halfX + 39, 7);
 
     if (recipe.getExperience() > 0) {

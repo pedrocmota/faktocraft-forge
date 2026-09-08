@@ -33,9 +33,9 @@ public enum CableTier {
 
   public BlockBehaviour.Properties createProperties() {
     if (this == GLASS_FIBRE_CABLE) {
-      return BlockBehaviour.Properties.of().strength(0.8F, 0.8F).sound(SoundType.GLASS);
+      return BlockBehaviour.Properties.of().strength(0.8F, 0.8F).sound(SoundType.GLASS).noOcclusion();
     }
-    return BlockBehaviour.Properties.of().strength(0.8F, 0.8F).sound(SoundType.WOOL);
+    return BlockBehaviour.Properties.of().strength(0.8F, 0.8F).sound(SoundType.WOOL).noOcclusion();
   }
 
   public static CableTier get(EnergyTier energyTier) {

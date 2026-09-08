@@ -3,7 +3,7 @@
   "group": "faktocraft",
   "key": {
     "a": {
-      "item": "minecraft:amethyst_shard"
+      "tag": "forge:gems/amethyst"
     },
     "c": {
       "item": "faktocraft:electronic_circuit"

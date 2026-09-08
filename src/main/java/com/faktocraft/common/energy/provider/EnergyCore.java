@@ -330,7 +330,11 @@ public class EnergyCore extends SavedData implements IEnergyCore {
 
   private void createBurn(EnergyNetwork network, BlockPos soundPos, int tierDiff) {
     HashSet<BlockPos> cables = new HashSet<>(network.getConnections());
+    networks.removeNetwork(network);
     for (BlockPos cablePos : cables) {
+      if (!level.isLoaded(cablePos)) {
+        continue;
+      }
       level.removeBlock(cablePos, false);
       if (level instanceof ServerLevel serverLevel) {
         PacketParticle.send(serverLevel, cablePos);
@@ -342,7 +346,6 @@ public class EnergyCore extends SavedData implements IEnergyCore {
       }
     }
     level.playSound(null, soundPos, SoundEvents.GENERIC_BURN, SoundSource.BLOCKS, 1F, 1F);
-    networks.removeNetwork(network);
     if (tierDiff >= 2) {
       float power = Math.min(2.0F, 0.5F + 0.5F * tierDiff);
       level.explode(null, com.faktocraft.common.registries.ModDamageTypes.machineExplosion(level), null,
@@ -674,6 +677,9 @@ public class EnergyCore extends SavedData implements IEnergyCore {
 
   private void transferFromCables() {
     for (EnergyNetwork network : new ArrayList<>(networks.getNetworks())) {
+      if (!networks.getNetworks().contains(network)) {
+        continue;
+      }
       int leftExtract = networkExtractBudget(network);
       if (leftExtract <= 0) {
         continue;

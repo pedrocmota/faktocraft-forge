@@ -62,7 +62,7 @@ public class BlockCable extends VoxelBlock implements EntityBlock {
   @Override
   public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(
       Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
-    if (level.isClientSide() || !canShock()) {
+    if (level.isClientSide() || !canShock() || !state.getValue(WATERLOGGED)) {
       return null;
     }
     return (tickLevel, pos, tickState, be) -> shockTick((ServerLevel) tickLevel, pos, tickState);

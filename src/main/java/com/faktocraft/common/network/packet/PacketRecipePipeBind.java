@@ -28,7 +28,8 @@ public record PacketRecipePipeBind(BlockPos pipePos, int ioId, int slot) {
     ctx.get().enqueueWork(() -> {
       ServerPlayer player = ctx.get().getSender();
       if (player == null || !(player.containerMenu instanceof MenuRecipePipe menu)
-          || !menu.getPipePos().equals(msg.pipePos) || menu.editIndex() < 0) {
+          || !menu.getPipePos().equals(msg.pipePos) || menu.editIndex() < 0
+          || !BlockEntityRecipePipe.isValidIo(msg.ioId)) {
         return;
       }
       if (!(player.level().getBlockEntity(msg.pipePos) instanceof BlockEntityRecipePipe pipe)) {

@@ -72,6 +72,9 @@ public class RubberLog extends FaktocraftBlock implements IStateRubberLog, IStat
     if (level.isClientSide()) {
       return InteractionResult.PASS;
     }
+    if (!isWet(state) && !isDry(state)) {
+      return InteractionResult.PASS;
+    }
     RandomSource random = level.getRandom();
 
     if (itemStack.getItem() instanceof IElectricItem electricItem) {
@@ -118,6 +121,20 @@ public class RubberLog extends FaktocraftBlock implements IStateRubberLog, IStat
     }
 
     return InteractionResult.PASS;
+  }
+
+  public static java.util.List<ItemStack> tapDrops(RandomSource random, BlockState state) {
+    if (!(state.getBlock() instanceof RubberLog log) || !log.isWet(state)) {
+      return java.util.List.of();
+    }
+    return java.util.List.of(new ItemStack(ModItems.STICKY_RESIN, random.nextInt(3) + 1));
+  }
+
+  public static BlockState tapped(BlockState state) {
+    if (!(state.getBlock() instanceof RubberLog log)) {
+      return state;
+    }
+    return log.setDry(log.setWet(state, false), true);
   }
 
   @Override

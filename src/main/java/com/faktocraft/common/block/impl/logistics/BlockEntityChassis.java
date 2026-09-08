@@ -19,7 +19,60 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BlockEntityChassis extends BlockEntity {
+public class BlockEntityChassis extends BlockEntity implements com.faktocraft.common.cover.ICoverHost {
+
+  @org.jetbrains.annotations.Nullable
+  private BlockState cover;
+  private int coverHoles;
+
+  @org.jetbrains.annotations.Nullable
+  @Override
+  public BlockState getCover() {
+    return cover;
+  }
+
+  @Override
+  public int getCoverHoles() {
+    return coverHoles;
+  }
+
+  @Override
+  public void setCover(@org.jetbrains.annotations.Nullable BlockState cover, int holes) {
+    this.cover = cover;
+    this.coverHoles = holes;
+    com.faktocraft.common.cover.CoverSupport.markChanged(this);
+  }
+
+  @Override
+  public net.minecraftforge.client.model.data.ModelData getModelData() {
+    return com.faktocraft.common.cover.CoverSupport.modelData(cover, coverHoles);
+  }
+
+  @Override
+  public void onDataPacket(net.minecraft.network.Connection connection,
+      net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket packet) {
+    BlockState previousCover = cover;
+    int previousHoles = coverHoles;
+    super.onDataPacket(connection, packet);
+    if (previousCover != cover || previousHoles != coverHoles) {
+      com.faktocraft.common.cover.CoverSupport.refreshClientModel(this);
+    }
+  }
+
+  @Override
+  public void onLoad() {
+    super.onLoad();
+    com.faktocraft.common.cover.CoverSupport.onClientLoad(this, this);
+    if (level != null && !level.isClientSide()) {
+      LogisticsCores.markDirtyNear(level, worldPosition);
+    }
+  }
+
+  @Override
+  public void setRemoved() {
+    com.faktocraft.common.cover.CoverSupport.onClientRemoved(this, this);
+    super.setRemoved();
+  }
 
   public static final int MODULE_SLOTS = 8;
   public static final int UPGRADE_SLOTS = 3;
@@ -432,7 +485,7 @@ public class BlockEntityChassis extends BlockEntity {
     }
     LogisticsItemTree.ensureBuilt(level);
     Endpoint dest = Endpoint.chassis(worldPosition);
-    if (core.getLedger().hasActiveJobFor(dest)) {
+    if (core.getLedger().hasActiveJobFor(dest) || core.hasPendingPlanFor(dest)) {
       return;
     }
     for (ItemStack module : suppliers) {
@@ -723,11 +776,14 @@ public class BlockEntityChassis extends BlockEntity {
     if (selectedInventory != null) {
       tag.putInt("invDir", selectedInventory.get3DDataValue());
     }
+    com.faktocraft.common.cover.CoverSupport.save(tag, cover, coverHoles);
   }
 
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
+    cover = com.faktocraft.common.cover.CoverSupport.load(tag);
+    coverHoles = com.faktocraft.common.cover.CoverSupport.loadHoles(tag);
     if (tag.contains("modules")) {
       modules.load(tag.getCompound("modules"));
     }
@@ -746,6 +802,7 @@ public class BlockEntityChassis extends BlockEntity {
     if (selectedInventory != null) {
       tag.putInt("invDir", selectedInventory.get3DDataValue());
     }
+    com.faktocraft.common.cover.CoverSupport.save(tag, cover, coverHoles);
     return tag;
   }
 

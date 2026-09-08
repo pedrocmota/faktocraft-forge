@@ -98,7 +98,7 @@ public final class RegistrationHandler {
     bootstrap = runnable;
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   public static void onRegister(RegisterEvent event) {
     if (bootstrap != null) {
       Runnable b = bootstrap;

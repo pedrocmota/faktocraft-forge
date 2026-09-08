@@ -8,6 +8,8 @@ public final class GuiScaleHelper {
 
   private static final int MIN_SCALE = 1;
 
+  private static boolean restoring;
+
   private GuiScaleHelper() {
   }
 
@@ -17,6 +19,9 @@ public final class GuiScaleHelper {
 
   public static void fit(Minecraft minecraft, Screen screen, int neededWidth, int neededHeight,
       int comfortMargin) {
+    if (restoring) {
+      return;
+    }
     Window window = minecraft.getWindow();
     int preferred = window.calculateScale(minecraft.options.guiScale().get(), minecraft.isEnforceUnicode());
     int scale = preferred;
@@ -52,7 +57,12 @@ public final class GuiScaleHelper {
     Window window = minecraft.getWindow();
     int preferred = window.calculateScale(minecraft.options.guiScale().get(), minecraft.isEnforceUnicode());
     if ((int) window.getGuiScale() != preferred) {
-      minecraft.resizeDisplay();
+      restoring = true;
+      try {
+        minecraft.resizeDisplay();
+      } finally {
+        restoring = false;
+      }
     }
   }
 }

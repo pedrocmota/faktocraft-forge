@@ -31,6 +31,9 @@ public class PipeRegistry {
   public static final Block TANK = ModBlocks.register("tank",
       com.faktocraft.common.block.impl.pipe.BlockTank::new,
       BlockBehaviour.Properties.of().strength(1.0f).sound(SoundType.GLASS).noOcclusion());
+  public static final Block ENDER_TANK = ModBlocks.register("ender_tank",
+      com.faktocraft.common.block.impl.pipe.BlockEnderTank::new,
+      BlockBehaviour.Properties.of().strength(2.0f).sound(SoundType.METAL).noOcclusion());
 
   public static final Item FLUID_EXTRACTOR_PIPE_ITEM = ModItems.registerBlockItem(FLUID_EXTRACTOR_PIPE);
   public static final Item FLUID_STONE_PIPE_ITEM = ModItems.registerBlockItem(FLUID_STONE_PIPE);
@@ -40,6 +43,8 @@ public class PipeRegistry {
       com.faktocraft.common.block.impl.pipe.BlockPumpTube::new,
       net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
   public static final Item TANK_ITEM = ModItems.registerBlockItem(TANK);
+  public static final Item ENDER_TANK_ITEM = ModItems.registerBlockItem(ENDER_TANK,
+      net.minecraft.world.item.Rarity.UNCOMMON);
 
   public static final Item MOTOR_CHAMBER = RegistrationHandler.item("motor_chamber",
       new Item(new Item.Properties()));
@@ -84,6 +89,9 @@ public class PipeRegistry {
   public static final BlockEntityType<com.faktocraft.common.block.impl.pipe.BlockEntityTank> TANK_BLOCK_ENTITY =
       RegistrationHandler
           .blockEntity("tank", com.faktocraft.common.block.impl.pipe.BlockEntityTank::new, TANK);
+  public static final BlockEntityType<
+      com.faktocraft.common.block.impl.pipe.BlockEntityEnderTank> ENDER_TANK_BLOCK_ENTITY = RegistrationHandler
+          .blockEntity("ender_tank", com.faktocraft.common.block.impl.pipe.BlockEntityEnderTank::new, ENDER_TANK);
 
   public static final MenuType<com.faktocraft.common.block.impl.pipe.MenuExtractorPipe> EXTRACTOR_PIPE_MENU =
       MenuTypeHelper
@@ -93,6 +101,10 @@ public class PipeRegistry {
   public static final MenuType<com.faktocraft.common.block.impl.pipe.MenuPump> PUMP_MENU = MenuTypeHelper
       .register("pump",
           (windowId, inv, pos) -> new com.faktocraft.common.block.impl.pipe.MenuPump(windowId,
+              inv.player.level(), pos, inv, inv.player));
+  public static final MenuType<com.faktocraft.common.block.impl.pipe.MenuEnderTank> ENDER_TANK_MENU = MenuTypeHelper
+      .register("ender_tank",
+          (windowId, inv, pos) -> new com.faktocraft.common.block.impl.pipe.MenuEnderTank(windowId,
               inv.player.level(), pos, inv, inv.player));
 
   public static void register() {

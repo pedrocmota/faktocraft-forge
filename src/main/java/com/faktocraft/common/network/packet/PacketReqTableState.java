@@ -8,9 +8,6 @@ import com.faktocraft.common.block.impl.logistics.TaskLedger;
 import com.faktocraft.common.network.ModNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import com.faktocraft.common.block.impl.logistics.ItemKey;
 import net.minecraft.world.item.ItemStack;
@@ -41,15 +38,13 @@ public record PacketReqTableState(BlockPos blockPos, String dimension) {
       if (player == null) {
         return;
       }
-      ServerLevel level = player.server.getLevel(ResourceKey.create(
-          net.minecraft.core.registries.Registries.DIMENSION, new ResourceLocation(msg.dimension)));
-      if (level == null || !level.isLoaded(msg.blockPos)
-          || !(level.getBlockEntity(msg.blockPos) instanceof BlockEntityRequestTable table)) {
-        return;
-      }
-
       if (!(player.containerMenu instanceof com.faktocraft.common.block.impl.logistics.MenuRequestTable menu)
           || !menu.getTablePos().equals(msg.blockPos)) {
+        return;
+      }
+      BlockEntityRequestTable table = menu.getTable();
+      Level level = table != null ? table.getLevel() : null;
+      if (table == null || table.isRemoved() || level == null) {
         return;
       }
       ModNetworking.sendToPlayer(player, build(level, table));

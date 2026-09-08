@@ -10,7 +10,85 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEntityCable extends BlockEntity implements IEnergyTransmitter, ISupportHost {
+public class BlockEntityCable extends BlockEntity
+    implements IEnergyTransmitter, ISupportHost, com.faktocraft.common.cover.ICoverHost {
+
+  @org.jetbrains.annotations.Nullable
+  private BlockState cover;
+  private int coverHoles;
+
+  @org.jetbrains.annotations.Nullable
+  @Override
+  public BlockState getCover() {
+    return cover;
+  }
+
+  @Override
+  public int getCoverHoles() {
+    return coverHoles;
+  }
+
+  @Override
+  public void setCover(@org.jetbrains.annotations.Nullable BlockState cover, int holes) {
+    this.cover = cover;
+    this.coverHoles = holes;
+    com.faktocraft.common.cover.CoverSupport.markChanged(this);
+  }
+
+  @Override
+  public net.minecraftforge.client.model.data.ModelData getModelData() {
+    return com.faktocraft.common.cover.CoverSupport.modelData(cover, coverHoles);
+  }
+
+  @Override
+  public void onDataPacket(net.minecraft.network.Connection connection,
+      net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket packet) {
+    BlockState previousCover = cover;
+    int previousHoles = coverHoles;
+    super.onDataPacket(connection, packet);
+    if (cover != previousCover || coverHoles != previousHoles) {
+      com.faktocraft.common.cover.CoverSupport.refreshClientModel(this);
+    }
+  }
+
+  @Override
+  public void onLoad() {
+    super.onLoad();
+    com.faktocraft.common.cover.CoverSupport.onClientLoad(this, this);
+  }
+
+  @Override
+  public void setRemoved() {
+    com.faktocraft.common.cover.CoverSupport.onClientRemoved(this, this);
+    super.setRemoved();
+  }
+
+  @Override
+  protected void saveAdditional(net.minecraft.nbt.CompoundTag tag) {
+    super.saveAdditional(tag);
+    com.faktocraft.common.cover.CoverSupport.save(tag, cover, coverHoles);
+  }
+
+  @Override
+  public void load(net.minecraft.nbt.CompoundTag tag) {
+    super.load(tag);
+    cover = com.faktocraft.common.cover.CoverSupport.load(tag);
+    coverHoles = com.faktocraft.common.cover.CoverSupport.loadHoles(tag);
+  }
+
+  @Override
+  public net.minecraft.nbt.CompoundTag getUpdateTag() {
+    net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+    saveAdditional(tag);
+    return tag;
+  }
+
+  @Nullable
+  @Override
+  public net.minecraft.network.protocol.Packet<
+      net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+    return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+  }
 
   public BlockEntityCable(BlockPos pos, BlockState state) {
     super(ModBlockEntities.CABLE, pos, state);

@@ -165,8 +165,8 @@ public class BlockEntityCircuitAssembler extends FaktocraftBlockEntity
             getItemStackHandler().setStackInSlot(OUTPUT_SLOT, outputStack.copy());
           }
 
-          ItemStack[] inputs = {inputStack0, inputStack1, inputStack2};
-          int[] inputSlots = {INPUT_SLOT_0, INPUT_SLOT_1, INPUT_SLOT_2};
+          ItemStack[] inputs = { inputStack0, inputStack1, inputStack2 };
+          int[] inputSlots = { INPUT_SLOT_0, INPUT_SLOT_1, INPUT_SLOT_2 };
           for (int i = 0; i < inputs.length; i++) {
             if (consume[i] > 0) {
               inputs[i].shrink(consume[i]);

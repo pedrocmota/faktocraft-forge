@@ -95,6 +95,37 @@ public class QuarryGameTest {
         .thenSucceed();
   }
 
+  @GameTest(template = TEMPLATE, timeoutTicks = 4000)
+  public static void landmarkAreaMinesUntaggedBlockButSparesChestAndModBlock(GameTestHelper helper) {
+    helper.setBlock(MARK_CORNER, QuarryRegistry.LANDMARK.defaultBlockState());
+    helper.setBlock(MARK_X, QuarryRegistry.LANDMARK.defaultBlockState());
+    helper.setBlock(MARK_Z, QuarryRegistry.LANDMARK.defaultBlockState());
+    BlockPos bricks = new BlockPos(4, 1, 4);
+    BlockPos chest = new BlockPos(3, 1, 3);
+    BlockPos casing = new BlockPos(5, 1, 5);
+    helper.setBlock(bricks, Blocks.BRICKS.defaultBlockState());
+    helper.setBlock(chest, Blocks.CHEST.defaultBlockState());
+    helper.setBlock(casing, com.faktocraft.common.registries.ModBlocks.BASIC_MACHINE_CASING.defaultBlockState());
+    place(helper, QUARRY, QuarryRegistry.QUARRY);
+
+    helper.startSequence()
+        .thenWaitUntil(() -> {
+          fillEnergy(helper);
+          helper.assertTrue(quarry(helper).hasArea(), "area was not resolved from the landmarks");
+        })
+        .thenWaitUntil(() -> {
+          fillEnergy(helper);
+          helper.assertTrue(inventoryContains(quarry(helper), Items.BRICKS),
+              "untagged bricks were not mined into the internal inventory");
+        })
+        .thenExecute(() -> {
+          helper.assertBlockPresent(Blocks.CHEST, chest);
+          helper.assertBlockPresent(com.faktocraft.common.registries.ModBlocks.BASIC_MACHINE_CASING, casing);
+          helper.assertBlockNotPresent(Blocks.BRICKS, bricks);
+        })
+        .thenSucceed();
+  }
+
   @GameTest(template = TEMPLATE, timeoutTicks = 600)
   public static void breakingQuarryRemovesFrame(GameTestHelper helper) {
     helper.setBlock(MARK_CORNER, QuarryRegistry.LANDMARK.defaultBlockState());

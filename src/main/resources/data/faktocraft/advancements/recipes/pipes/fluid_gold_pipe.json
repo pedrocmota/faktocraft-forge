@@ -18,9 +18,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "faktocraft:rubber"
-            ]
+            "tag": "forge:rubber"
           }
         ]
       }

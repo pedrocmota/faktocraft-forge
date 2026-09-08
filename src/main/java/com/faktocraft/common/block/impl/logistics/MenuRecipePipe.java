@@ -1,7 +1,11 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.network.ModNetworking;
+import com.faktocraft.common.network.packet.PacketRecipePipeRecipes;
 import com.faktocraft.common.util.TransferUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.DataSlot;
@@ -32,25 +36,29 @@ public class MenuRecipePipe extends MenuPipeRecipes {
   }
 
   public static int valueToIo(int value) {
-    return value >= OUTPUT_VALUE_BASE
-        ? BlockEntityRecipePipe.outputId(value - OUTPUT_VALUE_BASE)
-        : value;
+    if (value >= OUTPUT_VALUE_BASE && value < OUTPUT_VALUE_BASE + BlockEntityRecipePipe.MAX_OUTPUTS) {
+      return BlockEntityRecipePipe.outputId(value - OUTPUT_VALUE_BASE);
+    }
+    return value >= 0 && value < BlockEntityRecipePipe.MAX_INPUTS ? value : Integer.MIN_VALUE;
   }
 
   private final BlockEntityRecipePipe recipePipe;
+  private final Player player;
   private final DataSlot timeoutData;
   private final DataSlot dockSlots;
+  private int sentRecipesVersion = -1;
 
   public MenuRecipePipe(int windowId, Level level, BlockPos pos, Inventory playerInventory, Player player) {
     super(LogisticsRegistry.RECIPE_PIPE_MENU, windowId,
         level.getBlockEntity(pos) instanceof BlockEntityRecipePipe found ? found : null,
         playerInventory, PLAYER_INV_Y);
     this.recipePipe = (BlockEntityRecipePipe) this.pipe;
+    this.player = player;
 
     this.timeoutData = addDataSlot(recipePipe != null ? new DataSlot() {
       @Override
       public int get() {
-        return recipePipe.timeoutTicks();
+        return recipePipe.timeoutTicks() / 20;
       }
 
       @Override
@@ -82,8 +90,21 @@ public class MenuRecipePipe extends MenuPipeRecipes {
     return handler != null ? handler.getSlots() : 0;
   }
 
+  @Override
+  public void broadcastChanges() {
+    super.broadcastChanges();
+    if (recipePipe == null || !(player instanceof ServerPlayer serverPlayer)
+        || recipePipe.recipesVersion() == sentRecipesVersion) {
+      return;
+    }
+    sentRecipesVersion = recipePipe.recipesVersion();
+    CompoundTag tag = new CompoundTag();
+    recipePipe.saveRecipes(tag);
+    ModNetworking.sendToPlayer(serverPlayer, new PacketRecipePipeRecipes(recipePipe.getBlockPos(), tag));
+  }
+
   public int timeoutTicks() {
-    return timeoutData.get();
+    return timeoutData.get() * 20;
   }
 
   public int machineSlotCount() {
@@ -122,16 +143,30 @@ public class MenuRecipePipe extends MenuPipeRecipes {
     switch (action) {
       case ACTION_TIMEOUT_UP -> recipePipe.setTimeoutTicks(recipePipe.timeoutTicks() + timeoutStep(value));
       case ACTION_TIMEOUT_DOWN -> recipePipe.setTimeoutTicks(recipePipe.timeoutTicks() - timeoutStep(value));
-      case ACTION_SET_IO -> recipePipe.setIo(editIndex(), valueToIo(value), getCarried());
-      case ACTION_CLEAR_IO -> recipePipe.setIo(editIndex(), valueToIo(value), ItemStack.EMPTY);
-      case ACTION_CYCLE_TAG -> recipePipe.cycleTag(editIndex(), valueToIo(value));
-      case ACTION_COUNT_UP -> recipePipe.adjustCount(editIndex(), valueToIo(value), 1);
-      case ACTION_COUNT_DOWN -> recipePipe.adjustCount(editIndex(), valueToIo(value), -1);
-      case ACTION_COUNT_UP_16 -> recipePipe.adjustCount(editIndex(), valueToIo(value), 16);
-      case ACTION_COUNT_DOWN_16 -> recipePipe.adjustCount(editIndex(), valueToIo(value), -16);
       default -> {
-        return false;
+        return handleIoAction(action, value);
       }
+    }
+    return true;
+  }
+
+  private boolean handleIoAction(int action, int value) {
+    if (action < ACTION_SET_IO || action > ACTION_CYCLE_TAG || action == ACTION_TIMEOUT_UP
+        || action == ACTION_TIMEOUT_DOWN) {
+      return false;
+    }
+    int io = valueToIo(value);
+    if (!BlockEntityRecipePipe.isValidIo(io)) {
+      return false;
+    }
+    switch (action) {
+      case ACTION_SET_IO -> recipePipe.setIo(editIndex(), io, getCarried());
+      case ACTION_CLEAR_IO -> recipePipe.setIo(editIndex(), io, ItemStack.EMPTY);
+      case ACTION_CYCLE_TAG -> recipePipe.cycleTag(editIndex(), io);
+      case ACTION_COUNT_UP -> recipePipe.adjustCount(editIndex(), io, 1);
+      case ACTION_COUNT_DOWN -> recipePipe.adjustCount(editIndex(), io, -1);
+      case ACTION_COUNT_UP_16 -> recipePipe.adjustCount(editIndex(), io, 16);
+      default -> recipePipe.adjustCount(editIndex(), io, -16);
     }
     return true;
   }

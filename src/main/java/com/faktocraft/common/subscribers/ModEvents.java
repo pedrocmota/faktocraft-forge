@@ -33,6 +33,9 @@ public class ModEvents {
   public static void onLevelUnload(net.minecraftforge.event.level.LevelEvent.Unload event) {
     if (event.getLevel() instanceof net.minecraft.world.level.Level level && level.isClientSide()) {
       com.faktocraft.common.energy.provider.EnergyCore.removeClientCore(level);
+    } else if (event.getLevel() instanceof ServerLevel serverLevel) {
+      com.faktocraft.common.energy.WindSim.clear(serverLevel.dimension());
+      com.faktocraft.common.energy.WindFarmRegistry.clear(serverLevel.dimension());
     }
   }
 

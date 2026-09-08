@@ -9,7 +9,7 @@
    "item": "minecraft:crafting_table"
   },
   "x": {
-   "item": "minecraft:chest"
+   "tag": "forge:chests/wooden"
   },
   "c": {
    "item": "faktocraft:electronic_circuit"

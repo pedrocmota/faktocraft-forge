@@ -36,15 +36,19 @@ public class ServerConfig {
   public int solar_generator_day_tick_generate = 1;
   public int solar_generator_night_tick_generate = 0;
   public int advanced_solar_generator_energy_capacity = 20000;
-  public int advanced_solar_generator_day_tick_generate = 8;
+  public int advanced_solar_generator_day_tick_generate = 6;
   public int advanced_solar_generator_night_tick_generate = 1;
   public int hybrid_solar_generator_energy_capacity = 80000;
-  public int hybrid_solar_generator_day_tick_generate = 64;
-  public int hybrid_solar_generator_night_tick_generate = 8;
+  public int hybrid_solar_generator_day_tick_generate = 32;
+  public int hybrid_solar_generator_night_tick_generate = 4;
   public int quantum_solar_generator_energy_capacity = 160000;
-  public int quantum_solar_generator_day_tick_generate = 384;
-  public int quantum_solar_generator_night_tick_generate = 48;
-  public int quantum_solar_generator_moonlight_tick_generate = 16;
+  public int quantum_solar_generator_day_tick_generate = 192;
+  public int quantum_solar_generator_night_tick_generate = 24;
+  public int quantum_solar_generator_moonlight_tick_generate = 8;
+  public int stellar_solar_generator_energy_capacity = 480000;
+  public int stellar_solar_generator_day_tick_generate = 576;
+  public int stellar_solar_generator_night_tick_generate = 72;
+  public int stellar_solar_generator_moonlight_tick_generate = 24;
 
   public int circuit_assembler_energy_capacity = 1600;
 
@@ -124,6 +128,13 @@ public class ServerConfig {
   public int teleport_anchor_base_cost = 2500;
   public int teleport_anchor_cost_per_block = 10;
   public int teleport_anchor_cooldown_ticks = 40;
+  public int teleport_anchor_dimensional_cost = 40_000;
+  public int teleport_anchor_preload_radius = 2;
+  public int teleport_anchor_preload_ticks = 200;
+  public int teleport_anchor_charge_ticks = 100;
+
+  public int hole_drill_ticks = 30;
+  public int hole_drill_energy_cost = 200;
 
   public int chunk_loader_energy_capacity = 100_000;
   public int chunk_loader_tick_usage_per_chunk = 8;
@@ -132,4 +143,8 @@ public class ServerConfig {
   public int quarry_energy_capacity = 4000;
   public int quarry_energy_per_block = 400;
   public int quarry_max_draw_per_tick = 8;
+
+  public int forester_energy_capacity = 4000;
+  public int forester_energy_per_action = 120;
+  public int forester_max_draw_per_tick = 8;
 }

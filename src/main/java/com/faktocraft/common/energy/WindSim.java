@@ -27,10 +27,14 @@ public final class WindSim {
   private WindSim() {
   }
 
+  public static void clear(ResourceKey<Level> dimension) {
+    STATES.remove(dimension);
+  }
+
   public static double getStrength(ServerLevel level) {
     State state = STATES.computeIfAbsent(level.dimension(), key -> new State());
     long now = level.getGameTime();
-    if (state.lastStep == Long.MIN_VALUE) {
+    if (state.lastStep == Long.MIN_VALUE || now < state.lastStep) {
       state.lastStep = now;
     }
 

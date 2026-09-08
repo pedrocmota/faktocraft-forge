@@ -3,7 +3,7 @@
   "group": "faktocraft_pipes",
   "key": {
     "r": {
-      "item": "faktocraft:rubber"
+      "tag": "forge:rubber"
     },
     "s": {
       "item": "minecraft:stick"

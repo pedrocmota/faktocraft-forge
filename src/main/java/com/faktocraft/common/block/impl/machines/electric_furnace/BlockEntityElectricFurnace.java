@@ -105,9 +105,14 @@ public class BlockEntityElectricFurnace extends FaktocraftBlockEntity
     final ItemStack outputStack = itemStackHandler.getStackInSlot(OUTPUT_SLOT);
 
     if (!ItemStack.isSameItemSameTags(cachedInputStack, inputStack)) {
+      boolean hadInput = !cachedInputStack.isEmpty();
+      SmeltingRecipe oldRecipe = furnaceRecipe;
       cachedInputStack = inputStack.copy();
       furnaceRecipe = inputStack.isEmpty() ? null : getRecipe(inputStack).orElse(null);
       resultStack = furnaceRecipe != null ? getRecipeResult(inputStack) : ItemStack.EMPTY;
+      if (hadInput || (oldRecipe != null && oldRecipe != furnaceRecipe)) {
+        progress.setBoth(-1);
+      }
     }
 
     if (furnaceRecipe != null) {

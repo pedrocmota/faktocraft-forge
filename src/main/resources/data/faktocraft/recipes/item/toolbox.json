@@ -3,10 +3,10 @@
   "group": "faktocraft",
   "key": {
     "p": {
-      "item": "faktocraft:iron_plate"
+      "tag": "forge:plates/iron"
     },
     "c": {
-      "item": "minecraft:chest"
+      "tag": "forge:chests/wooden"
     }
   },
   "pattern": [

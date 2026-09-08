@@ -3,8 +3,7 @@ package com.faktocraft.integration.jade.provider;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.pipe.IValveHolder;
 import com.faktocraft.common.block.impl.pipe.PipeValve;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import com.faktocraft.integration.waila.WailaData;
 import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
@@ -28,13 +27,8 @@ public class JadeValveProvider implements IBlockComponentProvider {
       return;
     }
     PipeValve valve = holder.getValve();
-    if (!valve.isPresent()) {
-      return;
+    if (valve.isPresent()) {
+      tooltip.add(WailaData.valveLine(valve.isOpen()));
     }
-    Component state = valve.isOpen()
-        ? Component.translatable("top." + Faktocraft.MODID + ".state_open").withStyle(ChatFormatting.GREEN)
-        : Component.translatable("top." + Faktocraft.MODID + ".state_closed").withStyle(ChatFormatting.RED);
-    tooltip.add(Component.translatable("top." + Faktocraft.MODID + ".valve", state)
-        .withStyle(ChatFormatting.GRAY));
   }
 }

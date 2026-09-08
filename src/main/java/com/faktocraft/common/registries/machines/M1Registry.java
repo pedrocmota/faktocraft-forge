@@ -54,6 +54,9 @@ public class M1Registry {
   public static final Block QUANTUM_SOLAR_GENERATOR = ModBlocks.register("quantum_solar_generator",
       p -> new BlockSolarGenerator(SolarGeneratorTier.QUANTUM, p),
       BlockMachine.machineProperties(0, 0));
+  public static final Block STELLAR_SOLAR_GENERATOR = ModBlocks.register("stellar_solar_generator",
+      p -> new BlockSolarGenerator(SolarGeneratorTier.STELLAR, p),
+      BlockMachine.machineProperties(0, 0));
 
   public static final Block WIND_GENERATOR = ModBlocks.register("wind_generator",
       BlockWindGenerator::new, BlockMachine.machineProperties(0, 0));
@@ -97,6 +100,8 @@ public class M1Registry {
       net.minecraft.world.item.Rarity.RARE);
   public static final Item QUANTUM_SOLAR_GENERATOR_ITEM = ModItems.registerElectricBlockItem(QUANTUM_SOLAR_GENERATOR,
       net.minecraft.world.item.Rarity.EPIC);
+  public static final Item STELLAR_SOLAR_GENERATOR_ITEM = ModItems.registerElectricBlockItem(STELLAR_SOLAR_GENERATOR,
+      net.minecraft.world.item.Rarity.EPIC);
   public static final Item WIND_GENERATOR_ITEM = ModItems.registerElectricBlockItem(WIND_GENERATOR);
   public static final Item GEO_GENERATOR_ITEM = ModItems.registerElectricBlockItem(GEO_GENERATOR);
   public static final Item COMBUSTION_GENERATOR_ITEM = ModItems.registerElectricBlockItem(COMBUSTION_GENERATOR);
@@ -122,7 +127,8 @@ public class M1Registry {
 
   public static final BlockEntityType<BlockEntitySolarGenerator> SOLAR_GENERATOR_BE = registerBlockEntity(
       "solar_generator", BlockEntitySolarGenerator::new,
-      SOLAR_GENERATOR, ADVANCED_SOLAR_GENERATOR, HYBRID_SOLAR_GENERATOR, QUANTUM_SOLAR_GENERATOR);
+      SOLAR_GENERATOR, ADVANCED_SOLAR_GENERATOR, HYBRID_SOLAR_GENERATOR, QUANTUM_SOLAR_GENERATOR,
+      STELLAR_SOLAR_GENERATOR);
 
   public static final BlockEntityType<BlockEntityWindGenerator> WIND_GENERATOR_BE = registerBlockEntity(
       "wind_generator", BlockEntityWindGenerator::new, WIND_GENERATOR);

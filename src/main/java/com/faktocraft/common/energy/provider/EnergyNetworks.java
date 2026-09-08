@@ -369,14 +369,21 @@ public class EnergyNetworks {
     if (network == null) {
       return;
     }
+    BlockPos delta = neighborPos.subtract(pos);
+    Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
+    if (direction == null) {
+      return;
+    }
 
     BlockState neighborState = level.getBlockState(neighborPos);
-    if (neighborState.getBlock() instanceof BlockCable cable) {
+    boolean linked = linkAllowed(level.getBlockState(pos), direction)
+        && linkAllowed(neighborState, direction.getOpposite());
+    if (linked && neighborState.getBlock() instanceof BlockCable cable) {
       EnergyNetwork other = getNetwork(neighborPos);
       if (other != null && other != network && tierOf(neighborPos, cable) != network.getEnergyTier()) {
         network.getTransmitters().add(neighborPos);
       }
-    } else if (EnergyLookup.isPresent(level, neighborPos, null)) {
+    } else if (linked && EnergyLookup.isPresent(level, neighborPos, null)) {
       network.getElectrics().add(neighborPos);
     } else {
       network.getElectrics().remove(neighborPos);

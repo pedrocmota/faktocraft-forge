@@ -137,7 +137,9 @@ public class BlockEntityScanner extends FaktocraftBlockEntity
             addRecipeUsed(recipe);
             progress.setBoth(-1);
           } else {
-            shouldUpdateState = true;
+            if (mode != ScannerMode.PROGRESS) {
+              shouldUpdateState = true;
+            }
             mode = ScannerMode.PROGRESS;
           }
         } else {
@@ -145,7 +147,9 @@ public class BlockEntityScanner extends FaktocraftBlockEntity
           mode = ScannerMode.IDLE;
         }
       } else {
-        shouldUpdateState = true;
+        if (mode != ScannerMode.NO_POWER) {
+          shouldUpdateState = true;
+        }
         mode = ScannerMode.NO_POWER;
       }
     } else {

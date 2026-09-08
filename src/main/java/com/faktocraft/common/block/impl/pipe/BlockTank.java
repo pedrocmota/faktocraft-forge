@@ -45,8 +45,15 @@ public class BlockTank extends FaktocraftBlock implements EntityBlock {
       var fluidBlock = fluid.defaultFluidState().createLegacyBlock();
       if (!fluidBlock.isAir() && newState.isAir()) {
         super.onRemove(state, level, pos, newState, isMoving);
-        level.setBlock(pos, fluidBlock, 3);
-        level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.8F, 0.9F);
+        var server = level.getServer();
+        if (server != null) {
+          server.execute(() -> {
+            if (level.getBlockState(pos).isAir()) {
+              level.setBlock(pos, fluidBlock, 3);
+              level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.8F, 0.9F);
+            }
+          });
+        }
         return;
       }
     }

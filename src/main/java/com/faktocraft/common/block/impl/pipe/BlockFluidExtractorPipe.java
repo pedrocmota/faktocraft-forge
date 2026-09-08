@@ -44,7 +44,7 @@ public class BlockFluidExtractorPipe extends BlockFluidPipe
       return null;
     }
     Level level = context.getLevel();
-    for (boolean tanksOnly : new boolean[] {true, false}) {
+    for (boolean tanksOnly : new boolean[] { true, false }) {
       for (Direction direction : Constants.DIRECTIONS) {
         if (!state.getValue(FACING_TO_PROPERTY_MAP.get(direction))) {
           continue;

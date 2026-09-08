@@ -86,7 +86,7 @@ public class DiggerElectricItem extends ElectricItem {
   public float getDestroySpeed(ItemStack stack, BlockState state) {
     float speed = getBaseDestroySpeed(state);
     if (speed > 1.0F) {
-      return getEnergy(stack).consumeEnergy(getMineCost(), true) > 1 ? speed : 1.0F;
+      return getEnergy(stack).consumeEnergy(getMineCost(), true) >= getMineCost() ? speed : 1.0F;
     }
     return speed;
   }

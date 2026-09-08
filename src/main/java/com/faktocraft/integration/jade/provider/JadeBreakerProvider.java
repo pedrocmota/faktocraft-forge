@@ -2,8 +2,7 @@ package com.faktocraft.integration.jade.provider;
 
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.cable.BlockBreaker;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import com.faktocraft.integration.waila.WailaData;
 import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
@@ -24,14 +23,8 @@ public class JadeBreakerProvider implements IBlockComponentProvider {
   @Override
   public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
     var state = accessor.getBlockState();
-    if (!state.hasProperty(BlockBreaker.ON)) {
-      return;
+    if (state.hasProperty(BlockBreaker.ON)) {
+      tooltip.add(WailaData.breakerLine(state.getValue(BlockBreaker.ON)));
     }
-    boolean on = state.getValue(BlockBreaker.ON);
-    Component stateComponent = on
-        ? Component.translatable("top." + Faktocraft.MODID + ".state_on").withStyle(ChatFormatting.GREEN)
-        : Component.translatable("top." + Faktocraft.MODID + ".state_off").withStyle(ChatFormatting.RED);
-    tooltip.add(Component.translatable("top." + Faktocraft.MODID + ".breaker", stateComponent)
-        .withStyle(ChatFormatting.GRAY));
   }
 }

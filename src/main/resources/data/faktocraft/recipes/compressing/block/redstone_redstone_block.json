@@ -3,7 +3,7 @@
   "experience": 0.1,
   "ingredient": {
     "count": 9,
-    "item": "minecraft:redstone"
+    "tag": "forge:dusts/redstone"
   },
   "power_cost": 12,
   "result": {

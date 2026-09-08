@@ -5,6 +5,9 @@ import com.faktocraft.common.recipe.impl.AlloySmeltingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -27,9 +30,9 @@ public class AlloySmeltingCategory extends AbstractRecipeCategory<AlloySmeltingR
   public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "alloy_smelting");
   public static final RecipeType<AlloySmeltingRecipe> TYPE = new RecipeType<>(UID, AlloySmeltingRecipe.class);
 
-  private IDrawableAnimated progress;
-  private IDrawableAnimated energy;
-  private IDrawableAnimated fire;
+  private final LoadingCache<Integer, IDrawableAnimated> progress;
+  private final IDrawableAnimated energy;
+  private final IDrawableAnimated fire;
 
   public AlloySmeltingCategory(IGuiHelper guiHelper) {
     super(
@@ -38,16 +41,16 @@ public class AlloySmeltingCategory extends AbstractRecipeCategory<AlloySmeltingR
         guiHelper,
         guiHelper.createDrawable(JEI_LARGE, 0, 0, 152, 54),
         guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M3Registry.ALLOY_SMELTER)));
+    this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
+        (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(duration,
+            IDrawableAnimated.StartDirection.LEFT, false)));
+    this.energy = createEnergyDrawable();
+    this.fire = guiHelper.drawableBuilder(PROCESS, 67, 0, 16, 16).buildAnimated(100,
+        IDrawableAnimated.StartDirection.TOP, true);
   }
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, AlloySmeltingRecipe recipe, IFocusGroup focuses) {
-    this.progress = guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(recipe.getDuration(),
-        IDrawableAnimated.StartDirection.LEFT, false);
-    this.energy = createEnergyDrawable();
-    this.fire = guiHelper.drawableBuilder(PROCESS, 67, 0, 16, 16).buildAnimated(100,
-        IDrawableAnimated.StartDirection.TOP, true);
-
     int i = 0;
     for (Map.Entry<Ingredient, Integer> entry : recipe.getIngredientMap().entrySet()) {
       Ingredient ingredient = entry.getKey();
@@ -69,7 +72,7 @@ public class AlloySmeltingCategory extends AbstractRecipeCategory<AlloySmeltingR
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 
-    this.progress.draw(graphics, halfX - 6, 19);
+    this.progress.getUnchecked(recipe.getDuration()).draw(graphics, halfX - 6, 19);
     this.energy.draw(graphics, halfX + 58, 7);
     this.fire.draw(graphics, halfX - 50, 27);
 

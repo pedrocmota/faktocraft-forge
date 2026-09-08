@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "a": {
+      "item": "faktocraft:advanced_machine_casing"
+    },
+    "e": {
+      "item": "faktocraft:electronic_circuit"
+    },
+    "r": {
+      "tag": "forge:rubber"
+    },
+    "x": {
+      "item": "minecraft:iron_axe"
+    },
+    "s": {
+      "tag": "forge:ingots/steel"
+    }
+  },
+  "pattern": [
+    "ese",
+    "sas",
+    "rxr"
+  ],
+  "result": {
+    "item": "faktocraft:forester"
+  }
+}

@@ -26,7 +26,7 @@ import java.util.Map;
 public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
 
   public static final int PATTERN_SIZE = 9;
-  public static final int MAX_RECIPES = 4096;
+  public static final int MAX_RECIPES = 256;
 
   private static final int MAX_CANDIDATES = 64;
 

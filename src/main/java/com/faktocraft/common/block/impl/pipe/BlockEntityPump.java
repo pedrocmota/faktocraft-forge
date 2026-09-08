@@ -111,7 +111,7 @@ public class BlockEntityPump extends FaktocraftBlockEntity
 
   @Override
   protected int worldSyncIntervalTicks() {
-    return 1;
+    return tubeDepth != tubeTarget ? 1 : super.worldSyncIntervalTicks();
   }
 
   private final com.faktocraft.common.util.NeighborFluidCache neighborFluidCache =
@@ -237,7 +237,9 @@ public class BlockEntityPump extends FaktocraftBlockEntity
 
     pushFluidAround();
 
-    if (this.setActive(worked)) {
+    boolean wasActive = activeState;
+    setActive(worked);
+    if (wasActive != worked) {
       updateBlockState();
     }
   }

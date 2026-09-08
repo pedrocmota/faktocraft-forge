@@ -34,9 +34,13 @@ public final class ChunkBorderOverlay {
   private static final int COLOR_G = 217;
   private static final int COLOR_B = 209;
   private static final int COLOR_A = 140;
+  private static final double WALL_OFFSET = 1.0 / 128.0;
+  private static final int HUD_BOTTOM_MARGIN = 90;
 
   private static boolean active = false;
   private static ResourceKey<Level> dimension;
+  private static BlockPos loaderPos;
+  private static int shownChunkCount;
   private static List<double[]> walls = List.of();
 
   private ChunkBorderOverlay() {
@@ -58,27 +62,43 @@ public final class ChunkBorderOverlay {
       double x0 = cx * 16.0;
       double z0 = cz * 16.0;
       if (!chunks.contains(ChunkPos.asLong(cx, cz - 1))) {
-        segments.add(new double[] {x0, z0, x0 + 16.0, z0});
+        segments.add(new double[] { x0, z0 - WALL_OFFSET, x0 + 16.0, z0 - WALL_OFFSET });
       }
       if (!chunks.contains(ChunkPos.asLong(cx, cz + 1))) {
-        segments.add(new double[] {x0, z0 + 16.0, x0 + 16.0, z0 + 16.0});
+        segments.add(new double[] { x0, z0 + 16.0 + WALL_OFFSET, x0 + 16.0, z0 + 16.0 + WALL_OFFSET });
       }
       if (!chunks.contains(ChunkPos.asLong(cx - 1, cz))) {
-        segments.add(new double[] {x0, z0, x0, z0 + 16.0});
+        segments.add(new double[] { x0 - WALL_OFFSET, z0, x0 - WALL_OFFSET, z0 + 16.0 });
       }
       if (!chunks.contains(ChunkPos.asLong(cx + 1, cz))) {
-        segments.add(new double[] {x0 + 16.0, z0, x0 + 16.0, z0 + 16.0});
+        segments.add(new double[] { x0 + 16.0 + WALL_OFFSET, z0, x0 + 16.0 + WALL_OFFSET, z0 + 16.0 });
       }
     }
 
     walls = segments;
     dimension = dim;
+    ChunkBorderOverlay.loaderPos = loaderPos.immutable();
+    shownChunkCount = chunkCount;
     active = true;
+  }
+
+  public static boolean isShowing(BlockPos pos) {
+    return active && pos.equals(loaderPos);
+  }
+
+  public static int shownChunkCount() {
+    return shownChunkCount;
   }
 
   public static void hide() {
     active = false;
     walls = List.of();
+    loaderPos = null;
+  }
+
+  public static void reset() {
+    hide();
+    dimension = null;
   }
 
   public static boolean isActive() {
@@ -86,7 +106,7 @@ public final class ChunkBorderOverlay {
   }
 
   public static void onScreenOpening(ScreenEvent.Opening event) {
-    if (active && event.getNewScreen() instanceof PauseScreen) {
+    if (active && event.getNewScreen() instanceof PauseScreen && Minecraft.getInstance().isWindowActive()) {
       hide();
       event.setCanceled(true);
     }
@@ -163,7 +183,7 @@ public final class ChunkBorderOverlay {
     Component text = Component.translatable("gui.faktocraft.chunk_loader.border_exit");
     int width = minecraft.font.width(text);
     int x = (graphics.guiWidth() - width) / 2;
-    int y = 16;
+    int y = graphics.guiHeight() - HUD_BOTTOM_MARGIN;
     graphics.fill(x - 4, y - 4, x + width + 4, y + 12, 0x90000000);
     graphics.drawString(minecraft.font, text, x, y, 0xFFFFFF, true);
   }

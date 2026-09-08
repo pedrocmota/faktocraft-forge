@@ -65,7 +65,7 @@ public class ElectricHoe extends DiggerElectricItem {
   public InteractionResult useOn(UseOnContext context) {
     ItemStack stack = context.getItemInHand();
     IEnergy energy = getEnergy(stack);
-    if (energy.energyStored() <= 1) {
+    if (energy.energyStored() < energyCostTill) {
       return InteractionResult.PASS;
     }
 

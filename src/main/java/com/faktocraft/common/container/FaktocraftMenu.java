@@ -23,6 +23,7 @@ public abstract class FaktocraftMenu extends AbstractContainerMenu {
   private final ArrayList<MachineSlot> machineSlots = new ArrayList<>();
   private final ArrayList<SlotElectricMenu> batterySlots = new ArrayList<>();
   private final ArrayList<SlotUpgradeMenu> upgradeSlots = new ArrayList<>();
+  private int playerInventoryStart = -1;
 
   public int playerInvLeft = 8;
   public int playerInvTop = 84;
@@ -148,7 +149,12 @@ public abstract class FaktocraftMenu extends AbstractContainerMenu {
     layoutPlayerInventorySlots(playerInventory, playerInvLeft, playerInvTop);
   }
 
+  public int playerInventoryStart() {
+    return playerInventoryStart >= 0 ? playerInventoryStart : Math.max(0, slots.size() - 36);
+  }
+
   protected void layoutPlayerInventorySlots(Inventory playerInventory, int leftCol, int topRow) {
+    playerInventoryStart = slots.size();
     for (int row = 0; row < 3; row++) {
       for (int col = 0; col < 9; col++) {
         addSlot(new Slot(playerInventory, col + row * 9 + 9, leftCol + col * 18, topRow + row * 18));

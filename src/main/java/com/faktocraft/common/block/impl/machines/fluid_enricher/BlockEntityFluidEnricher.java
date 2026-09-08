@@ -110,18 +110,18 @@ public class BlockEntityFluidEnricher extends FaktocraftBlockEntity
     CountedIngredient second = enrichingRecipe.getCountedIngredient2().orElse(null);
     if (second == null) {
       if (fits(first, a, checkCounts)) {
-        return new int[] {INPUT_SLOT, -1};
+        return new int[] { INPUT_SLOT, -1 };
       }
       if (fits(first, b, checkCounts)) {
-        return new int[] {INPUT_SLOT_2, -1};
+        return new int[] { INPUT_SLOT_2, -1 };
       }
       return null;
     }
     if (fits(first, a, checkCounts) && fits(second, b, checkCounts)) {
-      return new int[] {INPUT_SLOT, INPUT_SLOT_2};
+      return new int[] { INPUT_SLOT, INPUT_SLOT_2 };
     }
     if (fits(first, b, checkCounts) && fits(second, a, checkCounts)) {
-      return new int[] {INPUT_SLOT_2, INPUT_SLOT};
+      return new int[] { INPUT_SLOT_2, INPUT_SLOT };
     }
     return null;
   }
@@ -136,18 +136,18 @@ public class BlockEntityFluidEnricher extends FaktocraftBlockEntity
     FluidIngredientData second = enrichingRecipe.getFluidInput2().orElse(null);
     if (second == null) {
       if (holds(fluidInputStorage, first, checkAmounts)) {
-        return new FluidStorage[] {fluidInputStorage, null};
+        return new FluidStorage[] { fluidInputStorage, null };
       }
       if (holds(fluidInputStorage2, first, checkAmounts)) {
-        return new FluidStorage[] {fluidInputStorage2, null};
+        return new FluidStorage[] { fluidInputStorage2, null };
       }
       return null;
     }
     if (holds(fluidInputStorage, first, checkAmounts) && holds(fluidInputStorage2, second, checkAmounts)) {
-      return new FluidStorage[] {fluidInputStorage, fluidInputStorage2};
+      return new FluidStorage[] { fluidInputStorage, fluidInputStorage2 };
     }
     if (holds(fluidInputStorage2, first, checkAmounts) && holds(fluidInputStorage, second, checkAmounts)) {
-      return new FluidStorage[] {fluidInputStorage2, fluidInputStorage};
+      return new FluidStorage[] { fluidInputStorage2, fluidInputStorage };
     }
     return null;
   }
@@ -213,6 +213,9 @@ public class BlockEntityFluidEnricher extends FaktocraftBlockEntity
         || cachedInputStack2.getItem() != inputStack2.getItem()
         || cachedFluid1 != fluidInputStorage.getFluid()
         || cachedFluid2 != fluidInputStorage2.getFluid()) {
+      boolean itemsChanged = (!cachedInputStack.isEmpty() && cachedInputStack.getItem() != inputStack.getItem())
+          || (!cachedInputStack2.isEmpty() && cachedInputStack2.getItem() != inputStack2.getItem());
+      FluidEnrichingRecipe oldRecipe = recipe;
       cachedInputStack = inputStack.copy();
       cachedInputStack2 = inputStack2.copy();
       cachedFluid1 = fluidInputStorage.getFluid();
@@ -220,6 +223,9 @@ public class BlockEntityFluidEnricher extends FaktocraftBlockEntity
       recipe = (inputStack.getItem() != Items.AIR || inputStack2.getItem() != Items.AIR)
           ? getRecipe().orElse(null)
           : null;
+      if (itemsChanged || (oldRecipe != null && oldRecipe != recipe)) {
+        progress.setBoth(-1);
+      }
     }
 
     if (recipe != null) {

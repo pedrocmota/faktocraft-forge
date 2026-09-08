@@ -7,6 +7,9 @@ import com.faktocraft.common.registries.machines.M2Registry;
 import com.faktocraft.common.util.GuiUtil;
 import net.minecraftforge.registries.ForgeRegistries;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -30,8 +33,8 @@ public class RecyclingCategory extends AbstractRecipeCategory<RecyclingRecipe> {
   public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "recycling");
   public static final RecipeType<RecyclingRecipe> TYPE = new RecipeType<>(UID, RecyclingRecipe.class);
 
-  private IDrawableAnimated progress;
-  private IDrawableAnimated energy;
+  private final LoadingCache<Integer, IDrawableAnimated> progress;
+  private final IDrawableAnimated energy;
 
   public RecyclingCategory(IGuiHelper guiHelper) {
     super(
@@ -40,14 +43,14 @@ public class RecyclingCategory extends AbstractRecipeCategory<RecyclingRecipe> {
         guiHelper,
         guiHelper.createDrawable(JEI, 117, 0, 114, 54),
         guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M2Registry.RECYCLER)));
+    this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
+        (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 25, 85, 24, 16).buildAnimated(duration,
+            IDrawableAnimated.StartDirection.LEFT, false)));
+    this.energy = createEnergyDrawable();
   }
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, RecyclingRecipe recipe, IFocusGroup focuses) {
-    this.progress = guiHelper.drawableBuilder(PROCESS, 25, 85, 24, 16).buildAnimated(recipe.getDuration(),
-        IDrawableAnimated.StartDirection.LEFT, false);
-    this.energy = createEnergyDrawable();
-
     List<ItemStack> inputs = ForgeRegistries.ITEMS.getValues().stream()
         .map(Item::getDefaultInstance)
         .filter(stack -> !stack.isEmpty() && !recipe.isExcluded(stack))
@@ -67,7 +70,7 @@ public class RecyclingCategory extends AbstractRecipeCategory<RecyclingRecipe> {
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 
-    this.progress.draw(graphics, halfX - 24, 19);
+    this.progress.getUnchecked(recipe.getDuration()).draw(graphics, halfX - 24, 19);
     this.energy.draw(graphics, halfX + 39, 7);
 
     GuiUtil.renderScaled(graphics, recipe.getPowerCost() + " IE/T", 0, 48, 0.75f, 0x7E7E7E, false);

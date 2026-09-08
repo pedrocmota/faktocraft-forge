@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "faktocraft:block/drilled_block"
+      }
+    }
+  ]
+}

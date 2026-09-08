@@ -5,6 +5,9 @@ import com.faktocraft.common.recipe.impl.CircuitAssemblingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -28,8 +31,8 @@ public class CircuitAssemblingCategory extends AbstractRecipeCategory<CircuitAss
   public static final RecipeType<CircuitAssemblingRecipe> TYPE = new RecipeType<>(UID,
       CircuitAssemblingRecipe.class);
 
-  private IDrawableAnimated progress;
-  private IDrawableAnimated energy;
+  private final LoadingCache<Integer, IDrawableAnimated> progress;
+  private final IDrawableAnimated energy;
 
   public CircuitAssemblingCategory(IGuiHelper guiHelper) {
     super(
@@ -38,14 +41,14 @@ public class CircuitAssemblingCategory extends AbstractRecipeCategory<CircuitAss
         guiHelper,
         guiHelper.createDrawable(JEI_LARGE, 0, 0, 152, 54),
         guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M3Registry.CIRCUIT_ASSEMBLER)));
+    this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
+        (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(duration,
+            IDrawableAnimated.StartDirection.LEFT, false)));
+    this.energy = createEnergyDrawable();
   }
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, CircuitAssemblingRecipe recipe, IFocusGroup focuses) {
-    this.progress = guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(recipe.getDuration(),
-        IDrawableAnimated.StartDirection.LEFT, false);
-    this.energy = createEnergyDrawable();
-
     int i = 0;
     for (Map.Entry<Ingredient, Integer> entry : recipe.getIngredientMap().entrySet()) {
       Ingredient ingredient = entry.getKey();
@@ -67,7 +70,7 @@ public class CircuitAssemblingCategory extends AbstractRecipeCategory<CircuitAss
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 
-    this.progress.draw(graphics, halfX - 6, 19);
+    this.progress.getUnchecked(recipe.getDuration()).draw(graphics, halfX - 6, 19);
     this.energy.draw(graphics, halfX + 58, 7);
 
     GuiUtil.renderScaled(graphics, recipe.getPowerCost() + " IE/T", 0, 48, 0.75f, 0x7E7E7E, false);

@@ -5,6 +5,9 @@ import com.faktocraft.common.recipe.impl.FluidExtrudingRecipe;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -25,8 +28,8 @@ public class FluidExtrudingCategory extends AbstractRecipeCategory<FluidExtrudin
   public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "fluid_extruding");
   public static final RecipeType<FluidExtrudingRecipe> TYPE = new RecipeType<>(UID, FluidExtrudingRecipe.class);
 
-  private IDrawableAnimated progress;
-  private IDrawableAnimated energy;
+  private final LoadingCache<Integer, IDrawableAnimated> progress;
+  private final IDrawableAnimated energy;
 
   public FluidExtrudingCategory(IGuiHelper guiHelper) {
     super(
@@ -35,14 +38,14 @@ public class FluidExtrudingCategory extends AbstractRecipeCategory<FluidExtrudin
         guiHelper,
         guiHelper.createDrawable(JEI_LARGE, 0, 55, 152, 54),
         guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M3Registry.EXTRUDER)));
+    this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
+        (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 25, 51, 24, 16).buildAnimated(duration,
+            IDrawableAnimated.StartDirection.LEFT, false)));
+    this.energy = createEnergyDrawable();
   }
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, FluidExtrudingRecipe recipe, IFocusGroup focuses) {
-    this.progress = guiHelper.drawableBuilder(PROCESS, 25, 51, 24, 16).buildAnimated(recipe.getDuration(),
-        IDrawableAnimated.StartDirection.LEFT, false);
-    this.energy = createEnergyDrawable();
-
     builder.addSlot(RecipeIngredientRole.INPUT, 11, 12).setFluidRenderer(8000, false, 8, 29)
         .addFluidStack(Fluids.WATER, Math.max(recipe.getWaterCost(), 1));
     builder.addSlot(RecipeIngredientRole.INPUT, 52, 12).setFluidRenderer(8000, false, 8, 29)
@@ -55,7 +58,7 @@ public class FluidExtrudingCategory extends AbstractRecipeCategory<FluidExtrudin
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 
-    this.progress.draw(graphics, halfX - 6, 19);
+    this.progress.getUnchecked(recipe.getDuration()).draw(graphics, halfX - 6, 19);
     this.energy.draw(graphics, halfX + 58, 7);
 
     if (recipe.getExperience() > 0) {

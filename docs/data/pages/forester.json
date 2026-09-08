@@ -1,0 +1,82 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The forester is the quarry's green sibling: same landmarks, the same frame in dark green, same moving gantry, but instead of digging it grows and harvests a tree farm inside the rectangle. It runs on **High tier** power.",
+      "pt": "A florestadora é a irmã verde da mineradora: os mesmos marcos, a mesma moldura em verde escuro, o mesmo braço móvel, mas em vez de escavar ela cultiva e colhe uma floresta dentro do retângulo. Funciona com energia de tensão **Alta**."
+    },
+    {
+      "type": "h",
+      "en": "Setup",
+      "pt": "Montagem"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Place **three Landmarks** in an **L** on flat ground (sides from 10 to 30 blocks) and put the **Forester** next to one of them, outside the rectangle.",
+        "Feed it High-tier power and dock a capacitor.",
+        "Drop **saplings** in the three left input slots and, optionally, **bone meal** in the two right ones.",
+        "The frame builds itself around the area and the gantry starts planting on a 6-block grid, on any dirt or grass at the machine's level, far enough apart that neighbouring canopies never touch and one harvest never drags an unfinished tree along."
+      ],
+      "pt": [
+        "Coloque **três Marcos** em **L** em terreno plano (lados de 10 a 30 blocos) e ponha a **Florestadora** encostada num deles, fora do retângulo.",
+        "Alimente com tensão Alta e encaixe um capacitor.",
+        "Coloque **mudas** nos três slots da esquerda e, se quiser, **farinha de osso** nos dois da direita.",
+        "A moldura se constrói ao redor da área e o braço começa a plantar numa grade de 6 blocos, em qualquer terra ou grama no nível da máquina, longe o bastante para as copas vizinhas não se tocarem e uma colheita não levar junto uma árvore ainda crescendo."
+      ]
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Forester",
+            "pt": "Florestadora"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/forester_top",
+              "front": "block/machines/forester_front",
+              "side": "block/machines/forester_side"
+            }
+          }
+        },
+        {
+          "name": {
+            "en": "Landmark",
+            "pt": "Marco"
+          },
+          "icon": {
+            "item": "block/misc/landmark"
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Behavior",
+      "pt": "Comportamento"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Every tree whose trunk crosses the machine's level gets felled **top down, logs and leaves**; drops go to the **27-slot inventory**, and saplings are routed back to the sapling slots first.",
+        "With bone meal available the gantry keeps dosing the same sapling until the tree actually grows, then moves to the next; a sapling that refuses to grow after a dozen doses is left alone for a minute. Without bone meal trees grow at their natural pace.",
+        "**Rubber trees**: the small toggle under the fertilizer slots chooses between *tapping only* (the tree stays and resin is collected whenever a spot fills) and *felling* like any other tree (resin is tapped first).",
+        "Supports overclocker and efficiency upgrades; pull items out with [logistics pipes](#/logistics). Breaking the machine removes the frame."
+      ],
+      "pt": [
+        "Toda árvore cujo tronco cruza o nível da máquina é derrubada **de cima para baixo, troncos e folhas**; os drops vão para o **inventário de 27 slots**, e as mudas voltam primeiro para os slots de mudas.",
+        "Com farinha de osso disponível o braço insiste na mesma muda até a árvore crescer de fato e só então passa para a próxima; uma muda que não cresce depois de uma dúzia de doses é deixada em paz por um minuto. Sem farinha de osso as árvores crescem no ritmo natural.",
+        "**Seringueiras**: o pequeno botão sob os slots de fertilizante escolhe entre *só extrair resina* (a árvore fica e a resina é colhida sempre que um ponto enche) e *cortar* como qualquer outra árvore (a resina é extraída antes).",
+        "Aceita melhorias de overclocker e eficiência; retire os itens com [tubos de logística](#/logistics). Quebrar a máquina remove a moldura."
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Keep the ground inside the rectangle flat and at the machine's height: the forester only plants on the layer right above its own level. The frame height follows the saplings it holds: it rises as soon as a taller species arrives and only comes back down once the area is idle and no tree stands above the new top. Only vanilla saplings and rubber saplings are accepted, and oaks inside the area never grow into the big branching variant.",
+      "pt": "Mantenha o chão dentro do retângulo plano e na altura da máquina: a florestadora só planta na camada logo acima do próprio nível. A altura da moldura acompanha as mudas guardadas: sobe assim que chega uma espécie mais alta e só desce quando a área está ociosa e nenhuma árvore passa do novo topo. Só mudas do jogo base e de seringueira são aceitas, e carvalhos dentro da área nunca crescem na variante grande cheia de galhos."
+    }
+  ]
+}

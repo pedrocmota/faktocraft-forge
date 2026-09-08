@@ -6,6 +6,9 @@ import com.faktocraft.common.registries.machines.M4Registry;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.util.TextComponentUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -26,8 +29,8 @@ public class ScannerCategory extends AbstractRecipeCategory<ScannerRecipe> {
   public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "scanner");
   public static final RecipeType<ScannerRecipe> TYPE = new RecipeType<>(UID, ScannerRecipe.class);
 
-  private IDrawableAnimated progress;
-  private IDrawableAnimated energy;
+  private final LoadingCache<Integer, IDrawableAnimated> progress;
+  private final IDrawableAnimated energy;
 
   public ScannerCategory(IGuiHelper guiHelper) {
     super(
@@ -36,14 +39,14 @@ public class ScannerCategory extends AbstractRecipeCategory<ScannerRecipe> {
         guiHelper,
         guiHelper.createDrawable(JEI_LARGE_2, 0, 55, 152, 54),
         guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M4Registry.SCANNER)));
+    this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
+        (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 62, 122, 61, 42).buildAnimated(duration,
+            IDrawableAnimated.StartDirection.LEFT, false)));
+    this.energy = createEnergyDrawable();
   }
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, ScannerRecipe recipe, IFocusGroup focuses) {
-    this.progress = guiHelper.drawableBuilder(PROCESS, 62, 122, 61, 42).buildAnimated(recipe.getDuration(),
-        IDrawableAnimated.StartDirection.LEFT, false);
-    this.energy = createEnergyDrawable();
-
     builder.addSlot(RecipeIngredientRole.OUTPUT, 23, 19).addItemStacks(stacks(recipe.getIngredient(), 1));
   }
 
@@ -52,7 +55,7 @@ public class ScannerCategory extends AbstractRecipeCategory<ScannerRecipe> {
       double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 
-    this.progress.draw(graphics, halfX - 76, 5);
+    this.progress.getUnchecked(recipe.getDuration()).draw(graphics, halfX - 76, 5);
     this.energy.draw(graphics, halfX + 58, 7);
 
     if (recipe.getExperience() > 0) {

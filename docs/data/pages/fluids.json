@@ -44,6 +44,23 @@
         },
         {
           "name": {
+            "en": "Ender Tank",
+            "pt": "Tanque ender"
+          },
+          "icon": {
+            "block": {
+              "top": "block/pipe/ender_tank_end",
+              "front": "block/pipe/ender_tank_preview_front",
+              "side": "block/pipe/ender_tank_preview_side"
+            }
+          },
+          "desc": {
+            "en": "Set a 6-digit code in its GUI: every Ender Tank with the same code shares one 16-bucket volume, at any distance or dimension. Without a code it stays inactive; it never joins with neighbouring tanks.",
+            "pt": "Defina uma senha de 6 dígitos na GUI: todo tanque ender com a mesma senha compartilha um volume de 16 baldes, em qualquer distância ou dimensão. Sem senha fica inativo; nunca se une aos tanques vizinhos."
+          }
+        },
+        {
+          "name": {
             "en": "Fluid Stone Pipe",
             "pt": "Tubo de Fluido de Pedra"
           },
@@ -209,6 +226,11 @@
       "type": "p",
       "en": "The **Fueling Station** fills fluid-powered gear - most importantly [jetpacks](#/jetpack) - straight from its internal tank. Park the item in its slot and watch the gauge fill.",
       "pt": "O **Posto de Abastecimento** enche equipamentos movidos a fluido - principalmente as [jetpacks](#/jetpack) - direto do tanque interno. Deixe o item no slot e veja o medidor encher."
+    },
+    {
+      "type": "callout",
+      "en": "Fluid pipes can run inside walls: bore the block with the [Hole Drill](#/energy) and place the pipe on the bored block.",
+      "pt": "Tubos de fluido podem correr por dentro de paredes: fure o bloco com a [Furadeira](#/energy) e coloque o tubo no bloco furado."
     }
   ]
 }

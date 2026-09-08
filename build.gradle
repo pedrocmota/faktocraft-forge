@@ -44,6 +44,7 @@ minecraft {
         }
 
         gameTestServer {
+            workingDirectory project.file('run-gametest')
             property 'forge.enabledGameTestNamespaces', mod_id
             property 'faktocraft.energyAudit', (project.findProperty('energyAudit') ?: 'false')
             property 'faktocraft.testFilter', (project.findProperty('tests') ?: '')
@@ -82,16 +83,74 @@ repositories {
             includeGroup 'maven.modrinth'
         }
     }
+    maven {
+        name = 'Shedaniel'
+        url 'https://maven.shedaniel.me/'
+        content {
+            includeGroup 'me.shedaniel'
+            includeGroup 'me.shedaniel.cloth'
+        }
+    }
+    maven {
+        name = 'Architectury'
+        url 'https://maven.architectury.dev/'
+        content {
+            includeGroup 'dev.architectury'
+        }
+    }
+    maven {
+        name = 'WTHIT'
+        url 'https://maven2.bai.lol'
+        content {
+            includeGroup 'mcp.mobius.waila'
+            includeGroup 'lol.bai'
+        }
+    }
 }
+
+def modProfiles = [
+    default    : ['jei', 'jade'],
+    alternative: ['rei', 'wthit'],
+    production : ['embeddium', 'distanthorizons', 'jei', 'jade', 'oculus'],
+]
+
+def modRuntimeDeps = [
+    jei            : ["mezz.jei:jei-1.20.1-forge:${jei_version}"],
+    jade           : ["maven.modrinth:jade:${jade_version}"],
+    rei            : ["me.shedaniel:RoughlyEnoughItems-forge:${rei_version}",
+                      "dev.architectury:architectury-forge:${architectury_version}",
+                      "me.shedaniel.cloth:cloth-config-forge:${cloth_config_version}"],
+    wthit          : ["mcp.mobius.waila:wthit:forge-${wthit_version}",
+                      "lol.bai:badpackets:forge-${badpackets_version}"],
+    embeddium      : ["maven.modrinth:embeddium:${embeddium_version}"],
+    distanthorizons: ["maven.modrinth:distanthorizons:${distant_horizons_version}"],
+    oculus         : ["maven.modrinth:oculus:${oculus_version}"],
+]
+
+def modProfile = (project.findProperty('profile') ?: 'default').toString()
+if (!modProfiles.containsKey(modProfile)) {
+    throw new GradleException("Unknown mod profile '${modProfile}'. Available: ${modProfiles.keySet().join(', ')}")
+}
+logger.lifecycle("Mod profile: ${modProfile} -> ${modProfiles[modProfile].join(', ')}")
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-common-api:15.20.0.106"))
-    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.20.0.106"))
-    runtimeOnly(fg.deobf("mezz.jei:jei-1.20.1-forge:15.20.0.106"))
+    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-common-api:${jei_version}"))
+    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-forge-api:${jei_version}"))
+    compileOnly(fg.deobf("maven.modrinth:jade:${jade_version}"))
 
-    implementation(fg.deobf("maven.modrinth:jade:11.13.3+forge"))
+    modProfiles[modProfile].each { mod ->
+        modRuntimeDeps[mod].each { coordinate ->
+            runtimeOnly(fg.deobf(coordinate)) { transitive = false }
+        }
+    }
+
+    compileOnly(fg.deobf("me.shedaniel:RoughlyEnoughItems-api-forge:${rei_version}"))
+    compileOnly(fg.deobf("me.shedaniel:RoughlyEnoughItems-default-plugin-forge:${rei_version}"))
+    compileOnly(fg.deobf("dev.architectury:architectury-forge:${architectury_version}"))
+    compileOnly("me.shedaniel.cloth:basic-math:0.6.1")
+    compileOnly(fg.deobf("mcp.mobius.waila:wthit-api:forge-${wthit_version}"))
 }
 
 tasks.named('processResources', ProcessResources).configure {

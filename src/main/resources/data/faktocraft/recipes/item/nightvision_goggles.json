@@ -15,7 +15,7 @@
       "item": "faktocraft:luminator"
     },
     "r": {
-      "item": "faktocraft:rubber"
+      "tag": "forge:rubber"
     }
   },
   "pattern": [

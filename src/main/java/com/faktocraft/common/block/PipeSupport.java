@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public final class PipeSupport {
 
   private static final Direction[] ANY_SIDE = {
-    Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+      Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
 
   private static final int JUNCTION_SPACING = 3;
 
@@ -196,8 +196,8 @@ public final class PipeSupport {
 
   private static Direction[] sideOrder(Direction.Axis axis) {
     return switch (axis) {
-      case X -> new Direction[] {Direction.NORTH, Direction.SOUTH};
-      case Z -> new Direction[] {Direction.EAST, Direction.WEST};
+      case X -> new Direction[] { Direction.NORTH, Direction.SOUTH };
+      case Z -> new Direction[] { Direction.EAST, Direction.WEST };
       case Y -> ANY_SIDE;
     };
   }

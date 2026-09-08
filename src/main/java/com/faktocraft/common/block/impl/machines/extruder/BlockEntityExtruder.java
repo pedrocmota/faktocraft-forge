@@ -60,6 +60,8 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
   protected List<FluidExtrudingRecipe> recipes;
   @Nullable
   protected FluidExtrudingRecipe recipe;
+  @Nullable
+  private String pendingRecipeId;
 
   private final LazyOptional<IFluidHandler> fluidPortsCap = LazyOptional.of(
       () -> new com.faktocraft.common.block.impl.machines.MachineFluidPorts(
@@ -110,11 +112,30 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
     if (recipes == null || recipes.isEmpty()) {
       return;
     }
+    selectRecipe(index);
+    progress.setBoth(-1);
+  }
+
+  private void selectRecipe(int index) {
+    if (recipes == null || recipes.isEmpty()) {
+      return;
+    }
     index = Math.max(0, Math.min(index, recipes.size() - 1));
     this.recipe = recipes.get(index);
     this.recipeIndex = index;
     getItemStackHandler().setStackInSlot(INPUT_SLOT, recipe.getResultItem());
-    progress.setBoth(-1);
+  }
+
+  private int indexOfRecipe(@Nullable String id) {
+    if (id == null || recipes == null) {
+      return -1;
+    }
+    for (int i = 0; i < recipes.size(); i++) {
+      if (recipes.get(i).getId().toString().equals(id)) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   @Override
@@ -156,7 +177,13 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
     }
 
     if (this.recipe == null && recipes != null && !recipes.isEmpty()) {
-      setRecipe(0);
+      int savedIndex = indexOfRecipe(pendingRecipeId);
+      pendingRecipeId = null;
+      if (savedIndex >= 0) {
+        selectRecipe(savedIndex);
+      } else {
+        setRecipe(0);
+      }
       updateBlockState();
     }
 
@@ -229,6 +256,11 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
     CompoundTag progressTag = new CompoundTag();
     progress.save(progressTag);
     tag.put("progress", progressTag);
+    if (recipe != null) {
+      tag.putString("recipe", recipe.getId().toString());
+    } else if (pendingRecipeId != null) {
+      tag.putString("recipe", pendingRecipeId);
+    }
     super.saveAdditional(tag);
   }
 
@@ -247,6 +279,7 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
     if (tag.contains("progress")) {
       progress.load(tag.getCompound("progress"));
     }
+    this.pendingRecipeId = tag.contains("recipe") ? tag.getString("recipe") : null;
   }
 
   @Override

@@ -6,10 +6,10 @@
       "tag": "forge:plates/tin"
     },
     "r": {
-      "item": "faktocraft:rubber"
+      "tag": "forge:rubber"
     },
     "d": {
-      "item": "minecraft:redstone"
+      "tag": "forge:dusts/redstone"
     }
   },
   "pattern": [

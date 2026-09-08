@@ -2,6 +2,7 @@ package com.faktocraft.common.block.impl.generators.generator;
 
 import com.faktocraft.common.block.BlockElectricMachine;
 import com.faktocraft.common.enums.EnergyTier;
+import com.faktocraft.common.interfaces.block.IGenerationInfo;
 import com.faktocraft.common.interfaces.block.IHasMenu;
 import com.faktocraft.common.util.BlockStateHelper;
 import net.minecraft.core.BlockPos;
@@ -15,7 +16,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockGenerator extends BlockElectricMachine implements IHasMenu {
+public class BlockGenerator extends BlockElectricMachine implements IHasMenu, IGenerationInfo {
+
+  @Override
+  public void appendGenerationInfo(java.util.List<net.minecraft.network.chat.Component> tooltip) {
+    tooltip.add(IGenerationInfo.line("generation",
+        IGenerationInfo.rate(com.faktocraft.common.config.ModConfig.server().generator_tick_generate)));
+  }
 
   public BlockGenerator(Properties properties) {
     super(EnergyTier.LOW, properties);

@@ -3,10 +3,10 @@
   "group": "faktocraft",
   "key": {
     "r": {
-      "item": "faktocraft:rubber"
+      "tag": "forge:rubber"
     },
     "g": {
-      "item": "minecraft:glass_pane"
+      "tag": "forge:glass_panes"
     },
     "p": {
       "item": "faktocraft:plastic"

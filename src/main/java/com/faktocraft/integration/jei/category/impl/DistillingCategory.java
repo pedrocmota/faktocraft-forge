@@ -4,6 +4,9 @@ import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.distillery.DistilleryRegistry;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -29,8 +32,8 @@ public class DistillingCategory extends AbstractRecipeCategory<DistillingCategor
   public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "distilling");
   public static final RecipeType<Entry> TYPE = new RecipeType<>(UID, Entry.class);
 
-  private IDrawableAnimated progress;
-  private IDrawableAnimated energy;
+  private final LoadingCache<Integer, IDrawableAnimated> progress;
+  private final IDrawableAnimated energy;
 
   private final IDrawableStatic tankFrame;
   private final IDrawableStatic slotFrame;
@@ -44,14 +47,14 @@ public class DistillingCategory extends AbstractRecipeCategory<DistillingCategor
         guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(DistilleryRegistry.DISTILLERY)));
     this.tankFrame = guiHelper.createDrawable(JEI_LARGE, 160, 165, 16, 37);
     this.slotFrame = guiHelper.createDrawable(JEI_LARGE, 180, 165, 18, 18);
+    this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
+        (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(duration,
+            IDrawableAnimated.StartDirection.LEFT, false)));
+    this.energy = createEnergyDrawable();
   }
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, Entry recipe, IFocusGroup focuses) {
-    this.progress = guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(recipe.duration(),
-        IDrawableAnimated.StartDirection.LEFT, false);
-    this.energy = createEnergyDrawable();
-
     builder.addSlot(RecipeIngredientRole.INPUT, 8, 12)
         .setFluidRenderer(recipe.oil().getAmount(), false, 8, 29)
         .addFluidStack(recipe.oil().getFluid(), recipe.oil().getAmount());
@@ -80,7 +83,7 @@ public class DistillingCategory extends AbstractRecipeCategory<DistillingCategor
     tankFrame.draw(graphics, 40, 8);
     slotFrame.draw(graphics, 73, 35);
 
-    this.progress.draw(graphics, halfX - 6, 19);
+    this.progress.getUnchecked(recipe.duration()).draw(graphics, halfX - 6, 19);
     this.energy.draw(graphics, halfX + 58, 7);
 
     GuiUtil.renderScaled(graphics, recipe.duration() / 20 + "s", 3, 1, 0.75f, 0x7E7E7E, false);

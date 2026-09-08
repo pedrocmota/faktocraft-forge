@@ -25,6 +25,9 @@ public class BlockElectricMachine extends BlockMachine implements IElectricMachi
       @org.jetbrains.annotations.Nullable net.minecraft.world.level.BlockGetter level,
       java.util.List<net.minecraft.network.chat.Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
     tooltip.add(IElectricMachine.tierTooltip(getEnergyTiers()));
+    if (this instanceof com.faktocraft.common.interfaces.block.IGenerationInfo info) {
+      info.appendGenerationInfo(tooltip);
+    }
     super.appendHoverText(stack, level, tooltip, flag);
   }
 }

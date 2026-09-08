@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_pipes",
+  "key": {
+    "e": {
+      "tag": "forge:ender_pearls"
+    },
+    "g": {
+      "tag": "forge:glass/colorless"
+    },
+    "t": {
+      "item": "faktocraft:tank"
+    },
+    "o": {
+      "tag": "forge:obsidian"
+    },
+    "c": {
+      "item": "faktocraft:electronic_circuit"
+    }
+  },
+  "pattern": [
+    "ege",
+    "gtg",
+    "oco"
+  ],
+  "result": {
+    "item": "faktocraft:ender_tank"
+  }
+}

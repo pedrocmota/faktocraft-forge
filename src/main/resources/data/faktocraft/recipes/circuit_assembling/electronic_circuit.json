@@ -12,7 +12,7 @@
     },
     {
       "count": 2,
-      "item": "minecraft:redstone"
+      "tag": "forge:dusts/redstone"
     }
   ],
   "power_cost": 10,

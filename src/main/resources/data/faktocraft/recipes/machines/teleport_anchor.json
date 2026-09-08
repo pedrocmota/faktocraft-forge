@@ -15,7 +15,7 @@
       "item": "faktocraft:glass_fibre_cable"
     },
     "t": {
-      "item": "minecraft:ender_pearl"
+      "tag": "forge:ender_pearls"
     }
   },
   "pattern": [

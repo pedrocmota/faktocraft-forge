@@ -3,7 +3,7 @@
   "group": "faktocraft",
   "key": {
     "r": {
-      "item": "faktocraft:rubber"
+      "tag": "forge:rubber"
     },
     "p": {
       "item": "faktocraft:plastic"

@@ -29,8 +29,8 @@ public class MatterFabricatingCategory extends AbstractRecipeCategory<MatterFabr
   public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "matter_fabricating");
   public static final RecipeType<Entry> TYPE = new RecipeType<>(UID, Entry.class);
 
-  private IDrawableAnimated progress;
-  private IDrawableAnimated energy;
+  private final IDrawableAnimated progress;
+  private final IDrawableAnimated energy;
 
   private final IDrawableStatic slotFrame;
 
@@ -42,14 +42,13 @@ public class MatterFabricatingCategory extends AbstractRecipeCategory<MatterFabr
         guiHelper.createDrawable(JEI_LARGE, 0, 165, 152, 54),
         guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M4Registry.MATTER_FABRICATOR)));
     this.slotFrame = guiHelper.createDrawable(JEI_LARGE, 180, 165, 18, 18);
+    this.progress = guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(200,
+        IDrawableAnimated.StartDirection.LEFT, false);
+    this.energy = createEnergyDrawable();
   }
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, Entry recipe, IFocusGroup focuses) {
-    this.progress = guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(200,
-        IDrawableAnimated.StartDirection.LEFT, false);
-    this.energy = createEnergyDrawable();
-
     builder.addSlot(RecipeIngredientRole.INPUT, 8, 19)
         .addItemStack(recipe.amplifier());
 

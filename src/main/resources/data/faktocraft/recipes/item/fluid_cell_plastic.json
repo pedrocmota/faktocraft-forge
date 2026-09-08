@@ -3,7 +3,7 @@
   "group": "faktocraft",
   "key": {
     "g": {
-      "item": "minecraft:glass_pane"
+      "tag": "forge:glass_panes"
     },
     "p": {
       "item": "faktocraft:plastic"

@@ -6,6 +6,7 @@ import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketModuleTree;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -18,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -53,6 +55,8 @@ public class ModuleTreePanel {
   private final List<Row> rows = new ArrayList<>();
   private int scroll;
   private String query = "";
+  @Nullable
+  private CompoundTag builtTag;
 
   @Nullable
   private String editingNode;
@@ -127,8 +131,16 @@ public class ModuleTreePanel {
     return order;
   }
 
+  public void rebuildIfChanged() {
+    if (!Objects.equals(menu.getModuleStack().getTag(), builtTag)) {
+      rebuild();
+    }
+  }
+
   public void rebuild() {
     rows.clear();
+    CompoundTag currentTag = menu.getModuleStack().getTag();
+    builtTag = currentTag != null ? currentTag.copy() : null;
     Map<String, Boolean> overrides = ModuleSettings.treeOverrides(menu.getModuleStack());
     Map<String, Integer> counts = isSupplier()
         ? ModuleSettings.treeCounts(menu.getModuleStack()) : Map.of();

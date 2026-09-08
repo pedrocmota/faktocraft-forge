@@ -18,7 +18,52 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEntityFluidPipe extends BlockEntity implements IValveHolder, ISupportHost {
+public class BlockEntityFluidPipe extends BlockEntity
+    implements IValveHolder, ISupportHost, com.faktocraft.common.cover.ICoverHost {
+
+  @org.jetbrains.annotations.Nullable
+  private BlockState cover;
+  private int coverHoles;
+
+  @org.jetbrains.annotations.Nullable
+  @Override
+  public BlockState getCover() {
+    return cover;
+  }
+
+  @Override
+  public int getCoverHoles() {
+    return coverHoles;
+  }
+
+  @Override
+  public void setCover(@org.jetbrains.annotations.Nullable BlockState cover, int holes) {
+    this.cover = cover;
+    this.coverHoles = holes;
+    com.faktocraft.common.cover.CoverSupport.markChanged(this);
+  }
+
+  @Override
+  public net.minecraftforge.client.model.data.ModelData getModelData() {
+    return com.faktocraft.common.cover.CoverSupport.modelData(cover, coverHoles);
+  }
+
+  @Override
+  public void onDataPacket(net.minecraft.network.Connection connection,
+      net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket packet) {
+    BlockState previousCover = cover;
+    int previousHoles = coverHoles;
+    super.onDataPacket(connection, packet);
+    if (cover != previousCover || coverHoles != previousHoles) {
+      com.faktocraft.common.cover.CoverSupport.refreshClientModel(this);
+    }
+  }
+
+  @Override
+  public void onLoad() {
+    super.onLoad();
+    com.faktocraft.common.cover.CoverSupport.onClientLoad(this, this);
+  }
 
   public final FluidStorage tank;
   private boolean dirtySync;
@@ -267,6 +312,7 @@ public class BlockEntityFluidPipe extends BlockEntity implements IValveHolder, I
 
   @Override
   public void setRemoved() {
+    com.faktocraft.common.cover.CoverSupport.onClientRemoved(this, this);
     super.setRemoved();
     tankCap.invalidate();
   }
@@ -280,6 +326,7 @@ public class BlockEntityFluidPipe extends BlockEntity implements IValveHolder, I
     CompoundTag tankTag = new CompoundTag();
     tank.save(tankTag);
     tag.put("tank", tankTag);
+    com.faktocraft.common.cover.CoverSupport.save(tag, cover, coverHoles);
   }
 
   @Override
@@ -293,6 +340,8 @@ public class BlockEntityFluidPipe extends BlockEntity implements IValveHolder, I
       tank.load(tag.getCompound("tank"));
     }
     settledMb = tank.getFluidAmount();
+    cover = com.faktocraft.common.cover.CoverSupport.load(tag);
+    coverHoles = com.faktocraft.common.cover.CoverSupport.loadHoles(tag);
   }
 
   @Override

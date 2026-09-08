@@ -94,6 +94,14 @@ public class BlockEntityAssemblyTable extends FaktocraftBlockEntity
     return super.getCapability(cap, side);
   }
 
+  @Override
+  public void onLoad() {
+    super.onLoad();
+    if (level != null && !level.isClientSide()) {
+      LogisticsCores.markDirtyNear(level, worldPosition);
+    }
+  }
+
   @Nullable
   private BlockPos cachedPipePos;
   private int pipeRecheck;
@@ -103,7 +111,7 @@ public class BlockEntityAssemblyTable extends FaktocraftBlockEntity
     if (level == null) {
       return null;
     }
-    if (!level.isClientSide() && cachedPipePos != null && --pipeRecheck > 0
+    if (cachedPipePos != null && --pipeRecheck > 0
         && level.getBlockEntity(cachedPipePos) instanceof BlockEntityCraftPipe cached) {
       return cached;
     }
@@ -299,7 +307,7 @@ public class BlockEntityAssemblyTable extends FaktocraftBlockEntity
   @Override
   public void preRemoveSideEffects(BlockPos pos, BlockState state) {
     if (level != null && !level.isClientSide()) {
-      for (ItemStackHandler handler : new ItemStackHandler[] {ingredients, output}) {
+      for (ItemStackHandler handler : new ItemStackHandler[] { ingredients, output }) {
         for (int i = 0; i < handler.getSlots(); i++) {
           ItemStack stack = handler.getStackInSlot(i);
           if (!stack.isEmpty()) {

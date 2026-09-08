@@ -121,7 +121,9 @@ public class BlockEntityWindGenerator extends FaktocraftBlockEntity implements I
       super.updateBlockState();
     }
 
-    if (this.setActive(active)) {
+    boolean wasActive = activeState;
+    setActive(active);
+    if (wasActive != active) {
       super.updateBlockState();
     }
 

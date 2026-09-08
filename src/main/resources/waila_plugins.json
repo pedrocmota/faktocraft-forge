@@ -1,0 +1,9 @@
+{
+  "faktocraft:core": {
+    "entrypoints": {
+      "common": "com.faktocraft.integration.wthit.WthitCommonPlugin",
+      "client": "com.faktocraft.integration.wthit.WthitClientPlugin"
+    },
+    "side": "*"
+  }
+}

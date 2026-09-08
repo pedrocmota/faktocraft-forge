@@ -30,7 +30,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,17 +70,14 @@ public class BlockEntityCanningMachine extends FaktocraftBlockEntity
     return super.addBatterySlot(slots);
   }
 
-  private boolean hasJob(ItemStack up) {
+  private boolean hasJob(ItemStack up, ItemStack down) {
     if (up.isEmpty() || !(up.getItem() instanceof FluidItem)) {
       return false;
     }
     if (mode == CanningMachineMode.FILL) {
-      return FluidCellTankHelper.hasEnoughToFill(up, fluidStorage);
+      return FluidCellTankHelper.canDrainToCell(up, down, fluidStorage);
     }
-    int amount = FluidItem.getFluidAmount(up);
-    return amount > 0
-        && fluidStorage.fill(new FluidStack(FluidItem.getFluid(up), amount),
-            IFluidHandler.FluidAction.SIMULATE) == amount;
+    return FluidCellTankHelper.canFillFromCell(up, down, fluidStorage);
   }
 
   @Override
@@ -96,8 +92,9 @@ public class BlockEntityCanningMachine extends FaktocraftBlockEntity
     }
 
     final ItemStack up = getItemStackHandler().getStackInSlot(CELL_UP);
+    final ItemStack down = getItemStackHandler().getStackInSlot(CELL_DOWN);
 
-    if (hasJob(up)) {
+    if (hasJob(up, down)) {
       if (progress.getProgress() == -1) {
         progress.setData(0, ModConfig.server().canning_machine_duration);
       }

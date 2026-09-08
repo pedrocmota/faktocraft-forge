@@ -7,7 +7,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class BlockStonePipe extends VoxelBlock {
+public class BlockStonePipe extends VoxelBlock implements net.minecraft.world.level.block.EntityBlock {
+
+  @org.jetbrains.annotations.Nullable
+  @Override
+  public net.minecraft.world.level.block.entity.BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    return com.faktocraft.common.cover.CoverSupport.isCovered(state)
+        ? new com.faktocraft.common.cover.BlockEntityCoverHolder(pos, state)
+        : null;
+  }
 
   public BlockStonePipe(Properties properties) {
     super(properties, 0.25f);

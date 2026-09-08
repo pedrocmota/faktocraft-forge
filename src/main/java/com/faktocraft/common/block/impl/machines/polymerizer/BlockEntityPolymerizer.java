@@ -126,8 +126,13 @@ public class BlockEntityPolymerizer extends FaktocraftBlockEntity
     }
 
     if (cachedInputStack.getItem() != inputStack.getItem()) {
+      boolean hadInput = !cachedInputStack.isEmpty();
+      PolymerizingRecipe oldRecipe = recipe;
       cachedInputStack = inputStack.copy();
       recipe = inputStack.getItem() != Items.AIR ? getRawRecipe(inputStack).orElse(null) : null;
+      if (hadInput || (oldRecipe != null && oldRecipe != recipe)) {
+        progress.setBoth(-1);
+      }
     }
 
     if (recipe != null && oilStorage.getFluidAmount() >= recipe.getFluidInput().amountMb()) {

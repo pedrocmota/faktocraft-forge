@@ -7,6 +7,8 @@ import com.faktocraft.common.network.packet.PacketRequestTarget;
 import com.faktocraft.common.network.packet.PacketTableState;
 import com.faktocraft.common.network.packet.PacketTaskHistoryOp;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -53,6 +55,19 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
   private static final int TAB_H = 11;
   private static final float TAB_FONT_SCALE = 0.7f;
   private static final int TAB_MAX_W = 64;
+  private static final int QTY_X = 202;
+  private static final int QTY_Y = 193;
+  private static final int QTY_BUTTON_W = 14;
+  private static final int QTY_H = 14;
+  private static final int QTY_FIELD_W = 36;
+  private static final int QTY_TEXT_COLOR = 0x404040;
+  private static final int MESSAGE_X = 176;
+  private static final int MESSAGE_Y = 210;
+  private static final int MESSAGE_W = 154;
+  private static final int MESSAGE_LINES = 2;
+  private static final long MESSAGE_MILLIS = 6000L;
+  private static final int MESSAGE_ERROR_COLOR = 0xA02020;
+  private static final int MESSAGE_INFO_COLOR = 0x404040;
 
   private enum Tab {
     REQUESTS, TASKS
@@ -70,7 +85,11 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
   private boolean autoExtractShown;
   private Button minusButton;
   private Button plusButton;
+  private QuantityBox quantityBox;
   private Button requestButton;
+  private List<net.minecraft.util.FormattedCharSequence> messageLines = List.of();
+  private int messageColor;
+  private long messageUntil;
   private TaskListPanel taskPanel;
 
   public ScreenRequestTable(MenuRequestTable menu, Inventory inventory, Component title) {
@@ -114,9 +133,13 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     autoExtractButton.setTooltip(net.minecraft.client.gui.components.Tooltip.create(autoExtractTooltip()));
 
     minusButton = addRenderableWidget(Button.builder(Component.literal("-"),
-        b -> adjustQuantity(-step())).bounds(left + 202, top + 193, 14, 14).build());
+        b -> stepQuantity(-1)).bounds(left + QTY_X, top + QTY_Y, QTY_BUTTON_W, QTY_H).build());
     plusButton = addRenderableWidget(Button.builder(Component.literal("+"),
-        b -> adjustQuantity(step())).bounds(left + 252, top + 193, 14, 14).build());
+        b -> stepQuantity(1)).bounds(left + QTY_X + QTY_BUTTON_W + QTY_FIELD_W, top + QTY_Y, QTY_BUTTON_W, QTY_H)
+        .build());
+    quantityBox = new QuantityBox(this.font, left + QTY_X + QTY_BUTTON_W, top + QTY_Y, QTY_FIELD_W, QTY_H);
+    quantityBox.setValue(String.valueOf(quantity));
+    addRenderableWidget(quantityBox);
 
     requestButton = addRenderableWidget(Button.builder(Component.translatable(key("request_button")),
         b -> request()).bounds(left + 176, top + 230, 154, 18).build());
@@ -189,6 +212,10 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     autoExtractButton.visible = main;
     minusButton.visible = main;
     plusButton.visible = main;
+    quantityBox.setVisible(main);
+    if (!main) {
+      quantityBox.setFocused(false);
+    }
     requestButton.visible = main;
     taskPanel.setVisible(!main);
   }
@@ -259,11 +286,93 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     return hasShiftDown() ? 16 : 1;
   }
 
-  private void adjustQuantity(int delta) {
-    quantity = Math.max(1, Math.min(MenuRequestTable.MAX_REQUEST, quantity + delta));
+  private void stepQuantity(int direction) {
+    int step = step();
+    int next;
+    if (step == 1) {
+      next = quantity + direction;
+    } else if (direction > 0) {
+      next = (quantity / step + 1) * step;
+    } else {
+      next = (quantity - 1) / step * step;
+    }
+    setQuantity(next);
+  }
+
+  private void setQuantity(int value) {
+    quantity = Math.max(1, Math.min(MenuRequestTable.MAX_REQUEST, value));
+    if (quantityBox != null && !quantityBox.getValue().equals(String.valueOf(quantity))) {
+      quantityBox.setValue(String.valueOf(quantity));
+    }
+  }
+
+  private boolean quantityTyped(String text) {
+    if (text.isEmpty()) {
+      return true;
+    }
+    if (text.length() > String.valueOf(MenuRequestTable.MAX_REQUEST).length()) {
+      return false;
+    }
+    for (int i = 0; i < text.length(); i++) {
+      if (text.charAt(i) < '0' || text.charAt(i) > '9') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private void quantityChanged(String text) {
+    if (text.isEmpty()) {
+      return;
+    }
+    int parsed = Integer.parseInt(text);
+    quantity = Math.max(1, Math.min(MenuRequestTable.MAX_REQUEST, parsed));
+    if (parsed > MenuRequestTable.MAX_REQUEST) {
+      quantityBox.setValue(String.valueOf(quantity));
+    }
+  }
+
+  private void commitQuantity() {
+    if (quantityBox != null) {
+      String expected = String.valueOf(quantity);
+      if (!quantityBox.getValue().equals(expected)) {
+        quantityBox.setValue(expected);
+      }
+    }
+  }
+
+  private PacketTableState.Entry selectedEntry() {
+    ItemStack ghost = this.menu.getGhostStack();
+    if (ghost.isEmpty()) {
+      return null;
+    }
+    ItemKey target = ItemKey.of(ghost);
+    for (PacketTableState.Entry entry : all) {
+      if (target.matches(entry.stack())) {
+        return entry;
+      }
+    }
+    return null;
+  }
+
+  private boolean canRequest() {
+    PacketTableState.Entry entry = selectedEntry();
+    if (entry == null || entry.blocked()) {
+      return false;
+    }
+    return entry.count() >= quantity || entry.craftableOnly();
+  }
+
+  private void updateControls() {
+    minusButton.active = quantity > 1;
+    plusButton.active = quantity < MenuRequestTable.MAX_REQUEST;
+    requestButton.active = canRequest();
   }
 
   private void request() {
+    if (!canRequest()) {
+      return;
+    }
     if (this.minecraft != null && this.minecraft.gameMode != null) {
 
       com.faktocraft.common.network.ModNetworking.sendToServer(
@@ -277,6 +386,31 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
 
   public boolean matches(BlockPos pos) {
     return pos.equals(this.menu.getTablePos());
+  }
+
+  public void showMessage(Component message, boolean error) {
+    List<net.minecraft.util.FormattedCharSequence> lines = this.font.split(message, MESSAGE_W);
+    messageLines = lines.size() > MESSAGE_LINES ? lines.subList(0, MESSAGE_LINES) : lines;
+    messageColor = error ? MESSAGE_ERROR_COLOR : MESSAGE_INFO_COLOR;
+    messageUntil = Util.getMillis() + MESSAGE_MILLIS;
+  }
+
+  private void renderMessage(GuiGraphics graphics) {
+    if (messageLines.isEmpty()) {
+      return;
+    }
+    if (Util.getMillis() >= messageUntil) {
+      messageLines = List.of();
+      return;
+    }
+    int left = (this.width - this.imageWidth) / 2;
+    int top = (this.height - this.imageHeight) / 2;
+    int y = top + MESSAGE_Y;
+    for (net.minecraft.util.FormattedCharSequence line : messageLines) {
+      int x = left + MESSAGE_X + (MESSAGE_W - this.font.width(line)) / 2;
+      graphics.drawString(this.font, line, x, y, messageColor, false);
+      y += this.font.lineHeight;
+    }
   }
 
   public void applyState(PacketTableState state) {
@@ -390,11 +524,12 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
       return;
     }
     renderBackground(graphics);
+    updateControls();
     super.render(graphics, mouseX, mouseY, partialTick);
     renderTabs(graphics, mouseX, mouseY);
     renderBrowser(graphics, mouseX, mouseY);
     renderPagination(graphics, mouseX, mouseY);
-    renderQuantity(graphics);
+    renderMessage(graphics);
     renderTooltip(graphics, mouseX, mouseY);
     renderBrowserTooltip(graphics, mouseX, mouseY);
   }
@@ -402,9 +537,9 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
   private static final String PAGER_CHARS = "0123456789/";
 
   private static final int[][] PAGER_GLYPHS = {
-    {7, 5, 5, 5, 7}, {2, 6, 2, 2, 7}, {7, 1, 7, 4, 7}, {7, 1, 7, 1, 7}, {5, 5, 7, 1, 1},
-    {7, 4, 7, 1, 7}, {7, 4, 7, 5, 7}, {7, 1, 2, 2, 2}, {7, 5, 7, 5, 7}, {7, 5, 7, 1, 7},
-    {1, 1, 2, 4, 4}
+      { 7, 5, 5, 5, 7 }, { 2, 6, 2, 2, 7 }, { 7, 1, 7, 4, 7 }, { 7, 1, 7, 1, 7 }, { 5, 5, 7, 1, 1 },
+      { 7, 4, 7, 1, 7 }, { 7, 4, 7, 5, 7 }, { 7, 1, 2, 2, 2 }, { 7, 5, 7, 5, 7 }, { 7, 5, 7, 1, 7 },
+      { 1, 1, 2, 4, 4 }
   };
 
   private void drawTinyText(GuiGraphics graphics, String text, int x, int y, int color) {
@@ -451,7 +586,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     int rightButton = left + PANEL_RIGHT - 4 - 8;
     int numberX = rightButton - 3 - numberWidth;
     int leftButton = numberX - 3 - 8;
-    return new int[] {leftButton, rightButton, top + 19, numberX};
+    return new int[] { leftButton, rightButton, top + 19, numberX };
   }
 
   private void renderPagination(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -467,13 +602,6 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     int[] layout = pagerLayout();
     int x = direction < 0 ? layout[0] : layout[1];
     return mouseX >= x && mouseX < x + 8 && mouseY >= layout[2] && mouseY < layout[2] + 8;
-  }
-
-  private void renderQuantity(GuiGraphics graphics) {
-    int left = (this.width - this.imageWidth) / 2;
-    int top = (this.height - this.imageHeight) / 2;
-    String value = String.valueOf(quantity);
-    graphics.drawString(this.font, value, left + 234 - this.font.width(value) / 2, top + 197, 0x404040, false);
   }
 
   private void renderBrowser(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -562,6 +690,12 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
       }
       return true;
     }
+    if (quantityBox.isFocused() && !quantityBox.isMouseOver(mouseX, mouseY)) {
+      quantityBox.setFocused(false);
+      if (getFocused() == quantityBox) {
+        setFocused(null);
+      }
+    }
     if (isOverPager(mouseX, mouseY, -1)) {
       turnPage(-1);
       return true;
@@ -599,8 +733,10 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     }
     int left = (this.width - this.imageWidth) / 2;
     int top = (this.height - this.imageHeight) / 2;
-    if (mouseX >= left + 202 && mouseX < left + 266 && mouseY >= top + 193 && mouseY < top + 208) {
-      adjustQuantity(delta > 0 ? step() : -step());
+    int qtyWidth = QTY_BUTTON_W * 2 + QTY_FIELD_W;
+    if (mouseX >= left + QTY_X && mouseX < left + QTY_X + qtyWidth && mouseY >= top + QTY_Y
+        && mouseY < top + QTY_Y + QTY_H) {
+      stepQuantity(delta > 0 ? 1 : -1);
       return true;
     }
     return super.mouseScrolled(mouseX, mouseY, delta);
@@ -610,10 +746,15 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
   public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
     EditBox taskSearch = taskPanel != null ? taskPanel.searchBox() : null;
     EditBox focused = search != null && search.isFocused() && search.isVisible() ? search
-        : taskSearch != null && taskSearch.isFocused() && taskSearch.isVisible() ? taskSearch : null;
+        : quantityBox != null && quantityBox.isFocused() && quantityBox.isVisible() ? quantityBox
+            : taskSearch != null && taskSearch.isFocused() && taskSearch.isVisible() ? taskSearch : null;
     if (focused != null) {
-      if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+      boolean enter = keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER;
+      if (keyCode == GLFW.GLFW_KEY_ESCAPE || (enter && focused == quantityBox)) {
         focused.setFocused(false);
+        if (getFocused() == focused) {
+          setFocused(null);
+        }
         return true;
       }
       if (focused.keyPressed(keyCode, scanCode, modifiers)) {
@@ -643,5 +784,53 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     int left = (this.width - this.imageWidth) / 2;
     int top = (this.height - this.imageHeight) / 2;
     graphics.blit(BACKGROUND, left, top, 0, 0, this.imageWidth, this.imageHeight, 512, 256);
+  }
+
+  private final class QuantityBox extends EditBox {
+
+    private final Font boxFont;
+
+    QuantityBox(Font font, int x, int y, int width, int height) {
+      super(font, x, y, width, height, Component.empty());
+      this.boxFont = font;
+      setBordered(false);
+      setMaxLength(String.valueOf(MenuRequestTable.MAX_REQUEST).length());
+      setFilter(ScreenRequestTable.this::quantityTyped);
+      setResponder(ScreenRequestTable.this::quantityChanged);
+    }
+
+    @Override
+    public void setFocused(boolean focused) {
+      boolean was = isFocused();
+      super.setFocused(focused);
+      if (focused) {
+        moveCursorToEnd();
+        setHighlightPos(getCursorPosition());
+      } else if (was) {
+        commitQuantity();
+      }
+    }
+
+    @Override
+    public void onClick(double mouseX, double mouseY) {
+      moveCursorToEnd();
+      setHighlightPos(getCursorPosition());
+    }
+
+    @Override
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+      if (!isVisible()) {
+        return;
+      }
+      String value = getValue();
+      int textWidth = boxFont.width(value);
+      int x = getX() + (getWidth() - textWidth) / 2;
+      int y = getY() + (getHeight() - boxFont.lineHeight) / 2 + 1;
+      graphics.drawString(boxFont, value, x, y, QTY_TEXT_COLOR, false);
+      if (isFocused() && (Util.getMillis() / 300L) % 2L == 0L) {
+        int cursorX = x + boxFont.width(value.substring(0, getCursorPosition()));
+        graphics.fill(cursorX, y - 1, cursorX + 1, y + boxFont.lineHeight, 0xFF000000 | QTY_TEXT_COLOR);
+      }
+    }
   }
 }

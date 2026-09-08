@@ -247,7 +247,7 @@ public class ScreenModule extends AbstractContainerScreen<MenuModule> {
       reserveButton.setMessage(reserveLabel());
     }
     if (treePanel != null) {
-      treePanel.rebuild();
+      treePanel.rebuildIfChanged();
     }
   }
 

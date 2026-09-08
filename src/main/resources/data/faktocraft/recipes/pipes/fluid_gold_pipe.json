@@ -6,7 +6,7 @@
       "item": "faktocraft:gold_pipe"
     },
     {
-      "item": "faktocraft:rubber"
+      "tag": "forge:rubber"
     }
   ],
   "result": {

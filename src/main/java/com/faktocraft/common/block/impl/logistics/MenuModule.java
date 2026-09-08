@@ -162,6 +162,9 @@ public class MenuModule extends AbstractContainerMenu {
 
   @Override
   public boolean clickMenuButton(Player player, int id) {
+    if (id < 0) {
+      return false;
+    }
     int action = id / 16;
     int line = id % 16;
     if (action == ACTION_BACK) {
@@ -172,7 +175,8 @@ public class MenuModule extends AbstractContainerMenu {
       return false;
     }
     java.util.List<ModuleSettings.FilterLine> lines = ModuleSettings.lines(module);
-    ModuleSettings.FilterLine current = line < ModuleSettings.MAX_LINES ? lines.get(line) : null;
+    ModuleSettings.FilterLine current = line < ModuleSettings.MAX_LINES && line < lines.size()
+        ? lines.get(line) : null;
     switch (action) {
       case ACTION_CLEAR_LINE -> {
         if (current != null) {

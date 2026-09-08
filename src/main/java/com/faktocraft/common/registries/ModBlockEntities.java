@@ -16,13 +16,18 @@ public class ModBlockEntities {
   public static final BlockEntityType<com.faktocraft.common.block.impl.cable.BlockEntityBreaker> BREAKER = register(
       "breaker", com.faktocraft.common.block.impl.cable.BlockEntityBreaker::new, ModBlocks.CIRCUIT_BREAKER);
 
+  public static final BlockEntityType<com.faktocraft.common.cover.BlockEntityCoverHolder> COVER_HOLDER = register(
+      "cover_holder", com.faktocraft.common.cover.BlockEntityCoverHolder::new, ModBlocks.DRILLED_BLOCK,
+      com.faktocraft.common.block.impl.logistics.LogisticsRegistry.STONE_PIPE,
+      com.faktocraft.common.block.impl.logistics.LogisticsRegistry.GOLD_PIPE);
+
   public static final BlockEntityType<BlockEntityLuminator> LUMINATOR = register("luminator", BlockEntityLuminator::new,
       ModBlocks.LUMINATOR);
 
   public static final BlockEntityType<
       com.faktocraft.common.block.impl.teleport_anchor.BlockEntityTeleportAnchor> TELEPORT_ANCHOR = register(
           "teleport_anchor", com.faktocraft.common.block.impl.teleport_anchor.BlockEntityTeleportAnchor::new,
-          ModBlocks.TELEPORT_ANCHOR);
+          ModBlocks.TELEPORT_ANCHOR, ModBlocks.DIMENSIONAL_TELEPORT_ANCHOR);
 
   private static <T extends BlockEntity> BlockEntityType<T> register(String name,
       BlockEntityType.BlockEntitySupplier<T> factory, Block... blocks) {

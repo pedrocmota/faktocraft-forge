@@ -57,6 +57,14 @@ public class BlockEntityRequestTable extends FaktocraftBlockEntity {
     return true;
   }
 
+  @Override
+  public void onLoad() {
+    super.onLoad();
+    if (level != null && !level.isClientSide()) {
+      LogisticsCores.markDirtyNear(level, worldPosition);
+    }
+  }
+
   public boolean isAutoExtract() {
     return autoExtract;
   }
@@ -147,9 +155,7 @@ public class BlockEntityRequestTable extends FaktocraftBlockEntity {
   }
 
   private void message(@Nullable ServerPlayer player, String key) {
-    if (player != null) {
-      player.displayClientMessage(Component.translatable("logistics." + Faktocraft.MODID + "." + key), true);
-    }
+    LogisticsMessages.error(player, Component.translatable("logistics." + Faktocraft.MODID + "." + key));
   }
 
   @NotNull
