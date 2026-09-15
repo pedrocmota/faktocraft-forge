@@ -141,6 +141,11 @@ public class FaktocraftBlockEntity extends BlockEntity {
 
       itemHandlerCap = LazyOptional.of(() -> new InvWrapper(itemStackHandler) {
         @Override
+        public int getSlotLimit(int slot) {
+          return itemStackHandler.getSlotLimit(slot);
+        }
+
+        @Override
         public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
           return isAutomationExtractable(slot) ? super.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
         }
@@ -184,6 +189,7 @@ public class FaktocraftBlockEntity extends BlockEntity {
   public static final int BATTERY_DOCK_SLOTS = 4;
   public static final int TENSION_DOCK_SLOT = 2;
   private int batteryDockCapacity = 0;
+  private int pendingDockEnergy = 0;
   private boolean dischargeMode = false;
 
   public boolean isDischargeMode() {
@@ -275,7 +281,40 @@ public class FaktocraftBlockEntity extends BlockEntity {
     }
     batteryDockCapacity = cap;
     energyStorage.setMaxEnergy((int) Math.min(Integer.MAX_VALUE, (long) cap));
+    applyPendingDockEnergy();
     applyDockTension();
+  }
+
+  private void applyPendingDockEnergy() {
+    if (pendingDockEnergy <= 0 || energyStorage == null) {
+      return;
+    }
+    int room = energyStorage.maxEnergy() - energyStorage.energyStored();
+    if (room <= 0) {
+      return;
+    }
+    int applied = Math.min(pendingDockEnergy, room);
+    energyStorage.setEnergy(energyStorage.energyStored() + applied);
+    pendingDockEnergy -= applied;
+  }
+
+  public void restoreStoredEnergy(int energy) {
+    if (!hasEnergy || energyStorage == null || energy <= 0) {
+      return;
+    }
+    int room = Math.max(0, energyStorage.maxEnergy() - energyStorage.energyStored());
+    int applied = Math.min(energy, room);
+    if (applied > 0) {
+      energyStorage.setEnergy(energyStorage.energyStored() + applied);
+    }
+    if (hasBatteryDock()) {
+      pendingDockEnergy += energy - applied;
+    }
+    setChanged();
+  }
+
+  public int getPendingDockEnergy() {
+    return pendingDockEnergy;
   }
 
   public int getDockTensionLevel() {
@@ -527,8 +566,13 @@ public class FaktocraftBlockEntity extends BlockEntity {
   }
 
   protected IItemHandler createSlotTypeStorage(InventorySlotType... types) {
-    List<InventorySlotType> typeList = List.of(types);
-    return new InvWrapper(new SlotTypeContainer(typeList));
+    SlotTypeContainer container = new SlotTypeContainer(List.of(types));
+    return new InvWrapper(container) {
+      @Override
+      public int getSlotLimit(int slot) {
+        return container.slotLimit(slot);
+      }
+    };
   }
 
   private class SlotTypeContainer implements net.minecraft.world.Container {
@@ -580,6 +624,10 @@ public class FaktocraftBlockEntity extends BlockEntity {
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
       return isItemValidForSlot(slotIds.get(slot), stack);
+    }
+
+    int slotLimit(int slot) {
+      return getCustomSlotLimit(slotIds.get(slot));
     }
 
     @Override
@@ -952,6 +1000,9 @@ public class FaktocraftBlockEntity extends BlockEntity {
       tag.putInt("energy", energyStorage.energyStored());
       tag.putBoolean("dischargeMode", dischargeMode);
       tag.putBoolean("undervoltage", isUndervoltage());
+      if (pendingDockEnergy > 0) {
+        tag.putInt("pendingEnergy", pendingDockEnergy);
+      }
     }
     if (hasCooldown) {
       tag.putInt("cooldown", cooldown);
@@ -993,6 +1044,8 @@ public class FaktocraftBlockEntity extends BlockEntity {
       energyStorage.setEnergy(tag.contains("energy") ? tag.getInt("energy") : 0);
       dischargeMode = tag.getBoolean("dischargeMode");
       undervoltageTicks = tag.getBoolean("undervoltage") ? UNDERVOLTAGE_HOLD_TICKS : 0;
+      pendingDockEnergy = Math.max(0, tag.getInt("pendingEnergy"));
+      applyPendingDockEnergy();
     }
     redstoneOnly = tag.getBoolean("redstoneOnly");
     generatorPriorityMode = net.minecraft.util.Mth.clamp(tag.getInt("generatorPriority"), 0, 5);

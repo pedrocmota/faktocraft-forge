@@ -40,14 +40,23 @@ public record PacketCellFill(BlockPos blockPos, int tankIndex, boolean all) {
         }
         var tanks = machine.getGuiTanks();
         ItemStack carried = player.containerMenu.getCarried();
-        if (msg.tankIndex() < 0 || msg.tankIndex() >= tanks.size()
-            || !(carried.getItem() instanceof FluidCell)) {
+        if (msg.tankIndex() < 0 || msg.tankIndex() >= tanks.size()) {
+          return;
+        }
+        if (com.faktocraft.common.util.FluidInteractionHelper.isContainer(carried)) {
+          if (com.faktocraft.common.util.FluidInteractionHelper.pourCarried(player, tanks.get(msg.tankIndex()),
+              msg.all())) {
+            player.containerMenu.broadcastChanges();
+          }
+          return;
+        }
+        if (!(carried.getItem() instanceof FluidCell)) {
           return;
         }
         var fluid = FluidItem.getFluid(carried);
         int amount = FluidItem.getFluidAmount(carried);
         FluidStorage tank = tanks.get(msg.tankIndex());
-        if (fluid == Fluids.EMPTY || amount <= 0
+        if (tank.isOutputOnly() || fluid == Fluids.EMPTY || amount <= 0
             || tank.fillFluid(new FluidStack(fluid, amount), amount, true) != amount) {
           return;
         }

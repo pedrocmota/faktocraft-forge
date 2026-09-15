@@ -76,6 +76,9 @@ public class FaktocraftClient {
     event.register(com.faktocraft.client.render.ExtractorSocketRenderer.SOCKET_MODEL);
     event.register(com.faktocraft.client.render.ExtractorRingRenderer.BAR_MODEL);
     event.register(com.faktocraft.client.render.ExtractorRingRenderer.CORNERS_MODEL);
+    event.register(com.faktocraft.client.render.UraniumCentrifugeRenderer.DRUM_MODEL);
+    event.register(com.faktocraft.client.render.UraniumCentrifugeRenderer.DRUM_ACTIVE_MODEL);
+    event.register(com.faktocraft.client.render.UraniumCentrifugeRenderer.SOCKET_CABLE_MODEL);
   }
 
   @SubscribeEvent
@@ -131,6 +134,9 @@ public class FaktocraftClient {
     ItemProperties.register(ModItems.FLUID_CELL, new ResourceLocation(Faktocraft.MODID, "filled"),
         (stack, level, entity, seed) -> ModComponentsFluids.hasFluid(stack) ? 1.0f : 0.0f);
 
+    ItemProperties.register(ModItems.GEIGER_COUNTER, new ResourceLocation(Faktocraft.MODID, "dose"),
+        (stack, level, entity, seed) -> com.faktocraft.common.item.impl.tools.GeigerCounter.doseLevel(stack));
+
     ItemProperties.register(ModItems.PLUNGER, new ResourceLocation(Faktocraft.MODID, "plunging"),
         (stack, level, entity, seed) -> {
           if (entity == null || !entity.isUsingItem() || entity.getUseItem().getItem() != stack.getItem()) {
@@ -163,6 +169,8 @@ public class FaktocraftClient {
       net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions event) {
     event.registerLayerDefinition(com.faktocraft.client.model.JetpackModel.LAYER,
         com.faktocraft.client.model.JetpackModel::createLayer);
+    event.registerLayerDefinition(com.faktocraft.client.model.HazmatModel.LAYER,
+        com.faktocraft.client.model.HazmatModel::createLayer);
   }
 
   @SubscribeEvent
@@ -200,11 +208,20 @@ public class FaktocraftClient {
     event.registerBlockEntityRenderer(PipeRegistry.TANK_BLOCK_ENTITY, context -> new TankRenderer());
     event.registerBlockEntityRenderer(PipeRegistry.ENDER_TANK_BLOCK_ENTITY,
         com.faktocraft.client.render.EnderTankRenderer::new);
+    event.registerBlockEntityRenderer(
+        com.faktocraft.common.block.impl.monitor.MonitorRegistry.STATUS_MONITOR_BLOCK_ENTITY,
+        com.faktocraft.client.render.StatusMonitorRenderer::new);
+    com.faktocraft.client.render.StatusClientBridges.init();
+    com.faktocraft.common.block.impl.monitor.StatusSources.setFluidColorProvider(fluid -> 0xFF000000
+        | net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions.of(fluid).getTintColor());
     event.registerBlockEntityRenderer(PipeRegistry.FLUID_PIPE_BLOCK_ENTITY, context -> new FluidPipeRenderer());
     event.registerBlockEntityRenderer(com.faktocraft.common.registries.machines.M1Registry.WIND_GENERATOR_BE,
         context -> new com.faktocraft.client.render.WindRotorRenderer());
     event.registerBlockEntityRenderer(com.faktocraft.common.registries.ModBlockEntities.BREAKER,
         context -> new com.faktocraft.client.render.BreakerRenderer());
+    event.registerBlockEntityRenderer(
+        com.faktocraft.common.registries.machines.M3Registry.URANIUM_CENTRIFUGE_BLOCK_ENTITY,
+        context -> new com.faktocraft.client.render.UraniumCentrifugeRenderer());
   }
 
   @SubscribeEvent

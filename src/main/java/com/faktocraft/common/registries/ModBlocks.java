@@ -2,12 +2,17 @@ package com.faktocraft.common.registries;
 
 import com.faktocraft.common.block.BlockOre;
 import com.faktocraft.common.block.BlockResource;
+import com.faktocraft.common.block.BlockRubberCarpet;
+import com.faktocraft.common.block.impl.machines.nuclear_reactor.BlockAdvancedMachineCasing;
+import com.faktocraft.common.block.impl.machines.nuclear_reactor.BlockNuclearReactor;
+import com.faktocraft.common.block.impl.nuke.BlockNuke;
 import com.faktocraft.common.block.BlockSheet;
 import com.faktocraft.common.block.impl.BlockIronFence;
 import com.faktocraft.common.block.impl.BlockIronScaffolding;
 import com.faktocraft.common.block.impl.cable.BlockCable;
 import com.faktocraft.common.block.impl.cf.BlockReinforcedGlass;
 import com.faktocraft.common.block.impl.cf.BlockReinforcedStone;
+import com.faktocraft.common.block.impl.cf.BlockReinforcedStoneDoor;
 import com.faktocraft.common.block.impl.cf.BlockReinforcedStoneSlab;
 import com.faktocraft.common.block.impl.cf.BlockReinforcedStoneStairs;
 import com.faktocraft.common.block.impl.luminator.BlockLuminator;
@@ -88,14 +93,20 @@ public class ModBlocks {
       BlockResource.resourceProperties(1F, 3F));
   public static final Block BASIC_MACHINE_CASING = register("basic_machine_casing", BlockResource::new,
       BlockResource.resourceProperties(1F, 3F));
-  public static final Block ADVANCED_MACHINE_CASING = register("advanced_machine_casing", BlockResource::new,
-      BlockResource.resourceProperties(1F, 3F));
+  public static final Block ADVANCED_MACHINE_CASING = register("advanced_machine_casing",
+      BlockAdvancedMachineCasing::new, BlockResource.resourceProperties(1F, 3F));
+  public static final Block NUCLEAR_REACTOR = register("nuclear_reactor", BlockNuclearReactor::new,
+      BlockNuclearReactor.reactorProperties());
+  public static final Block NUKE = register("nuke", BlockNuke::new, BlockNuke.nukeProperties());
 
   public static final Block PLASTIC_BLOCK = register("plastic_block", BlockResource::new,
       BlockResource.resourceProperties(1F, 3F));
 
   public static final Block RESIN_SHEET = register("resin_sheet", BlockSheet::new, BlockSheet.sheetProperties(0.7F));
-  public static final Block RUBBER_SHEET = register("rubber_sheet", BlockSheet::new, BlockSheet.sheetProperties(0.7F));
+  public static final Block RUBBER_CARPET = register("rubber_carpet", BlockRubberCarpet::new,
+      BlockRubberCarpet.carpetProperties());
+  public static final Block RUBBER_BLOCK = register("rubber_block", Block::new,
+      BlockRubberCarpet.blockProperties());
 
   public static final Block TELEPORT_ANCHOR = register("teleport_anchor",
       com.faktocraft.common.block.impl.teleport_anchor.BlockTeleportAnchor::new,
@@ -128,6 +139,8 @@ public class ModBlocks {
       BlockReinforcedStoneSlab.reinforcedStoneSlabProperties());
   public static final Block REINFORCED_STONE_STAIRS = register("reinforced_stone_stairs",
       BlockReinforcedStoneStairs::new, BlockReinforcedStoneStairs.reinforcedStoneStairsProperties());
+  public static final Block REINFORCED_STONE_DOOR = register("reinforced_stone_door",
+      BlockReinforcedStoneDoor::new, BlockReinforcedStoneDoor.reinforcedStoneDoorProperties());
 
   public static final Block IRON_SCAFFOLDING = register("iron_scaffolding", BlockIronScaffolding::new,
       BlockIronScaffolding.scaffoldingProperties());

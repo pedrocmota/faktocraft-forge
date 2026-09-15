@@ -8,8 +8,8 @@
     "l": {
       "item": "minecraft:lapis_block"
     },
-    "p": {
-      "item": "faktocraft:iridium_plate"
+    "L": {
+      "item": "faktocraft:lapotron_crystal"
     },
     "s": {
       "item": "faktocraft:advanced_solar_generator"
@@ -23,7 +23,7 @@
   },
   "pattern": [
     "klk",
-    "psp",
+    "LsL",
     "cec"
   ],
   "result": {

@@ -25,6 +25,7 @@ import com.faktocraft.common.registries.machines.M4Registry;
 import com.faktocraft.common.registries.ModComponentsFluids;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.registries.ModSounds;
+import com.faktocraft.common.util.EnergyCosts;
 import com.faktocraft.common.util.StackHandlerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -87,7 +88,7 @@ public class BlockEntityReplicator extends FaktocraftBlockEntity
     if (!result.isEmpty() && getEnergyStorage().energyStored() > 0
         && (mode.getId() == 1 || mode.getId() == 2)) {
       int matterCost = result.getMatterCost();
-      int energyCost = (int) (result.getEnergyCost() * getEnergyUsageFactor());
+      int energyCost = EnergyCosts.perTick(result.getEnergyCost(), getEnergyUsageFactor());
       int duration = Math.max(matterCost, 1);
 
       if (progress.getProgress() == -1) {

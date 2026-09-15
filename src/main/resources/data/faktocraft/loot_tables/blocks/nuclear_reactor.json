@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "faktocraft:nuclear_reactor",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "faktocraft:nuclear_reactor",
+                  "properties": {
+                    "placed": "true"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "faktocraft:advanced_machine_casing"
+            }
+          ]
+        }
+      ],
+      "name": "nuclear_reactor",
+      "rolls": 1.0
+    }
+  ]
+}

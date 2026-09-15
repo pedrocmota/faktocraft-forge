@@ -11,8 +11,8 @@
     },
     {
       "type": "callout",
-      "en": "Faktocraft is in its **first alpha version**. Bugs may occur - please report them on [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues)!",
-      "pt": "O Faktocraft está na **primeira versão alpha**. Bugs podem ocorrer - reporte no [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues)!"
+      "en": "Faktocraft is in **beta**: every system is in place and playable, but balance is still being tuned. Found a bug? Please report it on [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues)!",
+      "pt": "O Faktocraft está em **beta**: todos os sistemas estão prontos e jogáveis, mas o balanceamento ainda está sendo ajustado. Achou um bug? Reporte no [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues)!"
     },
     {
       "type": "callout",
@@ -123,6 +123,79 @@
           "desc": {
             "en": "Rubber trees, seven new ores and underground oil.",
             "pt": "Seringueiras, sete minérios novos e petróleo subterrâneo."
+          }
+        },
+        {
+          "name": {
+            "en": "Fluids",
+            "pt": "Fluidos"
+          },
+          "link": "fluids",
+          "icon": {
+            "item": "item/fluid_cell"
+          },
+          "desc": {
+            "en": "Tanks, pumps, fluid pipes and the Ender Tank.",
+            "pt": "Tanques, bombas, tubos de fluido e o Tanque ender."
+          }
+        },
+        {
+          "name": {
+            "en": "Oil & refining",
+            "pt": "Petróleo e refino"
+          },
+          "link": "oil",
+          "icon": {
+            "fluid": "block/fluid/oil"
+          },
+          "desc": {
+            "en": "Find pockets, pump them, distill fuel, make plastic.",
+            "pt": "Ache bolsões, bombeie, destile fuel, faça plástico."
+          }
+        },
+        {
+          "name": {
+            "en": "Radiation",
+            "pt": "Radiação"
+          },
+          "link": "radiation",
+          "icon": {
+            "item": "item/tool/electric/geiger_counter"
+          },
+          "desc": {
+            "en": "Uranium, shielding, the Geiger Counter and the hazmat suit.",
+            "pt": "Urânio, blindagem, o Contador Geiger e o traje hazmat."
+          }
+        },
+        {
+          "name": {
+            "en": "Nuclear Reactor",
+            "pt": "Reator Nuclear"
+          },
+          "link": "nuclear-reactor",
+          "icon": {
+            "block": {
+              "top": "block/nuclear_reactor_top_center",
+              "front": "block/nuclear_reactor_center"
+            }
+          },
+          "desc": {
+            "en": "A 3x3x3 Ultra generator that melts down if you let it.",
+            "pt": "Um gerador Ultra 3x3x3 que entra em fusão se você deixar."
+          }
+        },
+        {
+          "name": {
+            "en": "Utility blocks",
+            "pt": "Blocos utilitários"
+          },
+          "link": "status-monitor",
+          "icon": {
+            "item": "item/status_monitor"
+          },
+          "desc": {
+            "en": "Status Monitor, Teleport Anchor, Chunk Loader, Hole Drill.",
+            "pt": "Monitor de status, Âncora de Teleporte, Carregador de Chunks, Furadeira."
           }
         }
       ]

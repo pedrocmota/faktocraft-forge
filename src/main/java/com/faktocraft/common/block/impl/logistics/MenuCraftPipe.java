@@ -65,6 +65,16 @@ public class MenuCraftPipe extends MenuPipeRecipes {
   }
 
   @Override
+  protected net.minecraft.nbt.CompoundTag copyEntry(int index) {
+    return craftPipe != null ? craftPipe.copyRecipe(index) : null;
+  }
+
+  @Override
+  protected boolean pasteEntry(net.minecraft.nbt.CompoundTag entry) {
+    return craftPipe != null && craftPipe.pasteRecipe(entry);
+  }
+
+  @Override
   protected boolean handleAction(Player player, int action, int value) {
     if (craftPipe == null || editIndex() < 0) {
       return false;

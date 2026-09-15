@@ -93,6 +93,47 @@ public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
     return recipes.size() - 1;
   }
 
+  private CompoundTag savePattern(Pattern pattern) {
+    CompoundTag tag = new CompoundTag();
+    pattern.slots.save(tag);
+    if (pattern.strict) {
+      tag.putBoolean("strict", true);
+    }
+    return tag;
+  }
+
+  private Pattern loadPattern(CompoundTag tag) {
+    Pattern pattern = new Pattern();
+    pattern.slots.load(tag);
+    pattern.strict = tag.getBoolean("strict");
+    pattern.invalidate();
+    return pattern;
+  }
+
+  @Nullable
+  public CompoundTag copyRecipe(int index) {
+    return index >= 0 && index < recipes.size() ? savePattern(recipes.get(index)) : null;
+  }
+
+  public boolean pasteRecipe(CompoundTag tag) {
+    Pattern pasted = loadPattern(tag.copy());
+    for (int i = 0; i < recipes.size(); i++) {
+      if (recipes.get(i).isEmpty()) {
+        recipes.set(i, pasted);
+        setChanged();
+        sync();
+        return true;
+      }
+    }
+    if (recipes.size() >= MAX_RECIPES) {
+      return false;
+    }
+    recipes.add(pasted);
+    setChanged();
+    sync();
+    return true;
+  }
+
   public void removeRecipe(int recipe) {
     if (recipe >= 0 && recipe < recipes.size()) {
       recipes.remove(recipe);
@@ -426,12 +467,7 @@ public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
     super.saveAdditional(tag);
     ListTag list = new ListTag();
     for (Pattern pattern : recipes) {
-      CompoundTag patternTag = new CompoundTag();
-      pattern.slots.save(patternTag);
-      if (pattern.strict) {
-        patternTag.putBoolean("strict", true);
-      }
-      list.add(patternTag);
+      list.add(savePattern(pattern));
     }
     tag.put("recipes", list);
   }
@@ -442,11 +478,7 @@ public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
     recipes.clear();
     ListTag list = tag.getList("recipes", Tag.TAG_COMPOUND);
     for (int i = 0; i < Math.min(list.size(), MAX_RECIPES); i++) {
-      Pattern pattern = new Pattern();
-      pattern.slots.load(list.getCompound(i));
-      pattern.strict = list.getCompound(i).getBoolean("strict");
-      pattern.invalidate();
-      recipes.add(pattern);
+      recipes.add(loadPattern(list.getCompound(i)));
     }
 
     if (recipes.isEmpty() && tag.contains("pattern")) {

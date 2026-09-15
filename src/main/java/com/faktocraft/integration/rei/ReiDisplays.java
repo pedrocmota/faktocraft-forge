@@ -25,6 +25,7 @@ import com.faktocraft.common.recipe.impl.SawingRecipe;
 import com.faktocraft.common.recipe.impl.ScannerRecipe;
 import com.faktocraft.common.recipe.impl.ScrapBoxRecipe;
 import com.faktocraft.common.recipe.impl.ThermalCentrifugingRecipe;
+import com.faktocraft.common.recipe.impl.UraniumCentrifugingRecipe;
 import com.faktocraft.common.registries.ModItems;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
@@ -142,10 +143,12 @@ public final class ReiDisplays {
   }
 
   public static MachineDisplay recycling(RecyclingRecipe recipe) {
-    List<ItemStack> inputs = ForgeRegistries.ITEMS.getValues().stream()
-        .map(Item::getDefaultInstance)
-        .filter(stack -> !stack.isEmpty() && !recipe.isExcluded(stack))
-        .toList();
+    List<ItemStack> inputs = recipe.isSpecific()
+        ? List.of(recipe.getIngredient().getItems())
+        : ForgeRegistries.ITEMS.getValues().stream()
+            .map(Item::getDefaultInstance)
+            .filter(stack -> !stack.isEmpty() && !recipe.isExcluded(stack))
+            .toList();
     return new MachineDisplay(ReiCategories.RECYCLING, List.of(EntryIngredients.ofItemStacks(inputs)),
         List.of(chance(recipe.getResultItem(), recipe.getChance())), location(recipe),
         MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(), 0.0F));
@@ -190,6 +193,12 @@ public final class ReiDisplays {
         List.of(fluid(recipe.getFluidInput()), items(recipe.getIngredient(), recipe.getIngredientCount())),
         List.of(item(recipe.getResult())), location(recipe),
         MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(), recipe.getExperience()));
+  }
+
+  public static MachineDisplay uraniumCentrifuging(UraniumCentrifugingRecipe recipe) {
+    return bonusDisplay(ReiCategories.URANIUM_CENTRIFUGING, recipe, recipe.getIngredient(),
+        recipe.getIngredientCount(), recipe.getResultItem(), recipe.getBonusResult().firstResult(),
+        recipe.getDuration(), recipe.getPowerCost(), recipe.getExperience());
   }
 
   public static MachineDisplay thermalCentrifuging(ThermalCentrifugingRecipe recipe) {

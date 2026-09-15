@@ -20,11 +20,12 @@ public record PacketTableState(BlockPos blockPos, List<Entry> entries, List<Task
   }
 
   public record TaskLine(long id, ItemStack stack, int count, String stateKey, String detail,
-      boolean system, long originPos, String originLabel, List<SubLine> subs) {
+      boolean system, long originPos, String originLabel, int delivered, List<SubLine> subs) {
   }
 
   public record SubLine(String kind, ItemStack stack, int count, String stateKey,
-      ItemStack leftoverStack, int leftoverCount, String where, String whereDetail) {
+      ItemStack leftoverStack, int leftoverCount, String where, String whereDetail, int done, int inputsDone,
+      int inputsTotal) {
   }
 
   public static void encode(PacketTableState msg, FriendlyByteBuf buf) {
@@ -46,6 +47,7 @@ public record PacketTableState(BlockPos blockPos, List<Entry> entries, List<Task
       buf.writeBoolean(task.system());
       buf.writeLong(task.originPos());
       buf.writeUtf(task.originLabel(), 128);
+      buf.writeVarInt(task.delivered());
       buf.writeVarInt(task.subs().size());
       for (SubLine sub : task.subs()) {
         buf.writeUtf(sub.kind(), 16);
@@ -56,6 +58,9 @@ public record PacketTableState(BlockPos blockPos, List<Entry> entries, List<Task
         buf.writeVarInt(sub.leftoverCount());
         buf.writeUtf(sub.where(), 16);
         buf.writeUtf(sub.whereDetail(), 128);
+        buf.writeVarInt(sub.done());
+        buf.writeVarInt(sub.inputsDone());
+        buf.writeVarInt(sub.inputsTotal());
       }
     }
     buf.writeVarInt(msg.errors.size());
@@ -82,13 +87,16 @@ public record PacketTableState(BlockPos blockPos, List<Entry> entries, List<Task
       boolean system = buf.readBoolean();
       long originPos = buf.readLong();
       String originLabel = buf.readUtf(128);
+      int delivered = buf.readVarInt();
       int subCount = buf.readVarInt();
       List<SubLine> subs = new ArrayList<>(subCount);
       for (int s = 0; s < subCount; s++) {
         subs.add(new SubLine(buf.readUtf(16), buf.readItem(), buf.readVarInt(), buf.readUtf(64),
-            buf.readItem(), buf.readVarInt(), buf.readUtf(16), buf.readUtf(128)));
+            buf.readItem(), buf.readVarInt(), buf.readUtf(16), buf.readUtf(128), buf.readVarInt(),
+            buf.readVarInt(), buf.readVarInt()));
       }
-      tasks.add(new TaskLine(id, stack, count, stateKey, detail, system, originPos, originLabel, subs));
+      tasks.add(new TaskLine(id, stack, count, stateKey, detail, system, originPos, originLabel, delivered,
+          subs));
     }
     int errorCount = buf.readVarInt();
     List<String> errors = new ArrayList<>(errorCount);

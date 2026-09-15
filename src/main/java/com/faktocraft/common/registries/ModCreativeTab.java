@@ -39,7 +39,7 @@ import java.util.function.Supplier;
 public class ModCreativeTab {
 
   private static final Set<String> STORAGE_BLOCKS = Set.of(
-      "tin_block", "bronze_block", "silver_block", "steel_block", "lead_block", "plastic_block");
+      "tin_block", "bronze_block", "silver_block", "steel_block", "lead_block", "plastic_block", "rubber_block");
   private static final Set<String> RUBBER_NATURE = Set.of(
       "rubber_log", "rubber_wood", "rubber_leaves", "rubber_sapling");
 
@@ -55,6 +55,7 @@ public class ModCreativeTab {
       "polymerizer",
       "geological_scanner", "quarry", "landmark", "forester",
       "coal_alloy_smelter", "combustion_alloy_smelter", "alloy_smelter", "fermenter", "thermal_centrifuge",
+      "uranium_centrifuge",
       "luminator",
       "matter_fabricator", "scanner", "replicator", "teleport_anchor", "dimensional_teleport_anchor", "chunk_loader",
       "overclocker_upgrade", "advanced_overclocker_upgrade",
@@ -65,7 +66,8 @@ public class ModCreativeTab {
   private static final List<String> ENERGY_PROGRESSION = List.of(
       "generator", "wind_generator", "geo_generator", "combustion_generator",
       "solar_generator", "advanced_solar_generator", "hybrid_solar_generator", "quantum_solar_generator",
-      "stellar_solar_generator",
+      "stellar_solar_generator", "nuclear_reactor", "empty_fuel_rod", "fuel_rod", "neutron_reflector",
+      "depleted_fuel_rod", "nuclear_waste", "plutonium", "nuke",
       "wind_rotor", "advanced_wind_rotor",
       "battery_box", "cesu", "mfe", "mfsu",
       "charge_pad_battery_box", "charge_pad_cesu", "charge_pad_mfe", "charge_pad_mfsu",
@@ -86,8 +88,8 @@ public class ModCreativeTab {
       "mining_drill", "diamond_drill", "iridium_drill", "hole_drill",
       "chainsaw", "diamond_chainsaw", "iridium_chainsaw",
       "electric_hoe", "multi_tool", "nano_saber",
-      "wind_meter", "ie_meter", "prospector", "plunger",
-      "memory_card", "teleport_card",
+      "wind_meter", "ie_meter", "prospector", "geiger_counter", "decontaminator", "plunger",
+      "memory_card", "teleport_card", "monitor_card",
       "nightvision_goggles",
       "hazmat_helmet", "hazmat_chestplate", "hazmat_leggings", "hazmat_boots",
       "bronze_helmet", "bronze_chestplate", "bronze_leggings", "bronze_boots",
@@ -95,6 +97,7 @@ public class ModCreativeTab {
       "quantum_helmet", "quantum_chestplate", "quantum_leggings", "quantum_boots");
 
   private static final List<String> TRANSPORT_PROGRESSION = List.of(
+      "status_monitor",
       "fluid_extractor_pipe", "fluid_stone_pipe", "fluid_gold_pipe",
       "pipe_valve", "pump", "tank",
       "stone_pipe", "gold_pipe",
@@ -152,6 +155,9 @@ public class ModCreativeTab {
                 }
                 if (item == ModItems.FLUID_CELL) {
                   addFilledFluidCells(output);
+                }
+                if (item instanceof com.faktocraft.common.item.impl.reactor.CoolantCell coolantCell) {
+                  output.accept(coolantCell.makeFullStack());
                 }
                 if (item instanceof com.faktocraft.common.item.impl.armor.JetpackItem jetpack) {
                   ItemStack full = new ItemStack(item);
@@ -222,7 +228,8 @@ public class ModCreativeTab {
   private static final Map<String, BooleanSupplier> CONTENT_TOGGLES = Map.of(
       "teleport_anchor", BasicConfig::teleportAnchorEnabled,
       "dimensional_teleport_anchor", BasicConfig::teleportAnchorEnabled,
-      "chunk_loader", BasicConfig::chunkLoaderEnabled);
+      "chunk_loader", BasicConfig::chunkLoaderEnabled,
+      "nuke", BasicConfig::nukeEnabled);
 
   public static boolean isUnreleased(Item item) {
     BooleanSupplier toggle = CONTENT_TOGGLES.get(idOf(item));

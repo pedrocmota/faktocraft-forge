@@ -17,9 +17,10 @@ public class Wrench extends ToolItem {
   public InteractionResult useOn(UseOnContext context) {
     Level level = context.getLevel();
     BlockPos pos = context.getClickedPos();
-    return WrenchHelper.onWrenchUse(level.getBlockState(pos), level, pos, context.getPlayer(), context.getClickedFace())
-        ? InteractionResult.SUCCESS
-        : InteractionResult.PASS;
+    return WrenchHelper.onWrenchUse(level.getBlockState(pos), level, pos, context.getPlayer(), context.getHand(),
+        context.getClickedFace())
+            ? InteractionResult.SUCCESS
+            : InteractionResult.PASS;
   }
 
   @Override

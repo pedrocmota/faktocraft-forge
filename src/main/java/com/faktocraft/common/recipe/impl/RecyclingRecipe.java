@@ -26,17 +26,36 @@ public class RecyclingRecipe implements IBaseRecipe<Container> {
   private final float chance;
   private final ItemStack result;
   private final List<Ingredient> excluded;
+  private final Ingredient ingredient;
 
   public RecyclingRecipe(ResourceLocation id, float chance, ItemStack result, List<Ingredient> excluded) {
+    this(id, chance, result, excluded, Ingredient.EMPTY);
+  }
+
+  public RecyclingRecipe(ResourceLocation id, float chance, ItemStack result, List<Ingredient> excluded,
+      Ingredient ingredient) {
     this.id = id;
     this.chance = chance;
     this.result = result;
     this.excluded = List.copyOf(excluded);
+    this.ingredient = ingredient;
+  }
+
+  public boolean isSpecific() {
+    return !ingredient.isEmpty();
+  }
+
+  public Ingredient getIngredient() {
+    return ingredient;
   }
 
   @Override
   public boolean matches(Container container, Level level) {
-    return !container.getItem(0).isEmpty() && !isExcluded(container.getItem(0));
+    ItemStack input = container.getItem(0);
+    if (input.isEmpty()) {
+      return false;
+    }
+    return isSpecific() ? ingredient.test(input) : !isExcluded(input);
   }
 
   public boolean isExcluded(ItemStack stack) {
@@ -105,7 +124,10 @@ public class RecyclingRecipe implements IBaseRecipe<Container> {
           excluded.add(RecipeJsonHelper.ingredient(array.get(i)));
         }
       }
-      return new RecyclingRecipe(id, chance, result, excluded);
+      Ingredient ingredient = json.has("ingredient")
+          ? RecipeJsonHelper.ingredient(json.get("ingredient"))
+          : Ingredient.EMPTY;
+      return new RecyclingRecipe(id, chance, result, excluded, ingredient);
     }
 
     @Override
@@ -117,7 +139,8 @@ public class RecyclingRecipe implements IBaseRecipe<Container> {
       for (int i = 0; i < size; i++) {
         excluded.add(Ingredient.fromNetwork(buf));
       }
-      return new RecyclingRecipe(id, chance, result, excluded);
+      Ingredient ingredient = Ingredient.fromNetwork(buf);
+      return new RecyclingRecipe(id, chance, result, excluded, ingredient);
     }
 
     @Override
@@ -128,6 +151,7 @@ public class RecyclingRecipe implements IBaseRecipe<Container> {
       for (Ingredient ingredient : recipe.excluded) {
         ingredient.toNetwork(buf);
       }
+      recipe.ingredient.toNetwork(buf);
     }
   }
 }

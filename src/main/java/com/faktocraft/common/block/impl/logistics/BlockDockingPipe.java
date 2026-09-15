@@ -37,10 +37,12 @@ public abstract class BlockDockingPipe extends VoxelBlock implements EntityBlock
   public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
       LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
     state = super.updateShape(state, direction, neighborState, level, pos, neighborPos);
-    for (Direction side : Direction.values()) {
-      state = state.setValue(FACING_TO_PROPERTY_MAP.get(side), canConnect(level, pos, side));
-    }
-    return state;
+    return withConnections(state, level, pos);
+  }
+
+  @Override
+  protected boolean connectionExtensions() {
+    return true;
   }
 
   @Override

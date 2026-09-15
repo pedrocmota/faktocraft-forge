@@ -19,6 +19,7 @@ import com.faktocraft.common.interfaces.entity.IElectricSlot;
 import com.faktocraft.common.interfaces.entity.ISupportUpgrades;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.registries.machines.M3Registry;
+import com.faktocraft.common.util.EnergyCosts;
 import com.faktocraft.common.util.StackHandlerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
@@ -54,7 +55,8 @@ public class BlockEntityFermenter extends FaktocraftBlockEntity implements IEner
 
   public final FluidStorage fluidInputStorage = new FluidStorage(
       ModConfig.server().fermenter_biomass_capacity, v -> v.getFluid() == ModFluids.BIOMASS.still());
-  public final FluidStorage fluidOutputStorage = new FluidStorage(ModConfig.server().fermenter_biogas_capacity);
+  public final FluidStorage fluidOutputStorage = new FluidStorage(
+      ModConfig.server().fermenter_biogas_capacity, v -> v.getFluid() == ModFluids.BIOGAS.still()).markOutputOnly();
 
   private int cachedInput = 0;
   private int cachedOutput = 0;
@@ -110,7 +112,7 @@ public class BlockEntityFermenter extends FaktocraftBlockEntity implements IEner
 
     progress.rescaleMax(getSpeedFactor() * DURATION_TICKS);
     progressWaste.rescaleMax(getSpeedFactor() * WASTE_EVERY_TICKS);
-    int energyCost = (int) (ModConfig.server().fermenter_tick_usage * getEnergyUsageFactor());
+    int energyCost = EnergyCosts.perTick(ModConfig.server().fermenter_tick_usage, getEnergyUsageFactor());
 
     boolean wasteRoom = wasteStack.isEmpty()
         || (wasteStack.is(ModItems.FERTILIZER) && wasteStack.getCount() < wasteStack.getMaxStackSize());

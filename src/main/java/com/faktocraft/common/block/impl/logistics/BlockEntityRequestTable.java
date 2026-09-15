@@ -18,6 +18,9 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public class BlockEntityRequestTable extends FaktocraftBlockEntity {
 
@@ -26,6 +29,7 @@ public class BlockEntityRequestTable extends FaktocraftBlockEntity {
   private ItemStack ghostTarget = ItemStack.EMPTY;
   private boolean autoExtract;
   private int extractCooldown;
+  private final Set<MenuRequestTable> openMenus = new LinkedHashSet<>();
   private final com.faktocraft.common.util.ItemStackHandler craftMatrix =
       new com.faktocraft.common.util.ItemStackHandler(
           9) {
@@ -41,6 +45,20 @@ public class BlockEntityRequestTable extends FaktocraftBlockEntity {
 
   public com.faktocraft.common.util.ItemStackHandler getCraftMatrix() {
     return craftMatrix;
+  }
+
+  void attachMenu(MenuRequestTable menu) {
+    openMenus.add(menu);
+  }
+
+  void detachMenu(MenuRequestTable menu) {
+    openMenus.remove(menu);
+  }
+
+  void refreshOpenMenus() {
+    for (MenuRequestTable menu : List.copyOf(openMenus)) {
+      menu.refreshResult();
+    }
   }
 
   @Override
@@ -85,14 +103,17 @@ public class BlockEntityRequestTable extends FaktocraftBlockEntity {
     }
     extractCooldown = Math.max(1, com.faktocraft.common.config.ModConfig.server().logistics_extractor_interval);
     BlockEntityLogisticsController core = findCore();
-    LogisticsGraph graph = core != null ? core.graph() : null;
+    if (core == null || !core.networkOnline()) {
+      return;
+    }
+    LogisticsGraph graph = core.graph();
     if (graph == null) {
       return;
     }
     int perItem = Math.max(0, com.faktocraft.common.config.ModConfig.server().logistics_energy_per_item);
     int budget = Math.max(1, com.faktocraft.common.config.ModConfig.server().logistics_extractor_items_per_op);
     Endpoint source = Endpoint.tableBuffer(worldPosition);
-    java.util.List<BlockEntityChassis.SinkCandidate> sinks = null;
+    List<BlockEntityChassis.SinkCandidate> sinks = null;
     for (int slot = 0; slot < STORAGE_SLOTS && budget > 0; slot++) {
       ItemStack peek = getItemStackHandler().getStackInSlot(slot);
       if (peek.isEmpty()) {

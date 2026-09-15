@@ -27,6 +27,7 @@ import com.faktocraft.common.registries.ModComponentsFluids;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.registries.ModRecipeType;
 import com.faktocraft.common.registries.ModSounds;
+import com.faktocraft.common.util.EnergyCosts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -56,7 +57,7 @@ public class BlockEntityScanner extends FaktocraftBlockEntity
 
   public BlockEntityScanner(BlockPos pos, BlockState state) {
     super(M4Registry.SCANNER_BE, pos, state);
-    createEnergyStorage(0, ModConfig.server().scanner_energy_capacity, EnergyType.RECEIVE, EnergyTier.VERY_HIGH);
+    createEnergyStorage(0, ModConfig.server().scanner_energy_capacity, EnergyType.RECEIVE, EnergyTier.ULTRA);
     initBatterySlots();
   }
 
@@ -124,7 +125,7 @@ public class BlockEntityScanner extends FaktocraftBlockEntity
             progress.setData(0, getSpeedFactor() * scannerRecipe.getDuration());
           }
 
-          int powerCost = (int) (scannerRecipe.getPowerCost() * getEnergyUsageFactor());
+          int powerCost = EnergyCosts.perTick(scannerRecipe.getPowerCost(), getEnergyUsageFactor());
           if (getEnergyStorage().consumeEnergy(powerCost, true) >= powerCost) {
             active = true;
             progress.incProgress(1);

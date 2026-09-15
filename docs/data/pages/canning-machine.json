@@ -1,0 +1,125 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The **Canning Machine** moves fluid between containers and pipes automatically. Feed it empty cells and it fills them from its tank; feed it full ones and it drains them into the tank. It is the bridge between [fluid pipes](#/tank-and-pump) and [item logistics](#/logistics): once fluid is in a cell, any item pipe can carry it.",
+      "pt": "A **Máquina de enlatamento** move fluido entre recipientes e tubos automaticamente. Dê células vazias e ela enche com o tanque dela; dê células cheias e ela esvazia no tanque. É a ponte entre [tubos de fluido](#/tank-and-pump) e [logística de itens](#/logistics): com o fluido numa célula, qualquer tubo de itens carrega."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Canning Machine",
+            "pt": "Máquina de enlatamento"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/canning_machine_top",
+              "front": "block/machines/basic/canning_machine_front",
+              "side": "block/machines/basic/canning_machine_leftright"
+            }
+          },
+          "desc": {
+            "en": "Tin Plates and Fluid Cells above and below, Electronic Circuits around a Basic Machine Casing. Low voltage, 1 200 IE buffer, 8 000 mB tank; 30 ticks per container at 2 IE/t.",
+            "pt": "Placas de estanho e Células de fluído em cima e embaixo, Circuitos eletrônicos em volta de um Revestimento de máquina básico. Tensão Baixa, buffer de 1 200 IE, tanque de 8 000 mB; 30 ticks por recipiente a 2 IE/t."
+          }
+        },
+        {
+          "name": {
+            "en": "Fluid Cell",
+            "pt": "Célula de fluído"
+          },
+          "icon": {
+            "item": "item/fluid_cell"
+          },
+          "desc": {
+            "en": "The container it was made for: filled or emptied in any amount, and stackable.",
+            "pt": "O recipiente para o qual ela foi feita: enchida ou esvaziada em qualquer quantidade, e empilhável."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Using it",
+      "pt": "Usando"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Power it with Low voltage and put a container in the **top slot**. The result drops into the **output slot** below; a battery slot keeps it running through brown-outs.",
+        "Press the mode button to choose the direction: **\"Mode: fill cells from the tank\"** takes fluid out of the tank into the container, **\"Mode: empty cells into the tank\"** does the opposite.",
+        "Each container takes 30 ticks (1.5 s) at 2 IE/t - cheap enough to hang on any Low line.",
+        "The tank holds 8 000 mB of one fluid at a time. To switch fluids, empty it first (a Fluid Extractor Pipe on any side does it)."
+      ],
+      "pt": [
+        "Alimente com tensão Baixa e coloque um recipiente no **slot de cima**. O resultado cai no **slot de saída** embaixo; um slot de bateria mantém a máquina rodando em quedas de energia.",
+        "Aperte o botão de modo para escolher a direção: **\"Modo: encher células com o tanque\"** tira fluido do tanque para o recipiente, **\"Modo: esvaziar células para o tanque\"** faz o contrário.",
+        "Cada recipiente leva 30 ticks (1,5 s) a 2 IE/t - barato o bastante para pendurar em qualquer linha Baixa.",
+        "O tanque guarda 8 000 mB de um fluido por vez. Para trocar de fluido, esvazie antes (um Tubo extrator de fluido em qualquer lado resolve)."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "What goes in the slot",
+      "pt": "O que vai no slot"
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Container", "Fill mode", "Empty mode"],
+        "pt": ["Recipiente", "Modo encher", "Modo esvaziar"]
+      },
+      "rows": [
+        [
+          {"en": "Fluid Cell", "pt": "Célula de fluído"},
+          {"en": "Any amount up to the cell's capacity - a half-full tank gives a partial cell.", "pt": "Qualquer quantidade até a capacidade da célula - um tanque pela metade dá uma célula parcial."},
+          {"en": "Drains whatever the cell holds, even a partial amount.", "pt": "Esvazia o que a célula tiver, mesmo uma quantidade parcial."}
+        ],
+        [
+          {"en": "Buckets and other mods' containers", "pt": "Baldes e recipientes de outros mods"},
+          {"en": "Whole 1 000 mB only: the bucket waits until the tank has a full bucket.", "pt": "Só 1 000 mB inteiros: o balde espera até o tanque ter um balde cheio."},
+          {"en": "Whole 1 000 mB only: needs 1 000 mB of room in the tank.", "pt": "Só 1 000 mB inteiros: precisa de 1 000 mB de espaço no tanque."}
+        ],
+        [
+          {"en": "Glass bottle", "pt": "Garrafa de vidro"},
+          {"en": "With water in the tank, 250 mB become a water bottle.", "pt": "Com água no tanque, 250 mB viram uma garrafa de água."},
+          {"en": "-", "pt": "-"}
+        ]
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "Buckets are all or nothing. If the tank has 500 mB and an empty bucket in the slot, the machine simply waits - it will not give you half a bucket. Use Fluid Cells when the amounts do not line up.",
+      "pt": "Baldes são tudo ou nada. Se o tanque tem 500 mB e um balde vazio no slot, a máquina simplesmente espera - ela não te dá meio balde. Use Células de fluído quando as quantidades não baterem."
+    },
+    {
+      "type": "h",
+      "en": "Pipes and automation",
+      "pt": "Tubos e automação"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Fluid pipes connect on every side except the **front**. Push fluid in from a pump or a Fluid Extractor Pipe on a tank; pull it out with an extractor pipe.",
+        "Item pipes feed the top slot and take from the output slot like on any machine - a [Recipe Pipe](#/autocrafting) with the canning machine as its station lets the [Request Table](#/request-table) ask for \"10 cells of fuel\" and get them.",
+        "Two canning machines back to back make a fluid link over item logistics: one empties cells at the tank farm, the other fills them where the fluid is needed, and stone pipes carry the cells between them.",
+        "Set the extractor pipe on the tank to **Redstone** mode and wire a lever if you only want the machine topped up on demand."
+      ],
+      "pt": [
+        "Tubos de fluido conectam em todo lado menos na **frente**. Empurre fluido de uma bomba ou de um Tubo extrator de fluido num tanque; tire com um tubo extrator.",
+        "Tubos de itens alimentam o slot de cima e retiram do slot de saída como em qualquer máquina - um [Tubo de receita](#/autocrafting) com a máquina de enlatamento como estação deixa a [Mesa de pedidos](#/request-table) pedir \"10 células de combustível\" e receber.",
+        "Duas máquinas de enlatamento em pontas opostas fazem um elo de fluido por cima da logística de itens: uma esvazia células no parque de tanques, a outra enche onde o fluido é necessário, e tubos de pedra levam as células entre elas.",
+        "Deixe o tubo extrator do tanque no modo **Redstone** e ligue uma alavanca se só quiser abastecer a máquina sob demanda."
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "For a handful of cells you do not need the machine at all: open any machine with a fluid gauge and click the gauge holding a cell or bucket to pour or fill it, shift + click for the whole stack. The Canning Machine is for when you want it done while you are somewhere else.",
+      "pt": "Para um punhado de células você nem precisa da máquina: abra qualquer máquina com medidor de fluido e clique no medidor segurando uma célula ou balde para despejar ou encher, shift + clique para a pilha inteira. A Máquina de enlatamento é para quando você quer isso feito enquanto está em outro lugar."
+    }
+  ]
+}

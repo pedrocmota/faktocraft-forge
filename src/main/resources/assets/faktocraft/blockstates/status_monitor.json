@@ -1,0 +1,39 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "faktocraft:block/status_monitor"
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "faktocraft:block/status_monitor",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "faktocraft:block/status_monitor",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "faktocraft:block/status_monitor",
+        "y": 270
+      }
+    }
+  ]
+}

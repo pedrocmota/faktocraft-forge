@@ -11,6 +11,7 @@ import com.faktocraft.common.enums.GuiSlotType;
 import com.faktocraft.common.enums.InventorySlotType;
 import com.faktocraft.common.fluid.ModFluids;
 import com.faktocraft.common.interfaces.entity.IElectricSlot;
+import com.faktocraft.common.util.EnergyCosts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -43,7 +44,8 @@ public class BlockEntityDistillery extends FaktocraftBlockEntity
   public final FluidStorage oilTank = new FluidStorage(4000);
   public final FluidStorage acidTank = new FluidStorage(2000);
   public final FluidStorage waterTank = new FluidStorage(4000);
-  public final FluidStorage fuelTank = new FluidStorage(4000);
+  public final FluidStorage fuelTank = new FluidStorage(4000, v -> v.getFluid() == ModFluids.FUEL.still())
+      .markOutputOnly();
 
   public final com.faktocraft.common.entity.block.BlockEntityProgress progress =
       new com.faktocraft.common.entity.block.BlockEntityProgress(
@@ -106,7 +108,7 @@ public class BlockEntityDistillery extends FaktocraftBlockEntity
     boolean active = false;
     boolean updateState = false;
     progress.rescaleMax(getSpeedFactor() * DURATION_TICKS);
-    int energyCost = (int) (POWER_PER_TICK * getEnergyUsageFactor());
+    int energyCost = EnergyCosts.perTick(POWER_PER_TICK, getEnergyUsageFactor());
     if (canRun()) {
       if (getEnergyStorage().consumeEnergy(energyCost, true) == energyCost) {
         getEnergyStorage().consumeEnergy(energyCost, false);

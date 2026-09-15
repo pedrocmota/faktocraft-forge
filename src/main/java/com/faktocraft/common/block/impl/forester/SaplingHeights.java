@@ -17,7 +17,6 @@ public final class SaplingHeights {
     HEIGHTS.put(Items.SPRUCE_SAPLING, 9);
     HEIGHTS.put(Items.JUNGLE_SAPLING, 13);
     HEIGHTS.put(Items.ACACIA_SAPLING, 9);
-    HEIGHTS.put(Items.DARK_OAK_SAPLING, 6);
     HEIGHTS.put(Items.CHERRY_SAPLING, 11);
     HEIGHTS.put(Items.MANGROVE_PROPAGULE, 12);
     HEIGHTS.put(Items.AZALEA, 6);

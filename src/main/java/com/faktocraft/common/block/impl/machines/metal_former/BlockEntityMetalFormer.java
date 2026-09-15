@@ -25,6 +25,7 @@ import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.registries.ModRecipeType;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
+import com.faktocraft.common.util.EnergyCosts;
 import com.faktocraft.common.util.StackHandlerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -105,7 +106,7 @@ public class BlockEntityMetalFormer extends FaktocraftBlockEntity
       if (canWork(currentRecipe)) {
         progress.rescaleMax(getSpeedFactor() * currentRecipe.getDuration());
 
-        int energyCost = (int) (currentRecipe.getPowerCost() * getEnergyUsageFactor());
+        int energyCost = EnergyCosts.perTick(currentRecipe.getPowerCost(), getEnergyUsageFactor());
 
         if (getEnergyStorage().consumeEnergy(energyCost, true) == energyCost
             && progress.getProgress() <= progress.getProgressMax()) {

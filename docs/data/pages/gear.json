@@ -1,4 +1,5 @@
 {
+  "stackedCards": true,
   "blocks": [
     {
       "type": "h",
@@ -27,12 +28,17 @@
             "pt": "Traje hazmat"
           },
           "icon": {
-            "item": "item/hazmat_chestplate"
+            "tinted": {
+              "base": "item/hazmat_chestplate",
+              "overlay": "item/hazmat_chestplate_overlay",
+              "color": "e8c43a"
+            }
           },
           "desc": {
             "en": "Protects against fire, acid and hazards.",
             "pt": "Protege contra fogo, ácido e perigos."
-          }
+          },
+          "link": "hazmat-suit"
         },
         {
           "name": {
@@ -214,6 +220,20 @@
             "en": "Probes cables and machines for grid diagnostics.",
             "pt": "Sonda cabos e máquinas para diagnosticar a rede."
           }
+        },
+        {
+          "name": {
+            "en": "Geiger Counter",
+            "pt": "Contador Geiger"
+          },
+          "icon": {
+            "item": "item/tool/electric/geiger_counter"
+          },
+          "desc": {
+            "en": "Clicks faster the hotter it gets and shows the dose on its screen, from a calm green to a flashing red.",
+            "pt": "Estala mais rápido quanto mais quente e mostra a dose na tela, do verde tranquilo ao vermelho piscando."
+          },
+          "link": "radiation"
         }
       ]
     }

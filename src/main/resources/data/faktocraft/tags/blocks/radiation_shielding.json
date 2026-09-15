@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "faktocraft:lead_block",
+    "faktocraft:reinforced_stone",
+    "faktocraft:reinforced_stone_door",
+    "faktocraft:reinforced_stone_slab",
+    "faktocraft:reinforced_stone_stairs",
+    "minecraft:obsidian",
+    "minecraft:crying_obsidian",
+    "minecraft:reinforced_deepslate",
+    "minecraft:bedrock"
+  ]
+}

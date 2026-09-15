@@ -1,7 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
 import com.faktocraft.Faktocraft;
-import com.faktocraft.common.block.VoxelBlock;
 import com.faktocraft.common.config.ModConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -129,6 +128,12 @@ public abstract class BlockEntityDockingPipe extends BlockEntity implements com.
     return direction != null ? worldPosition.relative(direction) : null;
   }
 
+  @Nullable
+  public Direction dockedSide() {
+    Direction direction = selectedInventoryDirection();
+    return direction != null ? direction.getOpposite() : null;
+  }
+
   public boolean cycleInventory(@Nullable Player player) {
     if (level == null || level.isClientSide()) {
       return false;
@@ -159,11 +164,7 @@ public abstract class BlockEntityDockingPipe extends BlockEntity implements com.
     if (level == null || !(getBlockState().getBlock() instanceof BlockDockingPipe block)) {
       return;
     }
-    BlockState state = getBlockState();
-    for (Direction direction : Direction.values()) {
-      state = state.setValue(VoxelBlock.FACING_TO_PROPERTY_MAP.get(direction),
-          block.connects(level, worldPosition, direction));
-    }
+    BlockState state = block.withConnections(getBlockState(), level, worldPosition);
     level.setBlock(worldPosition, state, 3);
     level.sendBlockUpdated(worldPosition, state, state, 3);
   }

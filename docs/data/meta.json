@@ -27,8 +27,8 @@
       "pt": "Página não encontrada."
     },
     "footer": {
-      "en": "Faktocraft is in alpha - found a mistake or a bug? Report it on [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues).",
-      "pt": "O Faktocraft está em alpha - achou um erro ou bug? Reporte no [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues)."
+      "en": "Faktocraft is in beta - found a mistake or a bug? Report it on [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues).",
+      "pt": "O Faktocraft está em beta - achou um erro ou bug? Reporte no [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues)."
     }
   },
   "nav": [
@@ -90,6 +90,19 @@
               "top": "block/generator/generator_top",
               "front": "block/generator/generator_front",
               "side": "block/generator/generator_side"
+            }
+          }
+        },
+        {
+          "id": "nuclear-reactor",
+          "title": {
+            "en": "Nuclear Reactor",
+            "pt": "Reator Nuclear"
+          },
+          "icon": {
+            "block": {
+              "top": "block/nuclear_reactor_top_center",
+              "front": "block/nuclear_reactor_center"
             }
           }
         },
@@ -180,6 +193,34 @@
           "icon": {
             "item": "item/upgrade/overclocker"
           }
+        },
+        {
+          "id": "alloy-smelter",
+          "title": {
+            "en": "Alloy smelters",
+            "pt": "Fornos de fundição"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/alloy_smelter_top",
+              "front": "block/machines/basic/alloy_smelter_front",
+              "side": "block/machines/basic/alloy_smelter_side"
+            }
+          }
+        },
+        {
+          "id": "canning-machine",
+          "title": {
+            "en": "Canning Machine",
+            "pt": "Máquina de enlatamento"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/canning_machine_top",
+              "front": "block/machines/basic/canning_machine_front",
+              "side": "block/machines/basic/canning_machine_leftright"
+            }
+          }
         }
       ]
     },
@@ -200,6 +241,16 @@
           }
         },
         {
+          "id": "logistics-modules",
+          "title": {
+            "en": "Chassis & modules",
+            "pt": "Chassi e módulos"
+          },
+          "icon": {
+            "item": "item/module_sink"
+          }
+        },
+        {
           "id": "request-table",
           "title": {
             "en": "Request Table & autocrafting",
@@ -214,13 +265,59 @@
           }
         },
         {
+          "id": "autocrafting",
+          "title": {
+            "en": "Autocrafting pipes",
+            "pt": "Tubos de autocraft"
+          },
+          "icon": {
+            "pipe": "block/pipe/recipe_pipe"
+          }
+        }
+      ]
+    },
+    {
+      "section": {
+        "en": "Fluids",
+        "pt": "Fluidos"
+      },
+      "pages": [
+        {
           "id": "fluids",
           "title": {
-            "en": "Fluids",
-            "pt": "Fluidos"
+            "en": "Fluids overview",
+            "pt": "Visão geral de fluidos"
           },
           "icon": {
             "item": "item/fluid_cell"
+          }
+        },
+        {
+          "id": "tank-and-pump",
+          "title": {
+            "en": "Tanks, pump & fluid pipes",
+            "pt": "Tanques, bomba e tubos"
+          },
+          "icon": {
+            "block": {
+              "top": "block/pipe/pump_top",
+              "front": "block/pipe/pump_side"
+            }
+          }
+        },
+        {
+          "id": "ender-tank",
+          "title": {
+            "en": "Ender Tank",
+            "pt": "Tanque ender"
+          },
+          "icon": {
+            "tank": {
+              "frame": "block/pipe/ender_tank_frame",
+              "band": "block/pipe/ender_tank_band",
+              "panel": "block/pipe/ender_tank_panel",
+              "end": "block/pipe/ender_tank_end"
+            }
           }
         }
       ]
@@ -236,6 +333,30 @@
           "title": {
             "en": "Oil, fuel & acid",
             "pt": "Petróleo, fuel e ácido"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/distillery_top",
+              "front": "block/machines/distillery_front",
+              "side": "block/machines/distillery_side"
+            }
+          }
+        },
+        {
+          "id": "oil-pockets",
+          "title": {
+            "en": "Oil pockets",
+            "pt": "Bolsões de petróleo"
+          },
+          "icon": {
+            "fluid": "block/fluid/oil"
+          }
+        },
+        {
+          "id": "distillery",
+          "title": {
+            "en": "Oil refining",
+            "pt": "Refino de petróleo"
           },
           "icon": {
             "block": {
@@ -292,6 +413,82 @@
               "all": "block/ore/tin"
             }
           }
+        },
+        {
+          "id": "geological-scanner",
+          "title": {
+            "en": "Geological Scanner",
+            "pt": "Scanner geológico"
+          },
+          "icon": {
+            "block": {
+              "top": "block/basic_machine_casing",
+              "front": "block/machines/basic/geological_scanner_front",
+              "side": "block/basic_machine_casing"
+            }
+          }
+        },
+        {
+          "id": "prospector",
+          "title": {
+            "en": "Prospector",
+            "pt": "Prospector"
+          },
+          "icon": {
+            "item": "item/tool/electric/prospector"
+          }
+        },
+        {
+          "id": "hole-drill",
+          "title": {
+            "en": "Hole Drill & covers",
+            "pt": "Furadeira e capas"
+          },
+          "icon": {
+            "item": "item/tool/electric/hole_drill"
+          }
+        }
+      ]
+    },
+    {
+      "section": {
+        "en": "Radiation",
+        "pt": "Radiação"
+      },
+      "pages": [
+        {
+          "id": "radiation",
+          "title": {
+            "en": "Radiation",
+            "pt": "Radiação"
+          },
+          "icon": {
+            "item": "item/tool/electric/geiger_counter"
+          }
+        },
+        {
+          "id": "uranium",
+          "title": {
+            "en": "Uranium & fuel",
+            "pt": "Urânio e combustível"
+          },
+          "icon": {
+            "item": "item/dust/enriched_uranium"
+          }
+        },
+        {
+          "id": "hazmat-suit",
+          "title": {
+            "en": "Hazmat suit",
+            "pt": "Traje hazmat"
+          },
+          "icon": {
+            "tinted": {
+              "base": "item/hazmat_chestplate",
+              "overlay": "item/hazmat_chestplate_overlay",
+              "color": "e8c43a"
+            }
+          }
         }
       ]
     },
@@ -342,16 +539,6 @@
           "icon": {
             "item": "item/jetpack"
           }
-        },
-        {
-          "id": "prospector",
-          "title": {
-            "en": "Prospector",
-            "pt": "Prospector"
-          },
-          "icon": {
-            "item": "item/tool/electric/prospector"
-          }
         }
       ]
     },
@@ -386,6 +573,28 @@
               "top": "block/misc/chunk_loader_top",
               "front": "block/misc/chunk_loader_side",
               "side": "block/misc/chunk_loader_side"
+            }
+          }
+        },
+        {
+          "id": "status-monitor",
+          "title": {
+            "en": "Status Monitor",
+            "pt": "Monitor de status"
+          },
+          "icon": {
+            "item": "item/status_monitor"
+          }
+        },
+        {
+          "id": "construction-blocks",
+          "title": {
+            "en": "Construction & utility blocks",
+            "pt": "Blocos de construção e utilitários"
+          },
+          "icon": {
+            "block": {
+              "all": "block/reinforced_stone"
             }
           }
         }

@@ -75,7 +75,7 @@ public class GuiFluidBar extends GuiElement {
   }
 
   private boolean cellPourable() {
-    if (menu == null || drainIndex < 0) {
+    if (menu == null || drainIndex < 0 || fluidStorage.isOutputOnly()) {
       return false;
     }
     var carried = menu.getCarried();
@@ -86,6 +86,16 @@ public class GuiFluidBar extends GuiElement {
     int amount = com.faktocraft.common.item.base.FluidItem.getFluidAmount(carried);
     return fluid != net.minecraft.world.level.material.Fluids.EMPTY && amount > 0
         && fluidStorage.fillFluid(new net.minecraftforge.fluids.FluidStack(fluid, amount), amount, true) == amount;
+  }
+
+  private boolean bucketPourable() {
+    return menu != null && drainIndex >= 0
+        && com.faktocraft.common.util.FluidInteractionHelper.canPourContainer(menu.getCarried(), fluidStorage);
+  }
+
+  private boolean bucketFillable() {
+    return menu != null && drainIndex >= 0
+        && com.faktocraft.common.util.FluidInteractionHelper.canFillContainer(menu.getCarried(), fluidStorage);
   }
 
   @Override
@@ -110,6 +120,16 @@ public class GuiFluidBar extends GuiElement {
             .withStyle(net.minecraft.ChatFormatting.DARK_AQUA));
       } else if (cellFillable()) {
         lines.add(Component.translatable("gui." + Faktocraft.MODID + ".cell_drain_hint")
+            .withStyle(net.minecraft.ChatFormatting.AQUA));
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".cell_drain_all_hint")
+            .withStyle(net.minecraft.ChatFormatting.DARK_AQUA));
+      } else if (bucketPourable()) {
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".bucket_fill_hint")
+            .withStyle(net.minecraft.ChatFormatting.AQUA));
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".cell_fill_all_hint")
+            .withStyle(net.minecraft.ChatFormatting.DARK_AQUA));
+      } else if (bucketFillable()) {
+        lines.add(Component.translatable("gui." + Faktocraft.MODID + ".bucket_drain_hint")
             .withStyle(net.minecraft.ChatFormatting.AQUA));
         lines.add(Component.translatable("gui." + Faktocraft.MODID + ".cell_drain_all_hint")
             .withStyle(net.minecraft.ChatFormatting.DARK_AQUA));
@@ -169,8 +189,8 @@ public class GuiFluidBar extends GuiElement {
     prevPressed = pressed;
 
     boolean plunger = plungerCarried();
-    boolean cell = !plunger && cellPourable();
-    boolean drainCell = !plunger && !cell && cellFillable();
+    boolean cell = !plunger && (cellPourable() || bucketPourable());
+    boolean drainCell = !plunger && !cell && (cellFillable() || bucketFillable());
     if (!plunger && !cell && !drainCell) {
       holdStartMs = -1;
       lastSoundStep = -1;

@@ -45,7 +45,7 @@
           },
           {
             "en": "High ↔ Very High",
-            "pt": "Alta ↔ Muito Alta"
+            "pt": "Alta ↔ Altíssima"
           }
         ],
         [
@@ -54,8 +54,8 @@
             "pt": "Transformador Muito Alto"
           },
           {
-            "en": "Very High ↔ Ultra",
-            "pt": "Muito Alta ↔ Ultra"
+            "en": "Ultra → Very High (step down only)",
+            "pt": "Ultra → Altíssima (só rebaixa)"
           }
         ]
       ]
@@ -70,12 +70,14 @@
       "en": [
         "The **front face** carries one tier; the **other five faces** carry the other.",
         "It has two modes: **step down** (high tier in, low tier out) and **step up** (low in, high out). Toggle the mode by interacting with the block.",
+        "The **Very High Transformer** is the exception: it only steps **Ultra down to Very High**. There is no way to step up into Ultra - that tier comes only from Ultra generators.",
         "A **redstone signal** pauses the transformer, letting you gate conversions with automation.",
         "Point the front the wrong way and the high-tier side may face a low-tier machine - remember the [explosion rule](#/energy)!"
       ],
       "pt": [
         "A **face frontal** carrega uma tensão; as **outras cinco faces** carregam a outra.",
         "Tem dois modos: **rebaixar** (tensão alta entra, baixa sai) e **elevar** (baixa entra, alta sai). Alterne o modo interagindo com o bloco.",
+        "O **Transformador Muito Alto** é a exceção: ele só rebaixa **Ultra para Altíssima**. Não existe como elevar até a Ultra - essa tensão vem apenas de geradores Ultra.",
         "Um **sinal de redstone** pausa o transformador, permitindo controlar conversões com automação.",
         "Aponte a frente para o lado errado e a face de tensão alta pode encarar uma máquina de tensão baixa - lembre da [regra da explosão](#/energy)!"
       ]

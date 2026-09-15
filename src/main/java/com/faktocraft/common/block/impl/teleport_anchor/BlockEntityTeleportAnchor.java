@@ -417,6 +417,10 @@ public class BlockEntityTeleportAnchor extends FaktocraftBlockEntity implements 
 
   @Override
   public void load(CompoundTag tag) {
+    if (tag.contains("bufferCapacity")) {
+      this.bufferCapacity = clampBuffer(tag.getInt("bufferCapacity"));
+      getEnergyStorage().setMaxEnergy(bufferCapacity);
+    }
     super.load(tag);
     this.destination = tag.contains("destination") ? BlockPos.of(tag.getLong("destination")) : null;
     this.destinationDimension = tag.contains("destinationDimension")
@@ -424,8 +428,5 @@ public class BlockEntityTeleportAnchor extends FaktocraftBlockEntity implements 
             new ResourceLocation(tag.getString("destinationDimension")))
         : null;
     this.teleportCooldown = tag.contains("teleportCooldown") ? tag.getInt("teleportCooldown") : 0;
-    if (tag.contains("bufferCapacity")) {
-      this.bufferCapacity = clampBuffer(tag.getInt("bufferCapacity"));
-    }
   }
 }

@@ -3,16 +3,89 @@ package com.faktocraft.common.block.impl.machines;
 import com.faktocraft.common.entity.block.FluidStorage;
 import com.faktocraft.common.item.base.FluidItem;
 import com.faktocraft.common.item.impl.FluidCell;
+import com.faktocraft.common.util.FluidInteractionHelper;
 import com.faktocraft.common.util.ItemStackHandler;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public final class FluidCellTankHelper {
 
+  public static final int BOTTLE_MB = 250;
+
   private FluidCellTankHelper() {
+  }
+
+  public static boolean isEmptyBottle(ItemStack stack) {
+    return stack.is(Items.GLASS_BOTTLE);
+  }
+
+  public static boolean isContainer(ItemStack stack) {
+    return !isEmptyBottle(stack) && FluidInteractionHelper.isContainer(stack);
+  }
+
+  public static boolean acceptsInput(ItemStack stack) {
+    return stack.getItem() instanceof FluidItem || isEmptyBottle(stack) || isContainer(stack);
+  }
+
+  private static boolean moveContainer(ItemStackHandler handler, int slotUp, int slotDown, FluidStorage tank,
+      boolean fill) {
+    ItemStack up = handler.getStackInSlot(slotUp);
+    ItemStack down = handler.getStackInSlot(slotDown);
+    if (fill ? !canDrainToCell(up, down, tank) : !canFillFromCell(up, down, tank)) {
+      return false;
+    }
+    FluidActionResult result = fill
+        ? FluidUtil.tryFillContainer(up, tank, Integer.MAX_VALUE, null, true)
+        : FluidUtil.tryEmptyContainer(up, tank, Integer.MAX_VALUE, null, true);
+    if (!result.isSuccess()) {
+      return false;
+    }
+    ItemStack remaining = up.copy();
+    remaining.shrink(1);
+    handler.setStackInSlot(slotUp, remaining.isEmpty() ? ItemStack.EMPTY : remaining);
+    if (down.isEmpty()) {
+      handler.setStackInSlot(slotDown, result.getResult());
+    } else {
+      down.grow(1);
+      handler.setStackInSlot(slotDown, down);
+    }
+    return true;
+  }
+
+  private static ItemStack waterBottle() {
+    return PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER);
+  }
+
+  public static boolean canFillBottle(ItemStack up, ItemStack down, FluidStorage tank) {
+    return isEmptyBottle(up) && tank.getFluid() == Fluids.WATER && tank.getFluidAmount() >= BOTTLE_MB
+        && outputAccepts(down, waterBottle());
+  }
+
+  private static boolean fillBottle(ItemStackHandler handler, int slotUp, int slotDown, FluidStorage tank) {
+    ItemStack up = handler.getStackInSlot(slotUp);
+    ItemStack down = handler.getStackInSlot(slotDown);
+    if (!canFillBottle(up, down, tank)) {
+      return false;
+    }
+    tank.drain(BOTTLE_MB, IFluidHandler.FluidAction.EXECUTE);
+    ItemStack remaining = up.copy();
+    remaining.shrink(1);
+    handler.setStackInSlot(slotUp, remaining.isEmpty() ? ItemStack.EMPTY : remaining);
+    if (down.isEmpty()) {
+      handler.setStackInSlot(slotDown, waterBottle());
+    } else {
+      down.grow(1);
+      handler.setStackInSlot(slotDown, down);
+    }
+    return true;
   }
 
   private static int getCellCapacity(ItemStack stack) {
@@ -71,6 +144,13 @@ public final class FluidCellTankHelper {
   }
 
   public static boolean canDrainToCell(ItemStack up, ItemStack down, FluidStorage tank) {
+    if (isEmptyBottle(up)) {
+      return canFillBottle(up, down, tank);
+    }
+    if (isContainer(up)) {
+      FluidActionResult result = FluidUtil.tryFillContainer(up, tank, Integer.MAX_VALUE, null, false);
+      return result.isSuccess() && outputAccepts(down, result.getResult());
+    }
     if (!hasEnoughToFill(up, tank)) {
       return false;
     }
@@ -84,6 +164,12 @@ public final class FluidCellTankHelper {
     ItemStack up = handler.getStackInSlot(slotUp);
     ItemStack down = handler.getStackInSlot(slotDown);
 
+    if (isEmptyBottle(up)) {
+      return fillBottle(handler, slotUp, slotDown, tank);
+    }
+    if (isContainer(up)) {
+      return moveContainer(handler, slotUp, slotDown, tank, true);
+    }
     if (!canDrainToCell(up, down, tank)) {
       return false;
     }
@@ -111,6 +197,10 @@ public final class FluidCellTankHelper {
   }
 
   public static boolean canFillFromCell(ItemStack up, ItemStack down, FluidStorage tank) {
+    if (isContainer(up)) {
+      FluidActionResult result = FluidUtil.tryEmptyContainer(up, tank, Integer.MAX_VALUE, null, false);
+      return result.isSuccess() && outputAccepts(down, result.getResult());
+    }
     if (up.isEmpty() || !(up.getItem() instanceof FluidItem)) {
       return false;
     }
@@ -134,6 +224,9 @@ public final class FluidCellTankHelper {
     ItemStack up = handler.getStackInSlot(slotUp);
     ItemStack down = handler.getStackInSlot(slotDown);
 
+    if (isContainer(up)) {
+      return moveContainer(handler, slotUp, slotDown, tank, false);
+    }
     if (!canFillFromCell(up, down, tank)) {
       return false;
     }

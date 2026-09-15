@@ -1,0 +1,116 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The **Ender Tank** is a tank without a location. Set a 6-digit code on it and it shares one 16 000 mB volume with every other Ender Tank on the same code - across the map, across dimensions, with no cable and no energy. Pump oil in the desert, drain it at the base.",
+      "pt": "O **Tanque ender** é um tanque sem lugar fixo. Defina uma senha de 6 dígitos nele e ele compartilha um volume único de 16 000 mB com todo outro Tanque ender com a mesma senha - pelo mapa inteiro, entre dimensões, sem cabo e sem energia. Bombeie petróleo no deserto, drene na base."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Ender Tank",
+            "pt": "Tanque ender"
+          },
+          "icon": {
+            "tank": {
+              "frame": "block/pipe/ender_tank_frame",
+              "band": "block/pipe/ender_tank_band",
+              "panel": "block/pipe/ender_tank_panel",
+              "end": "block/pipe/ender_tank_end"
+            }
+          },
+          "desc": {
+            "en": "Two ender pearls and glass on top, glass around a Tank in the middle, obsidian and an Electronic Circuit below. 16 000 mB per code, shared; the code glows purple on the front.",
+            "pt": "Duas pérolas de ender e vidro em cima, vidro em volta de um Tanque no meio, obsidiana e um Circuito eletrônico embaixo. 16 000 mB por senha, compartilhados; a senha brilha em roxo na frente."
+          }
+        },
+        {
+          "name": {
+            "en": "Fluid Cell",
+            "pt": "Célula de fluído"
+          },
+          "icon": {
+            "item": "item/fluid_cell"
+          },
+          "desc": {
+            "en": "Right-click the tank with a cell or a bucket to fill or empty it by hand.",
+            "pt": "Botão direito no tanque com uma célula ou um balde enche ou esvazia na mão."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Setting the code",
+      "pt": "Definindo a senha"
+    },
+    {
+      "type": "list",
+      "en": [
+        "A fresh tank has no code and is **inactive**: the GUI says \"No code set: the tank is inactive\" and it holds nothing.",
+        "Right-click the tank with an empty hand (or anything that is not a fluid container) to open the GUI. Type six digits in the **Code** box - anything from 000000 to 999999 - and press **Apply** or Enter.",
+        "The six digits appear glowing purple on the front of the block, so you can read a tank's channel without opening it.",
+        "Every Ender Tank with the same code is now the same tank: fill one, and the gauge rises on all of them.",
+        "To change the channel, type a new code and apply it. To deactivate the tank, apply an empty box."
+      ],
+      "pt": [
+        "Um tanque novo não tem senha e fica **inativo**: a GUI diz \"Sem senha: o tanque está inativo\" e ele não guarda nada.",
+        "Clique com o botão direito no tanque com a mão vazia (ou com qualquer coisa que não seja recipiente de fluido) para abrir a GUI. Digite seis dígitos na caixa **Senha** - qualquer coisa de 000000 a 999999 - e aperte **Aplicar** ou Enter.",
+        "Os seis dígitos aparecem brilhando em roxo na frente do bloco, então dá para ler o canal de um tanque sem abrir.",
+        "Todo Tanque ender com a mesma senha agora é o mesmo tanque: encha um e o medidor sobe em todos.",
+        "Para trocar de canal, digite uma senha nova e aplique. Para desativar o tanque, aplique a caixa vazia."
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "Changing the code does **not** carry the fluid along. The 16 000 mB stay on the old channel; the tank simply starts showing whatever the new channel holds. Drain a channel before abandoning it, or note the code so you can come back for it.",
+      "pt": "Trocar a senha **não** leva o fluido junto. Os 16 000 mB ficam no canal antigo; o tanque simplesmente passa a mostrar o que o canal novo tem. Drene um canal antes de abandonar, ou anote a senha para voltar depois."
+    },
+    {
+      "type": "h",
+      "en": "Moving fluid in and out",
+      "pt": "Colocando e tirando fluido"
+    },
+    {
+      "type": "list",
+      "en": [
+        "By hand: right-click with a full bucket or [Fluid Cell](#/fluids) to pour it in, with an empty one to take fluid out.",
+        "By pipe: [fluid pipes](#/tank-and-pump) connect on any side. Push fluid in with a [Fluid Pump](#/tank-and-pump) or a machine output, pull it out with a Fluid Extractor Pipe.",
+        "The capacity is 16 000 mB for the whole channel, not per block: ten tanks on the same code still hold 16 000 mB together."
+      ],
+      "pt": [
+        "Na mão: botão direito com um balde ou [Célula de fluído](#/fluids) cheios despeja, com um vazio tira fluido.",
+        "Por tubo: [tubos de fluido](#/tank-and-pump) conectam em qualquer lado. Empurre fluido para dentro com uma [Bomba de fluidos](#/tank-and-pump) ou a saída de uma máquina, puxe com um Tubo extrator de fluido.",
+        "A capacidade é 16 000 mB para o canal inteiro, não por bloco: dez tanques na mesma senha ainda guardam 16 000 mB juntos."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "What to do with it",
+      "pt": "O que fazer com ele"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Remote pumping**: put a Fluid Pump on a desert [oil lake](#/oil) with an Ender Tank next to it (and a [Chunk Loader](#/chunk-loader) so it keeps running). At the base, an extractor on a tank with the same code feeds your distillery - no pipeline across the map.",
+        "**Nether lava**: pump lava in the Nether, burn it in the Overworld.",
+        "**Water for the reactor**: an Ender Tank on the [Nuclear Reactor](#/nuclear-reactor) fed by a pump on an infinite water source anywhere in the world.",
+        "**Jetpack top-ups**: one tank of fuel at every outpost, all on the same code, for the [Fueling Station](#/distillery)."
+      ],
+      "pt": [
+        "**Bombeamento remoto**: coloque uma Bomba de fluidos num [lago de petróleo](#/oil) no deserto com um Tanque ender ao lado (e um [Carregador de chunks](#/chunk-loader) para continuar rodando). Na base, um extrator num tanque com a mesma senha alimenta a destiladora - sem tubulação pelo mapa.",
+        "**Lava do Nether**: bombeie lava no Nether, queime no Overworld.",
+        "**Água para o reator**: um Tanque ender no [Reator nuclear](#/nuclear-reactor) alimentado por uma bomba numa fonte infinita de água em qualquer lugar do mundo.",
+        "**Reabastecer a jetpack**: um tanque de combustível em cada posto avançado, todos na mesma senha, para a [Estação de abastecimento](#/distillery)."
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "Two things it does not do: it never merges with regular [Tanks](#/tank-and-pump) stacked above or below it, and codes are not private - anyone on the server who sets the same six digits shares your channel. Pick codes that are not 000000 or 123456.",
+      "pt": "Duas coisas que ele não faz: nunca se une a [Tanques](#/tank-and-pump) comuns empilhados acima ou abaixo, e as senhas não são privadas - qualquer um no servidor que definir os mesmos seis dígitos compartilha o seu canal. Escolha senhas que não sejam 000000 nem 123456."
+    }
+  ]
+}

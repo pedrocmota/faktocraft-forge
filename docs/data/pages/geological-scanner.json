@@ -1,0 +1,153 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "banner",
+      "src": "banners/scanner.webp"
+    },
+    {
+      "type": "p",
+      "en": "The **Geological Scanner** is the stationary big brother of the [Geological Prospector](#/prospector): a block that, given power, surveys every chunk within 14 chunks of itself for ores and [Crude Oil](#/oil) and shares the results with every prospector and scanner on the same password. Place it once, walk away, and come back to a full map of what lies under your base.",
+      "pt": "O **Scanner geológico** é o irmão maior e fixo do [Prospector geológico](#/prospector): um bloco que, com energia, sonda todo chunk num raio de 14 chunks atrás de minérios e [Petróleo](#/oil) e compartilha o resultado com todo prospector e scanner na mesma senha. Coloque uma vez, vá embora, e volte para um mapa completo do que tem embaixo da sua base."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Geological Scanner",
+            "pt": "Scanner geológico"
+          },
+          "icon": {
+            "block": {
+              "top": "block/basic_machine_casing",
+              "front": "block/machines/basic/geological_scanner_front",
+              "side": "block/basic_machine_casing"
+            }
+          },
+          "desc": {
+            "en": "Iron Plates, a Geological Prospector, 2 Advanced Circuits, a Basic Machine Casing and an Electronic Circuit. High tier, 100 000 IE buffer, 25 000 IE and 8 seconds per chunk, 625 chunks of range.",
+            "pt": "Placas de ferro, um Prospector geológico, 2 Circuitos eletrônicos avançados, um Revestimento de máquina básico e um Circuito eletrônico. Tensão Alta, buffer de 100 000 IE, 25 000 IE e 8 segundos por chunk, 625 chunks de alcance."
+          }
+        },
+        {
+          "name": {
+            "en": "Geological Prospector",
+            "pt": "Prospector geológico"
+          },
+          "icon": {
+            "item": "item/tool/electric/prospector"
+          },
+          "link": "prospector",
+          "desc": {
+            "en": "The handheld version and an ingredient of the scanner. 10 000 IE per chunk, but only the chunk you stand in.",
+            "pt": "A versão de mão e ingrediente do scanner. 10 000 IE por chunk, mas só o chunk em que você está."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Setting it up",
+      "pt": "Montando"
+    },
+    {
+      "type": "list",
+      "en": [
+        "1. Place the scanner in the middle of the area you care about: it covers a **disc of radius 14 chunks**, 625 chunks in all, and the map darkens everything outside it.",
+        "2. Feed it **High-tier** power on any side. There is no battery slot: it drinks from the cable only, and each chunk costs **25 000 IE**, so a full sweep is about 15.6 million IE. A Combustion Generator can do it, slowly; a [Battery Box](#/battery-box) in front of it evens things out.",
+        "3. Open it and press **Start**. It works outwards from its own chunk, **8 seconds per chunk**, and shows **Scanning chunk x, z** in the footer with the energy bar and a **x/y chunks** counter. **Pause** stops it where it is.",
+        "4. Chunks already scanned under the same password are **skipped**, so a second scanner or a prospector that has been through the area saves you their cost.",
+        "5. Want one specific chunk right now? **Double-click it on the map** and it goes to the front of the queue.",
+        "6. When it says **Area fully scanned** it is done. **Waiting for energy** means the cable is not keeping up.",
+        "7. Rare finds shout: when a chunk turns up **Iridium** or a **Giant oil pocket**, the scanner posts a chat message with the chunk coordinates, so you do not need to watch it."
+      ],
+      "pt": [
+        "1. Coloque o scanner no meio da área que te interessa: ele cobre um **disco de raio 14 chunks**, 625 chunks ao todo, e o mapa escurece tudo fora dele.",
+        "2. Alimente com energia de tensão **Alta** por qualquer lado. Não tem slot de bateria: ele só bebe do cabo, e cada chunk custa **25 000 IE**, então uma varredura completa dá uns 15,6 milhões de IE. Um Gerador à combustão dá conta, devagar; uma [Caixa de baterias](#/battery-box) na frente dele suaviza as coisas.",
+        "3. Abra e aperte **Iniciar**. Ele trabalha do próprio chunk para fora, **8 segundos por chunk**, e mostra **Varrendo chunk x, z** no rodapé com a barra de energia e um contador **x/y chunks**. **Pausar** para onde estiver.",
+        "4. Chunks já varridos na mesma senha são **pulados**, então um segundo scanner ou um prospector que já passou pela área te poupa o custo deles.",
+        "5. Quer um chunk específico agora? **Clique duas vezes nele no mapa** e ele vai para a frente da fila.",
+        "6. Quando disser **Área totalmente varrida**, acabou. **Aguardando energia** quer dizer que o cabo não está dando conta.",
+        "7. Achados raros gritam: quando um chunk revela **Irídio** ou um **Bolsão gigante de petróleo**, o scanner manda uma mensagem no chat com as coordenadas do chunk, então não precisa ficar olhando."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Reading the map and the report",
+      "pt": "Lendo o mapa e o relatório"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Map tab**: drag it or use the arrow keys to pan, scroll to zoom, press **Center** to snap back to the scanner. Scanned chunks are coloured by what was found; **Not scanned** and **Nothing found** are told apart when you hover.",
+        "**Rare finds**: the chip on the map lists the notable results (iridium, giant oil pockets); click it to jump from one to the next.",
+        "**Report tab**: a summary line **N types in M scanned chunks**, then every ore and oil type found. Click a type to list its chunks with the counts; click a chunk to show it on the map.",
+        "**Chunk sheet**: open a chunk for its own report, **N types, ~M blocks**, with one line per find. The tilde is honest: counts are estimates ([accuracy](#/prospector))."
+      ],
+      "pt": [
+        "**Aba Mapa**: arraste ou use as setas para navegar, role para aproximar, aperte **Centralizar** para voltar ao scanner. Chunks varridos ficam coloridos pelo que foi achado; **Não escaneado** e **Nada encontrado** se distinguem ao passar o mouse.",
+        "**Achados raros**: a etiqueta no mapa lista os resultados notáveis (irídio, bolsões gigantes de petróleo); clique para pular de um para o outro.",
+        "**Aba Relatório**: uma linha de resumo **N tipos em M chunks escaneados**, depois cada tipo de minério e petróleo achado. Clique num tipo para listar os chunks com as contagens; clique num chunk para mostrar no mapa.",
+        "**Laudo do chunk**: abra um chunk para o laudo dele, **N tipos, ~M blocos**, com uma linha por achado. O til é sincero: as contagens são estimativas ([precisão](#/prospector))."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Password",
+      "pt": "Senha"
+    },
+    {
+      "type": "p",
+      "en": "Scans are not stored in the block. They live on the server under a **6-digit password**, and every Geological Scanner and Geological Prospector set to the same password sees the same scans. New devices start at **000000**, so out of the box everyone on the server shares one big map.",
+      "pt": "As varreduras não ficam no bloco. Elas vivem no servidor sob uma **senha de 6 dígitos**, e todo Scanner geológico e Prospector geológico com a mesma senha vê as mesmas varreduras. Aparelhos novos começam em **000000**, então de fábrica todo mundo no servidor compartilha um mapão só."
+    },
+    {
+      "type": "list",
+      "en": [
+        "Hover the **padlock** in the top-right corner of the screen to see the current password.",
+        "Click it, type 6 digits in the box and press **Apply**. The map reloads with whatever that password already holds.",
+        "Give every scanner and prospector of your base the same password and each survey adds to the same map; give a mining expedition its own password to keep it separate.",
+        "The server keeps up to 8192 chunks per password; past that, the oldest scans are dropped first."
+      ],
+      "pt": [
+        "Passe o mouse no **cadeado** no canto superior direito da tela para ver a senha atual.",
+        "Clique nele, digite 6 dígitos na caixa e aperte **Aplicar**. O mapa recarrega com o que essa senha já guarda.",
+        "Dê a mesma senha a todo scanner e prospector da sua base e cada sondagem soma no mesmo mapa; dê uma senha própria a uma expedição de mineração para manter separado.",
+        "O servidor guarda até 8192 chunks por senha; passando disso, as varreduras mais antigas caem primeiro."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Scanner or prospector?",
+      "pt": "Scanner ou prospector?"
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["", "Geological Scanner", "Geological Prospector"],
+        "pt": ["", "Scanner geológico", "Prospector geológico"]
+      },
+      "rows": [
+        [{"en": "Form", "pt": "Forma"}, {"en": "Block, needs a cable", "pt": "Bloco, precisa de cabo"}, {"en": "Handheld, 400 000 IE inside", "pt": "De mão, 400 000 IE dentro"}],
+        [{"en": "Coverage", "pt": "Cobertura"}, {"en": "625 chunks around it, automatic", "pt": "625 chunks em volta, automático"}, {"en": "The chunk you stand in", "pt": "O chunk em que você está"}],
+        [{"en": "Cost per chunk", "pt": "Custo por chunk"}, "25 000 IE", "10 000 IE"],
+        [{"en": "Time per chunk", "pt": "Tempo por chunk"}, {"en": "8 s", "pt": "8 s"}, {"en": "8 s", "pt": "8 s"}],
+        [{"en": "Tier", "pt": "Tensão"}, {"en": "High", "pt": "Alta"}, {"en": "High", "pt": "Alta"}],
+        [{"en": "Alerts", "pt": "Avisos"}, {"en": "Chat message on iridium and giant oil pockets", "pt": "Mensagem no chat com irídio e bolsões gigantes"}, {"en": "Beacon ping when a scan finishes", "pt": "Toque de sinalizador ao terminar"}],
+        [{"en": "Best for", "pt": "Melhor para"}, {"en": "Mapping the whole neighbourhood of a base", "pt": "Mapear a vizinhança inteira de uma base"}, {"en": "Checking a spot before you commit a Quarry", "pt": "Checar um ponto antes de comprometer uma Mineradora"}]
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "The scanner is greedy: 625 chunks at 25 000 IE is more than most mid-game grids can spare in one go. Run it from a dedicated generator or let it fill its buffer overnight; **Waiting for energy** is not a bug, it is the bill.",
+      "pt": "O scanner é guloso: 625 chunks a 25 000 IE é mais do que a maioria das redes de meio de jogo aguenta de uma vez. Rode com um gerador dedicado ou deixe ele encher o buffer durante a noite; **Aguardando energia** não é bug, é a conta."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Do not sweep blindly. Double-click the chunks around a promising prospector reading first, and only press **Start** once you have decided the area is worth 15 million IE. Then pair the result with the [Quarry](#/quarry) and the [Fluid Pump](#/oil-pockets).",
+      "pt": "Não varra às cegas. Clique duas vezes primeiro nos chunks em volta de uma leitura promissora do prospector, e só aperte **Iniciar** quando decidir que a área vale 15 milhões de IE. Depois combine o resultado com a [Mineradora](#/quarry) e a [Bomba de fluidos](#/oil-pockets)."
+    }
+  ]
+}

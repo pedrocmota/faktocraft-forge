@@ -50,13 +50,13 @@ public record PacketCoreTasksReq(BlockPos blockPos) {
           break;
         }
         tasks.add(line(summary.id(), summary.stack(), summary.count(), summary.stateKey(), summary.detail(),
-            summary.system(), summary.originPos(), summary.originLabel(), summary.subs()));
+            summary.system(), summary.originPos(), summary.originLabel(), summary.delivered(), summary.subs()));
       }
       for (List<TaskLedger.HistoryRecord> history : List.of(core.getLedger().userHistory(),
           core.getLedger().systemHistory())) {
         for (TaskLedger.HistoryRecord record : history) {
           tasks.add(line(record.id(), record.stack(), record.count(), record.stateKey(), record.detail(),
-              record.system(), record.originPos(), record.originLabel(), record.subs()));
+              record.system(), record.originPos(), record.originLabel(), record.delivered(), record.subs()));
         }
       }
       ModNetworking.sendToPlayer(player,
@@ -66,14 +66,15 @@ public record PacketCoreTasksReq(BlockPos blockPos) {
   }
 
   private static PacketTableState.TaskLine line(long id, net.minecraft.world.item.ItemStack stack, int count,
-      String stateKey, String detail, boolean system, long originPos, String originLabel,
+      String stateKey, String detail, boolean system, long originPos, String originLabel, int delivered,
       List<TaskLedger.SubRecord> subs) {
     List<PacketTableState.SubLine> lines = new ArrayList<>(subs.size());
     for (TaskLedger.SubRecord sub : subs) {
       lines.add(new PacketTableState.SubLine(sub.kind(), sub.item(), sub.count(), sub.stateKey(),
-          sub.leftoverItem(), sub.leftoverCount(), sub.where(), sub.whereDetail()));
+          sub.leftoverItem(), sub.leftoverCount(), sub.where(), sub.whereDetail(), sub.done(), sub.inputsDone(),
+          sub.inputsTotal()));
     }
     return new PacketTableState.TaskLine(id, stack, count, stateKey, detail, system, originPos, originLabel,
-        lines);
+        delivered, lines);
   }
 }

@@ -122,6 +122,13 @@ public class BlockEntityForester extends BlockEntityGantry {
 
   private boolean resinMode = false;
   private int scanIndex = 0;
+  private boolean treeBoxSet;
+  private int treeMinX;
+  private int treeMinY;
+  private int treeMinZ;
+  private int treeMaxX;
+  private int treeMaxY;
+  private int treeMaxZ;
   private int job = JOB_NONE;
   private int treeBaseX;
   private int treeBaseZ;
@@ -368,7 +375,7 @@ public class BlockEntityForester extends BlockEntityGantry {
       int result = placeFrameAt(serverLevel, pos);
       if (result == FRAME_BLOCKED) {
         BlockState state = serverLevel.getBlockState(pos);
-        if (!state.is(BlockTags.LOGS) && !state.is(BlockTags.LEAVES) && !isMineable(serverLevel, pos, state)) {
+        if (!isTreeBlock(state) && !isMineable(serverLevel, pos, state)) {
           return STATUS_OBSTRUCTED;
         }
         return breakAt(serverLevel, pos, state, STATUS_FRAMING, () -> {
@@ -427,7 +434,7 @@ public class BlockEntityForester extends BlockEntityGantry {
         return STATUS_WAITING_CHUNKS;
       }
       BlockState state = serverLevel.getBlockState(pos);
-      if (state.is(BlockTags.LOGS) || state.is(BlockTags.LEAVES)) {
+      if (isTreeBlock(state)) {
         resizePhase = RESIZE_NONE;
         shrinkRetry = SHRINK_RETRY_TICKS;
         invalidateFramePositions();
@@ -514,11 +521,19 @@ public class BlockEntityForester extends BlockEntityGantry {
         && rubber.isWet(state);
   }
 
+  private static boolean isMangroveRoots(BlockState state) {
+    return state.is(Blocks.MANGROVE_ROOTS) || state.is(Blocks.MUDDY_MANGROVE_ROOTS);
+  }
+
+  private static boolean isTreeBlock(BlockState state) {
+    return state.is(BlockTags.LOGS) || state.is(BlockTags.LEAVES) || isMangroveRoots(state);
+  }
+
   private boolean isTreePart(BlockState state) {
     if (resinMode && isRubber(state)) {
       return false;
     }
-    return state.is(BlockTags.LOGS) || state.is(BlockTags.LEAVES);
+    return isTreeBlock(state);
   }
 
   @Nullable
@@ -531,9 +546,11 @@ public class BlockEntityForester extends BlockEntityGantry {
     queue.add(base);
     visited.add(base);
     BlockPos best = base;
+    growTreeBox(base);
     while (!queue.isEmpty() && visited.size() < TREE_BLOCK_CAP) {
       BlockPos current = queue.poll();
-      if (current.getY() > best.getY()) {
+      growTreeBox(current);
+      if (current.getY() >= best.getY()) {
         best = current;
       }
       for (int dx = -1; dx <= 1; dx++) {
@@ -626,9 +643,17 @@ public class BlockEntityForester extends BlockEntityGantry {
     return -1;
   }
 
-  private int actionCost() {
+  private int actionCost(BlockState state) {
     int base = energyPerBlock();
+    if (job == JOB_HARVEST) {
+      return harvestCost(state);
+    }
     return job == JOB_PLANT || job == JOB_FERTILIZE ? Math.max(1, base / 2) : base;
+  }
+
+  public int harvestCost(BlockState state) {
+    int base = energyPerBlock();
+    return state.is(BlockTags.LEAVES) ? Math.max(1, base / 2) : base;
   }
 
   private void startJob(int kind, BlockPos target) {
@@ -654,7 +679,53 @@ public class BlockEntityForester extends BlockEntityGantry {
 
   private void finishJob() {
     job = JOB_NONE;
+    treeBoxSet = false;
     clearTarget();
+  }
+
+  private void growTreeBox(BlockPos pos) {
+    if (!treeBoxSet) {
+      treeBoxSet = true;
+      treeMinX = pos.getX();
+      treeMinY = pos.getY();
+      treeMinZ = pos.getZ();
+      treeMaxX = pos.getX();
+      treeMaxY = pos.getY();
+      treeMaxZ = pos.getZ();
+      return;
+    }
+    treeMinX = Math.min(treeMinX, pos.getX());
+    treeMinY = Math.min(treeMinY, pos.getY());
+    treeMinZ = Math.min(treeMinZ, pos.getZ());
+    treeMaxX = Math.max(treeMaxX, pos.getX());
+    treeMaxY = Math.max(treeMaxY, pos.getY());
+    treeMaxZ = Math.max(treeMaxZ, pos.getZ());
+  }
+
+  @Nullable
+  private BlockPos nextHarvestTarget(ServerLevel serverLevel) {
+    BlockPos next = highestTreeBlock(serverLevel, new BlockPos(treeBaseX, worldPosition.getY(), treeBaseZ));
+    return next != null ? next : leftoverLeaf(serverLevel);
+  }
+
+  @Nullable
+  private BlockPos leftoverLeaf(ServerLevel serverLevel) {
+    if (!treeBoxSet) {
+      return null;
+    }
+    BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+    for (int y = treeMaxY; y >= treeMinY; y--) {
+      for (int x = treeMinX; x <= treeMaxX; x++) {
+        for (int z = treeMinZ; z <= treeMaxZ; z++) {
+          cursor.set(x, y, z);
+          BlockState state = serverLevel.getBlockState(cursor);
+          if (state.is(BlockTags.LEAVES) && inside(cursor) && isTreePart(state)) {
+            return cursor.immutable();
+          }
+        }
+      }
+    }
+    return null;
   }
 
   @Override
@@ -703,7 +774,7 @@ public class BlockEntityForester extends BlockEntityGantry {
         return STATUS_WAITING_CHUNKS;
       }
       BlockState state = serverLevel.getBlockState(pos);
-      if (state.is(BlockTags.LOGS)) {
+      if (state.is(BlockTags.LOGS) || isMangroveRoots(state)) {
         if (isRubber(state)) {
           BlockPos wet = findWetRubber(serverLevel, pos);
           if (wet != null) {
@@ -715,6 +786,7 @@ public class BlockEntityForester extends BlockEntityGantry {
             continue;
           }
         }
+        treeBoxSet = false;
         BlockPos top = highestTreeBlock(serverLevel, pos);
         if (top != null) {
           treeBaseX = x;
@@ -760,7 +832,7 @@ public class BlockEntityForester extends BlockEntityGantry {
     if (job == JOB_FERTILIZE && fertilizeCooldown > 0) {
       return STATUS_WORKING;
     }
-    int cost = actionCost();
+    int cost = actionCost(state);
     int charge = chargeProgress(cost);
     if (charge == CHARGE_READY && headAtTarget()) {
       if (!dwellComplete()) {
@@ -778,7 +850,7 @@ public class BlockEntityForester extends BlockEntityGantry {
         if (isTreePart(state)) {
           return true;
         }
-        BlockPos next = highestTreeBlock(serverLevel, new BlockPos(treeBaseX, worldPosition.getY(), treeBaseZ));
+        BlockPos next = nextHarvestTarget(serverLevel);
         if (next != null) {
           setTarget(next);
         } else {
@@ -817,10 +889,9 @@ public class BlockEntityForester extends BlockEntityGantry {
   private int perform(ServerLevel serverLevel, BlockPos pos, BlockState state, int cost) {
     switch (job) {
       case JOB_HARVEST -> {
-        return breakAt(serverLevel, pos, state, STATUS_WORKING, () -> {
+        return breakAt(serverLevel, pos, state, STATUS_WORKING, cost, () -> {
           dwellTicks = 0;
-          BlockPos next = highestTreeBlock(serverLevel,
-              new BlockPos(treeBaseX, worldPosition.getY(), treeBaseZ));
+          BlockPos next = nextHarvestTarget(serverLevel);
           if (next != null) {
             setTarget(next);
           } else {
@@ -893,6 +964,9 @@ public class BlockEntityForester extends BlockEntityGantry {
     tag.putInt("fertilizeCooldown", fertilizeCooldown);
     tag.putInt("fertilizeDoses", fertilizeDoses);
     tag.putInt("emptyScanned", emptyScanned);
+    if (treeBoxSet) {
+      tag.putIntArray("treeBox", new int[] { treeMinX, treeMinY, treeMinZ, treeMaxX, treeMaxY, treeMaxZ });
+    }
     tag.putBoolean("plantableSeen", plantableSeen);
     tag.putInt("idleResult", idleResult);
     tag.putInt("frameHeight", frameHeight);
@@ -918,6 +992,16 @@ public class BlockEntityForester extends BlockEntityGantry {
     fertilizeCooldown = tag.getInt("fertilizeCooldown");
     fertilizeDoses = tag.getInt("fertilizeDoses");
     emptyScanned = tag.getInt("emptyScanned");
+    int[] box = tag.getIntArray("treeBox");
+    treeBoxSet = box.length == 6;
+    if (treeBoxSet) {
+      treeMinX = box[0];
+      treeMinY = box[1];
+      treeMinZ = box[2];
+      treeMaxX = box[3];
+      treeMaxY = box[4];
+      treeMaxZ = box[5];
+    }
     plantableSeen = tag.getBoolean("plantableSeen");
     idleResult = tag.getInt("idleResult");
     frameHeight = tag.contains("frameHeight") ? tag.getInt("frameHeight") : DEFAULT_FRAME_HEIGHT;

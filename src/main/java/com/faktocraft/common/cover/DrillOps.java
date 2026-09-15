@@ -64,6 +64,18 @@ public final class DrillOps {
     return !state.requiresCorrectToolForDrops() || TierSortingRegistry.isCorrectTierForDrops(Tiers.IRON, state);
   }
 
+  @Nullable
+  public static Direction drillFace(Level level, BlockPos pos, BlockState state, @Nullable Player player,
+      Direction face) {
+    if (canDrill(level, pos, state, player, face)) {
+      return face;
+    }
+    if (isBored(state) && canDrill(level, pos, state, player, face.getOpposite())) {
+      return face.getOpposite();
+    }
+    return null;
+  }
+
   public static boolean drill(Level level, BlockPos pos, Direction face) {
     BlockState state = level.getBlockState(pos);
     if (level.isClientSide() || !canDrill(level, pos, state, null, face)) {

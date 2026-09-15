@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "faktocraft:block/nuke"
+    },
+    "lit=true": {
+      "model": "faktocraft:block/nuke_lit"
+    }
+  }
+}

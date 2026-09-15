@@ -259,9 +259,6 @@ public class EnergyNetworks {
       if (!networks.contains(network)) {
         continue;
       }
-      if (network.maxReceiveTick() <= 0) {
-        network.setMaxEnergy(network.getEnergyTier().getBasicTransfer());
-      }
       BlockPos start = null;
       boolean loaded = true;
       for (BlockPos pos : network.getConnections()) {
@@ -300,6 +297,37 @@ public class EnergyNetworks {
   }
 
   private final HashSet<EnergyNetwork> pendingRepair = new HashSet<>();
+  private final HashSet<BlockPos> pendingAdopt = new HashSet<>();
+
+  public void scheduleRepair(EnergyNetwork network) {
+    if (networks.contains(network)) {
+      pendingRepair.add(network);
+    }
+  }
+
+  public void scheduleAdopt(BlockPos pos) {
+    pendingAdopt.add(pos.immutable());
+  }
+
+  public void adoptPending() {
+    if (pendingAdopt.isEmpty()) {
+      return;
+    }
+    for (BlockPos pos : new ArrayList<>(pendingAdopt)) {
+      pendingAdopt.remove(pos);
+      if (!level.isLoaded(pos) || getNetwork(pos) != null) {
+        continue;
+      }
+      BlockState state = level.getBlockState(pos);
+      if (!(state.getBlock() instanceof BlockCable cable)) {
+        continue;
+      }
+      EnergyTier tier = tierOf(pos, cable);
+      if (tier != null) {
+        onPlaced(pos, state, tier);
+      }
+    }
+  }
 
   public void repairLoaded() {
     if (pendingRepair.isEmpty()) {

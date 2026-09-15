@@ -19,6 +19,7 @@ import com.faktocraft.common.recipe.impl.RecyclingRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M2Registry;
+import com.faktocraft.common.util.EnergyCosts;
 import com.faktocraft.common.util.StackHandlerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -102,7 +103,7 @@ public class BlockEntityRecycler extends FaktocraftBlockEntity implements IEnerg
       }
 
       progress.rescaleMax(getSpeedFactor() * recyclingRecipe.getDuration());
-      int energyCost = (int) (recyclingRecipe.getPowerCost() * getEnergyUsageFactor());
+      int energyCost = EnergyCosts.perTick(recyclingRecipe.getPowerCost(), getEnergyUsageFactor());
 
       ItemStack resultStack = recyclingRecipe.getResultItem();
       if (canWork(outputStack, resultStack)) {

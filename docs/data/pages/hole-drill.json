@@ -1,0 +1,111 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The **Hole Drill** bores a tunnel through one face of a solid block. Open two faces and a cable or pipe can be placed inside the block itself: the wiring disappears into the wall, and the wall keeps looking like a wall. It is the tool for factories without cable spaghetti.",
+      "pt": "A **Furadeira** abre um túnel por uma face de um bloco sólido. Abra duas faces e um cabo ou tubo pode ser colocado dentro do próprio bloco: a fiação some na parede, e a parede continua parecendo parede. É a ferramenta para fábricas sem espaguete de cabos."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Hole Drill",
+            "pt": "Furadeira"
+          },
+          "icon": {
+            "item": "item/tool/electric/hole_drill"
+          },
+          "desc": {
+            "en": "Iron plates and an Electric Motor on top, two Electronic Circuits around a Mining Drill, a Light Battery below. Low-voltage tool holding 10 000 IE; every hole costs 200 IE.",
+            "pt": "Placas de ferro e um Motor elétrico em cima, dois Circuitos eletrônicos em volta de uma Escavadora, uma Bateria leve embaixo. Ferramenta de tensão Baixa com 10 000 IE; cada furo custa 200 IE."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Boring a hole",
+      "pt": "Furando"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Charge the drill in a [Battery Box](#/battery-box) or on a [Charge Pad](#/construction-blocks).",
+        "Aim at a face of a full solid block and **hold right-click for 1.5 s**. You hear the drill and see particles; then the face opens into an 8x8 tunnel that reaches the centre of the block.",
+        "Each hole takes 200 IE. With an empty drill you get \"Not enough energy in the drill\".",
+        "Aim at a face that is **already open** and the drill bores the **opposite face** instead, turning the block into a straight passage without walking around to the other side.",
+        "There is no undo: to close a hole, mine the block and place a fresh one."
+      ],
+      "pt": [
+        "Carregue a furadeira numa [Caixa de baterias](#/battery-box) ou numa [Plataforma de carga](#/construction-blocks).",
+        "Mire numa face de um bloco sólido inteiro e **segure o botão direito por 1,5 s**. Você ouve a furadeira e vê partículas; depois a face se abre num túnel 8x8 que vai até o centro do bloco.",
+        "Cada furo gasta 200 IE. Com a furadeira vazia aparece \"Sem energia suficiente na furadeira\".",
+        "Mire numa face que **já está aberta** e a furadeira fura a **face oposta**, transformando o bloco numa passagem reta sem você precisar dar a volta.",
+        "Não tem desfazer: para fechar um furo, quebre o bloco e coloque um novo."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "What can and cannot be bored",
+      "pt": "O que pode e o que não pode ser furado"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Yes: any full solid cube that can be mined - stone, bricks, planks, concrete, metal blocks and so on.",
+        "In survival, if the block needs a tool, the drill only works on blocks an iron pickaxe (or equivalent) could break.",
+        "No: blocks with an inventory or a GUI (chests, machines, furnaces), fluids, cables and pipes, and blocks marked as undrillable - bedrock, obsidian, ice and similar. You get \"This block can't be bored\"."
+      ],
+      "pt": [
+        "Sim: qualquer cubo sólido inteiro que dê para minerar - pedra, tijolos, tábuas, concreto, blocos de metal e por aí vai.",
+        "No survival, se o bloco exige ferramenta, a furadeira só funciona em blocos que uma picareta de ferro (ou equivalente) quebraria.",
+        "Não: blocos com inventário ou GUI (baús, máquinas, fornalhas), fluidos, cabos e tubos, e blocos marcados como infuráveis - bedrock, obsidiana, gelo e parecidos. Aparece \"Este bloco não pode ser furado\"."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "The Bored Block",
+      "pt": "O Bloco furado"
+    },
+    {
+      "type": "p",
+      "en": "A drilled block becomes a **Bored Block**: it keeps the exact look of the original with a tunnel through it. It has no item form. Break it and it drops whatever the original block dropped, so nothing is lost. Light passes through the tunnel.",
+      "pt": "Um bloco furado vira um **Bloco furado**: mantém a aparência exata do original com um túnel atravessando. Não existe como item. Quebre e ele solta o que o bloco original soltaria, então nada se perde. A luz passa pelo túnel."
+    },
+    {
+      "type": "h",
+      "en": "Running cables and pipes through walls",
+      "pt": "Passando cabos e tubos por paredes"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Open **at least two faces** of the block: up and down for a straight vertical run, up and one side for an L-turn, two opposite sides for a horizontal passage. With a single hole the placement is refused: \"Open at least two sides before running anything through\".",
+        "Place the cable or pipe on the bored block. The bored block is replaced by a **covered** cable or pipe: it renders as the original block with holes on the open faces and on every side it connects to, and it collides like a full cube.",
+        "This works with every [energy cable](#/energy), every [fluid pipe](#/tank-and-pump) and every [logistics pipe](#/logistics) - Stone Pipe, Golden Pipe, chassis, [craft and recipe pipes](#/autocrafting).",
+        "The covered pipe keeps working exactly like the bare one - it only looks like the wall.",
+        "Break a covered cable or pipe and it drops the cable or pipe, leaving the Bored Block behind with the same holes - ready for a different pipe."
+      ],
+      "pt": [
+        "Abra **pelo menos duas faces** do bloco: cima e baixo para uma descida reta, cima e um lado para uma curva em L, dois lados opostos para uma passagem horizontal. Com um furo só, a colocação é recusada: \"Abra pelo menos dois lados antes de passar algo por dentro\".",
+        "Coloque o cabo ou tubo no bloco furado. O bloco furado é substituído por um cabo ou tubo **encapado**: ele aparece como o bloco original com furos nas faces abertas e em todo lado a que se conecta, e colide como um cubo inteiro.",
+        "Funciona com todo [cabo de energia](#/energy), todo [tubo de fluido](#/tank-and-pump) e todo [tubo de logística](#/logistics) - Tubo de pedra, Tubo de ouro, chassi, [tubos de craft e de receita](#/autocrafting).",
+        "O tubo encapado continua funcionando exatamente como o tubo nu - ele só parece parede.",
+        "Quebre um cabo ou tubo encapado e ele solta o cabo ou tubo, deixando o Bloco furado no lugar com os mesmos furos - pronto para outro tubo."
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "A bored block cannot be undone and cannot be picked up: it has no item form. Plan the run before drilling, and remember that chests and machines can't be bored - route the passage through plain wall blocks beside them.",
+      "pt": "Um bloco furado não tem desfazer e não pode ser pego: ele não existe como item. Planeje o caminho antes de furar, e lembre que baús e máquinas não podem ser furados - passe o túnel pelos blocos de parede comuns ao lado deles."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Hide a whole cable trunk: stand at one end of a wall, bore a block, then aim at the open hole and bore again to open the opposite face. Repeat along the row and you have a straight tunnel through the wall in seconds. Lay the cable through it and only the two ends show. Light also passes through the tunnel, so a bored block in an outer wall doubles as a light slit.",
+      "pt": "Esconda um tronco de cabos inteiro: fique numa ponta da parede, fure um bloco, depois mire no furo aberto e fure de novo para abrir a face oposta. Repita ao longo da fileira e você tem um túnel reto atravessando a parede em segundos. Passe o cabo por ele e só as duas pontas aparecem. A luz também passa pelo túnel, então um bloco furado numa parede externa vira uma fresta de luz."
+    }
+  ]
+}

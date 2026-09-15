@@ -211,19 +211,22 @@ public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.l
     return false;
   }
 
+  public BlockState withConnections(BlockState state, LevelAccessor level, BlockPos pos) {
+    for (Direction direction : Constants.DIRECTIONS) {
+      boolean connected = canConnect(level, pos, direction);
+      state = state.setValue(FACING_TO_PROPERTY_MAP.get(direction), connected);
+      if (connectionExtensions()) {
+        state = state.setValue(EXT_TO_PROPERTY_MAP.get(direction), extendsInto(level, pos, direction, connected));
+      }
+    }
+    return state;
+  }
+
   @Override
   public BlockState setStateForPlacement(BlockPlaceContext context, BlockState state) {
     state = state.setValue(WATERLOGGED,
         waterloggable() && hasWaterAbove(context.getLevel(), context.getClickedPos()));
-    for (Direction direction : Constants.DIRECTIONS) {
-      boolean connected = canConnect(context.getLevel(), context.getClickedPos(), direction);
-      state = state.setValue(FACING_TO_PROPERTY_MAP.get(direction), connected);
-      if (connectionExtensions()) {
-        state = state.setValue(EXT_TO_PROPERTY_MAP.get(direction),
-            extendsInto(context.getLevel(), context.getClickedPos(), direction, connected));
-      }
-    }
-    return state;
+    return withConnections(state, context.getLevel(), context.getClickedPos());
   }
 
   @Override

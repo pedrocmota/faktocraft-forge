@@ -55,6 +55,9 @@ public class BlockEntityCable extends BlockEntity
   public void onLoad() {
     super.onLoad();
     com.faktocraft.common.cover.CoverSupport.onClientLoad(this, this);
+    if (level != null && !level.isClientSide() && getNetwork() == null) {
+      EnergyCore.get(level).getNetworks().scheduleAdopt(worldPosition);
+    }
   }
 
   @Override

@@ -45,8 +45,10 @@ public class BlockTransformer extends FaktocraftEntityBlock implements IStateFac
       java.util.List<net.minecraft.network.chat.Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
     EnergyTier high = transformerTier.getMaxTier();
     EnergyTier low = transformerTier.getMinTier();
+    String conversionKey = transformerTier.isStepUpAllowed() ? "tooltip.faktocraft.transformer_conversion"
+        : "tooltip.faktocraft.transformer_step_down_only";
     tooltip.add(net.minecraft.network.chat.Component.translatable(
-        "tooltip.faktocraft.transformer_conversion",
+        conversionKey,
         high.getLang().getTranslationComponent(),
         com.faktocraft.common.util.TextComponentUtil.getFormattedLong(high.getBasicTransfer()),
         low.getLang().getTranslationComponent(),

@@ -5,9 +5,11 @@ import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.interfaces.item.IElectricItem;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,11 +23,22 @@ public class ModEvents {
     if (event.phase != TickEvent.Phase.END || !(event.level instanceof ServerLevel level)) {
       return;
     }
+    com.faktocraft.common.radiation.RadiationManager.tick(level);
+    com.faktocraft.common.block.impl.nuke.NukeBlast.tick(level);
     if (level.getGameTime() % 20 != 0) {
       return;
     }
     for (ServerPlayer player : level.players()) {
       com.faktocraft.common.util.NightVisionHandler.check(player);
+    }
+  }
+
+  @SubscribeEvent
+  public static void onItemTooltip(net.minecraftforge.event.entity.player.ItemTooltipEvent event) {
+    if (com.faktocraft.common.radiation.Radioactivity.isRadioactive(event.getItemStack())) {
+      event.getToolTip().add(net.minecraft.network.chat.Component
+          .translatable("tooltip." + Faktocraft.MODID + ".radioactive")
+          .withStyle(net.minecraft.ChatFormatting.GREEN));
     }
   }
 
@@ -36,6 +49,14 @@ public class ModEvents {
     } else if (event.getLevel() instanceof ServerLevel serverLevel) {
       com.faktocraft.common.energy.WindSim.clear(serverLevel.dimension());
       com.faktocraft.common.energy.WindFarmRegistry.clear(serverLevel.dimension());
+      com.faktocraft.common.radiation.RadiationManager.clear(serverLevel.dimension());
+    }
+  }
+
+  @SubscribeEvent
+  public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
+    if (!event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity living) {
+      com.faktocraft.common.radiation.RadiationManager.track(living);
     }
   }
 

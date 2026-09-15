@@ -1,0 +1,19 @@
+{
+  "type": "faktocraft:uranium_centrifuging",
+  "duration": 400,
+  "experience": 0.5,
+  "ingredient": {
+    "count": 1,
+    "item": "faktocraft:uranium_dust"
+  },
+  "power_cost": 24,
+  "result": {
+    "count": 1,
+    "item": "faktocraft:depleted_uranium_dust"
+  },
+  "bonus_result": {
+    "chance": 40.0,
+    "count": 1,
+    "item": "faktocraft:enriched_uranium_dust"
+  }
+}

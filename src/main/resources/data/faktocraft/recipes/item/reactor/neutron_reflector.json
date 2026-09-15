@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "t": {
+      "tag": "forge:plates/tin"
+    },
+    "c": {
+      "item": "faktocraft:coal_dust"
+    },
+    "p": {
+      "tag": "forge:plates/copper"
+    }
+  },
+  "pattern": [
+    "tct",
+    "cpc",
+    "tct"
+  ],
+  "result": {
+    "item": "faktocraft:neutron_reflector"
+  }
+}

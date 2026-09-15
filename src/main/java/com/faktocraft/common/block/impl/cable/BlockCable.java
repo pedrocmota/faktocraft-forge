@@ -155,26 +155,25 @@ public class BlockCable extends VoxelBlock implements EntityBlock {
       return;
     }
     var network = cable.getNetwork();
-    if (ultra) {
-      float fill = network != null && network.maxEnergy() > 0
-          ? (float) network.energyStored() / network.maxEnergy()
-          : 0.0F;
-      boolean lethal = fill >= 0.9F;
-      living.hurt(com.faktocraft.common.registries.ModDamageTypes.ultraShock(level),
-          lethal ? 10000.0F : 6.0F);
-      return;
-    }
     var current = network != null ? network.getEnergyFlowing() : null;
     if (current == null) {
       return;
     }
-    float damage = switch (current) {
+    if (current == com.faktocraft.common.enums.EnergyTier.ULTRA) {
+      living.hurt(com.faktocraft.common.registries.ModDamageTypes.ultraShock(level), 10000.0F);
+      return;
+    }
+    living.hurt(com.faktocraft.common.registries.ModDamageTypes.electricShock(level), shockDamage(current));
+  }
+
+  public static float shockDamage(com.faktocraft.common.enums.EnergyTier flowing) {
+    return switch (flowing) {
       case LOW -> 1.0F;
       case MEDIUM -> 3.0F;
       case HIGH -> 6.0F;
-      default -> 1000.0F;
+      case VERY_HIGH -> 12.0F;
+      default -> 10000.0F;
     };
-    living.hurt(com.faktocraft.common.registries.ModDamageTypes.electricShock(level), damage);
   }
 
   @Override

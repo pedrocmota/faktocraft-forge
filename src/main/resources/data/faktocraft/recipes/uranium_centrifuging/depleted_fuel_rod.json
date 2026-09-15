@@ -1,0 +1,31 @@
+{
+  "type": "faktocraft:uranium_centrifuging",
+  "duration": 400,
+  "experience": 0.5,
+  "ingredient": {
+    "count": 1,
+    "item": "faktocraft:depleted_fuel_rod"
+  },
+  "power_cost": 24,
+  "result": {
+    "count": 1,
+    "item": "faktocraft:empty_fuel_rod"
+  },
+  "bonus_results": [
+    {
+      "chance": 30.0,
+      "count": 1,
+      "item": "faktocraft:enriched_uranium_dust"
+    },
+    {
+      "chance": 60.0,
+      "count": 1,
+      "item": "faktocraft:nuclear_waste"
+    },
+    {
+      "chance": 10.0,
+      "count": 1,
+      "item": "faktocraft:plutonium"
+    }
+  ]
+}

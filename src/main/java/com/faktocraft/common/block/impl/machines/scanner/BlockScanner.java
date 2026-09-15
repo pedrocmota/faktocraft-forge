@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class BlockScanner extends BlockElectricMachine implements IHasMenu {
 
   public BlockScanner(Properties properties) {
-    super(EnergyTier.VERY_HIGH, properties);
+    super(EnergyTier.ULTRA, properties);
   }
 
   @Override

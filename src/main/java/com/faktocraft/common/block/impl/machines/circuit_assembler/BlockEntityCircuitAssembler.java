@@ -19,6 +19,7 @@ import com.faktocraft.common.recipe.impl.CircuitAssemblingRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
+import com.faktocraft.common.util.EnergyCosts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -142,7 +143,7 @@ public class BlockEntityCircuitAssembler extends FaktocraftBlockEntity
       }
 
       progress.rescaleMax(getSpeedFactor() * duration);
-      int energyCost = (int) (energyCostPerTick * getEnergyUsageFactor());
+      int energyCost = EnergyCosts.perTick(energyCostPerTick, getEnergyUsageFactor());
 
       if (getEnergyStorage().consumeEnergy(energyCost, true) == energyCost
           && progress.getProgress() <= progress.getProgressMax()) {
@@ -178,7 +179,7 @@ public class BlockEntityCircuitAssembler extends FaktocraftBlockEntity
           progress.setBoth(-1);
         }
       }
-    } else {
+    } else if (recipe == null) {
       progress.setBoth(-1);
     }
 

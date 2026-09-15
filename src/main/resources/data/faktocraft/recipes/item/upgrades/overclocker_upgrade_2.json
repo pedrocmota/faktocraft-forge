@@ -6,7 +6,12 @@
       "item": "faktocraft:copper_cable_insulated"
     },
     "c": {
-      "item": "faktocraft:large_coolant_cell"
+      "type": "forge:nbt",
+      "item": "faktocraft:large_coolant_cell",
+      "nbt": {
+        "fluid": "faktocraft:coolant",
+        "fluid_amount": 6000
+      }
     },
     "e": {
       "item": "faktocraft:electronic_circuit"

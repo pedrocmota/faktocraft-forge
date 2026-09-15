@@ -17,6 +17,7 @@ import com.faktocraft.common.recipe.impl.SawingRecipe;
 import com.faktocraft.common.recipe.impl.ScannerRecipe;
 import com.faktocraft.common.recipe.impl.ScrapBoxRecipe;
 import com.faktocraft.common.recipe.impl.ThermalCentrifugingRecipe;
+import com.faktocraft.common.recipe.impl.UraniumCentrifugingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
@@ -45,6 +46,8 @@ public final class ModRecipeSerializer {
       PolymerizingRecipe.SERIALIZER);
   public static final RecipeSerializer<ThermalCentrifugingRecipe> THERMAL_CENTRIFUGING = register(
       "thermal_centrifuging", ThermalCentrifugingRecipe.SERIALIZER);
+  public static final RecipeSerializer<UraniumCentrifugingRecipe> URANIUM_CENTRIFUGING = register(
+      "uranium_centrifuging", UraniumCentrifugingRecipe.SERIALIZER);
   public static final RecipeSerializer<ScannerRecipe> SCANNER = register("scanner", ScannerRecipe.SERIALIZER);
   public static final RecipeSerializer<RollingRecipe> ROLLING = register("rolling", RollingRecipe.SERIALIZER);
   public static final RecipeSerializer<CuttingRecipe> CUTTING = register("cutting", CuttingRecipe.SERIALIZER);

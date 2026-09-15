@@ -31,6 +31,7 @@ public final class ReiCategories {
   public static final CategoryIdentifier<MachineDisplay> ORE_WASHING = id("ore_washing");
   public static final CategoryIdentifier<MachineDisplay> POLYMERIZING = id("polymerizing");
   public static final CategoryIdentifier<MachineDisplay> THERMAL_CENTRIFUGING = id("thermal_centrifuging");
+  public static final CategoryIdentifier<MachineDisplay> URANIUM_CENTRIFUGING = id("uranium_centrifuging");
   public static final CategoryIdentifier<MachineDisplay> SCANNER = id("scanner");
   public static final CategoryIdentifier<MachineDisplay> SCRAP_BOX = id("scrap_box");
   public static final CategoryIdentifier<MachineDisplay> ROLLING = id("rolling");
@@ -42,8 +43,8 @@ public final class ReiCategories {
 
   public static final List<CategoryIdentifier<MachineDisplay>> ALL = List.of(CRUSHING, COMPRESSING, EXTRACTING,
       FLUID_EXTRUDING, SAWING, ALLOY_SMELTING, CIRCUIT_ASSEMBLING, RECYCLING, FLUID_ENRICHING, ORE_WASHING,
-      POLYMERIZING, THERMAL_CENTRIFUGING, SCANNER, SCRAP_BOX, ROLLING, CUTTING, EXTRUDING, FERMENTING, DISTILLING,
-      MATTER_FABRICATING);
+      POLYMERIZING, THERMAL_CENTRIFUGING, URANIUM_CENTRIFUGING, SCANNER, SCRAP_BOX, ROLLING, CUTTING, EXTRUDING,
+      FERMENTING, DISTILLING, MATTER_FABRICATING);
 
   private static final int TANK_U = 160;
   private static final int TANK_V = 165;
@@ -103,6 +104,8 @@ public final class ReiCategories {
   public static List<MachineCategory> all() {
     return List.of(
         new MachineCategory(CRUSHING, "crushing", M2Registry.CRUSHER, JEI, 0, 0, 114, 54, simple(17, true, 6, 16)),
+        new MachineCategory(URANIUM_CENTRIFUGING, "uranium_centrifuging", M3Registry.URANIUM_CENTRIFUGE, JEI, 0, 0,
+            114, 54, simple(34, true, 6, 16)),
         new MachineCategory(COMPRESSING, "compressing", M2Registry.COMPRESSOR, JEI, 0, 55, 114, 54,
             simple(34, true, 6, 16)),
         new MachineCategory(EXTRACTING, "extracting", M2Registry.EXTRACTOR, JEI, 0, 110, 114, 54,

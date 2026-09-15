@@ -170,6 +170,7 @@ public class BlockEntityPump extends FaktocraftBlockEntity
   private Fluid queueFluid = Fluids.EMPTY;
   private int progress = 0;
   private int rebuildCooldown = 0;
+  private int lastSyncedFluid = -1;
 
   public int queuedSources() {
     return queue.size();
@@ -236,6 +237,11 @@ public class BlockEntityPump extends FaktocraftBlockEntity
     }
 
     pushFluidAround();
+
+    if (tank.getFluidAmount() != lastSyncedFluid) {
+      lastSyncedFluid = tank.getFluidAmount();
+      updateBlockState();
+    }
 
     boolean wasActive = activeState;
     setActive(worked);

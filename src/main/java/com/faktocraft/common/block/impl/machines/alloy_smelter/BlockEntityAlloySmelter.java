@@ -12,6 +12,7 @@ import com.faktocraft.common.interfaces.entity.ISupportUpgrades;
 import com.faktocraft.common.interfaces.entity.ITileSound;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
+import com.faktocraft.common.util.EnergyCosts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -53,7 +54,7 @@ public class BlockEntityAlloySmelter extends AbstractBlockEntityAlloySmelter
 
     if (refreshWork()) {
       beginIfIdle();
-      int energyCost = (int) (energyCostPerTick * getEnergyUsageFactor());
+      int energyCost = EnergyCosts.perTick(energyCostPerTick, getEnergyUsageFactor());
 
       if (getEnergyStorage().consumeEnergy(energyCost, true) == energyCost
           && progress.getProgress() <= progress.getProgressMax()) {

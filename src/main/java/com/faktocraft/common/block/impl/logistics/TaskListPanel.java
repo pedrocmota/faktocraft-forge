@@ -259,6 +259,10 @@ public class TaskListPanel {
       }
       Component line1 = Component.literal(task.count() + "× ").append(task.stack().getHoverName());
       MutableComponent line2 = Component.translatable(key("state." + task.stateKey()), task.detail());
+      if (task.count() > 0 && !"pending".equals(task.stateKey())) {
+        line2 = line2.append(" · ").append(Component.translatable(key("progress"), task.delivered(),
+            task.count()));
+      }
       if (showOrigin && task.originPos() != 0) {
         line2 = line2.append(" · ").append(originText(task));
       }
@@ -287,6 +291,12 @@ public class TaskListPanel {
 
   private Component subLine2(PacketTableState.SubLine sub) {
     MutableComponent text = Component.translatable(key("state." + sub.stateKey()), "");
+    if (sub.count() > 0) {
+      text.append(" · ").append(Component.translatable(key("sub_progress"), sub.done(), sub.count()));
+    }
+    if (sub.inputsTotal() > 0) {
+      text.append(" · ").append(Component.translatable(key("sub_inputs"), sub.inputsDone(), sub.inputsTotal()));
+    }
     if (sub.leftoverCount() > 0) {
       text.append(" · ").append(Component.translatable(key("leftover"), sub.leftoverCount(),
           sub.leftoverStack().getHoverName()));

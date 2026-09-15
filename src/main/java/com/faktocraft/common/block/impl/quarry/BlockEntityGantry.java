@@ -651,7 +651,12 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
 
   protected int breakAt(ServerLevel serverLevel, BlockPos pos, BlockState state, int workingStatus,
       Runnable advance, ItemStack tool) {
-    int cost = state.canBeReplaced() ? 0 : energyPerBlock();
+    return breakAt(serverLevel, pos, state, workingStatus, state.canBeReplaced() ? 0 : energyPerBlock(), advance,
+        tool);
+  }
+
+  protected int breakAt(ServerLevel serverLevel, BlockPos pos, BlockState state, int workingStatus, int cost,
+      Runnable advance, ItemStack tool) {
     int charge = chargeProgress(cost);
     if (charge != CHARGE_READY) {
       return charge == CHARGE_PARTIAL ? workingStatus : STATUS_NO_ENERGY;

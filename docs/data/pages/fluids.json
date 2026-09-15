@@ -1,45 +1,29 @@
 {
+  "stackedCards": true,
   "blocks": [
     {
       "type": "p",
-      "en": "Fluids have their own pipe layer, separate from item logistics: pump sources in, store them, pipe them between machines and carry them around in cells.",
-      "pt": "Fluidos têm sua própria camada de tubos, separada da logística de itens: bombeie fontes, armazene, transporte entre máquinas e carregue em células."
+      "en": "Fluids have their own layer, separate from item logistics: you pump them out of the world, store them in tanks, move them through fluid pipes and carry them around in cells and buckets. Everything liquid in the mod - oil, fuel, biomass, acid, coolant, matter - runs through the same handful of blocks.",
+      "pt": "Fluidos têm uma camada própria, separada da logística de itens: você bombeia do mundo, guarda em tanques, move por tubos de fluido e carrega em células e baldes. Tudo que é líquido no mod - petróleo, combustível, biomassa, ácido, refrigerante, matéria - passa pelos mesmos poucos blocos."
     },
     {
       "type": "icons",
       "items": [
         {
           "name": {
-            "en": "Pump",
-            "pt": "Bomba"
+            "en": "Tanks, pump & fluid pipes",
+            "pt": "Tanques, bomba e tubos de fluido"
           },
           "icon": {
             "block": {
               "top": "block/pipe/pump_top",
-              "front": "block/pipe/pump_side",
-              "side": "block/pipe/pump_side"
+              "front": "block/pipe/pump_side"
             }
           },
+          "link": "tank-and-pump",
           "desc": {
-            "en": "Drains fluid sources below it, extending its tube downwards.",
-            "pt": "Drena fontes de fluido abaixo dela, estendendo o tubo para baixo."
-          }
-        },
-        {
-          "name": {
-            "en": "Tank",
-            "pt": "Tanque"
-          },
-          "icon": {
-            "block": {
-              "top": "block/pipe/tank_end",
-              "front": "block/pipe/tank_side",
-              "side": "block/pipe/tank_side"
-            }
-          },
-          "desc": {
-            "en": "Stores fluid; stack tanks to grow the volume.",
-            "pt": "Armazena fluido; empilhe tanques para crescer o volume."
+            "en": "The Fluid Pump drains lakes and pockets up to 384 blocks below it; Tanks stack into 16 000 mB columns; stone, golden and extractor pipes move it around.",
+            "pt": "A Bomba de fluidos drena lagos e bolsões até 384 blocos abaixo dela; Tanques empilham em colunas de 16 000 mB; tubos de pedra, de ouro e extratores movem tudo."
           }
         },
         {
@@ -48,67 +32,53 @@
             "pt": "Tanque ender"
           },
           "icon": {
-            "block": {
-              "top": "block/pipe/ender_tank_end",
-              "front": "block/pipe/ender_tank_preview_front",
-              "side": "block/pipe/ender_tank_preview_side"
+            "tank": {
+              "frame": "block/pipe/ender_tank_frame",
+              "band": "block/pipe/ender_tank_band",
+              "panel": "block/pipe/ender_tank_panel",
+              "end": "block/pipe/ender_tank_end"
             }
           },
+          "link": "ender-tank",
           "desc": {
-            "en": "Set a 6-digit code in its GUI: every Ender Tank with the same code shares one 16-bucket volume, at any distance or dimension. Without a code it stays inactive; it never joins with neighbouring tanks.",
-            "pt": "Defina uma senha de 6 dígitos na GUI: todo tanque ender com a mesma senha compartilha um volume de 16 baldes, em qualquer distância ou dimensão. Sem senha fica inativo; nunca se une aos tanques vizinhos."
+            "en": "Set a 6-digit code: every Ender Tank on the same code shares one 16 000 mB volume at any distance or dimension.",
+            "pt": "Defina uma senha de 6 dígitos: todo Tanque ender na mesma senha compartilha um volume de 16 000 mB em qualquer distância ou dimensão."
           }
         },
         {
           "name": {
-            "en": "Fluid Stone Pipe",
-            "pt": "Tubo de Fluido de Pedra"
+            "en": "Fuel Distillery",
+            "pt": "Destiladora de combustível"
           },
           "icon": {
-            "pipe": "block/pipe/fluid_stone_pipe"
+            "block": {
+              "top": "block/machines/distillery_top",
+              "front": "block/machines/distillery_front",
+              "side": "block/machines/distillery_side"
+            }
           },
+          "link": "distillery",
           "desc": {
-            "en": "The fluid backbone.",
-            "pt": "O tronco dos fluidos."
+            "en": "Turns crude oil into fuel and sulfuric acid; next to it, the Fueling Station fills jetpacks and cooling kits.",
+            "pt": "Transforma petróleo em combustível e ácido sulfúrico; ao lado dela, a Estação de abastecimento enche jetpacks e kits de refrigeração."
           }
         },
         {
           "name": {
-            "en": "Fluid Gold Pipe",
-            "pt": "Tubo de Fluido de Ouro"
+            "en": "Canning Machine",
+            "pt": "Máquina de enlatamento"
           },
           "icon": {
-            "pipe": "block/pipe/fluid_gold_pipe"
+            "block": {
+              "top": "block/machines/basic/canning_machine_top",
+              "front": "block/machines/basic/canning_machine_front",
+              "side": "block/machines/basic/canning_machine_leftright"
+            }
           },
+          "link": "canning-machine",
           "desc": {
-            "en": "Higher throughput.",
-            "pt": "Vazão maior."
-          }
-        },
-        {
-          "name": {
-            "en": "Fluid Extractor",
-            "pt": "Extrator de Fluido"
-          },
-          "icon": {
-            "pipe": "block/pipe/fluid_extractor_pipe"
-          },
-          "desc": {
-            "en": "Pulls fluid out of tanks and machines into the pipes.",
-            "pt": "Puxa fluido de tanques e máquinas para os tubos."
-          }
-        },
-        {
-          "name": {
-            "en": "Fluid Cell",
-            "pt": "Célula de Fluido"
-          },
-          "icon": {
-            "item": "item/fluid_cell"
-          },
-          "desc": {
-            "en": "A portable bucket-like container for any mod fluid.",
-            "pt": "Um contêiner portátil, tipo balde, para qualquer fluido do mod."
+            "en": "Fills and empties cells, buckets and bottles automatically - the bridge between fluid pipes and item logistics.",
+            "pt": "Enche e esvazia células, baldes e garrafas automaticamente - a ponte entre tubos de fluido e logística de itens."
           }
         }
       ]
@@ -123,7 +93,7 @@
       "items": [
         {
           "name": {
-            "en": "Oil",
+            "en": "Crude Oil",
             "pt": "Petróleo"
           },
           "icon": {
@@ -131,21 +101,22 @@
           },
           "link": "oil",
           "desc": {
-            "en": "Pumped from underground pockets and desert lakes. The root of the whole chain: distills into fuel and acid, polymerizes into plastic and rubber.",
-            "pt": "Bombeado de bolsões subterrâneos e lagos desérticos. A raiz da cadeia inteira: destila em fuel e ácido, polimeriza em plástico e borracha."
+            "en": "From: underground [oil pockets](#/oil-pockets) and desert oil lakes, via the Fluid Pump. To: the Fuel Distillery (fuel + acid) and the Polymerizer (plastic and rubber). The root of the whole chain.",
+            "pt": "De: [bolsões de petróleo](#/oil-pockets) subterrâneos e lagos de petróleo no deserto, pela Bomba de fluidos. Para: a Destiladora de combustível (combustível + ácido) e a Polimerizadora (plástico e borracha). A raiz da cadeia inteira."
           }
         },
         {
           "name": {
             "en": "Fuel",
-            "pt": "Fuel"
+            "pt": "Combustível"
           },
           "icon": {
             "fluid": "block/fluid/fuel"
           },
+          "link": "distillery",
           "desc": {
-            "en": "80 mB per 100 mB of oil at the Distillery. The strongest liquid fuel: **40 E/t** in the Combustion Generator - and what jetpacks drink.",
-            "pt": "80 mB a cada 100 mB de petróleo na Destilaria. O combustível líquido mais forte: **40 E/t** no Gerador de Combustão - e o que as jetpacks bebem."
+            "en": "From: the Fuel Distillery, 80 mB per 100 mB of oil. To: the Combustion Generator at **40 IE/t**, the Combustion Alloy Smelter, and the Fueling Station for jetpacks.",
+            "pt": "De: a Destiladora de combustível, 80 mB a cada 100 mB de petróleo. Para: o Gerador de combustão a **40 IE/t**, o Forno de fundição a combustão e a Estação de abastecimento para jetpacks."
           }
         },
         {
@@ -156,9 +127,10 @@
           "icon": {
             "fluid": "block/fluid/biomass"
           },
+          "link": "machines-processing",
           "desc": {
-            "en": "Fluid Enricher: bio chaff (ground plant matter) + 1000 mB water → 1000 mB biomass. The renewable route's raw broth.",
-            "pt": "Enriquecedora: bio chaff (matéria vegetal moída) + 1000 mB de água → 1000 mB de biomassa. O caldo bruto da rota renovável."
+            "en": "From: the Fluid Enricher, bio chaff (ground plant matter) + 1 000 mB water → 1 000 mB biomass. To: the Fermenter. The raw broth of the renewable route.",
+            "pt": "De: a Enriquecedora de fluídos, bio chaff (matéria vegetal moída) + 1 000 mB de água → 1 000 mB de biomassa. Para: a Fermentadora. O caldo bruto da rota renovável."
           }
         },
         {
@@ -169,23 +141,24 @@
           "icon": {
             "fluid": "block/fluid/biogas"
           },
+          "link": "generators",
           "desc": {
-            "en": "Fermenter: 1000 mB biomass → 250 mB biofuel. Burns at **20 E/t** - fully renewable, no drilling required.",
-            "pt": "Fermentadora: 1000 mB de biomassa → 250 mB de biocombustível. Queima a **20 E/t** - totalmente renovável, sem perfurar nada."
+            "en": "From: the Fermenter, 1 000 mB biomass → 250 mB biofuel. To: the Combustion Generator at **20 IE/t** and the Combustion Alloy Smelter. Fully renewable, no drilling required.",
+            "pt": "De: a Fermentadora, 1 000 mB de biomassa → 250 mB de biocombustível. Para: o Gerador de combustão a **20 IE/t** e o Forno de fundição a combustão. Totalmente renovável, sem perfurar nada."
           }
         },
         {
           "name": {
             "en": "Sulfuric Acid",
-            "pt": "Ácido Sulfúrico"
+            "pt": "Ácido sulfúrico"
           },
           "icon": {
             "fluid": "block/fluid/sulfuric_acid"
           },
           "link": "oil",
           "desc": {
-            "en": "Distillery byproduct, or sulfur dust + water in the Enricher. Battery electrolyte and coolant ingredient. **Burns on contact** - 3 hearts.",
-            "pt": "Subproduto da Destilaria, ou pó de enxofre + água na Enriquecedora. Eletrólito de baterias e ingrediente do refrigerante. **Queima ao contato** - 3 corações."
+            "en": "From: the Fuel Distillery as a byproduct, or sulfur dust + water in the Fluid Enricher. To: battery electrolyte and the coolant recipe. **Burns on contact** - 3 hearts.",
+            "pt": "De: a Destiladora de combustível como subproduto, ou pó de enxofre + água na Enriquecedora de fluídos. Para: eletrólito de baterias e a receita do refrigerante. **Queima ao contato** - 3 corações."
           }
         },
         {
@@ -196,41 +169,53 @@
           "icon": {
             "fluid": "block/fluid/coolant"
           },
+          "link": "nuclear-reactor",
           "desc": {
-            "en": "Enricher: water + acid + lapis + diamond dust. Fills the coolant cells used by charging crystals and overclocker recipes.",
-            "pt": "Enriquecedora: água + ácido + lápis + pó de diamante. Enche as células de refrigerante usadas em cristais de carga e receitas de overclocker."
+            "en": "From: the Fluid Enricher, water + acid + lapis + diamond dust. To: the cooling kits of the Nuclear Reactor (refilled at the Fueling Station), charging crystals and overclocker recipes.",
+            "pt": "De: a Enriquecedora de fluídos, água + ácido + lápis + pó de diamante. Para: os kits de refrigeração do Reator nuclear (recarregados na Estação de abastecimento), cristais de carga e receitas de overclock."
           }
         },
         {
           "name": {
             "en": "UU-Matter",
-            "pt": "UU-Matter"
+            "pt": "Matéria UU"
           },
           "icon": {
             "fluid": "block/fluid/matter"
           },
           "link": "machines-endgame",
           "desc": {
-            "en": "Condensed from enormous amounts of energy (and scrap) in the Matter Fabricator; the Replicator turns it back into items.",
-            "pt": "Condensada de quantidades enormes de energia (e sucata) no Fabricador de Matéria; o Replicador a transforma de volta em itens."
+            "en": "From: the Matter Fabricator, condensed out of enormous amounts of energy and scrap. To: the Replicator, which turns it back into items.",
+            "pt": "De: o Fabricador de matéria, condensada de quantidades enormes de energia e sucata. Para: o Replicador, que a transforma de volta em itens."
           }
         }
       ]
     },
     {
       "type": "h",
-      "en": "Fueling Station",
-      "pt": "Posto de Abastecimento"
+      "en": "Fluid Cell",
+      "pt": "Célula de fluído"
     },
     {
       "type": "p",
-      "en": "The **Fueling Station** fills fluid-powered gear - most importantly [jetpacks](#/jetpack) - straight from its internal tank. Park the item in its slot and watch the gauge fill.",
-      "pt": "O **Posto de Abastecimento** enche equipamentos movidos a fluido - principalmente as [jetpacks](#/jetpack) - direto do tanque interno. Deixe o item no slot e veja o medidor encher."
+      "en": "The **Fluid Cell** is the mod's portable container: a bucket that takes any fluid, in any amount up to its capacity, and stacks. Right-click a Tank or an Ender Tank with it to fill or empty it, click the gauge in any machine GUI to pour it in or fill it (shift + click for the whole stack), or let the [Canning Machine](#/canning-machine) do it for you. Machines that need fluid can also take the cell in their slot.",
+      "pt": "A **Célula de fluído** é o recipiente portátil do mod: um balde que aceita qualquer fluido, em qualquer quantidade até a capacidade, e empilha. Botão direito num Tanque ou Tanque ender com ela enche ou esvazia, clique no medidor de qualquer GUI de máquina despeja ou enche (shift + clique para a pilha inteira), ou deixe a [Máquina de enlatamento](#/canning-machine) fazer isso por você. Máquinas que precisam de fluido também aceitam a célula no slot."
+    },
+    {
+      "type": "h",
+      "en": "Fueling Station",
+      "pt": "Estação de abastecimento"
+    },
+    {
+      "type": "p",
+      "en": "The **Fueling Station** fills fluid-powered gear straight from its internal tank: [jetpacks](#/jetpack) with fuel, the reactor's cooling kits with coolant. Park the item in its slot and watch the gauge drain. It lives on the [Fuel Distillery](#/distillery) page.",
+      "pt": "A **Estação de abastecimento** enche equipamentos movidos a fluido direto do tanque interno: [jetpacks](#/jetpack) com combustível, os kits de refrigeração do reator com refrigerante. Deixe o item no slot e veja o medidor esvaziar. Ela mora na página da [Destiladora de combustível](#/distillery)."
     },
     {
       "type": "callout",
-      "en": "Fluid pipes can run inside walls: bore the block with the [Hole Drill](#/energy) and place the pipe on the bored block.",
-      "pt": "Tubos de fluido podem correr por dentro de paredes: fure o bloco com a [Furadeira](#/energy) e coloque o tubo no bloco furado."
+      "style": "tip",
+      "en": "Fluid pipes can run inside walls: bore the block on two sides with the [Hole Drill](#/hole-drill) and place the pipe on the bored block.",
+      "pt": "Tubos de fluido podem correr por dentro de paredes: fure o bloco em dois lados com a [Furadeira](#/hole-drill) e coloque o tubo no bloco furado."
     }
   ]
 }

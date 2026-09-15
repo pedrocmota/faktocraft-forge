@@ -1,0 +1,177 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "banner",
+      "src": "banners/oil_pocket.webp"
+    },
+    {
+      "type": "p",
+      "en": "**Crude Oil** only generates in the Overworld, in three kinds of deposit: small underground pockets almost anywhere, open lakes on the surface of dry biomes, and rare **giant pockets** deep in the deepslate layer that can feed a base for a very long time. This page tells you where they are, how to find them and what they are worth.",
+      "pt": "O **Petróleo** só gera no Overworld, em três tipos de depósito: bolsões pequenos no subsolo em quase qualquer lugar, lagos abertos na superfície de biomas secos, e raros **bolsões gigantes** lá no fundo da camada de deepslate que alimentam uma base por muito tempo. Esta página diz onde eles estão, como achar e quanto valem."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Crude Oil",
+            "pt": "Petróleo"
+          },
+          "icon": {
+            "fluid": "block/fluid/oil"
+          },
+          "link": "oil",
+          "desc": {
+            "en": "Every source block is 1000 mB. It never refills: what you pump is what the world generated.",
+            "pt": "Cada bloco fonte são 1000 mB. Nunca reabastece: o que você bombeia é o que o mundo gerou."
+          }
+        },
+        {
+          "name": {
+            "en": "Geological Prospector",
+            "pt": "Prospector geológico"
+          },
+          "icon": {
+            "item": "item/tool/electric/prospector"
+          },
+          "link": "prospector",
+          "desc": {
+            "en": "Handheld, 10 000 IE per scan of the chunk you stand in. Reports oil as a pocket, a giant pocket or a surface lake.",
+            "pt": "De mão, 10 000 IE por varredura do chunk em que você está. Informa petróleo como bolsão, bolsão gigante ou lago de superfície."
+          }
+        },
+        {
+          "name": {
+            "en": "Fluid Pump",
+            "pt": "Bomba de fluidos"
+          },
+          "icon": {
+            "block": {
+              "top": "block/pipe/pump_top",
+              "front": "block/pipe/pump_side",
+              "side": "block/pipe/pump_side"
+            }
+          },
+          "link": "tank-and-pump",
+          "desc": {
+            "en": "Low tier, 1600 IE per bucket. Reaches 384 blocks down and empties the whole connected deposit.",
+            "pt": "Tensão Baixa, 1600 IE por balde. Alcança 384 blocos para baixo e esvazia todo o depósito conectado."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "The three kinds of deposit",
+      "pt": "Os três tipos de depósito"
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Deposit", "Height", "Rarity per chunk", "Biomes"],
+        "pt": ["Depósito", "Altura", "Raridade por chunk", "Biomas"]
+      },
+      "rows": [
+        [
+          {"en": "Underground pocket", "pt": "Bolsão subterrâneo"},
+          {"en": "Y -48 to +24", "pt": "Y -48 a +24"},
+          {"en": "1 in 18 (up to 5 tries per chunk)", "pt": "1 em 18 (até 5 tentativas por chunk)"},
+          {"en": "Every Overworld biome", "pt": "Todo bioma do Overworld"}
+        ],
+        [
+          {"en": "Surface lake", "pt": "Lago de superfície"},
+          {"en": "On the surface", "pt": "Na superfície"},
+          {"en": "1 in 20", "pt": "1 em 20"},
+          {"en": "Deserts, savannas and badlands only", "pt": "Só desertos, savanas e badlands"}
+        ],
+        [
+          {"en": "Giant pocket", "pt": "Bolsão gigante"},
+          {"en": "Y -44 to -4 (deepslate)", "pt": "Y -44 a -4 (deepslate)"},
+          {"en": "1 in 600 anywhere; 1 in 429 in deserts, savannas and badlands; 1 in 240 under deep oceans; 1 in 1200 under other oceans", "pt": "1 em 600 em qualquer lugar; 1 em 429 em desertos, savanas e badlands; 1 em 240 sob oceanos profundos; 1 em 1200 sob os outros oceanos"},
+          {"en": "Every Overworld biome, richer in hot biomes and under deep ocean", "pt": "Todo bioma do Overworld, mais rico em biomas quentes e sob oceano profundo"}
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "en": "Underground pockets and surface lakes are ordinary lakes with a **stone shell** around them, so you rarely see them from a cave. A **giant pocket** is different: one core blob 8 to 10 blocks wide and 5 to 6 tall, plus 4 to 7 extra blobs (5 to 9 wide, 4 to 6 tall) pushed up to 5 blocks off centre, all fused into one sealed reservoir of up to about **33 x 21 x 33 blocks**. Wherever it met a cave or water the game capped it with stone, so it is a solid black lump you only find by drilling into it, or by scanning.",
+      "pt": "Bolsões subterrâneos e lagos de superfície são lagos comuns com uma **casca de pedra** em volta, então é raro ver um de dentro de uma caverna. O **bolsão gigante** é diferente: um miolo de 8 a 10 blocos de largura por 5 a 6 de altura, mais 4 a 7 bolhas extras (5 a 9 de largura, 4 a 6 de altura) deslocadas até 5 blocos do centro, tudo fundido num reservatório selado de até uns **33 x 21 x 33 blocos**. Onde ele encontrou caverna ou água o jogo tampou com pedra, então é um bloco preto maciço que você só acha perfurando nele, ou escaneando."
+    },
+    {
+      "type": "h",
+      "en": "Finding them",
+      "pt": "Como encontrar"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Look at the surface.** In a desert, savanna or badlands, one chunk in twenty has an open oil lake: a black pool that shows black on maps. That is your first oil, no tools needed.",
+        "**Scan with the [Geological Prospector](#/prospector).** Stand on the chunk and press **Scan chunk**. Oil shows up as **Oil pocket** (any oil below Y 30), **Giant oil pocket** (600 or more oil blocks below Y 30 in that chunk) or **Oil lake (surface)** (oil at Y 30 or higher).",
+        "**Sweep with the [Geological Scanner](#/geological-scanner).** Place it, power it, press **Start**: it scans every chunk within 14 chunks and posts a chat alert the moment a giant pocket turns up. Giant pockets also appear in the **Rare finds** chip on the map, so you can jump straight to them.",
+        "**Read the numbers.** A giant pocket spans several chunks, so expect a cluster of neighbouring chunks all reporting oil. Dig to the chunk with the biggest count, or simply put the pump on any of them: the pump follows the oil sideways."
+      ],
+      "pt": [
+        "**Olhe a superfície.** Em deserto, savana ou badlands, um chunk em vinte tem um lago de petróleo aberto: uma poça preta que aparece preta nos mapas. É o seu primeiro petróleo, sem ferramenta nenhuma.",
+        "**Escaneie com o [Prospector geológico](#/prospector).** Fique em cima do chunk e aperte **Escanear chunk**. O petróleo aparece como **Bolsão de petróleo** (qualquer petróleo abaixo de Y 30), **Bolsão gigante de petróleo** (600 ou mais blocos de petróleo abaixo de Y 30 naquele chunk) ou **Lago de petróleo (superfície)** (petróleo em Y 30 ou acima).",
+        "**Varra com o [Scanner geológico](#/geological-scanner).** Coloque, energize, aperte **Iniciar**: ele escaneia todo chunk num raio de 14 chunks e manda um aviso no chat na hora em que um bolsão gigante aparece. Bolsões gigantes também entram na etiqueta **Achados raros** do mapa, então dá para pular direto até eles.",
+        "**Leia os números.** Um bolsão gigante ocupa vários chunks, então espere um grupo de chunks vizinhos todos informando petróleo. Cave até o chunk com a maior contagem, ou simplesmente ponha a bomba em qualquer um deles: a bomba segue o petróleo para os lados."
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "Server operators (permission level 2) have shortcuts: **/faktocraft locateoil** scans the loaded chunks around you (radius 1 to 32, default 12) and **/faktocraft locatepocket** predicts giant pockets from the world seed (16 to 1024 chunks, default 1000), listing up to 3 with a clickable teleport. Nothing here is needed in survival.",
+      "pt": "Operadores do servidor (nível de permissão 2) têm atalhos: **/faktocraft locateoil** varre os chunks carregados em volta de você (raio de 1 a 32, padrão 12) e **/faktocraft locatepocket** prevê bolsões gigantes a partir da seed do mundo (16 a 1024 chunks, padrão 1000), listando até 3 com teleporte clicável. Nada disso é necessário no survival."
+    },
+    {
+      "type": "h",
+      "en": "Pumping a pocket",
+      "pt": "Bombeando um bolsão"
+    },
+    {
+      "type": "list",
+      "en": [
+        "1. Stand above the deposit. You do not need to dig down to it: the **Fluid Pump** looks straight down through air for up to **384 blocks**, growing its own tube as it goes. Any solid block in the way stops it, so give it a clear shaft (a 1x1 hole is enough).",
+        "2. Place the pump with a **Stone Fluid Pipe** below it (that pipe is part of the recipe) and feed it Low-tier power from any side except the bottom. Each bucket costs **1600 IE** and takes 20 seconds; Overclocker Upgrades make it faster and hungrier.",
+        "3. From the first oil it touches, the pump **flood-fills** up and sideways through connected oil, up to **64 blocks** away horizontally and **4096 source blocks per pass**. It drains giant pockets whole, one source block at a time.",
+        "4. The pump keeps 16 000 mB inside and pushes up to 200 mB per tick out of every side except down. Put **Tanks** or fluid pipes right next to it or it stops when full. See [Tank and pump](#/tank-and-pump).",
+        "5. Watch the fluid bar: when it stops climbing the pocket is empty. Pick up the pump and move on; the tube retracts with it."
+      ],
+      "pt": [
+        "1. Fique acima do depósito. Não precisa cavar até ele: a **Bomba de fluidos** olha direto para baixo através do ar por até **384 blocos**, crescendo o próprio tubo no caminho. Qualquer bloco sólido no meio para ela, então deixe um poço livre (um buraco 1x1 basta).",
+        "2. Coloque a bomba com um **Tubo de fluido de pedra** embaixo (esse tubo faz parte da receita) e alimente com energia de tensão Baixa por qualquer lado menos o de baixo. Cada balde custa **1600 IE** e leva 20 segundos; Melhorias de overclock deixam mais rápida e mais gulosa.",
+        "3. A partir do primeiro petróleo que toca, a bomba **preenche** para cima e para os lados pelo petróleo conectado, até **64 blocos** de distância na horizontal e **4096 blocos fonte por passada**. Ela drena bolsões gigantes inteiros, um bloco fonte de cada vez.",
+        "4. A bomba guarda 16 000 mB dentro e empurra até 200 mB por tick por todos os lados menos o de baixo. Ponha **Tanques** ou tubos de fluido colados nela ou ela para quando enche. Veja [Tanque e bomba](#/tank-and-pump).",
+        "5. Olhe a barra de fluido: quando parar de subir, o bolsão acabou. Pegue a bomba e siga em frente; o tubo recolhe junto."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "What a pocket is worth",
+      "pt": "Quanto vale um bolsão"
+    },
+    {
+      "type": "p",
+      "en": "The [Fuel Distillery](#/distillery) turns **100 mB of oil into 80 mB of Fuel**, and the Combustion Generator burns Fuel at **40 IE per mB**. So every 100 mB of oil is 3200 IE of electricity, minus the 1600 IE the distillery spends to make it.",
+      "pt": "A [Destiladora de combustível](#/distillery) transforma **100 mB de petróleo em 80 mB de Combustível**, e o Gerador à combustão queima Combustível a **40 IE por mB**. Então cada 100 mB de petróleo são 3200 IE de eletricidade, menos os 1600 IE que a destiladora gasta para fazer."
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Oil", "Fuel", "IE in the generator", "IE after the distillery cost"],
+        "pt": ["Petróleo", "Combustível", "IE no gerador", "IE descontando a destiladora"]
+      },
+      "rows": [
+        ["100 mB", "80 mB", "3 200", "1 600"],
+        [{"en": "1 source block (1000 mB)", "pt": "1 bloco fonte (1000 mB)"}, "800 mB", "32 000", "16 000"],
+        [{"en": "One chunk of a giant pocket (600+ blocks)", "pt": "Um chunk de bolsão gigante (600+ blocos)"}, "480 000+ mB", "19 200 000+", "9 600 000+"]
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "A giant pocket covers several chunks, so multiply that last row. At 40 IE/t a single Combustion Generator needs about 20 game days (almost 7 real hours) to burn one chunk of it. Bring a stack of Tanks or an [Ender Tank](#/ender-tank) and leave the pump running; there is no rush.",
+      "pt": "Um bolsão gigante cobre vários chunks, então multiplique a última linha. A 40 IE/t, um único Gerador à combustão leva uns 20 dias de jogo (quase 7 horas reais) para queimar um chunk dele. Leve uma pilha de Tanques ou um [Tanque ender](#/ender-tank) e deixe a bomba rodando; não tem pressa."
+    }
+  ]
+}

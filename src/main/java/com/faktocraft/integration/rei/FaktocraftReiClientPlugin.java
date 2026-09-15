@@ -39,6 +39,9 @@ import com.faktocraft.common.block.impl.machines.scanner.BlockEntityScanner;
 import com.faktocraft.common.block.impl.machines.scanner.MenuScanner;
 import com.faktocraft.common.block.impl.machines.thermal_centrifuge.BlockEntityThermalCentrifuge;
 import com.faktocraft.common.block.impl.machines.thermal_centrifuge.MenuThermalCentrifuge;
+import com.faktocraft.common.block.impl.machines.uranium_centrifuge.BlockEntityUraniumCentrifuge;
+import com.faktocraft.common.block.impl.machines.uranium_centrifuge.MenuUraniumCentrifuge;
+import com.faktocraft.common.block.impl.machines.uranium_centrifuge.ScreenUraniumCentrifuge;
 import com.faktocraft.common.block.impl.machines.alloy_smelter.ScreenAlloySmelter;
 import com.faktocraft.common.block.impl.machines.alloy_smelter.ScreenCoalAlloySmelter;
 import com.faktocraft.common.block.impl.machines.alloy_smelter.ScreenCombustionAlloySmelter;
@@ -81,6 +84,7 @@ import com.faktocraft.common.recipe.impl.SawingRecipe;
 import com.faktocraft.common.recipe.impl.ScannerRecipe;
 import com.faktocraft.common.recipe.impl.ScrapBoxRecipe;
 import com.faktocraft.common.recipe.impl.ThermalCentrifugingRecipe;
+import com.faktocraft.common.recipe.impl.UraniumCentrifugingRecipe;
 import com.faktocraft.common.registries.ModCreativeTab;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.registries.ModRecipeType;
@@ -146,6 +150,7 @@ public class FaktocraftReiClientPlugin implements REIClientPlugin {
     registry.addWorkstations(ReiCategories.ORE_WASHING, EntryStacks.of(M3Registry.ORE_WASHING_PLANT));
     registry.addWorkstations(ReiCategories.POLYMERIZING, EntryStacks.of(M3Registry.POLYMERIZER));
     registry.addWorkstations(ReiCategories.THERMAL_CENTRIFUGING, EntryStacks.of(M3Registry.THERMAL_CENTRIFUGE));
+    registry.addWorkstations(ReiCategories.URANIUM_CENTRIFUGING, EntryStacks.of(M3Registry.URANIUM_CENTRIFUGE));
     registry.addWorkstations(ReiCategories.SCANNER, EntryStacks.of(M4Registry.SCANNER));
     registry.addWorkstations(ReiCategories.SCRAP_BOX, EntryStacks.of(ModItems.SCRAP_BOX));
     registry.addWorkstations(ReiCategories.ROLLING, EntryStacks.of(M3Registry.METAL_FORMER));
@@ -175,6 +180,8 @@ public class FaktocraftReiClientPlugin implements REIClientPlugin {
     registry.registerRecipeFiller(PolymerizingRecipe.class, ModRecipeType.POLYMERIZING, ReiDisplays::polymerizing);
     registry.registerRecipeFiller(ThermalCentrifugingRecipe.class, ModRecipeType.THERMAL_CENTRIFUGING,
         ReiDisplays::thermalCentrifuging);
+    registry.registerRecipeFiller(UraniumCentrifugingRecipe.class, ModRecipeType.URANIUM_CENTRIFUGING,
+        ReiDisplays::uraniumCentrifuging);
     registry.registerRecipeFiller(ScannerRecipe.class, ModRecipeType.SCANNER, ReiDisplays::scanner);
     registry.registerRecipeFiller(RollingRecipe.class, ModRecipeType.ROLLING, ReiDisplays::rolling);
     registry.registerRecipeFiller(CuttingRecipe.class, ModRecipeType.CUTTING, ReiDisplays::cutting);
@@ -260,6 +267,7 @@ public class FaktocraftReiClientPlugin implements REIClientPlugin {
     area(registry, ScreenOreWashingPlant.class, 90, 32, 19, 19, ReiCategories.ORE_WASHING);
     area(registry, ScreenPolymerizer.class, 88, 35, ARROW_W, ARROW_H, ReiCategories.POLYMERIZING);
     area(registry, ScreenThermalCentrifuge.class, 82, 33, ARROW_W, ARROW_H, ReiCategories.THERMAL_CENTRIFUGING);
+    area(registry, ScreenUraniumCentrifuge.class, 71, 35, ARROW_W, ARROW_H, ReiCategories.URANIUM_CENTRIFUGING);
     area(registry, ScreenFermenter.class, 76, 35, ARROW_W, ARROW_H, ReiCategories.FERMENTING);
     area(registry, ScreenDistillery.class, 94, 43, ARROW_W, ARROW_H, ReiCategories.DISTILLING);
     area(registry, ScreenMatterFabricator.class, 104, 51, ARROW_W, ARROW_H, ReiCategories.MATTER_FABRICATING);
@@ -364,6 +372,8 @@ public class FaktocraftReiClientPlugin implements REIClientPlugin {
         BlockEntityPolymerizer.INPUT_SLOT, 1, 1));
     registry.register(MachineTransfer.of(MenuThermalCentrifuge.class, ReiCategories.THERMAL_CENTRIFUGING,
         BlockEntityThermalCentrifuge.INPUT_SLOT, 1, 1));
+    registry.register(MachineTransfer.of(MenuUraniumCentrifuge.class, ReiCategories.URANIUM_CENTRIFUGING,
+        BlockEntityUraniumCentrifuge.INPUT_SLOT, 1, 1));
     registry.register(MachineTransfer.of(MenuScanner.class, ReiCategories.SCANNER, BlockEntityScanner.INPUT_SLOT, 1,
         1));
     registry.register(MachineTransfer.of(MenuMetalFormer.class, ReiCategories.ROLLING,

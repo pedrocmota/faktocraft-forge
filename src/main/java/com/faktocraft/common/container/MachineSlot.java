@@ -24,6 +24,16 @@ public class MachineSlot extends Slot {
   }
 
   @Override
+  public int getMaxStackSize() {
+    return Math.min(super.getMaxStackSize(), blockEntity.getCustomSlotLimit(getContainerSlot()));
+  }
+
+  @Override
+  public int getMaxStackSize(ItemStack stack) {
+    return Math.min(getMaxStackSize(), stack.getMaxStackSize());
+  }
+
+  @Override
   public boolean isActive() {
     return active;
   }

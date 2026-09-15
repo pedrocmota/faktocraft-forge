@@ -5,6 +5,8 @@ import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.item.impl.tools.Prospector;
+import com.faktocraft.common.scan.ScanChannel;
+import com.faktocraft.common.scan.ScanChannels;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -16,12 +18,15 @@ import org.jetbrains.annotations.Nullable;
 public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEnergyBlock {
 
   public static final int RADIUS = 14;
-  public static final int TOTAL_CHUNKS = (2 * RADIUS + 1) * (2 * RADIUS + 1);
+  public static final int TOTAL_CHUNKS = countInRange();
   public static final int SCAN_COST = 25000;
   public static final int SCAN_DURATION_TICKS = Prospector.SCAN_DURATION_TICKS;
   public static final int ENERGY_CAPACITY = 100000;
 
-  private final CompoundTag scans = new CompoundTag();
+  private int code = ScanChannels.DEFAULT_CODE;
+  private int lastChannelRevision = -1;
+  @Nullable
+  private CompoundTag legacyScans;
   private boolean running = false;
   private boolean jobActive = false;
   private int jobCx;
@@ -47,16 +52,70 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
     return true;
   }
 
+  public static boolean inRange(int dx, int dz) {
+    return dx * dx + dz * dz <= RADIUS * RADIUS;
+  }
+
+  private static int countInRange() {
+    int count = 0;
+    for (int dx = -RADIUS; dx <= RADIUS; dx++) {
+      for (int dz = -RADIUS; dz <= RADIUS; dz++) {
+        if (inRange(dx, dz)) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
   public static String scanKey(int chunkX, int chunkZ) {
-    return chunkX + "," + chunkZ;
+    return ScanChannel.localKey(chunkX, chunkZ);
   }
 
   public ChunkPos centerChunk() {
     return new ChunkPos(getBlockPos());
   }
 
-  public CompoundTag getScans() {
-    return scans;
+  public int getCode() {
+    return code;
+  }
+
+  public String codeText() {
+    return ScanChannels.codeText(code);
+  }
+
+  public void setCode(int newCode) {
+    int accepted = ScanChannels.sanitize(newCode);
+    if (accepted == code) {
+      return;
+    }
+    code = accepted;
+    lastChannelRevision = -1;
+    revision++;
+    setChanged();
+    updateBlockState();
+  }
+
+  @Nullable
+  private ScanChannel channel() {
+    if (!(level instanceof ServerLevel serverLevel)) {
+      return null;
+    }
+    return ScanChannels.get(serverLevel).channel(code);
+  }
+
+  public boolean hasScan(int chunkX, int chunkZ) {
+    ScanChannel channel = channel();
+    return channel != null && level != null && channel.has(level, chunkX, chunkZ);
+  }
+
+  public CompoundTag collectScans() {
+    ScanChannel channel = channel();
+    if (channel == null || level == null) {
+      return new CompoundTag();
+    }
+    ChunkPos center = centerChunk();
+    return channel.collect(level, center.x, center.z, RADIUS);
   }
 
   public boolean isRunning() {
@@ -102,8 +161,8 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
 
   public void setManualTarget(int cx, int cz) {
     ChunkPos center = centerChunk();
-    if (Math.max(Math.abs(cx - center.x), Math.abs(cz - center.z)) > RADIUS
-        || scans.contains(scanKey(cx, cz))
+    if (!inRange(cx - center.x, cz - center.z)
+        || hasScan(cx, cz)
         || (jobActive && jobCx == cx && jobCz == cz)) {
       return;
     }
@@ -120,13 +179,37 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
   }
 
   public int getScannedCount() {
-    return scans.getAllKeys().size();
+    ScanChannel channel = channel();
+    if (channel == null || level == null) {
+      return 0;
+    }
+    ChunkPos center = centerChunk();
+    int count = 0;
+    for (int dx = -RADIUS; dx <= RADIUS; dx++) {
+      for (int dz = -RADIUS; dz <= RADIUS; dz++) {
+        if (inRange(dx, dz) && channel.has(level, center.x + dx, center.z + dz)) {
+          count++;
+        }
+      }
+    }
+    return count;
   }
 
   @Override
   public void tickWork(BlockState state) {
     if (level == null || level.isClientSide() || !(level instanceof ServerLevel serverLevel)) {
       return;
+    }
+    ScanChannel channel = ScanChannels.get(serverLevel).channel(code);
+    if (legacyScans != null) {
+      channel.importLocal(serverLevel, legacyScans);
+      legacyScans = null;
+      setChanged();
+    }
+    if (channel.revision() != lastChannelRevision) {
+      lastChannelRevision = channel.revision();
+      revision++;
+      updateBlockState();
     }
     if (jobActive) {
       setActive(true);
@@ -135,7 +218,8 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
         CompoundTag scan = new CompoundTag();
         scan.putLong("t", serverLevel.getGameTime());
         scan.put("entries", entries);
-        scans.put(scanKey(jobCx, jobCz), scan);
+        channel.put(serverLevel, jobCx, jobCz, scan);
+        lastChannelRevision = channel.revision();
         jobActive = false;
         revision++;
         setChanged();
@@ -146,7 +230,7 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
     }
     int[] next = null;
     if (manualPending) {
-      if (scans.contains(scanKey(manualCx, manualCz))) {
+      if (channel.has(serverLevel, manualCx, manualCz)) {
         manualPending = false;
         revision++;
         setChanged();
@@ -159,7 +243,7 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
         setActive(false);
         return;
       }
-      next = nextUnscanned();
+      next = nextUnscanned(channel);
       if (next == null) {
         running = false;
         revision++;
@@ -218,17 +302,17 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
   }
 
   @Nullable
-  private int[] nextUnscanned() {
+  private int[] nextUnscanned(ScanChannel channel) {
     ChunkPos center = centerChunk();
     for (int r = 0; r <= RADIUS; r++) {
       for (int dx = -r; dx <= r; dx++) {
         for (int dz = -r; dz <= r; dz++) {
-          if (Math.max(Math.abs(dx), Math.abs(dz)) != r) {
+          if (Math.max(Math.abs(dx), Math.abs(dz)) != r || !inRange(dx, dz)) {
             continue;
           }
           int cx = center.x + dx;
           int cz = center.z + dz;
-          if (!scans.contains(scanKey(cx, cz))) {
+          if (!channel.has(level, cx, cz)) {
             return new int[] { cx, cz };
           }
         }
@@ -240,7 +324,10 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
   @Override
   protected void saveAdditional(CompoundTag tag) {
     super.saveAdditional(tag);
-    tag.put("scans", scans.copy());
+    tag.putInt("code", code);
+    if (legacyScans != null) {
+      tag.put("scans", legacyScans.copy());
+    }
     tag.putBoolean("running", running);
     tag.putBoolean("jobActive", jobActive);
     tag.putInt("jobCx", jobCx);
@@ -254,13 +341,9 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    scans.getAllKeys().removeIf(key -> true);
-    if (tag.contains("scans")) {
-      CompoundTag loaded = tag.getCompound("scans");
-      for (String key : loaded.getAllKeys()) {
-        scans.put(key, loaded.getCompound(key).copy());
-      }
-    }
+    code = tag.contains("code") ? ScanChannels.sanitize(tag.getInt("code")) : ScanChannels.DEFAULT_CODE;
+    legacyScans = tag.contains("scans") && !tag.getCompound("scans").isEmpty() ? tag.getCompound("scans").copy()
+        : null;
     running = tag.getBoolean("running");
     jobActive = tag.getBoolean("jobActive");
     jobCx = tag.getInt("jobCx");

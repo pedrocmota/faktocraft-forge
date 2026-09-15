@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "faktocraft:block/advanced_machine_casing",
+    "north": "faktocraft:block/nuclear_reactor_corner_tr",
+    "south": "faktocraft:block/advanced_machine_casing",
+    "west": "faktocraft:block/nuclear_reactor_corner_tl",
+    "east": "faktocraft:block/advanced_machine_casing",
+    "up": "faktocraft:block/nuclear_reactor_top_corner_tl",
+    "down": "faktocraft:block/advanced_machine_casing"
+  }
+}

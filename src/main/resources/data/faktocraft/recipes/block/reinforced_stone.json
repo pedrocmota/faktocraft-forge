@@ -11,11 +11,11 @@
   },
   "pattern": [
     "sss",
-    "asa",
+    "sas",
     "sss"
   ],
   "result": {
-    "count": 7,
+    "count": 8,
     "item": "faktocraft:reinforced_stone"
   }
 }

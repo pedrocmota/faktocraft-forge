@@ -46,7 +46,7 @@ public class BlockEntityMatterFabricator extends FaktocraftBlockEntity
   private int cachedOutput = 0;
   public final FluidStorage fluidMatterStorage = new FluidStorage(
       ModConfig.server().matter_fabricator_matter_capacity,
-      fluidStack -> fluidStack.getFluid() == ModFluids.MATTER.still());
+      fluidStack -> fluidStack.getFluid() == ModFluids.MATTER.still()).markOutputOnly();
 
   private final LazyOptional<IFluidHandler> fluidHandlerCap = LazyOptional.of(() -> fluidMatterStorage);
 
@@ -126,8 +126,7 @@ public class BlockEntityMatterFabricator extends FaktocraftBlockEntity
         }
 
         if (progress.getProgress() >= progress.getProgressMax()) {
-          fluidMatterStorage.fill(new FluidStack(ModFluids.MATTER.still(), produceRun),
-              IFluidHandler.FluidAction.EXECUTE);
+          fluidMatterStorage.fillFluid(new FluidStack(ModFluids.MATTER.still(), produceRun), produceRun, false);
           progress.setBoth(-1);
         }
       }

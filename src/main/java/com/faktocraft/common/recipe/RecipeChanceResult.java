@@ -25,6 +25,10 @@ public class RecipeChanceResult {
     return bonusResult.map(result -> new RecipeChanceResult(List.of(result))).orElse(EMPTY);
   }
 
+  public static RecipeChanceResult of(List<ChanceResult> results) {
+    return results.isEmpty() ? EMPTY : new RecipeChanceResult(results);
+  }
+
   public List<ChanceResult> getResults() {
     return results;
   }

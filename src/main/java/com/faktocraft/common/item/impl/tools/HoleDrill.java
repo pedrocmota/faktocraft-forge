@@ -10,6 +10,7 @@ import com.faktocraft.common.item.base.ElectricItem;
 import com.faktocraft.common.registries.ModSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -69,7 +70,7 @@ public class HoleDrill extends ElectricItem {
       return InteractionResultHolder.fail(stack);
     }
     BlockState state = level.getBlockState(pos);
-    if (!DrillOps.canDrill(level, pos, state, player, hit.getDirection())) {
+    if (DrillOps.drillFace(level, pos, state, player, hit.getDirection()) == null) {
       if (DrillOps.isBored(state)) {
         return InteractionResultHolder.pass(stack);
       }
@@ -126,7 +127,8 @@ public class HoleDrill extends ElectricItem {
       return null;
     }
     BlockPos pos = hit.getBlockPos();
-    return DrillOps.canDrill(level, pos, level.getBlockState(pos), player, hit.getDirection()) ? hit : null;
+    Direction face = DrillOps.drillFace(level, pos, level.getBlockState(pos), player, hit.getDirection());
+    return face == null ? null : hit.withDirection(face);
   }
 
   @Override

@@ -24,6 +24,7 @@ public class ModSounds {
   public static final SoundEvent REPLICATOR = register("tile.replicator");
   public static final SoundEvent SCANNER = register("tile.scanner");
   public static final SoundEvent THERMAL_CENTRIFUGE = register("tile.thermal_centrifuge");
+  public static final SoundEvent URANIUM_CENTRIFUGE = register("tile.uranium_centrifuge");
   public static final SoundEvent DISTILLERY = register("tile.distillery");
   public static final SoundEvent PUMP = register("tile.pump");
   public static final SoundEvent ALLOY_SMELTER = register("tile.alloy_smelter");
@@ -45,6 +46,9 @@ public class ModSounds {
 
   public static final SoundEvent NIGHT_VISION = register("player.night_vision");
   public static final SoundEvent MATTER_FABRICATOR_AMPLIFIED = register("extra.matter_fabricator_amplified");
+  public static final SoundEvent GEIGER_CLICK = register("item.geiger_click");
+  public static final SoundEvent REACTOR_HUM = register("tile.nuclear_reactor");
+  public static final SoundEvent REACTOR_ALARM = register("block.reactor_alarm");
 
   private static SoundEvent register(String name) {
     ResourceLocation id = RegistrationHandler.id(name);

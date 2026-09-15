@@ -1,0 +1,11 @@
+{
+  "type": "faktocraft:recycling",
+  "chance": 1.0,
+  "ingredient": {
+    "item": "faktocraft:nuclear_waste"
+  },
+  "result": {
+    "item": "faktocraft:scrap",
+    "count": 6
+  }
+}

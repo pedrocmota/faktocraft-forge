@@ -23,6 +23,7 @@ import com.faktocraft.common.recipe.impl.FluidExtrudingRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
+import com.faktocraft.common.util.EnergyCosts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -194,7 +195,7 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
       ItemStack resultItem = currentRecipe.getResultItem();
 
       progress.rescaleMax(getSpeedFactor() * currentRecipe.getDuration());
-      int energyCost = (int) (currentRecipe.getPowerCost() * getEnergyUsageFactor());
+      int energyCost = EnergyCosts.perTick(currentRecipe.getPowerCost(), getEnergyUsageFactor());
 
       boolean outputFits = outputStack.isEmpty()
           || (outputStack.getItem() == resultItem.getItem()

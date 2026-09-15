@@ -24,6 +24,7 @@ import com.faktocraft.common.recipe.impl.OreWashingRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
+import com.faktocraft.common.util.EnergyCosts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -177,7 +178,7 @@ public class BlockEntityOreWashingPlant extends FaktocraftBlockEntity
       }
 
       progress.rescaleMax(getSpeedFactor() * currentRecipe.getDuration());
-      int energyCost = (int) (currentRecipe.getPowerCost() * getEnergyUsageFactor());
+      int energyCost = EnergyCosts.perTick(currentRecipe.getPowerCost(), getEnergyUsageFactor());
 
       if (canWork(inputStack, currentRecipe)) {
         if (getEnergyStorage().consumeEnergy(energyCost, true) == energyCost
@@ -216,7 +217,7 @@ public class BlockEntityOreWashingPlant extends FaktocraftBlockEntity
           progress.setBoth(-1);
         }
       }
-    } else {
+    } else if (recipe == null) {
       progress.setBoth(-1);
     }
 

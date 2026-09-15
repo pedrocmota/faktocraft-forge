@@ -2,6 +2,7 @@ package com.faktocraft.common.recipe;
 
 import com.faktocraft.common.interfaces.receipe.IChanceRecipe;
 import com.faktocraft.common.item.crafting.CountedIngredient;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -9,12 +10,13 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public abstract class BasicChanceRecipe extends BasicMachineRecipe implements IChanceRecipe {
 
-  protected final RecipeChanceResult bonusResult;
+  protected RecipeChanceResult bonusResult;
 
   protected BasicChanceRecipe(ResourceLocation id, CountedIngredient ingredient, ItemStack result,
       Optional<ChanceResult> bonusResult,
@@ -25,6 +27,10 @@ public abstract class BasicChanceRecipe extends BasicMachineRecipe implements IC
 
   public RecipeChanceResult getBonusResult() {
     return bonusResult;
+  }
+
+  protected void setBonusResults(List<ChanceResult> results) {
+    this.bonusResult = RecipeChanceResult.of(results);
   }
 
   @Override
@@ -63,7 +69,15 @@ public abstract class BasicChanceRecipe extends BasicMachineRecipe implements IC
       float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
       int duration = GsonHelper.getAsInt(json, "duration", 180);
       int powerCost = GsonHelper.getAsInt(json, "power_cost", 8);
-      return factory.create(id, ingredient, result, bonusResult, experience, duration, powerCost);
+      T recipe = factory.create(id, ingredient, result, bonusResult, experience, duration, powerCost);
+      if (json.has("bonus_results")) {
+        List<ChanceResult> results = new ArrayList<>();
+        for (JsonElement element : GsonHelper.getAsJsonArray(json, "bonus_results")) {
+          results.add(ChanceResult.fromJson(element.getAsJsonObject()));
+        }
+        recipe.setBonusResults(results);
+      }
+      return recipe;
     }
 
     @Override
@@ -74,7 +88,16 @@ public abstract class BasicChanceRecipe extends BasicMachineRecipe implements IC
       float experience = buf.readFloat();
       int duration = buf.readVarInt();
       int powerCost = buf.readVarInt();
-      return factory.create(id, ingredient, result, bonusResult, experience, duration, powerCost);
+      T recipe = factory.create(id, ingredient, result, bonusResult, experience, duration, powerCost);
+      int extra = buf.readVarInt();
+      if (extra > 0) {
+        List<ChanceResult> results = new ArrayList<>(extra);
+        for (int i = 0; i < extra; i++) {
+          results.add(ChanceResult.fromNetwork(buf));
+        }
+        recipe.setBonusResults(results);
+      }
+      return recipe;
     }
 
     @Override
@@ -85,6 +108,13 @@ public abstract class BasicChanceRecipe extends BasicMachineRecipe implements IC
       buf.writeFloat(recipe.experience);
       buf.writeVarInt(recipe.duration);
       buf.writeVarInt(recipe.powerCost);
+      List<ChanceResult> results = recipe.bonusResult.getResults();
+      buf.writeVarInt(results.size() > 1 ? results.size() : 0);
+      if (results.size() > 1) {
+        for (ChanceResult bonus : results) {
+          bonus.toNetwork(buf);
+        }
+      }
     }
   }
 }

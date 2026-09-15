@@ -67,6 +67,11 @@ public class MenuRequestTable extends AbstractContainerMenu {
       }
 
       @Override
+      public boolean mayPickup(Player taker) {
+        return resultStillCurrent();
+      }
+
+      @Override
       public void onTake(Player taker, ItemStack stack) {
         consumeMatrix(taker);
         stack.getItem().onCraftedBy(stack, level, taker);
@@ -104,6 +109,10 @@ public class MenuRequestTable extends AbstractContainerMenu {
     }
     for (int col = 0; col < 9; col++) {
       addSlot(new Slot(playerInventory, col, 8 + col * 18, 231));
+    }
+
+    if (table != null && !level.isClientSide()) {
+      table.attachMenu(this);
     }
 
     addDataSlot(new net.minecraft.world.inventory.DataSlot() {
@@ -171,17 +180,39 @@ public class MenuRequestTable extends AbstractContainerMenu {
   }
 
   void matrixChanged() {
-    refreshResult();
+    if (table != null && !level.isClientSide()) {
+      table.refreshOpenMenus();
+    } else {
+      refreshResult();
+    }
   }
 
-  private void refreshResult() {
+  private ItemStack currentResult() {
+    CraftingRecipe recipe = level.getRecipeManager()
+        .getRecipeFor(RecipeType.CRAFTING, craftView, level).orElse(null);
+    return recipe != null ? recipe.assemble(craftView, level.registryAccess()) : ItemStack.EMPTY;
+  }
+
+  void refreshResult() {
     if (table == null || level.isClientSide()) {
       return;
     }
-    CraftingRecipe recipe = level.getRecipeManager()
-        .getRecipeFor(RecipeType.CRAFTING, craftView, level).orElse(null);
-    result.setItem(0, recipe != null ? recipe.assemble(craftView, level.registryAccess()) : ItemStack.EMPTY);
+    result.setItem(0, currentResult());
     broadcastChanges();
+  }
+
+  private boolean resultStillCurrent() {
+    if (table == null || level.isClientSide()) {
+      return true;
+    }
+    ItemStack shown = result.getItem(0);
+    ItemStack current = currentResult();
+    if (shown.isEmpty() || !ItemStack.matches(shown, current)) {
+      result.setItem(0, current);
+      broadcastChanges();
+      return false;
+    }
+    return true;
   }
 
   private void consumeMatrix(Player taker) {
@@ -243,6 +274,9 @@ public class MenuRequestTable extends AbstractContainerMenu {
     ItemStack stack = slot.getItem();
     ItemStack original = stack.copy();
     if (index == RESULT_INDEX) {
+      if (!resultStillCurrent()) {
+        return ItemStack.EMPTY;
+      }
       ItemStack crafted = stack.copy();
       if (!moveItemStackTo(stack, PLAYER_START, this.slots.size(), true)) {
         return ItemStack.EMPTY;
@@ -274,6 +308,7 @@ public class MenuRequestTable extends AbstractContainerMenu {
   @Override
   public void removed(Player player) {
     if (table != null && !level.isClientSide()) {
+      table.detachMenu(this);
       table.setAutoExtract(false);
     }
     super.removed(player);
@@ -281,10 +316,10 @@ public class MenuRequestTable extends AbstractContainerMenu {
 
   @Override
   public boolean stillValid(Player player) {
-    if (table == null && remote) {
-      return true;
+    if (table == null) {
+      return remote && level.isClientSide();
     }
-    if (table == null || table.isRemoved()) {
+    if (table.isRemoved() || !level.isLoaded(tablePos) || level.getBlockEntity(tablePos) != table) {
       return false;
     }
     if (remote) {

@@ -1,9 +1,60 @@
 {
+  "stackedCards": true,
   "blocks": [
     {
       "type": "p",
-      "en": "The **Prospector** is an electric scanner that surveys chunks for ores. Instead of strip-mining blindly, you sweep an area and dig only where it pays off.",
-      "pt": "O **Prospector** é um escâner elétrico que sonda chunks em busca de minérios. Em vez de minerar às cegas, você varre uma área e cava só onde compensa."
+      "en": "The **Geological Prospector** is a handheld electric scanner that surveys the chunk you are standing in for every ore and for [Crude Oil](#/oil). Instead of strip-mining blindly, you walk the land, scan where it looks promising and dig only where it pays off. Its bigger, stationary cousin is the [Geological Scanner](#/geological-scanner).",
+      "pt": "O **Prospector geológico** é um escâner elétrico de mão que sonda o chunk em que você está atrás de todo minério e de [Petróleo](#/oil). Em vez de minerar às cegas, você anda pelo terreno, escaneia onde parece promissor e cava só onde compensa. O primo maior e fixo dele é o [Scanner geológico](#/geological-scanner)."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Geological Prospector",
+            "pt": "Prospector geológico"
+          },
+          "icon": {
+            "item": "item/tool/electric/prospector"
+          },
+          "desc": {
+            "en": "4 Advanced Alloy, 3 Advanced Circuits, an IE Meter and an Energy Crystal. High tier, holds 400 000 IE, does not stack. 10 000 IE and 8 seconds per scan: 40 scans on a full charge.",
+            "pt": "4 Ligas avançadas, 3 Circuitos eletrônicos avançados, um Medidor de IE e um Cristal de energia. Tensão Alta, guarda 400 000 IE, não empilha. 10 000 IE e 8 segundos por varredura: 40 varreduras com carga cheia."
+          }
+        },
+        {
+          "name": {
+            "en": "IE Meter",
+            "pt": "Medidor de IE"
+          },
+          "icon": {
+            "item": "item/tool/electric/ie_meter"
+          },
+          "link": "energy",
+          "desc": {
+            "en": "The ingredient that gives the prospector its sensors. On its own it needs no power: right-click a cable or machine for a network or storage readout.",
+            "pt": "O ingrediente que dá os sensores ao prospector. Sozinho não precisa de energia: clique com o botão direito num cabo ou máquina para ler a rede ou o armazenamento."
+          }
+        },
+        {
+          "name": {
+            "en": "Geological Scanner",
+            "pt": "Scanner geológico"
+          },
+          "icon": {
+            "block": {
+              "top": "block/basic_machine_casing",
+              "front": "block/machines/basic/geological_scanner_front",
+              "side": "block/basic_machine_casing"
+            }
+          },
+          "link": "geological-scanner",
+          "desc": {
+            "en": "Built from a prospector. Sweeps 625 chunks on its own and shares its map with your prospector.",
+            "pt": "Feito a partir de um prospector. Varre 625 chunks sozinho e compartilha o mapa com o seu prospector."
+          }
+        }
+      ]
     },
     {
       "type": "h",
@@ -13,17 +64,93 @@
     {
       "type": "list",
       "en": [
-        "Charge it and **use** it to scan around you.",
-        "Open its screen to see a **chunk map**: scanned chunks are shaded by what they contain.",
-        "Hover a chunk for a summary of the ores found in it.",
-        "Pair it with the [Quarry](#/quarry): survey first, then drop the landmarks on the richest spot."
+        "1. Charge it in a [Battery Box](#/battery-box) or charge pad (High tier).",
+        "2. Stand on the chunk you want to check and **use** it: the map opens with your chunk outlined in **white** and the footer reading **Current chunk: x, z**.",
+        "3. Press **Scan chunk**. It costs 10 000 IE and takes 8 seconds; a beacon-like ping tells you it is done. The button greys out with **Not enough energy!** below 10 000 IE.",
+        "4. Hover the chunk for a summary, or click it to open the **Chunk x, z report** with every find and its estimated count.",
+        "5. Move to the next chunk and repeat. The map pans up to 512 chunks in every direction, so you can review a whole expedition from one spot."
       ],
       "pt": [
-        "Carregue-o e **use** para escanear ao seu redor.",
-        "Abra a tela para ver um **mapa de chunks**: chunks escaneados ficam sombreados pelo que contêm.",
-        "Passe o mouse num chunk para um resumo dos minérios encontrados.",
-        "Combine com a [Mineradora](#/quarry): sonde primeiro, depois solte os marcos no ponto mais rico."
+        "1. Carregue numa [Caixa de baterias](#/battery-box) ou num carregador (tensão Alta).",
+        "2. Fique no chunk que quer checar e **use**: o mapa abre com o seu chunk contornado em **branco** e o rodapé mostrando **Chunk atual: x, z**.",
+        "3. Aperte **Escanear chunk**. Custa 10 000 IE e leva 8 segundos; um toque tipo sinalizador avisa quando termina. O botão fica cinza com **Energia insuficiente!** abaixo de 10 000 IE.",
+        "4. Passe o mouse no chunk para um resumo, ou clique para abrir o **Laudo do chunk x, z** com cada achado e a contagem estimada.",
+        "5. Vá para o próximo chunk e repita. O mapa navega até 512 chunks em cada direção, então dá para rever uma expedição inteira de um lugar só."
       ]
+    },
+    {
+      "type": "h",
+      "en": "Accuracy",
+      "pt": "Precisão"
+    },
+    {
+      "type": "p",
+      "en": "The tooltip warns you: **approximate readings; sensors can miss a vein**. Each scan covers the whole chunk column, top to bottom, but for every ore type there is an **8% chance the prospector misses it entirely**, and every count it does report is randomized to **75% to 125%** of the real number. That is why the report says **~M blocks**. A chunk that reads **Nothing found** is probably empty, not certainly; scan it again if the neighbours are rich.",
+      "pt": "A dica do item avisa: **leituras aproximadas; os sensores podem falhar um veio**. Cada varredura cobre a coluna inteira do chunk, de cima a baixo, mas para cada tipo de minério há **8% de chance de o prospector não ver nada**, e toda contagem que ele informa é sorteada entre **75% e 125%** do número real. Por isso o laudo diz **~M blocos**. Um chunk que lê **Nada encontrado** provavelmente está vazio, não certamente; escaneie de novo se os vizinhos forem ricos."
+    },
+    {
+      "type": "h",
+      "en": "What it detects",
+      "pt": "O que ele detecta"
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Reading", "Meaning"],
+        "pt": ["Leitura", "Significado"]
+      },
+      "rows": [
+        [{"en": "Any ore", "pt": "Qualquer minério"}, {"en": "Every ore block in the chunk, vanilla and mod alike, with an estimated count. See [Ores and world](#/world).", "pt": "Todo bloco de minério do chunk, vanilla e do mod, com contagem estimada. Veja [Minérios e mundo](#/world)."}],
+        [{"en": "Oil pocket", "pt": "Bolsão de petróleo"}, {"en": "Oil below Y 30: an ordinary underground pocket. Worth a pump if it is close.", "pt": "Petróleo abaixo de Y 30: um bolsão subterrâneo comum. Vale uma bomba se estiver perto."}],
+        [{"en": "Giant oil pocket", "pt": "Bolsão gigante de petróleo"}, {"en": "600 or more oil blocks below Y 30 in this chunk alone: part of a giant pocket that spans its neighbours. Flagged as a rare find.", "pt": "600 ou mais blocos de petróleo abaixo de Y 30 só neste chunk: parte de um bolsão gigante que se estende pelos vizinhos. Marcado como achado raro."}],
+        [{"en": "Oil lake (surface)", "pt": "Lago de petróleo (superfície)"}, {"en": "Oil at Y 30 or higher: an open lake, the kind you find in deserts, savannas and badlands.", "pt": "Petróleo em Y 30 ou acima: um lago aberto, do tipo que se acha em desertos, savanas e badlands."}]
+      ]
+    },
+    {
+      "type": "p",
+      "en": "All three oil readings are explained, with rarity and depth, in [Oil pockets](#/oil-pockets).",
+      "pt": "As três leituras de petróleo estão explicadas, com raridade e profundidade, em [Bolsões de petróleo](#/oil-pockets)."
+    },
+    {
+      "type": "h",
+      "en": "The screen",
+      "pt": "A tela"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Map**: drag or use the arrow keys to pan, scroll to zoom, **Center** brings you back to your own chunk. Scanned chunks are coloured by what is in them; unscanned ones read **Not scanned**.",
+        "**Rare finds**: a chip that lists iridium and giant oil pockets and jumps between them.",
+        "**Report**: **N types in M scanned chunks**, one line per ore or oil type. Click a type for its chunks, click a chunk to see it on the map, open a chunk for its detail sheet.",
+        "**Padlock** (top-right): the password this prospector reads from and writes to."
+      ],
+      "pt": [
+        "**Mapa**: arraste ou use as setas para navegar, role para aproximar, **Centralizar** te traz de volta ao seu chunk. Chunks varridos ficam coloridos pelo conteúdo; os não varridos leem **Não escaneado**.",
+        "**Achados raros**: uma etiqueta que lista irídio e bolsões gigantes de petróleo e pula entre eles.",
+        "**Relatório**: **N tipos em M chunks escaneados**, uma linha por tipo de minério ou petróleo. Clique num tipo para ver os chunks, clique num chunk para vê-lo no mapa, abra um chunk para o laudo detalhado.",
+        "**Cadeado** (canto superior direito): a senha de onde este prospector lê e onde grava."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Password",
+      "pt": "Senha"
+    },
+    {
+      "type": "p",
+      "en": "Scans are not stored in the item: they live on the server under a **6-digit password**, shared by every prospector and Geological Scanner set to it. New devices start at **000000**. Hover the padlock to see the password, click it to change it. How to share or split surveys is explained on the [Geological Scanner](#/geological-scanner) page.",
+      "pt": "As varreduras não ficam no item: elas vivem no servidor sob uma **senha de 6 dígitos**, compartilhada por todo prospector e Scanner geológico configurado nela. Aparelhos novos começam em **000000**. Passe o mouse no cadeado para ver a senha, clique para trocar. Como compartilhar ou separar sondagens está explicado na página do [Scanner geológico](#/geological-scanner)."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Pair it with the [Quarry](#/quarry): scan a 3x3 of chunks, pick the one with the most of what you need, then drop the landmarks there. Forty scans per charge is enough for a whole afternoon of walking, and each scan you make also shows up in the scanner back home.",
+      "pt": "Combine com a [Mineradora](#/quarry): escaneie um 3x3 de chunks, escolha o que tem mais do que você precisa e solte os marcos lá. Quarenta varreduras por carga dão para uma tarde inteira de caminhada, e cada varredura que você faz também aparece no scanner lá em casa."
+    },
+    {
+      "type": "callout",
+      "en": "Do not trust a single empty reading over a giant pocket alert from a neighbour. The 8% miss chance applies per ore type per scan, so the fix for a doubtful chunk is simply a second scan.",
+      "pt": "Não confie numa única leitura vazia contra um aviso de bolsão gigante no vizinho. Os 8% de chance de falha valem por tipo de minério por varredura, então o conserto para um chunk duvidoso é simplesmente uma segunda varredura."
     }
   ]
 }

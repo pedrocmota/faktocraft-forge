@@ -137,7 +137,9 @@ public abstract class AbstractBlockEntityAlloySmelter extends FaktocraftBlockEnt
   }
 
   protected void idle() {
-    progress.setBoth(-1);
+    if (recipe == null) {
+      progress.setBoth(-1);
+    }
   }
 
   protected void craft() {

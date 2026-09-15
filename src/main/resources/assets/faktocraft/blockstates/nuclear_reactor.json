@@ -1,0 +1,88 @@
+{
+  "variants": {
+    "part=single": {
+      "model": "faktocraft:block/nuclear_reactor/single"
+    },
+    "part=x0y0z0": {
+      "model": "faktocraft:block/nuclear_reactor/x0y0z0"
+    },
+    "part=x0y0z1": {
+      "model": "faktocraft:block/nuclear_reactor/x0y0z1"
+    },
+    "part=x0y0z2": {
+      "model": "faktocraft:block/nuclear_reactor/x0y0z2"
+    },
+    "part=x0y1z0": {
+      "model": "faktocraft:block/nuclear_reactor/x0y1z0"
+    },
+    "part=x0y1z1": {
+      "model": "faktocraft:block/nuclear_reactor/x0y1z1"
+    },
+    "part=x0y1z2": {
+      "model": "faktocraft:block/nuclear_reactor/x0y1z2"
+    },
+    "part=x0y2z0": {
+      "model": "faktocraft:block/nuclear_reactor/x0y2z0"
+    },
+    "part=x0y2z1": {
+      "model": "faktocraft:block/nuclear_reactor/x0y2z1"
+    },
+    "part=x0y2z2": {
+      "model": "faktocraft:block/nuclear_reactor/x0y2z2"
+    },
+    "part=x1y0z0": {
+      "model": "faktocraft:block/nuclear_reactor/x1y0z0"
+    },
+    "part=x1y0z1": {
+      "model": "faktocraft:block/nuclear_reactor/x1y0z1"
+    },
+    "part=x1y0z2": {
+      "model": "faktocraft:block/nuclear_reactor/x1y0z2"
+    },
+    "part=x1y1z0": {
+      "model": "faktocraft:block/nuclear_reactor/x1y1z0"
+    },
+    "part=x1y1z1": {
+      "model": "faktocraft:block/nuclear_reactor/x1y1z1"
+    },
+    "part=x1y1z2": {
+      "model": "faktocraft:block/nuclear_reactor/x1y1z2"
+    },
+    "part=x1y2z0": {
+      "model": "faktocraft:block/nuclear_reactor/x1y2z0"
+    },
+    "part=x1y2z1": {
+      "model": "faktocraft:block/nuclear_reactor/x1y2z1"
+    },
+    "part=x1y2z2": {
+      "model": "faktocraft:block/nuclear_reactor/x1y2z2"
+    },
+    "part=x2y0z0": {
+      "model": "faktocraft:block/nuclear_reactor/x2y0z0"
+    },
+    "part=x2y0z1": {
+      "model": "faktocraft:block/nuclear_reactor/x2y0z1"
+    },
+    "part=x2y0z2": {
+      "model": "faktocraft:block/nuclear_reactor/x2y0z2"
+    },
+    "part=x2y1z0": {
+      "model": "faktocraft:block/nuclear_reactor/x2y1z0"
+    },
+    "part=x2y1z1": {
+      "model": "faktocraft:block/nuclear_reactor/x2y1z1"
+    },
+    "part=x2y1z2": {
+      "model": "faktocraft:block/nuclear_reactor/x2y1z2"
+    },
+    "part=x2y2z0": {
+      "model": "faktocraft:block/nuclear_reactor/x2y2z0"
+    },
+    "part=x2y2z1": {
+      "model": "faktocraft:block/nuclear_reactor/x2y2z1"
+    },
+    "part=x2y2z2": {
+      "model": "faktocraft:block/nuclear_reactor/x2y2z2"
+    }
+  }
+}

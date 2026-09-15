@@ -19,7 +19,11 @@
     "ttt"
   ],
   "result": {
-    "item": "faktocraft:medium_coolant_cell"
+    "item": "faktocraft:medium_coolant_cell",
+    "nbt": {
+      "fluid": "faktocraft:coolant",
+      "fluid_amount": 3000
+    }
   },
   "type": "minecraft:crafting_shaped"
 }

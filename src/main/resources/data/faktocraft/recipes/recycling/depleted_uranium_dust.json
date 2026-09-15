@@ -1,0 +1,11 @@
+{
+  "type": "faktocraft:recycling",
+  "chance": 1.0,
+  "ingredient": {
+    "item": "faktocraft:depleted_uranium_dust"
+  },
+  "result": {
+    "item": "faktocraft:scrap",
+    "count": 3
+  }
+}

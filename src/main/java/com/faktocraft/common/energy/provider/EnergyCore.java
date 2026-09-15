@@ -4,6 +4,7 @@ import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.EnergyLookup;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.energy.interfaces.IEnergyCore;
+import com.faktocraft.common.energy.interfaces.IEnergyProxy;
 import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -114,12 +115,22 @@ public class EnergyCore extends SavedData implements IEnergyCore {
     return count;
   }
 
+  private BlockPos accountPos(BlockPos pos) {
+    if (level != null && level.getBlockEntity(pos) instanceof IEnergyProxy proxy) {
+      FaktocraftBlockEntity owner = proxy.energyOwner();
+      if (owner != null) {
+        return owner.getBlockPos();
+      }
+    }
+    return pos;
+  }
+
   private int getEnergyReceivedBlock(BlockPos pos) {
-    return energyReceivedBlock.getOrDefault(pos, 0);
+    return energyReceivedBlock.getOrDefault(accountPos(pos), 0);
   }
 
   private int getEnergyExtractedBlock(BlockPos pos) {
-    return energyExtractedBlock.getOrDefault(pos, 0);
+    return energyExtractedBlock.getOrDefault(accountPos(pos), 0);
   }
 
   private int getEnergyReceivedNetwork(EnergyNetwork network) {
@@ -131,11 +142,11 @@ public class EnergyCore extends SavedData implements IEnergyCore {
   }
 
   private void addEnergyReceivedBlock(BlockPos pos, int amount) {
-    energyReceivedBlock.merge(pos, amount, Integer::sum);
+    energyReceivedBlock.merge(accountPos(pos), amount, Integer::sum);
   }
 
   private void addEnergyExtractedBlock(BlockPos pos, int amount) {
-    energyExtractedBlock.merge(pos, amount, Integer::sum);
+    energyExtractedBlock.merge(accountPos(pos), amount, Integer::sum);
   }
 
   private void addEnergyReceivedNetwork(EnergyNetwork network, int amount) {
@@ -154,6 +165,7 @@ public class EnergyCore extends SavedData implements IEnergyCore {
       return;
     }
 
+    networks.adoptPending();
     networks.repairLoaded();
 
     energyReceivedBlock.clear();
@@ -329,12 +341,20 @@ public class EnergyCore extends SavedData implements IEnergyCore {
   }
 
   private void createBurn(EnergyNetwork network, BlockPos soundPos, int tierDiff) {
-    HashSet<BlockPos> cables = new HashSet<>(network.getConnections());
-    networks.removeNetwork(network);
-    for (BlockPos cablePos : cables) {
-      if (!level.isLoaded(cablePos)) {
-        continue;
+    HashSet<BlockPos> cables = new HashSet<>();
+    for (BlockPos cablePos : network.getConnections()) {
+      if (level.isLoaded(cablePos)) {
+        cables.add(cablePos);
       }
+    }
+    network.getConnections().removeAll(cables);
+    if (network.getConnections().isEmpty()) {
+      networks.removeNetwork(network);
+    } else {
+      network.setEnergy(0);
+      networks.scheduleRepair(network);
+    }
+    for (BlockPos cablePos : cables) {
       level.removeBlock(cablePos, false);
       if (level instanceof ServerLevel serverLevel) {
         PacketParticle.send(serverLevel, cablePos);
@@ -587,15 +607,21 @@ public class EnergyCore extends SavedData implements IEnergyCore {
   private void transferFromBatteries() {
     transferBlocksToNetworks(EnergyType.BOTH);
     transferBlocksToNetworks(EnergyType.TRANSFORMER);
+    transferBlocksToNetworks(EnergyType.RECEIVE);
   }
 
   private ArrayList<BlockPos> orderedExtractBlocks() {
     ArrayList<BlockPos> ordered = new ArrayList<>(energyBlocks);
     HashMap<BlockPos, Integer> priorities = new HashMap<>();
     for (BlockPos pos : ordered) {
-      if (level.isLoaded(pos)
-          && level.getBlockEntity(pos) instanceof FaktocraftBlockEntity faktocraftBe
-          && faktocraftBe.isGenerator()) {
+      if (!level.isLoaded(pos)) {
+        continue;
+      }
+      BlockEntity be = level.getBlockEntity(pos);
+      if (be instanceof IEnergyProxy proxy) {
+        be = proxy.energyOwner();
+      }
+      if (be instanceof FaktocraftBlockEntity faktocraftBe && faktocraftBe.isGenerator()) {
         priorities.put(pos, faktocraftBe.effectiveGeneratorPriority());
       }
     }
@@ -615,6 +641,9 @@ public class EnergyCore extends SavedData implements IEnergyCore {
       }
       IEnergy energy = EnergyLookup.find(level, pos, null);
       if (energy == null || energy.energyType() != type) {
+        continue;
+      }
+      if (type == EnergyType.RECEIVE && energy.maxExtractTick() <= 0) {
         continue;
       }
 

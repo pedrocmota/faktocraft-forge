@@ -32,19 +32,59 @@ public final class LogisticsPlanner {
     }
   }
 
+  public record Maintain(ItemKey item, int count) {
+  }
+
   public record CraftDecl(BlockPos chassisPos, int moduleSlot, ItemKey result, int resultCount,
       List<ItemChoice> ingredients, List<Endpoint> ingredientEnds, Endpoint outputEnd, int priority,
-      boolean machine, int timeout) {
+      boolean machine, int timeout, List<IoMode> ingredientModes, List<Maintain> maintains,
+      List<Endpoint> maintainEnds, int batchSize, boolean shared) {
+
+    public CraftDecl(BlockPos chassisPos, int moduleSlot, ItemKey result, int resultCount,
+        List<ItemChoice> ingredients, List<Endpoint> ingredientEnds, Endpoint outputEnd, int priority,
+        boolean machine, int timeout, List<IoMode> ingredientModes, List<Maintain> maintains,
+        List<Endpoint> maintainEnds, int batchSize) {
+      this(chassisPos, moduleSlot, result, resultCount, ingredients, ingredientEnds, outputEnd, priority, machine,
+          timeout, ingredientModes, maintains, maintainEnds, batchSize, true);
+    }
+
+    public CraftDecl(BlockPos chassisPos, int moduleSlot, ItemKey result, int resultCount,
+        List<ItemChoice> ingredients, List<Endpoint> ingredientEnds, Endpoint outputEnd, int priority,
+        boolean machine, int timeout) {
+      this(chassisPos, moduleSlot, result, resultCount, ingredients, ingredientEnds, outputEnd, priority, machine,
+          timeout, java.util.Collections.nCopies(ingredients.size(), IoMode.PER_UNIT), List.of(), List.of(), 1);
+    }
+
+    public IoMode modeOf(int ingredient) {
+      return ingredient < ingredientModes.size() ? ingredientModes.get(ingredient) : IoMode.PER_UNIT;
+    }
+
+    public boolean batched() {
+      if (batchSize > 1 || !maintains.isEmpty()) {
+        return true;
+      }
+      for (IoMode mode : ingredientModes) {
+        if (mode != IoMode.PER_UNIT) {
+          return true;
+        }
+      }
+      return false;
+    }
   }
 
   public record PlanRequest(ItemKey target, int quantity, Map<ItemKey, Integer> stock, List<CraftDecl> decls) {
   }
 
-  public record StationChoice(BlockPos node, Endpoint output, List<Endpoint> ingredientEnds) {
+  public record StationChoice(BlockPos node, Endpoint output, List<Endpoint> ingredientEnds,
+      List<Maintain> maintains, List<Endpoint> maintainEnds, boolean shared) {
+
+    public StationChoice(BlockPos node, Endpoint output, List<Endpoint> ingredientEnds) {
+      this(node, output, ingredientEnds, List.of(), List.of(), true);
+    }
   }
 
   public record PlanStep(CraftDecl decl, int times, int surplus, List<ItemCount> ingredients,
-      List<StationChoice> stations) {
+      List<StationChoice> stations, List<Integer> origins) {
   }
 
   public record Plan(boolean success, Map<ItemKey, Integer> withdrawals, List<PlanStep> steps, int movedItems,
@@ -116,7 +156,8 @@ public final class LogisticsPlanner {
   private static int[] matchIngredients(CraftDecl decl, CraftDecl other) {
     List<ItemChoice> mine = decl.ingredients();
     List<ItemChoice> theirs = other.ingredients();
-    if (decl.resultCount() != other.resultCount() || mine.size() != theirs.size()) {
+    if (decl.resultCount() != other.resultCount() || mine.size() != theirs.size()
+        || decl.batchSize() != other.batchSize()) {
       return null;
     }
     int[] mapping = new int[mine.size()];
@@ -127,6 +168,7 @@ public final class LogisticsPlanner {
       for (int j = 0; j < theirs.size(); j++) {
         ItemChoice candidate = theirs.get(j);
         if (!used[j] && candidate.count() == want.count()
+            && decl.modeOf(i) == other.modeOf(j)
             && candidate.options().equals(want.options())) {
           found = j;
           break;
@@ -144,7 +186,8 @@ public final class LogisticsPlanner {
   private static List<StationChoice> stationsFor(State state, CraftDecl decl, List<Integer> origins,
       List<Endpoint> ends) {
     List<StationChoice> stations = new ArrayList<>();
-    stations.add(new StationChoice(decl.chassisPos(), decl.outputEnd(), ends));
+    stations.add(new StationChoice(decl.chassisPos(), decl.outputEnd(), ends, decl.maintains(),
+        decl.maintainEnds(), decl.shared()));
     for (CraftDecl other : state.declIndex.getOrDefault(decl.result(), List.of())) {
       if (other == decl) {
         continue;
@@ -157,7 +200,8 @@ public final class LogisticsPlanner {
       for (int origin : origins) {
         otherEnds.add(other.ingredientEnds().get(mapping[origin]));
       }
-      stations.add(new StationChoice(other.chassisPos(), other.outputEnd(), otherEnds));
+      stations.add(new StationChoice(other.chassisPos(), other.outputEnd(), otherEnds, other.maintains(),
+          other.maintainEnds(), other.shared()));
     }
     return stations;
   }
@@ -211,7 +255,7 @@ public final class LogisticsPlanner {
       if (index != null && extra > 0) {
         PlanStep old = state.steps.get(index);
         state.steps.set(index, new PlanStep(old.decl(), old.times(), extra, old.ingredients(),
-            old.stations()));
+            old.stations(), old.origins()));
       }
     });
     return new Plan(true, state.withdrawals, state.steps, moved, state.totalCrafts, direct, null, 0, null);
@@ -261,11 +305,14 @@ public final class LogisticsPlanner {
     List<Endpoint> ends = new ArrayList<>();
 
     List<Integer> origins = new ArrayList<>();
+    int batchSize = Math.max(1, decl.batchSize());
+    int batches = (times + batchSize - 1) / batchSize;
     for (int i = 0; i < decl.ingredients().size(); i++) {
       ItemChoice ingredient = decl.ingredients().get(i);
       Endpoint end = decl.ingredientEnds().get(i);
       int before = ingredients.size();
-      if (!resolveChoice(state, ingredient, ingredient.count() * times, depth + 1, ingredients, ends, end)) {
+      int needed = ingredient.count() * (decl.modeOf(i) == IoMode.PER_BATCH ? batches : times);
+      if (!resolveChoice(state, ingredient, needed, depth + 1, ingredients, ends, end)) {
         state.visiting.pop();
         return false;
       }
@@ -274,7 +321,7 @@ public final class LogisticsPlanner {
       }
     }
     state.visiting.pop();
-    state.steps.add(new PlanStep(decl, times, 0, ingredients, stationsFor(state, decl, origins, ends)));
+    state.steps.add(new PlanStep(decl, times, 0, ingredients, stationsFor(state, decl, origins, ends), origins));
     int extra = times * outputCount - quantity;
     if (extra > 0) {
       state.produced.merge(item, extra, Integer::sum);

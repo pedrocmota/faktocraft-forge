@@ -1,0 +1,243 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Tanks store fluid, the **Fluid Pump** gets it out of the world, and fluid pipes carry it between machines. This page covers the whole plumbing kit: how tanks stack, how far the pump reaches, what each pipe moves per tick, and how buckets and cells interact with machine gauges.",
+      "pt": "Tanques guardam fluido, a **Bomba de fluidos** tira fluido do mundo, e os tubos de fluido levam o fluido entre máquinas. Esta página cobre o kit de encanamento inteiro: como tanques empilham, até onde a bomba alcança, quanto cada tubo move por tick e como baldes e células interagem com os medidores das máquinas."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Tank",
+            "pt": "Tanque"
+          },
+          "icon": {
+            "glass_tank": {
+              "end": "block/pipe/tank_end",
+              "side": "block/pipe/tank_side"
+            }
+          },
+          "desc": {
+            "en": "Eight glass in a ring. 16 000 mB; stacked tanks merge into one column of up to 64 blocks.",
+            "pt": "Oito vidros em anel. 16 000 mB; tanques empilhados se unem numa coluna de até 64 blocos."
+          }
+        },
+        {
+          "name": {
+            "en": "Fluid Pump",
+            "pt": "Bomba de fluidos"
+          },
+          "icon": {
+            "block": {
+              "top": "block/pipe/pump_top",
+              "front": "block/pipe/pump_side"
+            }
+          },
+          "desc": {
+            "en": "Iron Plates around a Crude Circuit and an Electric Motor, a Stone Fluid Pipe below. Low voltage, 4 000 IE buffer, 1 600 IE per bucket; reaches 384 blocks down.",
+            "pt": "Placas de ferro em volta de um Circuito rústico e um Motor elétrico, um Tubo de fluido de pedra embaixo. Tensão Baixa, buffer de 4 000 IE, 1 600 IE por balde; alcança 384 blocos para baixo."
+          }
+        },
+        {
+          "name": {
+            "en": "Stone Fluid Pipe",
+            "pt": "Tubo de fluido de pedra"
+          },
+          "icon": {
+            "pipe": "block/pipe/fluid_stone_pipe"
+          },
+          "desc": {
+            "en": "Stone Pipe + Rubber, shapeless. 50 mB/t, the fluid backbone.",
+            "pt": "Tubo de pedra + Borracha, sem formato. 50 mB/t, o tronco dos fluidos."
+          }
+        },
+        {
+          "name": {
+            "en": "Golden Fluid Pipe",
+            "pt": "Tubo de fluido de ouro"
+          },
+          "icon": {
+            "pipe": "block/pipe/fluid_gold_pipe"
+          },
+          "desc": {
+            "en": "Golden Pipe + Rubber, shapeless. 200 mB/t for the trunk lines.",
+            "pt": "Tubo de ouro + Borracha, sem formato. 200 mB/t para as linhas principais."
+          }
+        },
+        {
+          "name": {
+            "en": "Fluid Extractor Pipe",
+            "pt": "Tubo extrator de fluido"
+          },
+          "icon": {
+            "pipe": "block/pipe/fluid_extractor_pipe"
+          },
+          "desc": {
+            "en": "Planks, glass, planks over Rubber, Electric Motor, Rubber - makes two. Pulls fluid out of a tank or machine into the pipes, 50 mB per pulse.",
+            "pt": "Tábuas, vidro, tábuas sobre Borracha, Motor elétrico, Borracha - faz dois. Puxa fluido de um tanque ou máquina para os tubos, 50 mB por pulso."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Tanks",
+      "pt": "Tanques"
+    },
+    {
+      "type": "list",
+      "en": [
+        "One **Tank** holds 16 000 mB of a single fluid. Stack tanks vertically and they merge into one column: 4 tanks = 64 000 mB, up to 64 blocks tall. Tanks holding different fluids stay separate.",
+        "Right-click with a bucket or any fluid container to fill or empty it by hand. Right-click with an empty hand to read the contents in the action bar.",
+        "Pipes connect on any side; a Fluid Extractor Pipe pulls out, a pump or machine output pushes in.",
+        "Breaking a tank that holds at least 1 000 mB of a placeable fluid (water, lava, oil) can spill it into the world. The option \"Broken tank places its fluid\" in the Faktocraft settings turns this on or off - drain the tank first if you are unsure."
+      ],
+      "pt": [
+        "Um **Tanque** guarda 16 000 mB de um único fluido. Empilhe tanques na vertical e eles se unem numa coluna: 4 tanques = 64 000 mB, até 64 blocos de altura. Tanques com fluidos diferentes ficam separados.",
+        "Botão direito com um balde ou qualquer recipiente de fluido enche ou esvazia na mão. Botão direito com a mão vazia lê o conteúdo na barra de ação.",
+        "Tubos conectam em qualquer lado; um Tubo extrator de fluido puxa, uma bomba ou a saída de uma máquina empurra.",
+        "Quebrar um tanque com pelo menos 1 000 mB de um fluido colocável (água, lava, petróleo) pode derramar o fluido no mundo. A opção \"Tanque quebrado solta o fluido\" nas configurações do Faktocraft liga ou desliga isso - esvazie o tanque antes se tiver dúvida."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Fluid Pump",
+      "pt": "Bomba de fluidos"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Place the pump above the fluid with nothing but air between them - up to **384 blocks** down. It lowers a tube by itself until it touches the surface; the tube is removed when the pump is broken.",
+        "The pump maps every source block of that fluid connected to the surface, spreading sideways up to 64 blocks and upward, up to 4 096 sources at a time. It drains the farthest ones first and re-scans every few seconds when the list runs out.",
+        "Each bucket (1 000 mB) costs **1 600 IE**, drawn at 4 IE/t from a 4 000 IE buffer that accepts Low voltage on every side except the bottom. That is one bucket every 20 seconds without upgrades.",
+        "**Infinite water**: a water source with two or more water sources next to it is pumped without being removed, so an ocean or a 2x2 pool never runs dry. Lava, oil and everything else is consumed block by block.",
+        "The pump keeps 16 000 mB inside and pushes it out at up to **200 mB/t per side** into every pipe, tank or machine around it (never downward, never into an extractor pipe or a closed valve). It only pumps while it has room for one more bucket.",
+        "Run mode buttons in the GUI: **Always on**, **Off**, **Redstone** (runs only with a redstone signal)."
+      ],
+      "pt": [
+        "Coloque a bomba acima do fluido só com ar entre os dois - até **384 blocos** para baixo. Ela desce um tubo sozinha até encostar na superfície; o tubo é removido quando a bomba é quebrada.",
+        "A bomba mapeia todo bloco-fonte daquele fluido conectado à superfície, espalhando para os lados até 64 blocos e para cima, até 4 096 fontes por vez. Ela drena as mais distantes primeiro e refaz a varredura a cada poucos segundos quando a lista acaba.",
+        "Cada balde (1 000 mB) custa **1 600 IE**, puxados a 4 IE/t de um buffer de 4 000 IE que aceita tensão Baixa em todo lado menos embaixo. Isso dá um balde a cada 20 segundos sem melhorias.",
+        "**Água infinita**: uma fonte de água com duas ou mais fontes de água ao lado é bombeada sem ser removida, então um oceano ou uma piscina 2x2 nunca seca. Lava, petróleo e todo o resto são consumidos bloco a bloco.",
+        "A bomba guarda 16 000 mB dentro e empurra para fora até **200 mB/t por lado** em todo tubo, tanque ou máquina em volta (nunca para baixo, nunca para um tubo extrator ou uma válvula fechada). Ela só bombeia enquanto tem espaço para mais um balde.",
+        "Botões de modo na GUI: **Sempre ligado**, **Desligado**, **Redstone** (só roda com sinal de redstone)."
+      ]
+    },
+    {
+      "type": "p",
+      "en": "The three upgrade slots take **overclockers** only: each Overclocker Upgrade adds 1 point and each Advanced Overclocker Upgrade adds 3, up to 8 points. Every point makes a bucket cost 1.6x more energy but draw it about 2.3x faster.",
+      "pt": "Os três slots de melhoria aceitam só **overclocks**: cada Melhoria de overclock soma 1 ponto e cada Melhoria de overclock avançada soma 3, até 8 pontos. Cada ponto faz o balde custar 1,6x mais energia, mas puxar cerca de 2,3x mais rápido."
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": [
+          "Upgrades",
+          "IE per bucket",
+          "Draw",
+          "Time per bucket"
+        ],
+        "pt": [
+          "Melhorias",
+          "IE por balde",
+          "Consumo",
+          "Tempo por balde"
+        ]
+      },
+      "rows": [
+        [{"en": "none", "pt": "nenhuma"}, "1 600", "4 IE/t", "20 s"],
+        [{"en": "1 Overclocker", "pt": "1 overclock"}, "2 560", "10 IE/t", "12.8 s"],
+        [{"en": "2 Overclockers", "pt": "2 overclocks"}, "4 096", "21 IE/t", "9.8 s"],
+        [{"en": "3 Overclockers or 1 Advanced", "pt": "3 overclocks ou 1 avançado"}, "6 554", "48 IE/t", "6.8 s"],
+        [{"en": "2 Advanced", "pt": "2 avançados"}, "26 844", "571 IE/t", "2.4 s"],
+        [{"en": "3 Advanced (capped at 8 points)", "pt": "3 avançados (limite de 8 pontos)"}, "68 720", "2 980 IE/t", "1.2 s"]
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "The pump only accepts Low voltage, and a Low line carries 32 IE/t. Past the first upgrade or two the pump drains its 4 000 IE buffer faster than the cable refills it, and the real rate settles at whatever the cable delivers. Heavy overclocking is for short bursts, or for a pump fed by a battery box right next to it.",
+      "pt": "A bomba só aceita tensão Baixa, e uma linha Baixa carrega 32 IE/t. Depois da primeira ou segunda melhoria a bomba esvazia o buffer de 4 000 IE mais rápido do que o cabo repõe, e a taxa real fica no que o cabo entrega. Overclock pesado é para rajadas curtas, ou para uma bomba alimentada por uma caixa de baterias colada nela."
+    },
+    {
+      "type": "h",
+      "en": "Fluid pipes",
+      "pt": "Tubos de fluido"
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": [
+          "Pipe",
+          "Throughput",
+          "Buffer",
+          "Recipe"
+        ],
+        "pt": [
+          "Tubo",
+          "Vazão",
+          "Buffer",
+          "Receita"
+        ]
+      },
+      "rows": [
+        [{"en": "Stone Fluid Pipe", "pt": "Tubo de fluido de pedra"}, "50 mB/t", "200 mB", {"en": "Stone Pipe + Rubber", "pt": "Tubo de pedra + Borracha"}],
+        [{"en": "Golden Fluid Pipe", "pt": "Tubo de fluido de ouro"}, "200 mB/t", "800 mB", {"en": "Golden Pipe + Rubber", "pt": "Tubo de ouro + Borracha"}],
+        [{"en": "Fluid Extractor Pipe", "pt": "Tubo extrator de fluido"}, "50 mB/t", "200 mB", {"en": "planks, glass, planks / Rubber, Electric Motor, Rubber (x2)", "pt": "tábuas, vidro, tábuas / Borracha, Motor elétrico, Borracha (x2)"}]
+      ]
+    },
+    {
+      "type": "list",
+      "en": [
+        "A pipe network carries one fluid at a time. A stone line moves 50 mB/t no matter how long it is; use golden pipes for the trunk and stone for the last metres.",
+        "The **Fluid Extractor Pipe** is the only pipe that pulls: place it against a tank or a machine's output and it takes 50 mB per pulse into the network. It has a small Low-voltage energy buffer, a GUI with upgrade slots and the same three run modes as the pump. Two extractors never connect to each other.",
+        "Machines refuse fluid connections on their **front face** - the side with the GUI texture. Pipe into the sides, back, top or bottom.",
+        "A pipe that ends against a block without its own connector (a plain wall, a decorative block) shows a steel **flange** on that end instead of an open pipe mouth.",
+        "Any fluid pipe can be hidden inside a wall with the [Hole Drill](#/hole-drill), and an [Ender Tank](#/ender-tank) replaces a pipeline across the map entirely."
+      ],
+      "pt": [
+        "Uma rede de tubos carrega um fluido por vez. Uma linha de pedra move 50 mB/t não importa o comprimento; use tubos de ouro no tronco e pedra nos últimos metros.",
+        "O **Tubo extrator de fluido** é o único tubo que puxa: coloque contra um tanque ou a saída de uma máquina e ele tira 50 mB por pulso para a rede. Tem um pequeno buffer de energia de tensão Baixa, uma GUI com slots de melhoria e os mesmos três modos da bomba. Dois extratores nunca se conectam entre si.",
+        "Máquinas recusam conexão de fluido na **face da frente** - o lado com a textura da GUI. Ligue os tubos nas laterais, atrás, em cima ou embaixo.",
+        "Um tubo que termina contra um bloco sem conector próprio (uma parede comum, um bloco decorativo) mostra um **flange** de aço nessa ponta em vez de uma boca aberta.",
+        "Qualquer tubo de fluido pode ser escondido dentro de uma parede com a [Furadeira](#/hole-drill), e um [Tanque ender](#/ender-tank) substitui uma tubulação pelo mapa inteira."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Supports and clamps",
+      "pt": "Apoios e braçadeiras"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Long runs of pipe or cable grow decorative support posts every 10 blocks, and fluid pipes get clamp rings. Purely visual - turn them off with \"Pipe and cable supports\" in the client options if you prefer bare pipes."
+      ],
+      "pt": [
+        "Trechos longos de tubo ou cabo ganham pés de apoio decorativos a cada 10 blocos, e tubos de fluido ganham anéis de braçadeira. Puramente visual - desligue em \"Pés de apoio de tubos e cabos\" nas opções do cliente se preferir tubos nus."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Buckets and cells in any machine",
+      "pt": "Baldes e células em qualquer máquina"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Open any machine GUI with a fluid gauge - a [Fuel Distillery](#/distillery), a Combustion Generator, the [Canning Machine](#/canning-machine) - and **click the gauge** while holding a full bucket: the bucket is poured in, if the tank accepts that fluid and has room for 1 000 mB.",
+        "Click the gauge with an **empty bucket** and it fills, as long as the tank holds at least 1 000 mB.",
+        "**Shift + click** repeats the action for the whole stack of buckets.",
+        "[Fluid Cells](#/fluids) work the same way, in any amount: a cell pours whatever fits and fills with whatever is available."
+      ],
+      "pt": [
+        "Abra a GUI de qualquer máquina com medidor de fluido - uma [Destiladora de combustível](#/distillery), um Gerador de combustão, a [Máquina de enlatamento](#/canning-machine) - e **clique no medidor** segurando um balde cheio: o balde é despejado, se o tanque aceitar aquele fluido e tiver espaço para 1 000 mB.",
+        "Clique no medidor com um **balde vazio** e ele enche, desde que o tanque tenha pelo menos 1 000 mB.",
+        "**Shift + clique** repete a ação para a pilha inteira de baldes.",
+        "[Células de fluído](#/fluids) funcionam do mesmo jeito, em qualquer quantidade: uma célula despeja o que couber e enche com o que estiver disponível."
+      ]
+    }
+  ]
+}

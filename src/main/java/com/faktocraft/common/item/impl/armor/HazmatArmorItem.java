@@ -22,6 +22,19 @@ public class HazmatArmorItem extends BaseArmor implements DyeableLeatherItem {
     return tag != null && tag.contains("color", 99) ? tag.getInt("color") : DEFAULT_COLOR;
   }
 
+  @Override
+  public void initializeClient(
+      java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+    consumer.accept(new net.minecraftforge.client.extensions.common.IClientItemExtensions() {
+      @Override
+      public net.minecraft.client.model.HumanoidModel<?> getHumanoidArmorModel(
+          LivingEntity living, ItemStack stack, EquipmentSlot slot,
+          net.minecraft.client.model.HumanoidModel<?> original) {
+        return slot == EquipmentSlot.LEGS ? original : com.faktocraft.client.model.HazmatModel.get(slot);
+      }
+    });
+  }
+
   public static boolean hasBoots(LivingEntity living) {
     return living.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof HazmatArmorItem;
   }

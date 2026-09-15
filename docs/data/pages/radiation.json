@@ -1,0 +1,198 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Everything in the [uranium chain](#/uranium) is **radioactive**: it hurts every living thing nearby whether it sits in a chest, in your pockets or on the ground, and the [Nuclear Reactor](#/nuclear-reactor) radiates on its own. Radiation is invisible, ignores armor and builds up over time, so shielding, the **Geiger Counter** and the [Hazmat suit](#/hazmat-suit) are what keep a nuclear base liveable.",
+      "pt": "Tudo na [cadeia do urânio](#/uranium) é **radioativo**: machuca tudo que é vivo por perto, esteja num baú, no seu bolso ou no chão, e o [Reator nuclear](#/nuclear-reactor) irradia por conta própria. A radiação é invisível, ignora armadura e acumula com o tempo, então blindagem, o **Contador Geiger** e o [Traje hazmat](#/hazmat-suit) são o que deixa uma base nuclear habitável."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {"en": "Geiger Counter", "pt": "Contador Geiger"},
+          "icon": {"item": "item/tool/electric/geiger_counter"},
+          "desc": {
+            "en": "Glass pane, 4 Lead Plates, an Electronic Circuit and redstone. Hold it to hear the clicks and read the dose in rad.",
+            "pt": "Vidraça, 4 Placas de chumbo, um Circuito eletrônico e redstone. Segure para ouvir os estalos e ler a dose em rad."
+          }
+        },
+        {
+          "name": {"en": "Hazmat suit", "pt": "Traje hazmat"},
+          "icon": {"tinted": {"base": "item/hazmat_chestplate", "overlay": "item/hazmat_chestplate_overlay", "color": "e8c43a"}},
+          "desc": {
+            "en": "Rubber and plastic. The full four-piece set makes you immune, and radiation never wears it out.",
+            "pt": "Borracha e plástico. O conjunto completo de quatro peças deixa você imune, e a radiação nunca gasta ele."
+          },
+          "link": "hazmat-suit"
+        },
+        {
+          "name": {"en": "Lead Block", "pt": "Bloco de chumbo"},
+          "icon": {"block": {"all": "block/lead_block"}},
+          "desc": {
+            "en": "9 Lead Ingots. The cheapest shielding: only 2% of the radiation gets through each block.",
+            "pt": "9 Lingotes de chumbo. A blindagem mais barata: só 2% da radiação atravessa cada bloco."
+          }
+        },
+        {
+          "name": {"en": "Reinforced Stone", "pt": "Pedra reforçada"},
+          "icon": {"block": {"all": "block/reinforced_stone"}},
+          "desc": {
+            "en": "Stone around an Advanced Alloy (8) or lead ingots (6). Shields like lead, survives a nuke, and has a door, slab and stairs.",
+            "pt": "Pedra em volta de uma Liga avançada (8) ou de lingotes de chumbo (6). Blinda como chumbo, sobrevive a uma nuke e tem porta, laje e escada."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "What radiates",
+      "pt": "O que irradia"
+    },
+    {
+      "type": "p",
+      "en": "Every radioactive item shows a green **☢ Radioactive** line in its tooltip. Its strength is the value below times the stack size, from any inventory block (chests, machines, pipes), from items on the ground, and from items carried by a player or mob at **half strength** - inventory, offhand and armor slots included.",
+      "pt": "Todo item radioativo mostra uma linha verde **☢ Radioativo** na dica. A força é o valor abaixo vezes o tamanho da pilha, vindo de qualquer bloco com inventário (baús, máquinas, tubos), de itens no chão e de itens carregados por um jogador ou mob na **metade da força** - inventário, mão secundária e armadura inclusos."
+    },
+    {
+      "type": "table",
+      "headers": {"en": ["Item", "rad per unit"], "pt": ["Item", "rad por unidade"]},
+      "rows": [
+        [{"en": "Depleted Uranium Dust", "pt": "Pó de urânio empobrecido"}, "0.05"],
+        [{"en": "Natural Uranium, uranium ore blocks as items", "pt": "Urânio natural, blocos de minério de urânio como item"}, "0.1"],
+        [{"en": "Uranium Dust", "pt": "Pó de urânio"}, "0.25"],
+        [{"en": "Depleted Fuel Rod", "pt": "Vareta de combustível esgotada"}, "0.5"],
+        [{"en": "Enriched Uranium Dust", "pt": "Pó de urânio enriquecido"}, "1.5"],
+        [{"en": "Nuclear Waste", "pt": "Lixo nuclear"}, "1.5"],
+        [{"en": "Plutonium", "pt": "Plutônio"}, "3.0"],
+        [{"en": "Uranium Fuel Rod", "pt": "Vareta de combustível de urânio"}, "4.5"]
+      ]
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Uranium ore in the ground**: 0.05 per ore block, and all the ores of one chunk section merge into a single source. A vein of 8 is about 0.4 rad - below the safe dose, so only the Geiger Counter notices it.",
+        "**Nuclear Reactor**: the formed cube radiates 40 rad with no rods, 100 loaded but stopped and 300 while running. Above 50% heat that climbs steadily up to 2000 rad at maximum heat.",
+        "**Meltdown fallout**: the crater starts at 4000 rad and fades to nothing over 1 hour of game time. **Nuke fallout**: 8000 rad fading over 2 hours."
+      ],
+      "pt": [
+        "**Minério de urânio na rocha**: 0,05 por bloco de minério, e todos os minérios de uma seção de chunk se juntam numa fonte só. Um veio de 8 dá uns 0,4 rad - abaixo da dose segura, então só o Contador Geiger percebe.",
+        "**Reator nuclear**: o cubo formado irradia 40 rad sem varetas, 100 carregado mas parado e 300 rodando. Acima de 50% de calor isso sobe direto até 2000 rad no calor máximo.",
+        "**Radiação de fusão**: a cratera começa em 4000 rad e cai até zero em 1 hora de jogo. **Radiação da nuke**: 8000 rad caindo ao longo de 2 horas."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "How the dose works",
+      "pt": "Como a dose funciona"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Distance**: a source of strength S gives S / (1 + distance²) rad: a fifth at two blocks, a seventeenth at four. Nothing reaches past 16 blocks, and the check runs once a second, only around players.",
+        "**Safe dose**: a source giving you 0.5 rad or less is ignored. Several sources above that **add up**.",
+        "**Exposure**: every second above the safe dose adds (dose - 0.5) to your exposure; every second at or below it, exposure halves (at least 2 per second), so walking away cures you fast. It survives relogging and resets when you die.",
+        "**Radiation sickness**: once exposure reaches 30, chronic damage starts - the dose (counted between 1 and 30) times 0.02 per second - until exposure decays back below 30.",
+        "**Acute damage**: a dose of 30 or more hurts at once, on top: (dose - 30) times 0.05 per second. Next to a hot reactor you die in seconds.",
+        "**Damage** lands in whole half-hearts, ignores armor, and each hit is capped at your health minus one: it never one-shots you. At half a heart the next pulse kills, with the message **was cooked by radiation**. The green **Radiation** effect is only a display: level I means accumulating without damage, levels II to IV grow with the damage per second."
+      ],
+      "pt": [
+        "**Distância**: uma fonte de força S dá S / (1 + distância²) rad: um quinto a dois blocos, um dezessete avos a quatro. Nada passa de 16 blocos, e a checagem roda uma vez por segundo, só em volta de jogadores.",
+        "**Dose segura**: uma fonte que dê 0,5 rad ou menos é ignorada. Várias fontes acima disso **se somam**.",
+        "**Exposição**: cada segundo acima da dose segura soma (dose - 0,5) à sua exposição; cada segundo na dose segura ou abaixo, a exposição cai pela metade (no mínimo 2 por segundo), então se afastar cura rápido. Ela sobrevive ao relogar e zera quando você morre.",
+        "**Doença da radiação**: quando a exposição chega a 30, começa o dano crônico - a dose (contada entre 1 e 30) vezes 0,02 por segundo - até a exposição cair de novo abaixo de 30.",
+        "**Dano agudo**: uma dose de 30 ou mais dói na hora, por cima: (dose - 30) vezes 0,05 por segundo. Do lado de um reator quente você morre em segundos.",
+        "**Dano** cai em meios corações inteiros, ignora armadura, e cada golpe é limitado à sua vida menos um: nunca mata de uma vez. Com meio coração o próximo pulso mata, com a mensagem **foi cozido pela radiação**. O efeito verde **Radiação** é só indicação: nível I significa acumulando sem dano, níveis II a IV crescem com o dano por segundo."
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "A chest with a stack of Uranium Dust is 16 rad: 3.2 rad two blocks away, safe only from six blocks on. The same stack in your inventory is 8 rad on top of you - sickness after about four seconds.",
+      "pt": "Um baú com uma pilha de Pó de urânio são 16 rad: 3,2 rad a dois blocos, seguro só a partir de seis blocos. A mesma pilha no seu inventário são 8 rad em cima de você - doença em uns quatro segundos."
+    },
+    {
+      "type": "h",
+      "en": "Shielding",
+      "pt": "Blindagem"
+    },
+    {
+      "type": "p",
+      "en": "Every block on the straight line between the source and you weakens the dose, and the factors multiply. Shielding blocks are the **Lead Block**, **Reinforced Stone** with its slab, stairs and closed **Reinforced Stone Door**, obsidian, crying obsidian, reinforced deepslate and bedrock.",
+      "pt": "Cada bloco na linha reta entre a fonte e você enfraquece a dose, e os fatores se multiplicam. Blocos de blindagem são o **Bloco de chumbo**, a **Pedra reforçada** com laje, escada e a **Porta de pedra reforçada** fechada, obsidiana, obsidiana chorosa, ardósia reforçada e bedrock."
+    },
+    {
+      "type": "table",
+      "headers": {"en": ["Between you and the source", "Gets through"], "pt": ["Entre você e a fonte", "Atravessa"]},
+      "rows": [
+        [{"en": "Shielding block", "pt": "Bloco de blindagem"}, "2%"],
+        [{"en": "Any other solid block", "pt": "Qualquer outro bloco sólido"}, "85%"],
+        [{"en": "Air, glass, open door", "pt": "Ar, vidro, porta aberta"}, "100%"]
+      ]
+    },
+    {
+      "type": "list",
+      "en": [
+        "Two lead blocks let through 0.04%: a chest with 128 Enriched Uranium Dust (192 rad) drops to 0.08 rad behind them, below the safe dose. Ten blocks of plain stone still pass 20%.",
+        "The door only shields while closed: open it and the vault is wide open too, so step back before opening."
+      ],
+      "pt": [
+        "Dois blocos de chumbo deixam passar 0,04%: um baú com 128 Pós de urânio enriquecido (192 rad) cai para 0,08 rad atrás deles, abaixo da dose segura. Dez blocos de pedra comum ainda passam 20%.",
+        "A porta só blinda fechada: aberta, o cofre fica escancarado também, então recue antes de abrir."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Immunity",
+      "pt": "Imunidade"
+    },
+    {
+      "type": "p",
+      "en": "**Creative and spectator** players take no dose, and neither does anyone in the **full Hazmat suit** - all four pieces on; exposure keeps decaying while you wear it. Nothing else helps: armor and enchantments do not reduce radiation damage, and mobs take it just like you. In creative, the **Decontaminator** (a debug item with no recipe) wipes meltdown and nuke fallout within 64 blocks on right-click and clears your dose.",
+      "pt": "**Jogadores no criativo e espectador** não recebem dose, nem quem está de **Traje hazmat completo** - as quatro peças; a exposição continua caindo enquanto você veste. Nada mais ajuda: armadura e encantamentos não reduzem o dano de radiação, e mobs sofrem igual a você. No criativo, o **Descontaminador** (item de debug, sem receita) apaga a radiação residual de fusões e nukes num raio de 64 blocos com clique direito e zera a sua dose."
+    },
+    {
+      "type": "h",
+      "en": "Geiger Counter",
+      "pt": "Contador Geiger"
+    },
+    {
+      "type": "p",
+      "en": "Craft it with a glass pane on top, **Lead Plate** - **Electronic Circuit** - Lead Plate in the middle row and Lead Plate - redstone - Lead Plate at the bottom. No energy, no right-click: just hold it in either hand. Every half second it measures the dose where you stand (carried items at half strength) and prints **☢ X rad** on the action bar. The clicks come faster the hotter it gets, and the screen on the 3D model steps up at 0.05, 0.5, 1 and 4 rad, the top one animated.",
+      "pt": "Faça com uma vidraça em cima, **Placa de chumbo** - **Circuito eletrônico** - Placa de chumbo na fileira do meio e Placa de chumbo - redstone - Placa de chumbo embaixo. Sem energia, sem clique direito: só segure em qualquer mão. A cada meio segundo ele mede a dose onde você está (itens carregados pela metade) e mostra **☢ X rad** na barra de ação. Os estalos ficam mais rápidos quanto mais quente, e a tela do modelo 3D muda em 0,05, 0,5, 1 e 4 rad, a última animada."
+    },
+    {
+      "type": "table",
+      "headers": {"en": ["Reading", "Colour", "Meaning"], "pt": ["Leitura", "Cor", "Significado"]},
+      "rows": [
+        [{"en": "below 0.05", "pt": "abaixo de 0,05"}, {"en": "green", "pt": "verde"}, {"en": "Background: rare random clicks.", "pt": "Fundo: estalos raros e aleatórios."}],
+        [{"en": "0.05 to 1", "pt": "0,05 a 1"}, {"en": "yellow", "pt": "amarelo"}, {"en": "Something is near. Harmless below 0.5; above it exposure builds.", "pt": "Tem algo perto. Inofensivo abaixo de 0,5; acima a exposição sobe."}],
+        [{"en": "1 to 4", "pt": "1 a 4"}, {"en": "gold", "pt": "dourado"}, {"en": "Sickness within a minute if you stay.", "pt": "Doença em até um minuto se você ficar."}],
+        [{"en": "4 and up", "pt": "4 ou mais"}, {"en": "red", "pt": "vermelho"}, {"en": "Leave now; from 30 rad the damage is immediate.", "pt": "Saia agora; a partir de 30 rad o dano é imediato."}]
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Practical tips",
+      "pt": "Dicas práticas"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Store uranium behind two blocks of lead or reinforced stone and feed the [Uranium Centrifuge](#/uranium) with [pipes](#/logistics), so you never carry dust yourself. One fuel rod in your pocket is 2.25 rad - sickness in about 20 seconds - so wear the [Hazmat suit](#/hazmat-suit) to load the reactor.",
+        "Keep the Geiger Counter in your offhand while you work; the colour tells you to step back before the Radiation effect even appears.",
+        "Exposure recovers fast: once the dose is gone it halves every second. Walking ten blocks away is usually the whole cure."
+      ],
+      "pt": [
+        "Guarde urânio atrás de dois blocos de chumbo ou pedra reforçada e alimente a [Centrífuga de urânio](#/uranium) com [tubos](#/logistics), para nunca carregar pó você mesmo. Uma vareta no bolso são 2,25 rad - doença em uns 20 segundos - então vista o [Traje hazmat](#/hazmat-suit) para carregar o reator.",
+        "Deixe o Contador Geiger na mão secundária enquanto trabalha; a cor manda recuar antes mesmo de o efeito Radiação aparecer.",
+        "A exposição recupera rápido: sem dose, ela cai pela metade a cada segundo. Andar dez blocos para longe costuma ser a cura inteira."
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "The Geiger Counter reads uranium ore through solid rock: a faint yellow reading with nothing in your inventory means a vein within a few blocks. Cheaper than the [Prospector](#/prospector) when you already know roughly where to dig.",
+      "pt": "O Contador Geiger lê minério de urânio através da rocha: uma leitura amarela fraca sem nada no inventário quer dizer um veio a poucos blocos. Mais barato que o [Prospector](#/prospector) quando você já sabe mais ou menos onde cavar."
+    }
+  ]
+}

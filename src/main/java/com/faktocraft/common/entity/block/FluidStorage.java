@@ -12,6 +12,7 @@ public class FluidStorage implements IFluidHandler, IProgress {
 
   private final int capacityMb;
   private final Predicate<FluidStack> validator;
+  private boolean outputOnly = false;
   private FluidStack fluid = FluidStack.EMPTY;
 
   private Runnable changeListener = () -> {
@@ -28,6 +29,15 @@ public class FluidStorage implements IFluidHandler, IProgress {
 
   public void setChangeListener(Runnable listener) {
     this.changeListener = listener;
+  }
+
+  public FluidStorage markOutputOnly() {
+    this.outputOnly = true;
+    return this;
+  }
+
+  public boolean isOutputOnly() {
+    return outputOnly;
   }
 
   public Fluid getFluid() {
@@ -115,12 +125,12 @@ public class FluidStorage implements IFluidHandler, IProgress {
 
   @Override
   public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
-    return validator.test(stack);
+    return !outputOnly && validator.test(stack);
   }
 
   @Override
   public int fill(FluidStack resource, FluidAction action) {
-    if (resource.isEmpty()) {
+    if (outputOnly || resource.isEmpty()) {
       return 0;
     }
     return fillFluid(resource, resource.getAmount(), action.simulate());

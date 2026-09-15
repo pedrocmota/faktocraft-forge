@@ -24,11 +24,11 @@
         },
         {
           "name": {
-            "en": "Rubber sheet",
-            "pt": "Folha de borracha"
+            "en": "Rubber carpet",
+            "pt": "Carpete de borracha"
           },
           "icon": {
-            "item": "block/rubber_sheet"
+            "item": "block/rubber_carpet"
           }
         }
       ]
@@ -105,13 +105,19 @@
         "Automate ore processing with the full chain: [ore processing machines](#/machines-processing).",
         "Store surplus power in a [battery box](#/battery-box) so machines keep running while generation dips.",
         "Move items around with [logistics pipes](#/logistics).",
-        "Let a [quarry](#/quarry) mine for you."
+        "Let a [quarry](#/quarry) mine for you.",
+        "Run cables and pipes through walls with the [Hole Drill](#/hole-drill).",
+        "Find oil with the [Prospector](#/prospector) and refine it into fuel: [oil](#/oil).",
+        "Before you touch uranium, read about [radiation](#/radiation) and the [hazmat suit](#/hazmat-suit)."
       ],
       "pt": [
         "Automatize o processamento de minério com a cadeia completa: [máquinas de processamento](#/machines-processing).",
         "Guarde o excedente numa [caixa de bateria](#/battery-box) para as máquinas continuarem rodando quando a geração cair.",
         "Mova itens com os [tubos de logística](#/logistics).",
-        "Deixe a [mineradora](#/quarry) minerar por você."
+        "Deixe a [mineradora](#/quarry) minerar por você.",
+        "Passe cabos e tubos por dentro das paredes com a [Furadeira](#/hole-drill).",
+        "Ache petróleo com o [Prospector](#/prospector) e refine em fuel: [petróleo](#/oil).",
+        "Antes de mexer com urânio, leia sobre [radiação](#/radiation) e o [traje hazmat](#/hazmat-suit)."
       ]
     }
   ]

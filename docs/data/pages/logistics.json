@@ -1,14 +1,10 @@
 {
+  "stackedCards": true,
   "blocks": [
     {
       "type": "p",
-      "en": "The logistics network moves items through **transparent pipes** - you literally watch items travel. It is request-driven: nothing moves without a reason, whether that reason is a module's rule or a player's request.",
-      "pt": "A rede de logística move itens por **tubos transparentes** - você literalmente vê os itens viajando. Ela é orientada a demanda: nada se move sem motivo, seja a regra de um módulo ou a requisição de um jogador."
-    },
-    {
-      "type": "h",
-      "en": "Pipes",
-      "pt": "Tubos"
+      "en": "The logistics network moves items through **transparent pipes**: you literally watch them travel. It is request-driven, so nothing moves without a reason, whether that reason is a module's rule, a machine waiting for ingredients or a player asking for an item at the [Request Table](#/request-table). Once it is up, the same network also [crafts on demand](#/autocrafting).",
+      "pt": "A rede de logística move itens por **tubos transparentes**: você literalmente vê eles viajando. Ela é orientada a demanda, então nada se move sem motivo, seja a regra de um módulo, uma máquina esperando insumo ou um jogador pedindo um item na [Mesa de Requisição](#/request-table). Depois de montada, a mesma rede também [fabrica sob demanda](#/autocrafting)."
     },
     {
       "type": "icons",
@@ -16,148 +12,131 @@
         {
           "name": {
             "en": "Stone Pipe",
-            "pt": "Tubo de Pedra"
+            "pt": "Tubo de pedra"
           },
           "icon": {
             "pipe": "block/pipe/stone_pipe"
           },
           "desc": {
-            "en": "The backbone - every network is built from these.",
-            "pt": "O tronco - toda rede é construída com eles."
+            "en": "Stone, glass, stone in a row makes 8. The trunk of every network: it only carries items, has no screen and costs nothing to run.",
+            "pt": "Pedra, vidro, pedra em fila dá 8. O tronco de toda rede: só carrega itens, não tem tela e não custa nada pra funcionar."
           }
         },
         {
           "name": {
-            "en": "Gold Pipe",
-            "pt": "Tubo de Ouro"
+            "en": "Golden Pipe",
+            "pt": "Tubo de ouro"
           },
           "icon": {
             "pipe": "block/pipe/gold_pipe"
           },
           "desc": {
-            "en": "Speeds items up as they pass through.",
-            "pt": "Acelera os itens que passam por ele."
+            "en": "Gold ingot, glass, gold ingot makes 8. Same trunk pipe, but an item crosses it in half the time.",
+            "pt": "Barra de ouro, vidro, barra de ouro dá 8. O mesmo tubo de tronco, mas o item atravessa na metade do tempo."
           }
         },
         {
           "name": {
-            "en": "Chassis Mk1 / Mk2",
-            "pt": "Chassi Mk1 / Mk2"
+            "en": "Chassis Pipe I / II",
+            "pt": "Tubo de chassi I / II"
           },
           "icon": {
             "pipe": "block/pipe/chassis_pipe_2"
           },
           "desc": {
-            "en": "Docks against an inventory and holds 2 (Mk1) or 3 (Mk2) modules.",
-            "pt": "Encosta num inventário e comporta 2 (Mk1) ou 3 (Mk2) módulos."
-          }
+            "en": "Electronic Circuit over a chest over a Stone Pipe; add an Advanced Circuit for tier II. Docks against one inventory and holds 2 or 3 modules. Details on the [modules page](#/logistics-modules).",
+            "pt": "Circuito eletrônico sobre um baú sobre um Tubo de pedra; junte um Circuito eletrônico avançado pro nível II. Encosta num inventário e comporta 2 ou 3 módulos. Detalhes na [página de módulos](#/logistics-modules)."
+          },
+          "link": "logistics-modules"
+        },
+        {
+          "name": {
+            "en": "Logistics Core",
+            "pt": "Núcleo logístico"
+          },
+          "icon": {
+            "block": {
+              "top": "block/logistics_controller_top",
+              "front": "block/logistics_controller_side"
+            }
+          },
+          "desc": {
+            "en": "Steel plates, redstone and an Electronic Circuit. The brain: one per network, Medium voltage, 40 000 IE buffer. Nothing moves without it.",
+            "pt": "Placas de aço, redstone e um Circuito eletrônico. O cérebro: um por rede, tensão Média, buffer de 40 000 IE. Sem ele nada se move."
+          },
+          "link": "request-table"
+        },
+        {
+          "name": {
+            "en": "Request Table",
+            "pt": "Mesa de Requisição"
+          },
+          "icon": {
+            "block": {
+              "top": "block/request_table_top",
+              "front": "block/request_table_front",
+              "side": "block/request_table_side"
+            }
+          },
+          "desc": {
+            "en": "Browse everything the network holds or can craft and ask for it, up to 1728 at a time.",
+            "pt": "Navegue por tudo que a rede tem ou consegue fabricar e peça, até 1728 de uma vez."
+          },
+          "link": "request-table"
+        },
+        {
+          "name": {
+            "en": "Craft Pipe and Recipe Pipe",
+            "pt": "Tubo de craft e Tubo de receita"
+          },
+          "icon": {
+            "pipe": "block/pipe/recipe_pipe"
+          },
+          "desc": {
+            "en": "Docking pipes that teach the network how things are made: crafting-table patterns on a Logistics Assembly Table, or the recipes of any machine.",
+            "pt": "Tubos de acoplamento que ensinam à rede como as coisas são feitas: padrões de bancada numa Mesa de montagem logística, ou as receitas de qualquer máquina."
+          },
+          "link": "autocrafting"
         }
       ]
     },
     {
       "type": "h",
-      "en": "Modules",
-      "pt": "Módulos"
+      "en": "Three layers",
+      "pt": "Três camadas"
     },
     {
-      "type": "p",
-      "en": "Modules give a chassis its behavior. Each module has a **RimWorld-style item filter**: a tree of every item in the game where you mark whole mods, categories or single items.",
-      "pt": "Módulos dão comportamento ao chassi. Cada módulo tem um **filtro de itens estilo RimWorld**: uma árvore com todos os itens do jogo onde você marca mods inteiros, categorias ou itens individuais."
+      "type": "list",
+      "en": [
+        "**Trunk**: Stone Pipes and Golden Pipes. They only connect to each other, to chassis and to docking pipes. Items travel 4 ticks per pipe, 2 ticks when the pipe is golden.",
+        "**Chassis and modules**: a chassis pipe docks against exactly one neighbouring inventory (chest, machine, anything with slots). The [modules](#/logistics-modules) you put inside decide what that inventory offers, accepts, pushes or keeps stocked.",
+        "**Core**: the **Logistics Core** owns the network, pays for every move and plans every request. It needs power: 2 IE per item moved and 20 IE per craft, taken from its 40 000 IE buffer. Without energy the network goes offline (you can still browse, nothing is delivered)."
+      ],
+      "pt": [
+        "**Tronco**: Tubos de pedra e Tubos de ouro. Eles só conectam entre si, a chassis e a tubos de acoplamento. Itens andam 4 ticks por tubo, 2 ticks quando o tubo é de ouro.",
+        "**Chassi e módulos**: um tubo de chassi encosta em exatamente um inventário vizinho (baú, máquina, qualquer coisa com slots). Os [módulos](#/logistics-modules) que você põe dentro decidem o que aquele inventário oferece, aceita, empurra ou mantém em estoque.",
+        "**Núcleo**: o **Núcleo logístico** é dono da rede, paga cada movimento e planeja cada pedido. Precisa de energia: 2 IE por item movido e 20 IE por craft, tirados do buffer de 40 000 IE. Sem energia a rede fica offline (dá pra navegar, mas nada é entregue)."
+      ]
     },
     {
-      "type": "icons",
-      "items": [
-        {
-          "name": {
-            "en": "Sink",
-            "pt": "Sink"
-          },
-          "icon": {
-            "item": "item/module_sink"
-          },
-          "desc": {
-            "en": "Accepts matching items into the docked inventory. Priority decides ties.",
-            "pt": "Aceita itens compatíveis no inventário encostado. Prioridade decide empates."
-          }
-        },
-        {
-          "name": {
-            "en": "Provider",
-            "pt": "Provider"
-          },
-          "icon": {
-            "item": "item/module_provider"
-          },
-          "desc": {
-            "en": "Offers the inventory's stock to the network.",
-            "pt": "Oferece o estoque do inventário à rede."
-          }
-        },
-        {
-          "name": {
-            "en": "Extractor",
-            "pt": "Extractor"
-          },
-          "icon": {
-            "item": "item/module_extractor"
-          },
-          "desc": {
-            "en": "Actively pulls matching items out and sends them to sinks.",
-            "pt": "Puxa itens compatíveis ativamente e os envia aos sinks."
-          }
-        },
-        {
-          "name": {
-            "en": "Supplier",
-            "pt": "Supplier"
-          },
-          "icon": {
-            "item": "item/module_supplier"
-          },
-          "desc": {
-            "en": "Keeps a target amount of each marked item stocked in the inventory.",
-            "pt": "Mantém uma quantidade-alvo de cada item marcado no inventário."
-          }
-        },
-        {
-          "name": {
-            "en": "Collector",
-            "pt": "Collector"
-          },
-          "icon": {
-            "item": "item/module_collector"
-          },
-          "desc": {
-            "en": "Vacuums dropped items near the chassis' free faces.",
-            "pt": "Aspira itens dropados perto das faces livres do chassi."
-          }
-        },
-        {
-          "name": {
-            "en": "Ejector",
-            "pt": "Ejector"
-          },
-          "icon": {
-            "item": "item/module_ejector"
-          },
-          "desc": {
-            "en": "Throws items out into the world.",
-            "pt": "Ejeta itens para o mundo."
-          }
-        },
-        {
-          "name": {
-            "en": "Disposal",
-            "pt": "Disposal"
-          },
-          "icon": {
-            "item": "item/module_disposal"
-          },
-          "desc": {
-            "en": "Destroys matching overflow - the network's trash can.",
-            "pt": "Destrói excedente compatível - a lixeira da rede."
-          }
-        }
+      "type": "callout",
+      "en": "The Logistics Core, the Request Table and the Logistics Assembly Table **never attach to a plain Stone or Golden Pipe**. They only join the network when they touch a chassis pipe, a Craft Pipe or a Recipe Pipe (the Assembly Table specifically through the docked side of its Craft Pipe). If your core says there is no network, that is almost always why.",
+      "pt": "O Núcleo logístico, a Mesa de Requisição e a Mesa de montagem logística **nunca se ligam num Tubo de pedra ou de ouro comum**. Eles só entram na rede quando encostam num tubo de chassi, num Tubo de craft ou num Tubo de receita (a Mesa de montagem especificamente pelo lado acoplado do seu Tubo de craft). Se o núcleo diz que não tem rede, quase sempre é isso."
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Number", "Value"],
+        "pt": ["Número", "Valor"]
+      },
+      "rows": [
+        [{"en": "Core buffer", "pt": "Buffer do núcleo"}, "40 000 IE"],
+        [{"en": "Energy per item moved", "pt": "Energia por item movido"}, "2 IE"],
+        [{"en": "Energy per craft", "pt": "Energia por craft"}, "20 IE"],
+        [{"en": "Travel per Stone Pipe", "pt": "Viagem por Tubo de pedra"}, {"en": "4 ticks", "pt": "4 ticks"}],
+        [{"en": "Travel per Golden Pipe", "pt": "Viagem por Tubo de ouro"}, {"en": "2 ticks", "pt": "2 ticks"}],
+        [{"en": "Items per module operation", "pt": "Itens por operação de módulo"}, {"en": "16 (+16 per Throughput Upgrade)", "pt": "16 (+16 por Melhoria de Vazão)"}],
+        [{"en": "Blocks per network", "pt": "Blocos por rede"}, {"en": "up to 1024", "pt": "até 1024"}]
       ]
     },
     {
@@ -168,28 +147,30 @@
     {
       "type": "list",
       "en": [
-        "Run **stone pipes** between your machines and chests.",
-        "Put a **chassis** against each inventory that should participate.",
-        "Give output chests a **sink** module (mark what belongs there), storage a **provider**, and machine outputs an **extractor**.",
-        "Add a [Logistics Controller and Request Table](#/request-table) to start requesting items on demand."
+        "Run **Stone Pipes** between the chests and machines that should take part. Plain pipes only need to touch each other.",
+        "Put a **Chassis Pipe I** against each inventory. With more than one neighbour, sneak and right-click the chassis with a **Wrench** to cycle which side it docks to; the chat tells you what it picked.",
+        "Open each chassis with a Wrench in your main hand and drop in [modules](#/logistics-modules): a **Provider Module** on storage chests, a **Sink Module** on the chest that should receive things (mark what belongs there), an **Extractor Module** on machine outputs.",
+        "Place the **Logistics Core** touching a chassis, wire it to a Medium line (see [Energy](#/energy) and [transformers](#/transformer)) and wait for the buffer to fill. The moment it has power, extractors start pushing and sinks start receiving.",
+        "Add a [Request Table](#/request-table) next to another chassis to pull items on demand, then [Craft and Recipe Pipes](#/autocrafting) to let the network make what it does not have."
       ],
       "pt": [
-        "Passe **tubos de pedra** entre suas máquinas e baús.",
-        "Coloque um **chassi** encostado em cada inventário que deve participar.",
-        "Dê aos baús de saída um módulo **sink** (marque o que pertence lá), ao armazém um **provider**, e às saídas de máquina um **extractor**.",
-        "Adicione um [Controlador de Logística e uma Mesa de Requisição](#/request-table) para pedir itens sob demanda."
+        "Passe **Tubos de pedra** entre os baús e máquinas que devem participar. Tubos comuns só precisam se encostar.",
+        "Coloque um **Tubo de chassi I** encostado em cada inventário. Com mais de um vizinho, agache e clique com a **Chave inglesa** no chassi pra alternar o lado acoplado; o chat diz o que ele escolheu.",
+        "Abra cada chassi com a Chave inglesa na mão principal e encaixe [módulos](#/logistics-modules): um **Módulo Provider** nos baús de armazenamento, um **Módulo Sink** no baú que deve receber coisas (marque o que pertence lá), um **Módulo Extrator** nas saídas de máquina.",
+        "Coloque o **Núcleo logístico** encostado num chassi, ligue numa linha Média (veja [Energia](#/energy) e [transformadores](#/transformer)) e espere o buffer encher. Assim que tiver energia, os extratores começam a empurrar e os sinks a receber.",
+        "Adicione uma [Mesa de Requisição](#/request-table) ao lado de outro chassi pra puxar itens sob demanda, depois [Tubos de craft e de receita](#/autocrafting) pra rede fabricar o que não tem."
       ]
     },
     {
       "type": "callout",
       "style": "tip",
-      "en": "Pipes are transparent **on purpose**: watching the flow is the best debugging tool the network has.",
-      "pt": "Os tubos são transparentes **de propósito**: ver o fluxo é a melhor ferramenta de depuração da rede."
+      "en": "Pipes are transparent **on purpose**: watching the flow is the best debugging tool the network has. The items you see travelling are ghosts of the real stack, which lives in the task; if a delivery is refused at the end, the stack goes back where it came from, so nothing is ever lost in a pipe.",
+      "pt": "Os tubos são transparentes **de propósito**: ver o fluxo é a melhor ferramenta de depuração da rede. Os itens que você vê viajando são fantasmas da pilha real, que fica na tarefa; se a entrega for recusada no fim, a pilha volta de onde saiu, então nada se perde num tubo."
     },
     {
       "type": "callout",
-      "en": "Logistics pipes and chassis can run inside walls: bore the block with the [Hole Drill](#/energy) and place the pipe on the bored block.",
-      "pt": "Tubos e chassis logísticos podem correr por dentro de paredes: fure o bloco com a [Furadeira](#/energy) e coloque o tubo no bloco furado."
+      "en": "Two cores that can reach each other stop everything with **Two cores on the same network!** Keep one Logistics Core per set of connected pipes. Pipes and chassis can also run inside walls: bore the block with the [Hole Drill](#/hole-drill) and place the pipe on the bored block, which then imitates the wall around it.",
+      "pt": "Dois núcleos que se alcançam param tudo com **Dois núcleos na mesma rede!** Mantenha um Núcleo logístico por conjunto de tubos conectados. Tubos e chassis também podem correr por dentro de paredes: fure o bloco com a [Furadeira](#/hole-drill) e coloque o tubo no bloco furado, que passa a imitar a parede em volta."
     }
   ]
 }

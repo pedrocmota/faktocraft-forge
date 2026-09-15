@@ -1,0 +1,158 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Autocrafting turns the [logistics network](#/logistics) from a conveyor into a factory: two docking pipes teach the [Logistics Core](#/request-table) how things are made, and from then on any request or Supplier Module can order items that do not exist yet. The **Craft Pipe** handles crafting-table patterns on a **Logistics Assembly Table**; the **Recipe Pipe** describes what any other machine consumes and produces.",
+      "pt": "O autocraft transforma a [rede de logística](#/logistics) de esteira em fábrica: dois tubos de acoplamento ensinam ao [Núcleo logístico](#/request-table) como as coisas são feitas, e daí em diante qualquer pedido ou Módulo Abastecedor pode encomendar itens que ainda não existem. O **Tubo de craft** cuida de padrões de bancada numa **Mesa de montagem logística**; o **Tubo de receita** descreve o que qualquer outra máquina consome e produz."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Craft Pipe",
+            "pt": "Tubo de craft"
+          },
+          "icon": {
+            "pipe": "block/pipe/craft_pipe"
+          },
+          "desc": {
+            "en": "Electronic Circuit over a crafting table over a Stone Pipe. Docks only to a Logistics Assembly Table and holds up to 256 crafting patterns.",
+            "pt": "Circuito eletrônico sobre uma bancada sobre um Tubo de pedra. Acopla só numa Mesa de montagem logística e guarda até 256 padrões de bancada."
+          }
+        },
+        {
+          "name": {
+            "en": "Logistics Assembly Table",
+            "pt": "Mesa de montagem logística"
+          },
+          "icon": {
+            "block": {
+              "top": "block/assembly_table_top",
+              "front": "block/assembly_table_side"
+            }
+          },
+          "desc": {
+            "en": "Steel Plates, an Electronic Circuit and a crafting table. Executes the patterns of its Craft Pipe: 4000 IE buffer, 8 IE/t, 40 ticks per craft, 9 ingredient and 9 output slots.",
+            "pt": "Placas de aço, um Circuito eletrônico e uma bancada. Executa os padrões do seu Tubo de craft: buffer de 4000 IE, 8 IE/t, 40 ticks por craft, 9 slots de ingrediente e 9 de saída."
+          }
+        },
+        {
+          "name": {
+            "en": "Recipe Pipe",
+            "pt": "Tubo de receita"
+          },
+          "icon": {
+            "pipe": "block/pipe/recipe_pipe"
+          },
+          "desc": {
+            "en": "Electronic Circuit over paper over a Stone Pipe. Docks to any machine or inventory and holds up to 256 recipes of up to 12 inputs and 4 outputs each.",
+            "pt": "Circuito eletrônico sobre papel sobre um Tubo de pedra. Acopla em qualquer máquina ou inventário e guarda até 256 receitas de até 12 entradas e 4 saídas cada."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Craft Pipe and Assembly Table",
+      "pt": "Tubo de craft e Mesa de montagem"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Place the **Logistics Assembly Table** on the docked side of a **Craft Pipe**; the table joins the network only through that pipe. A Craft Pipe against anything else fails with **Craft pipe without an Assembly Table**; a table without a pipe shows **No Craft Pipe connected**, because the table stores no recipe of its own.",
+        "Open the pipe with a **Wrench** in your main hand. Each pattern is a 3x3 grid you draw like a crafting table; the pipe keeps up to 256, with a search box, drag to reorder, **Add**, **Remove** and copy one / copy all / paste to clone patterns between pipes.",
+        "Each pattern is **Exact** or **Flexible**. Exact uses only the item you drew; Flexible accepts any variant the vanilla recipe allows (any plank for a chest), so the network uses whatever is in stock.",
+        "The table needs power: 4000 IE buffer, 8 IE/t, a capacitor dock, and 40 ticks per craft. **Overclocker Upgrade** and **Efficiency Upgrade** from the [upgrades page](#/upgrades) fit its slots.",
+        "When idle, the pipe drains whatever is left in the table's output slots (buckets, extra results) to the network's sinks, so leftovers never clog it."
+      ],
+      "pt": [
+        "Coloque a **Mesa de montagem logística** no lado acoplado de um **Tubo de craft**; a mesa entra na rede só por esse tubo. Um Tubo de craft encostado em outra coisa falha com **Tubo de craft sem Mesa de Montagem**; uma mesa sem tubo mostra **Sem Tubo de craft conectado**, porque a mesa não guarda receita própria.",
+        "Abra o tubo com a **Chave inglesa** na mão principal. Cada padrão é uma grade 3x3 que você desenha como numa bancada; o tubo guarda até 256, com busca, arrastar pra reordenar, **Adicionar**, **Remover** e copiar um / copiar todos / colar pra clonar padrões entre tubos.",
+        "Cada padrão é **Exato** ou **Flexível**. Exato usa só o item desenhado; Flexível aceita qualquer variante que a receita vanilla permite (qualquer tábua pra um baú), então a rede usa o que tiver em estoque.",
+        "A mesa precisa de energia: buffer de 4000 IE, 8 IE/t, um dock de capacitor, e 40 ticks por craft. A **Melhoria de overclock** e a **Melhoria de eficiência** da [página de melhorias](#/upgrades) cabem nos slots dela.",
+        "Ociosa, o tubo drena o que sobrou nos slots de saída da mesa (baldes, resultados extras) pros sinks da rede, então sobras nunca entopem ela."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Recipe Pipe in depth",
+      "pt": "Tubo de receita a fundo"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Dock it to any machine or chest that is **not** an Assembly Table; sneak and right-click with a Wrench to cycle the docked side. Machines refuse a connection on their front, so come in from a side, the back or the top. The screen opens with a Wrench.",
+        "Each recipe lists up to **12 inputs and 4 outputs**. Click a box holding an item to set it, right-click to clear, scroll to change the amount per craft (shift: 16). Crafting-table recipes are refused here: they belong in the Craft Pipe.",
+        "**Exact item or tag**: shift-click an input to switch between only that item and any item of its tag (blue background).",
+        "**Batch size** (1 to 64, shift: 8) is how many units enter the machine at once. At **1** the pipe feeds continuously and collects each output as it is ready, right for a furnace or crusher. A larger batch delivers the whole set, waits, and collects everything before the next set: needed when the machine only works on the complete set, like a brewing stand making 3 potions.",
+        "**Delivery mode** badge on each input, click to cycle: **U** (gray, per unit) once for every unit produced; **B** (blue, per batch) once per batch however many units it makes; **K** (orange, Keep stocked) topped up inside the machine to that amount, never counted as an ingredient and never taken back.",
+        "Examples: a furnace recipe is 1 raw iron **U** plus 1 coal **K** at 8, so the pipe keeps 8 coal in the fuel slot and only counts the ore. A brewing stand is 3 water bottles **B**, 1 nether wart **B**, blaze powder **K**, batch 3.",
+        "**Slot binding**: pick an input or output, then click a machine slot to say where it goes in or comes out; shift-click extends to a range of slots; right-click a slot removes the binding. Unbound entries use any slot. Press **F9** to show the slot numbers on the machine.",
+        "**Split work** (on by default): large requests are shared among every pipe with the same recipe and this option on. Off, this pipe only takes whole requests.",
+        "**Timeout**: seconds without progress before the request fails and the ingredients return to stock. Scroll changes it by 1 s, shift by a minute, from 1 s to 1 h; default 2 minutes. Copy / paste clones the whole pipe."
+      ],
+      "pt": [
+        "Acople em qualquer máquina ou baú que **não** seja uma Mesa de montagem; agache e clique com a Chave inglesa pra alternar o lado acoplado. Máquinas não aceitam conexão pela frente, então entre por um lado, por trás ou por cima. A tela abre com a Chave inglesa.",
+        "Cada receita lista até **12 entradas e 4 saídas**. Clique numa casa com um item na mão pra definir, botão direito apaga, rolagem muda a quantidade por craft (shift: 16). Receitas de bancada são recusadas aqui: elas vão no Tubo de craft.",
+        "**Item exato ou tag**: shift + clique numa entrada alterna entre só aquele item e qualquer item da tag dele (fundo azul).",
+        "**Tamanho do lote** (1 a 64, shift: 8) é quantas unidades entram na máquina de uma vez. Em **1** o tubo alimenta continuamente e recolhe cada saída conforme fica pronta, certo pra fornalha ou triturador. Lote maior entrega o conjunto inteiro, espera e recolhe tudo antes do próximo: necessário quando a máquina só trabalha com o conjunto completo, como um suporte de poções fazendo 3 poções.",
+        "**Modo de entrega**, o selo em cada entrada, clique pra alternar: **U** (cinza, por unidade) uma vez pra cada unidade produzida; **L** (azul, por lote) uma vez por lote, seja qual for o número de unidades; **M** (laranja, Manter) reposto dentro da máquina até essa quantidade, nunca contado como ingrediente e nunca retirado.",
+        "Exemplos: a receita da fornalha é 1 ferro bruto **U** mais 1 carvão **M** em 8, então o tubo mantém 8 carvões no slot de combustível e só conta o minério. O suporte de poções é 3 garrafas de água **L**, 1 fungo do Nether **L**, pó de blaze **M**, lote 3.",
+        "**Vínculo com os slots**: escolha uma entrada ou saída e clique num slot da máquina pra dizer por onde ela entra ou sai; shift + clique estende a uma faixa de slots; botão direito no slot desfaz o vínculo. Sem vínculo, qualquer slot serve. Aperte **F9** pra ver os números dos slots na máquina.",
+        "**Dividir trabalho** (ligado por padrão): pedidos grandes são repartidos entre todos os tubos com a mesma receita e esta opção ligada. Desligado, este tubo só assume pedidos inteiros.",
+        "**Tempo limite**: segundos sem progresso até o pedido falhar e os insumos voltarem ao estoque. Rolagem muda 1 s, shift muda um minuto, de 1 s a 1 h; padrão 2 minutos. Copiar / colar clona o tubo inteiro."
+      ]
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Setting", "Range", "Default"],
+        "pt": ["Ajuste", "Faixa", "Padrão"]
+      },
+      "rows": [
+        [{"en": "Recipes per pipe", "pt": "Receitas por tubo"}, "256", "-"],
+        [{"en": "Inputs / outputs per recipe", "pt": "Entradas / saídas por receita"}, "12 / 4", "-"],
+        [{"en": "Batch size", "pt": "Tamanho do lote"}, "1 - 64", "1"],
+        [{"en": "Timeout", "pt": "Tempo limite"}, {"en": "1 s - 1 h", "pt": "1 s - 1 h"}, {"en": "2 min", "pt": "2 min"}],
+        [{"en": "Split work", "pt": "Dividir trabalho"}, {"en": "on / off", "pt": "ligado / desligado"}, {"en": "on", "pt": "ligado"}]
+      ]
+    },
+    {
+      "type": "h",
+      "en": "How a multi-stage craft runs",
+      "pt": "Como um craft de vários estágios roda"
+    },
+    {
+      "type": "list",
+      "en": [
+        "You request 8 Electronic Circuits. The planner walks the known recipes backwards: circuits need plates and cables, plates need ingots from the Metal Former, and so on, up to 16 nested stages and 4096 crafts, otherwise **Request too complex**. A recipe that needs itself gives **Recipe cycle detected**.",
+        "The job becomes one parent task with **Deliver** subtasks for stock that already exists and one **Craft** subtask per stage. All stages start at once; each collects complete ingredient sets, so a later stage never steals from an earlier one.",
+        "**Division of work**: with several machines on the same recipe, the request is split into sub-jobs among every pipe with Split work on; pipes with it off only take whole requests. Otherwise machines are alternatives, and a task shows **Waiting for a free machine** while all are busy.",
+        "**Continuous flow** (batch 1): the pipe feeds as much as fits, drains the machine's output every tick and counts the accumulated total, so 90 iron in a furnace with room for 64 keeps flowing. The timeout only counts time **without progress**.",
+        "Every 20 ticks the core dispatches what is ready, up to 64 units per tick. Outputs of one stage become the inputs of the next; the final stage delivers to the Request Table, the Supplier's chest or wherever the request came from.",
+        "If a machine or pipe on the plan disappears the task fails at once with **machine or pipe removed**; if the machine stops progressing for the pipe's timeout it fails with **no production**, and reserved ingredients go back to stock. The [Request Table](#/request-table) page lists every state and failure reason."
+      ],
+      "pt": [
+        "Você pede 8 Circuitos eletrônicos. O planejador percorre as receitas conhecidas de trás pra frente: circuito precisa de placas e cabos, placa precisa de barra na Formadora de metais, e assim por diante, até 16 estágios aninhados e 4096 crafts, senão **Pedido complexo demais**. Receita que precisa de si mesma dá **Ciclo de receitas detectado**.",
+        "O trabalho vira uma tarefa-mãe com subtarefas **Entregar** pro estoque que já existe e uma subtarefa **Craftar** por estágio. Todos os estágios começam juntos; cada um coleta conjuntos completos de ingredientes, então um estágio posterior nunca rouba de um anterior.",
+        "**Divisão de trabalho**: com várias máquinas na mesma receita, o pedido é repartido em sub-pedidos entre todos os tubos com Dividir trabalho ligado; tubos com ele desligado só assumem pedidos inteiros. Fora isso as máquinas são alternativas, e a tarefa mostra **Aguardando máquina livre** enquanto todas estão ocupadas.",
+        "**Fluxo contínuo** (lote 1): o tubo alimenta o que cabe, drena a saída da máquina a cada tick e conta o total acumulado, então 90 ferros numa fornalha com espaço pra 64 continuam fluindo. O tempo limite só conta o tempo **sem progresso**.",
+        "A cada 20 ticks o núcleo despacha o que está pronto, até 64 unidades por tick. As saídas de um estágio viram as entradas do próximo; o último estágio entrega na Mesa de Requisição, no baú do Abastecedor ou de onde veio o pedido.",
+        "Se uma máquina ou tubo do plano some, a tarefa falha na hora com **máquina ou tubo removido**; se a máquina para de progredir pelo tempo limite do tubo, falha com **sem produção**, e os insumos reservados voltam pro estoque. A página da [Mesa de Requisição](#/request-table) lista todos os estados e motivos de falha."
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Machines whose slots have different roles (fuel, catalyst, two inputs) are what slot binding is for: bind the ore to the input slot and the coal to the fuel slot as **K**, and the pipe never stuffs coal where the ore goes. Press F9 once to learn the slot numbers of each [processing machine](#/machines-processing).",
+      "pt": "Máquinas cujos slots têm papéis diferentes (combustível, catalisador, duas entradas) são pra isso que existe o vínculo com os slots: vincule o minério ao slot de entrada e o carvão ao de combustível como **M**, e o tubo nunca enfia carvão onde vai o minério. Aperte F9 uma vez pra aprender os números dos slots de cada [máquina de processamento](#/machines-processing)."
+    },
+    {
+      "type": "callout",
+      "en": "A Recipe Pipe or Craft Pipe with no docked machine is a dead recipe: the planner reports **Pipe without an inventory** and every request through it fails. After moving a machine, sneak-click the pipe with a Wrench and read the chat to confirm which side it docked to.",
+      "pt": "Um Tubo de receita ou Tubo de craft sem máquina acoplada é uma receita morta: o planejador avisa **Tubo sem inventário** e todo pedido por ele falha. Depois de mover uma máquina, agache e clique no tubo com a Chave inglesa e leia o chat pra confirmar em que lado ele acoplou."
+    }
+  ]
+}

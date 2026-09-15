@@ -19,6 +19,12 @@
     },
     {
       "item": "minecraft:snowball"
+    },
+    {
+      "item": "faktocraft:nuclear_waste"
+    },
+    {
+      "item": "faktocraft:depleted_uranium_dust"
     }
   ],
   "result": {

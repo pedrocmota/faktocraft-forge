@@ -56,7 +56,8 @@ public record PacketReqTableState(BlockPos blockPos, String dimension) {
     List<PacketTableState.SubLine> lines = new ArrayList<>(subs.size());
     for (TaskLedger.SubRecord sub : subs) {
       lines.add(new PacketTableState.SubLine(sub.kind(), sub.item(), sub.count(), sub.stateKey(),
-          sub.leftoverItem(), sub.leftoverCount(), sub.where(), sub.whereDetail()));
+          sub.leftoverItem(), sub.leftoverCount(), sub.where(), sub.whereDetail(), sub.done(), sub.inputsDone(),
+          sub.inputsTotal()));
     }
     return lines;
   }
@@ -130,7 +131,7 @@ public record PacketReqTableState(BlockPos blockPos, String dimension) {
       }
       tasks.add(new PacketTableState.TaskLine(summary.id(), summary.stack(), summary.count(),
           summary.stateKey(), summary.detail(), summary.system(), summary.originPos(),
-          summary.originLabel(), subLines(summary.subs())));
+          summary.originLabel(), summary.delivered(), subLines(summary.subs())));
     }
     for (TaskLedger.HistoryRecord record : core.getLedger().userHistory()) {
       if (tasks.size() >= 32 + TaskLedger.HISTORY_LIMIT) {
@@ -141,7 +142,7 @@ public record PacketReqTableState(BlockPos blockPos, String dimension) {
       }
       tasks.add(new PacketTableState.TaskLine(record.id(), record.stack(), record.count(),
           record.stateKey(), record.detail(), record.system(), record.originPos(),
-          record.originLabel(), subLines(record.subs())));
+          record.originLabel(), record.delivered(), subLines(record.subs())));
     }
     return new PacketTableState(table.getBlockPos(), entries, tasks, errors);
   }

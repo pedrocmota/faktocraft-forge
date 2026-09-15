@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:uranium_centrifuge"
+        }
+      ],
+      "name": "uranium_centrifuge",
+      "rolls": 1.0
+    }
+  ]
+}

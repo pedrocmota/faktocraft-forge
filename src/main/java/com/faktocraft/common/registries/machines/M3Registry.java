@@ -37,6 +37,9 @@ import com.faktocraft.common.block.impl.machines.polymerizer.MenuPolymerizer;
 import com.faktocraft.common.block.impl.machines.thermal_centrifuge.BlockEntityThermalCentrifuge;
 import com.faktocraft.common.block.impl.machines.thermal_centrifuge.BlockThermalCentrifuge;
 import com.faktocraft.common.block.impl.machines.thermal_centrifuge.MenuThermalCentrifuge;
+import com.faktocraft.common.block.impl.machines.uranium_centrifuge.BlockEntityUraniumCentrifuge;
+import com.faktocraft.common.block.impl.machines.uranium_centrifuge.BlockUraniumCentrifuge;
+import com.faktocraft.common.block.impl.machines.uranium_centrifuge.MenuUraniumCentrifuge;
 import com.faktocraft.common.registries.MenuTypeHelper;
 import com.faktocraft.common.registries.ModBlocks;
 import com.faktocraft.common.registries.ModItems;
@@ -69,6 +72,8 @@ public class M3Registry {
       BlockMachine.machineProperties(0, 0));
   public static final Block THERMAL_CENTRIFUGE = ModBlocks.register("thermal_centrifuge", BlockThermalCentrifuge::new,
       BlockMachine.machineProperties(0, 0));
+  public static final Block URANIUM_CENTRIFUGE = ModBlocks.register("uranium_centrifuge",
+      BlockUraniumCentrifuge::new, BlockMachine.machineProperties(0, 0));
   public static final Block CANNING_MACHINE = ModBlocks.register("canning_machine", BlockCanningMachine::new,
       BlockMachine.machineProperties(0, 0));
   public static final Block POLYMERIZER = ModBlocks.register("polymerizer", BlockPolymerizer::new,
@@ -84,6 +89,7 @@ public class M3Registry {
   public static final Item ORE_WASHING_PLANT_ITEM = ModItems.registerElectricBlockItem(ORE_WASHING_PLANT);
   public static final Item METAL_FORMER_ITEM = ModItems.registerElectricBlockItem(METAL_FORMER);
   public static final Item THERMAL_CENTRIFUGE_ITEM = ModItems.registerElectricBlockItem(THERMAL_CENTRIFUGE);
+  public static final Item URANIUM_CENTRIFUGE_ITEM = ModItems.registerElectricBlockItem(URANIUM_CENTRIFUGE);
   public static final Item CANNING_MACHINE_ITEM = ModItems.registerElectricBlockItem(CANNING_MACHINE);
   public static final Item POLYMERIZER_ITEM = ModItems.registerElectricBlockItem(POLYMERIZER);
 
@@ -109,6 +115,8 @@ public class M3Registry {
   public static final BlockEntityType<BlockEntityThermalCentrifuge> THERMAL_CENTRIFUGE_BLOCK_ENTITY =
       registerBlockEntity(
           "thermal_centrifuge", BlockEntityThermalCentrifuge::new, THERMAL_CENTRIFUGE);
+  public static final BlockEntityType<BlockEntityUraniumCentrifuge> URANIUM_CENTRIFUGE_BLOCK_ENTITY =
+      registerBlockEntity("uranium_centrifuge", BlockEntityUraniumCentrifuge::new, URANIUM_CENTRIFUGE);
   public static final BlockEntityType<BlockEntityCanningMachine> CANNING_MACHINE_BLOCK_ENTITY = registerBlockEntity(
       "canning_machine", BlockEntityCanningMachine::new, CANNING_MACHINE);
   public static final BlockEntityType<BlockEntityPolymerizer> POLYMERIZER_BLOCK_ENTITY = registerBlockEntity(
@@ -137,6 +145,8 @@ public class M3Registry {
   public static final MenuType<MenuThermalCentrifuge> THERMAL_CENTRIFUGE_MENU = MenuTypeHelper.register(
       "thermal_centrifuge",
       (windowId, inv, pos) -> new MenuThermalCentrifuge(windowId, inv.player.level(), pos, inv, inv.player));
+  public static final MenuType<MenuUraniumCentrifuge> URANIUM_CENTRIFUGE_MENU = MenuTypeHelper.register(
+      "uranium_centrifuge", MenuUraniumCentrifuge::new);
   public static final MenuType<MenuCanningMachine> CANNING_MACHINE_MENU = MenuTypeHelper.register("canning_machine",
       (windowId, inv, pos) -> new MenuCanningMachine(windowId, inv.player.level(), pos, inv, inv.player));
   public static final MenuType<MenuPolymerizer> POLYMERIZER_MENU = MenuTypeHelper.register("polymerizer",

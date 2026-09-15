@@ -1,0 +1,82 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "faktocraft:block/uranium_centrifuge_drum",
+    "base_side": "faktocraft:block/machines/distillery_side",
+    "base_top": "faktocraft:block/uranium_centrifuge_base_top",
+    "base_bottom": "faktocraft:block/machines/distillery_bottom",
+    "drum": "faktocraft:block/uranium_centrifuge_drum",
+    "band": "faktocraft:block/uranium_centrifuge_band",
+    "cap": "faktocraft:block/uranium_centrifuge_cap"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        4,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#base_bottom",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#base_top",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#base_side",
+          "uv": [
+            0,
+            12,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#base_side",
+          "uv": [
+            0,
+            12,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#base_side",
+          "uv": [
+            0,
+            12,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#base_side",
+          "uv": [
+            0,
+            12,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -56,7 +56,7 @@
         [
           {
             "en": "Very High",
-            "pt": "Muito Alta"
+            "pt": "Altíssima"
           },
           "2048",
           {
@@ -134,7 +134,7 @@
         {
           "name": {
             "en": "HV (Very High)",
-            "pt": "AT (Muito Alta)"
+            "pt": "AT (Altíssima)"
           },
           "icon": {
             "cable": {
@@ -164,8 +164,8 @@
     },
     {
       "type": "p",
-      "en": "The **Hole Drill** opens one side of any plain solid block: hold right-click on that side for a few seconds and the block becomes a bored block that keeps its looks. Each extra side you drill joins the first at the center, so top and bottom make a straight passage while top and one side make an elbow. Once two or more sides are open, place a cable or pipe on the bored block and it slots inside - the wall shows the cable coming out of a neat hole on each open side. Break the cable and the bored block stays; break the bored block itself to get the original block back.",
-      "pt": "A **Furadeira** abre um lado de qualquer bloco sólido comum: segure o botão direito nesse lado por alguns segundos e o bloco vira um bloco furado que mantém a aparência. Cada lado extra que você fura se encontra com o primeiro no centro: cima e baixo formam uma passagem reta, cima e um lado formam um L. Com dois ou mais lados abertos, coloque um cabo ou tubo no bloco furado e ele encaixa por dentro - a parede mostra o cabo saindo por um furo limpo em cada lado aberto. Quebre o cabo e o bloco furado fica; quebre o próprio bloco furado para recuperar o bloco original."
+      "en": "The **Hole Drill** opens one side of any plain solid block; open two or more sides and cables, fluid pipes or logistics pipes run through it while the block keeps its looks. Everything about it is on the [Hole Drill & covers](#/hole-drill) page.",
+      "pt": "A **Furadeira** abre um lado de qualquer bloco sólido comum; abra dois ou mais lados e cabos, tubos de fluido ou tubos de logística passam por ele sem mudar a aparência do bloco. Tudo sobre ela está na página [Furadeira e capas](#/hole-drill)."
     },
     {
       "type": "icons",
@@ -177,7 +177,8 @@
           },
           "icon": {
             "item": "item/tool/electric/hole_drill"
-          }
+          },
+          "link": "hole-drill"
         }
       ]
     },
@@ -213,8 +214,8 @@
     },
     {
       "type": "callout",
-      "en": "**Glass fibre is the exception:** it looks insulated, but Ultra current leaks through - touching it costs 3 hearts, and if the network is **90% charged or more, the shock is instantly lethal**.",
-      "pt": "**A fibra de vidro é a exceção:** parece isolada, mas a corrente Ultra vaza - encostar custa 3 corações e, se a rede estiver com **90% de carga ou mais, o choque é letal na hora**."
+      "en": "**Glass fibre is the exception:** it looks insulated, but current leaks through. The shock follows the tension actually flowing: nothing flowing means no shock, Low to Very High hurt more and more, and **Ultra is instantly lethal**.",
+      "pt": "**A fibra de vidro é a exceção:** parece isolada, mas a corrente vaza. O choque segue a tensão que está passando de verdade: sem fluxo não há choque, de Baixa a Altíssima dói cada vez mais, e **Ultra é letal na hora**."
     },
     {
       "type": "callout",
@@ -230,13 +231,13 @@
     {
       "type": "list",
       "en": [
-        "[Transformers](#/transformer) convert energy between adjacent tiers, in both directions.",
+        "[Transformers](#/transformer) convert energy between adjacent tiers, in both directions - except Ultra, which can only be stepped down.",
         "[Circuit breakers](#/breaker) turn whole sections of the grid on and off.",
         "[Battery boxes](#/battery-box) store energy and output it on their own tier.",
         "A **tension upgrade** ([upgrades](#/upgrades)) lets a single machine accept one tier above its own."
       ],
       "pt": [
-        "[Transformadores](#/transformer) convertem energia entre tensões vizinhas, nos dois sentidos.",
+        "[Transformadores](#/transformer) convertem energia entre tensões vizinhas, nos dois sentidos - exceto a Ultra, que só pode ser rebaixada.",
         "[Disjuntores](#/breaker) ligam e desligam seções inteiras da rede.",
         "[Caixas de bateria](#/battery-box) armazenam energia e a fornecem na própria tensão.",
         "Uma **melhoria de tensão** ([melhorias](#/upgrades)) faz uma máquina aceitar uma tensão acima da sua."

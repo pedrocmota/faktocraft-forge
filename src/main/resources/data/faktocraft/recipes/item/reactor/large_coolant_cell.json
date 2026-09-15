@@ -2,7 +2,12 @@
   "group": "faktocraft",
   "key": {
     "m": {
-      "item": "faktocraft:medium_coolant_cell"
+      "type": "forge:nbt",
+      "item": "faktocraft:medium_coolant_cell",
+      "nbt": {
+        "fluid": "faktocraft:coolant",
+        "fluid_amount": 3000
+      }
     },
     "t": {
       "tag": "forge:plates/tin"
@@ -14,7 +19,11 @@
     "tmt"
   ],
   "result": {
-    "item": "faktocraft:large_coolant_cell"
+    "item": "faktocraft:large_coolant_cell",
+    "nbt": {
+      "fluid": "faktocraft:coolant",
+      "fluid_amount": 6000
+    }
   },
   "type": "minecraft:crafting_shaped"
 }

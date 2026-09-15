@@ -118,6 +118,13 @@
       }
     ]
   },
+  "tile.uranium_centrifuge": {
+    "sounds": [
+      {
+        "name": "faktocraft:thermal_centrifuge"
+      }
+    ]
+  },
   "item.jetpack": {
     "sounds": [
       {
@@ -288,6 +295,38 @@
     "sounds": [
       {
         "name": "faktocraft:hole_drill"
+      }
+    ]
+  },
+  "item.geiger_click": {
+    "subtitle": "subtitles.faktocraft.geiger_click",
+    "sounds": [
+      {
+        "name": "faktocraft:geiger_click1"
+      },
+      {
+        "name": "faktocraft:geiger_click2"
+      },
+      {
+        "name": "faktocraft:geiger_click3"
+      },
+      {
+        "name": "faktocraft:geiger_click4"
+      }
+    ]
+  },
+  "tile.nuclear_reactor": {
+    "sounds": [
+      {
+        "name": "faktocraft:reactor_hum"
+      }
+    ]
+  },
+  "block.reactor_alarm": {
+    "subtitle": "subtitles.faktocraft.reactor_alarm",
+    "sounds": [
+      {
+        "name": "faktocraft:reactor_alarm"
       }
     ]
   }

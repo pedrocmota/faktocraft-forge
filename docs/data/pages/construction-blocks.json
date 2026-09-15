@@ -1,0 +1,300 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Beyond the machines, Faktocraft adds a set of blocks for building the factory itself: blast-proof walls and glass, a door that only redstone opens, fences and scaffolding, powered lights, pads that charge your gear while you stand on them, and a few decorative blocks made from the mod's own materials.",
+      "pt": "Além das máquinas, o Faktocraft traz um conjunto de blocos para construir a fábrica em si: paredes e vidro à prova de explosão, uma porta que só a redstone abre, cercas e andaimes, luzes elétricas, plataformas que carregam seu equipamento enquanto você fica em cima, e alguns blocos decorativos feitos dos materiais do mod."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Reinforced Stone",
+            "pt": "Pedra reforçada"
+          },
+          "icon": {
+            "block": {
+              "all": "block/reinforced_stone"
+            }
+          },
+          "desc": {
+            "en": "8 stone around 1 Advanced Alloy → 8, or three rows of stone / Lead Ingots / stone → 6. Hardness 10, survives explosions, blocks radiation.",
+            "pt": "8 pedras em volta de 1 Liga avançada → 8, ou três fileiras de pedra / Lingotes de chumbo / pedra → 6. Dureza 10, sobrevive a explosões, bloqueia radiação."
+          }
+        },
+        {
+          "name": {
+            "en": "Reinforced Glass",
+            "pt": "Vidro reforçado"
+          },
+          "icon": {
+            "block": {
+              "all": "block/reinforced_glass"
+            }
+          },
+          "desc": {
+            "en": "Glass above and below, Advanced Alloy, glass, Advanced Alloy in the middle → 7. Explosion-proof and see-through.",
+            "pt": "Vidro em cima e embaixo, Liga avançada, vidro, Liga avançada no meio → 7. À prova de explosão e transparente."
+          }
+        },
+        {
+          "name": {
+            "en": "Reinforced Stone Door",
+            "pt": "Porta de pedra reforçada"
+          },
+          "icon": {
+            "item": "item/reinforced_stone_door"
+          },
+          "desc": {
+            "en": "2x3 Reinforced Stone → 3. Opens only with redstone, like an iron door; shields radiation while closed.",
+            "pt": "2x3 de Pedra reforçada → 3. Só abre com redstone, como uma porta de ferro; bloqueia radiação enquanto fechada."
+          }
+        },
+        {
+          "name": {
+            "en": "Iron Fence",
+            "pt": "Cerca de ferro"
+          },
+          "icon": {
+            "item": "block/iron_fence"
+          },
+          "desc": {
+            "en": "Two rows of iron ingot, Iron Rod, iron ingot → 8. A sturdy metal fence, blast resistance 3.",
+            "pt": "Duas fileiras de lingote de ferro, Vara de ferro, lingote de ferro → 8. Uma cerca de metal robusta, resistência 3."
+          }
+        },
+        {
+          "name": {
+            "en": "Iron Scaffolding",
+            "pt": "Andaime de ferro"
+          },
+          "icon": {
+            "block": {
+              "top": "block/iron_scaffolding_bottomtop",
+              "front": "block/iron_scaffolding_sides"
+            }
+          },
+          "desc": {
+            "en": "Iron Plates above and below, Iron Fence, Iron Rod, Iron Fence in the middle → 6. Climbable like vanilla scaffolding; mobs never spawn on it.",
+            "pt": "Placas de ferro em cima e embaixo, Cerca de ferro, Vara de ferro, Cerca de ferro no meio → 6. Escalável como o andaime vanilla; mobs nunca nascem em cima."
+          }
+        },
+        {
+          "name": {
+            "en": "Luminator",
+            "pt": "Luminária"
+          },
+          "icon": {
+            "block": {
+              "all": "block/machines/luminator"
+            }
+          },
+          "desc": {
+            "en": "Tin Plates and an Insulated Tin Cable on top, glass around a Tin Cable, glass below → 8. Light level 15 for 1 IE/t.",
+            "pt": "Placas de estanho e um Cabo de estanho isolado em cima, vidro em volta de um Cabo de estanho, vidro embaixo → 8. Luz 15 por 1 IE/t."
+          }
+        },
+        {
+          "name": {
+            "en": "Charge Pad (Battery Box)",
+            "pt": "Plataforma de carga (battery box)"
+          },
+          "icon": {
+            "block": {
+              "top": "block/charge_pad/battery_box_top",
+              "front": "block/charge_pad/battery_box_front",
+              "side": "block/charge_pad/battery_box_side"
+            }
+          },
+          "desc": {
+            "en": "Electronic Circuits and a stone pressure plate over Rubber, Battery Box, Rubber. Low voltage, 40 000 IE.",
+            "pt": "Circuitos eletrônicos e uma placa de pressão de pedra sobre Borracha, Caixa de baterias, Borracha. Tensão Baixa, 40 000 IE."
+          }
+        },
+        {
+          "name": {
+            "en": "Charge Pad (CESU)",
+            "pt": "Plataforma de carga (CESU)"
+          },
+          "icon": {
+            "block": {
+              "top": "block/charge_pad/cesu_top",
+              "front": "block/charge_pad/cesu_front",
+              "side": "block/charge_pad/cesu_side"
+            }
+          },
+          "desc": {
+            "en": "Same recipe with a CESU. Medium voltage, 300 000 IE.",
+            "pt": "Mesma receita com um CESU. Tensão Média, 300 000 IE."
+          }
+        },
+        {
+          "name": {
+            "en": "Charge Pad (MFE)",
+            "pt": "Plataforma de carga (MFE)"
+          },
+          "icon": {
+            "block": {
+              "top": "block/charge_pad/mfe_top",
+              "front": "block/charge_pad/mfe_front",
+              "side": "block/charge_pad/mfe_side"
+            }
+          },
+          "desc": {
+            "en": "Same recipe with an MFE. High voltage, 4 000 000 IE.",
+            "pt": "Mesma receita com um MFE. Tensão Alta, 4 000 000 IE."
+          }
+        },
+        {
+          "name": {
+            "en": "Charge Pad (MFSU)",
+            "pt": "Plataforma de carga (MFSU)"
+          },
+          "icon": {
+            "block": {
+              "top": "block/charge_pad/mfsu_top",
+              "front": "block/charge_pad/mfsu_front",
+              "side": "block/charge_pad/mfsu_side"
+            }
+          },
+          "desc": {
+            "en": "Same recipe with an MFSU. Very High voltage, 40 000 000 IE.",
+            "pt": "Mesma receita com um MFSU. Tensão Altíssima, 40 000 000 IE."
+          }
+        },
+        {
+          "name": {
+            "en": "Rubber Carpet",
+            "pt": "Carpete de borracha"
+          },
+          "icon": {
+            "item": "block/rubber_carpet"
+          },
+          "desc": {
+            "en": "Two rows of 3 Rubber → 3. A 1 px carpet for floors.",
+            "pt": "Duas fileiras de 3 Borrachas → 3. Um carpete de 1 px para o chão."
+          }
+        },
+        {
+          "name": {
+            "en": "Rubber Block",
+            "pt": "Bloco de borracha"
+          },
+          "icon": {
+            "block": {
+              "all": "block/rubber_block"
+            }
+          },
+          "desc": {
+            "en": "9 Rubber, and back again. Decorative storage.",
+            "pt": "9 Borrachas, e de volta. Armazenamento decorativo."
+          }
+        },
+        {
+          "name": {
+            "en": "Plastic Block",
+            "pt": "Bloco de plástico"
+          },
+          "icon": {
+            "block": {
+              "all": "block/plastic_block"
+            }
+          },
+          "desc": {
+            "en": "9 Plastic, and back again. Clean white walls for the lab.",
+            "pt": "9 Plásticos, e de volta. Paredes brancas limpas para o laboratório."
+          }
+        },
+        {
+          "name": {
+            "en": "Resin Sheet",
+            "pt": "Folha de resina"
+          },
+          "icon": {
+            "item": "block/resin_sheet"
+          },
+          "desc": {
+            "en": "A thin sticky sheet: anything walking over it slows down.",
+            "pt": "Uma folha fina e pegajosa: tudo que anda por cima fica mais lento."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Reinforced Stone",
+      "pt": "Pedra reforçada"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Two ways to make it: the alloy route (8 stone around one Advanced Alloy gives 8) once your [Compressor](#/machines-manufacturing) is pressing Advanced Alloy, or the lead route (stone, lead, stone in three rows gives 6) straight from the furnace.",
+        "Hardness 10 - slow to mine even with a diamond pickaxe - and effectively explosion-proof: it survives creepers, TNT and the [Nuke](#/nuclear-reactor).",
+        "It shields [radiation](#/radiation): a reactor room walled in Reinforced Stone keeps the outside safe. Lead and a few other blocks shield too.",
+        "**Reinforced Stone Slab** (3 in a row → 6) and **Reinforced Stone Stairs** (the vanilla stair shape → 4) keep the same protection, so a reinforced roof does not need to be a full block.",
+        "**Reinforced Glass** gives you a window into the reactor bay with the same blast resistance."
+      ],
+      "pt": [
+        "Dois jeitos de fazer: a rota da liga (8 pedras em volta de uma Liga avançada dá 8) quando o seu [Compressor](#/machines-manufacturing) estiver prensando Liga avançada, ou a rota do chumbo (pedra, chumbo, pedra em três fileiras dá 6) direto da fornalha.",
+        "Dureza 10 - lenta de minerar até com picareta de diamante - e na prática à prova de explosão: sobrevive a creepers, TNT e à [Nuke](#/nuclear-reactor).",
+        "Ela bloqueia [radiação](#/radiation): uma sala de reator murada com Pedra reforçada mantém o lado de fora seguro. Chumbo e alguns outros blocos também bloqueiam.",
+        "A **Laje de pedra reforçada** (3 em fileira → 6) e a **Escada de pedra reforçada** (o formato vanilla de escada → 4) mantêm a mesma proteção, então um teto reforçado não precisa ser de bloco inteiro.",
+        "O **Vidro reforçado** te dá uma janela para a baia do reator com a mesma resistência a explosão."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Luminator",
+      "pt": "Luminária"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Connect it to a Low or Medium cable: while it has power it shines at light level 15, the brightest a block can be. It holds 40 IE and burns 1 IE/t.",
+        "Rotate it with the [Wrench](#/gear) to mount it on walls or ceilings.",
+        "It is the cheapest light you can run off the grid: one Low cable feeds 32 of them. The [Scanner](#/machines-endgame) also uses one as a part."
+      ],
+      "pt": [
+        "Ligue a um cabo de tensão Baixa ou Média: enquanto tiver energia ela brilha com luz 15, o máximo que um bloco consegue. Guarda 40 IE e gasta 1 IE/t.",
+        "Gire com a [Chave inglesa](#/gear) para prender em paredes ou tetos.",
+        "É a luz mais barata que dá para ligar na rede: um cabo Baixo alimenta 32 delas. O [Scanner](#/machines-endgame) também usa uma como peça."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Charge Pads",
+      "pt": "Plataformas de carga"
+    },
+    {
+      "type": "p",
+      "en": "A **Charge Pad** is a battery box with a pressure plate on top: stand on it and every electric tool and piece of armour you are wearing or holding charges - [drills, chainsaws, the Hole Drill](#/gear) and the rest of your [electric gear](#/gear). Its GUI has a charge slot and a discharge slot like a normal battery box, and energy leaves only through the side it faces.",
+      "pt": "Uma **Plataforma de carga** é uma caixa de baterias com placa de pressão em cima: fique em pé nela e toda ferramenta elétrica e peça de armadura que você estiver usando ou segurando carrega - [escavadoras, motosserras, a Furadeira](#/gear) e o resto do seu [equipamento elétrico](#/gear). A GUI tem um slot de carga e um de descarga como uma caixa de baterias normal, e a energia só sai pelo lado para o qual ela está virada."
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Charge Pad", "Built from", "Voltage", "Capacity"],
+        "pt": ["Plataforma", "Feita com", "Tensão", "Capacidade"]
+      },
+      "rows": [
+        [{"en": "Charge Pad (Battery Box)", "pt": "Plataforma de carga (battery box)"}, {"en": "Battery Box", "pt": "Caixa de baterias"}, {"en": "Low", "pt": "Baixa"}, "40 000 IE"],
+        [{"en": "Charge Pad (CESU)", "pt": "Plataforma de carga (CESU)"}, "CESU", {"en": "Medium", "pt": "Média"}, "300 000 IE"],
+        [{"en": "Charge Pad (MFE)", "pt": "Plataforma de carga (MFE)"}, "MFE", {"en": "High", "pt": "Alta"}, "4 000 000 IE"],
+        [{"en": "Charge Pad (MFSU)", "pt": "Plataforma de carga (MFSU)"}, "MFSU", {"en": "Very High", "pt": "Altíssima"}, "40 000 000 IE"]
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "The recipe is the same for all four - two Electronic Circuits and a stone pressure plate over Rubber, the [storage block](#/battery-box), Rubber - so the pad has the same voltage and capacity as the box you put in. Feed it the voltage that box accepts.",
+      "pt": "A receita é a mesma para as quatro - dois Circuitos eletrônicos e uma placa de pressão de pedra sobre Borracha, o [bloco de armazenamento](#/battery-box), Borracha - então a plataforma tem a mesma tensão e capacidade da caixa que você colocou. Alimente com a tensão que aquela caixa aceita."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Put a Charge Pad (Battery Box) at the base entrance: walk over it on the way in and everything on you tops up without opening a single GUI. A Luminator on the same cable lights the door.",
+      "pt": "Coloque uma Plataforma de carga (battery box) na entrada da base: passe por cima ao entrar e tudo que está com você recarrega sem abrir GUI nenhuma. Uma Luminária no mesmo cabo ilumina a porta."
+    }
+  ]
+}

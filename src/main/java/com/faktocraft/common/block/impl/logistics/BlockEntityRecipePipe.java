@@ -21,8 +21,11 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
   public static final int MAX_OUTPUTS = 4;
   public static final int MIN_INPUTS = 3;
   public static final int MIN_OUTPUTS = 1;
+  public static final int MAX_BATCH = 64;
 
   private static final int MAX_TAG_ITEMS = 64;
+
+  private boolean shared = true;
 
   public static int outputId(int index) {
     return -1 - index;
@@ -49,22 +52,30 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
 
     public String tag = "";
     public int bindSlot = -1;
+    public int bindEnd = -1;
     public String bindBlock = "";
     public int bindSlots;
+    public IoMode mode = IoMode.PER_UNIT;
 
     public boolean isEmpty() {
       return stack.isEmpty();
+    }
+
+    public int lastSlot() {
+      return Math.max(bindSlot, bindEnd);
     }
 
     void clear() {
       stack = ItemStack.EMPTY;
       count = 0;
       tag = "";
+      mode = IoMode.PER_UNIT;
       clearBinding();
     }
 
     void clearBinding() {
       bindSlot = -1;
+      bindEnd = -1;
       bindBlock = "";
       bindSlots = 0;
     }
@@ -82,6 +93,12 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
         tag.putInt("slot", bindSlot);
         tag.putString("block", bindBlock);
         tag.putInt("slots", bindSlots);
+        if (bindEnd > bindSlot) {
+          tag.putInt("slotEnd", bindEnd);
+        }
+      }
+      if (mode != IoMode.PER_UNIT) {
+        tag.putByte("mode", (byte) mode.ordinal());
       }
       return tag;
     }
@@ -92,8 +109,10 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
       io.count = tag.getInt("cnt");
       io.tag = tag.getString("tag");
       io.bindSlot = tag.contains("slot") ? tag.getInt("slot") : -1;
+      io.bindEnd = tag.contains("slotEnd") ? Math.max(io.bindSlot, tag.getInt("slotEnd")) : io.bindSlot;
       io.bindBlock = tag.getString("block");
       io.bindSlots = tag.getInt("slots");
+      io.mode = tag.contains("mode") ? IoMode.of(tag.getByte("mode")) : IoMode.PER_UNIT;
       return io;
     }
   }
@@ -102,6 +121,7 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
 
     public final Io[] inputs = new Io[MAX_INPUTS];
     public final Io[] outputs = new Io[MAX_OUTPUTS];
+    public int batchSize = 1;
 
     MachineRecipe() {
       for (int i = 0; i < MAX_INPUTS; i++) {
@@ -146,11 +166,15 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
         outputList.add(io.save());
       }
       tag.put("out", outputList);
+      if (batchSize > 1) {
+        tag.putInt("batch", batchSize);
+      }
       return tag;
     }
 
     static MachineRecipe load(CompoundTag tag) {
       MachineRecipe recipe = new MachineRecipe();
+      recipe.batchSize = tag.contains("batch") ? Math.max(1, Math.min(MAX_BATCH, tag.getInt("batch"))) : 1;
       ListTag inputList = tag.getList("in", Tag.TAG_COMPOUND);
       for (int i = 0; i < Math.min(inputList.size(), MAX_INPUTS); i++) {
         recipe.inputs[i] = Io.load(inputList.getCompound(i));
@@ -202,6 +226,29 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
     return recipes.size() - 1;
   }
 
+  @Nullable
+  public CompoundTag copyRecipe(int index) {
+    MachineRecipe recipe = recipe(index);
+    return recipe != null ? recipe.save() : null;
+  }
+
+  public boolean pasteRecipe(CompoundTag tag) {
+    MachineRecipe pasted = MachineRecipe.load(tag.copy());
+    for (int i = 0; i < recipes.size(); i++) {
+      if (recipes.get(i).isEmpty()) {
+        recipes.set(i, pasted);
+        changed();
+        return true;
+      }
+    }
+    if (recipes.size() >= MAX_RECIPES) {
+      return false;
+    }
+    recipes.add(pasted);
+    changed();
+    return true;
+  }
+
   public void removeRecipe(int index) {
     if (index >= 0 && index < recipes.size()) {
       recipes.remove(index);
@@ -231,8 +278,50 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
       io.stack = stack.copyWithCount(1);
       io.count = Math.max(1, io.count);
       io.tag = "";
+      io.mode = IoMode.PER_UNIT;
       io.clearBinding();
     }
+    changed();
+  }
+
+  public void cycleMode(int recipe, int ioId) {
+    MachineRecipe entry = recipe(recipe);
+    if (entry == null || isOutputId(ioId)) {
+      return;
+    }
+    Io io = entry.io(ioId);
+    if (io == null || io.isEmpty()) {
+      return;
+    }
+    io.mode = io.mode.next();
+    changed();
+  }
+
+  public void setMode(int recipe, int ioId, IoMode mode) {
+    MachineRecipe entry = recipe(recipe);
+    Io io = entry != null && !isOutputId(ioId) ? entry.io(ioId) : null;
+    if (io == null || io.isEmpty()) {
+      return;
+    }
+    io.mode = mode;
+    changed();
+  }
+
+  public void adjustBatch(int recipe, int delta) {
+    MachineRecipe entry = recipe(recipe);
+    if (entry == null) {
+      return;
+    }
+    entry.batchSize = Math.max(1, Math.min(MAX_BATCH, entry.batchSize + delta));
+    changed();
+  }
+
+  public void setBatch(int recipe, int batchSize) {
+    MachineRecipe entry = recipe(recipe);
+    if (entry == null) {
+      return;
+    }
+    entry.batchSize = Math.max(1, Math.min(MAX_BATCH, batchSize));
     changed();
   }
 
@@ -290,6 +379,10 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
   }
 
   public void bind(int recipe, int ioId, int slot, String blockId, int slotCount) {
+    bind(recipe, ioId, slot, slot, blockId, slotCount);
+  }
+
+  public void bind(int recipe, int ioId, int slot, int slotEnd, String blockId, int slotCount) {
     MachineRecipe entry = recipe(recipe);
     Io io = entry != null ? entry.io(ioId) : null;
     if (io == null) {
@@ -299,10 +392,21 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
       io.clearBinding();
     } else {
       io.bindSlot = slot;
+      io.bindEnd = Math.max(slot, slotEnd);
       io.bindBlock = blockId;
       io.bindSlots = slotCount;
     }
     changed();
+  }
+
+  public boolean shared() {
+    return shared;
+  }
+
+  public void setShared(boolean shared) {
+    this.shared = shared;
+    setChanged();
+    sync();
   }
 
   public void changed() {
@@ -332,6 +436,7 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
   protected void saveAdditional(CompoundTag tag) {
     super.saveAdditional(tag);
     saveRecipes(tag);
+    tag.putBoolean("share", shared);
   }
 
   @Override
@@ -340,6 +445,7 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
     if (tag.contains("recipes")) {
       loadRecipes(tag);
     }
+    shared = !tag.contains("share") || tag.getBoolean("share");
   }
 
   @Override

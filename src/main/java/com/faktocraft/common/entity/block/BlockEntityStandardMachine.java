@@ -15,6 +15,7 @@ import com.faktocraft.common.interfaces.entity.ITileSound;
 import com.faktocraft.common.interfaces.receipe.IChanceRecipe;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketExperience;
+import com.faktocraft.common.util.EnergyCosts;
 import com.faktocraft.common.util.StackHandlerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -45,8 +46,13 @@ public abstract class BlockEntityStandardMachine extends FaktocraftBlockEntity
   protected boolean recipeResolved = false;
 
   public BlockEntityStandardMachine(BlockEntityType<?> type, BlockPos pos, BlockState state, int energyCapacity) {
+    this(type, pos, state, energyCapacity, EnergyTier.LOW);
+  }
+
+  public BlockEntityStandardMachine(BlockEntityType<?> type, BlockPos pos, BlockState state, int energyCapacity,
+      EnergyTier energyTier) {
     super(type, pos, state);
-    createEnergyStorage(0, energyCapacity, EnergyType.RECEIVE, EnergyTier.LOW);
+    createEnergyStorage(0, energyCapacity, EnergyType.RECEIVE, energyTier);
     initBatterySlots();
   }
 
@@ -135,7 +141,7 @@ public abstract class BlockEntityStandardMachine extends FaktocraftBlockEntity
         if (progress.getProgressMax() < 0) {
           progress.setData(0, getSpeedFactor() * recipe.getDuration());
         }
-        int energyCost = (int) (recipe.getPowerCost() * getEnergyUsageFactor());
+        int energyCost = EnergyCosts.perTick(recipe.getPowerCost(), getEnergyUsageFactor());
         if (getEnergyStorage().consumeEnergy(energyCost, true) == energyCost) {
           active = true;
           progress.incProgress(1);

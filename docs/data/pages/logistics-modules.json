@@ -1,0 +1,251 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "p",
+      "en": "A chassis pipe is the network's hand on an inventory, and modules are the instructions in that hand. Every chest or machine that takes part in the [logistics network](#/logistics) gets one **Chassis Pipe** docked to it and one or more modules inside. Nothing here works until a powered [Logistics Core](#/request-table) is on the network.",
+      "pt": "Um tubo de chassi é a mão da rede sobre um inventário, e os módulos são as instruções nessa mão. Cada baú ou máquina que participa da [rede de logística](#/logistics) ganha um **Tubo de chassi** acoplado e um ou mais módulos dentro. Nada aqui funciona até ter um [Núcleo logístico](#/request-table) com energia na rede."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Chassis Pipe I",
+            "pt": "Tubo de chassi I"
+          },
+          "icon": {
+            "pipe": "block/pipe/chassis_pipe_1"
+          },
+          "desc": {
+            "en": "Electronic Circuit over a chest over a Stone Pipe. 2 module slots and 1 upgrade slot.",
+            "pt": "Circuito eletrônico sobre um baú sobre um Tubo de pedra. 2 slots de módulo e 1 de melhoria."
+          }
+        },
+        {
+          "name": {
+            "en": "Chassis Pipe II",
+            "pt": "Tubo de chassi II"
+          },
+          "icon": {
+            "pipe": "block/pipe/chassis_pipe_2"
+          },
+          "desc": {
+            "en": "Chassis Pipe I plus an Advanced Circuit. 3 module slots and 2 upgrade slots.",
+            "pt": "Tubo de chassi I mais um Circuito eletrônico avançado. 3 slots de módulo e 2 de melhoria."
+          }
+        },
+        {
+          "name": {
+            "en": "Sink Module",
+            "pt": "Módulo Sink"
+          },
+          "icon": {
+            "item": "item/module_sink"
+          },
+          "desc": {
+            "en": "Circuit, redstone and a chest. Declares what the docked inventory accepts. Priority and Default route.",
+            "pt": "Circuito, redstone e um baú. Declara o que o inventário acoplado aceita. Prioridade e Rota padrão."
+          }
+        },
+        {
+          "name": {
+            "en": "Provider Module",
+            "pt": "Módulo Provider"
+          },
+          "icon": {
+            "item": "item/module_provider"
+          },
+          "desc": {
+            "en": "Circuit, redstone and a barrel. Exposes the inventory's stock to the network. Priority, Reserve and Exclude.",
+            "pt": "Circuito, redstone e um barril. Expõe o estoque do inventário à rede. Prioridade, Reserva e Excluir."
+          }
+        },
+        {
+          "name": {
+            "en": "Extractor Module",
+            "pt": "Módulo Extrator"
+          },
+          "icon": {
+            "item": "item/module_extractor"
+          },
+          "desc": {
+            "en": "Circuit, redstone and a hopper. Pushes filtered items out to the sinks every 20 ticks; an empty filter means everything.",
+            "pt": "Circuito, redstone e um funil. Empurra os itens do filtro pra fora até os sinks a cada 20 ticks; filtro vazio significa tudo."
+          }
+        },
+        {
+          "name": {
+            "en": "Supplier Module",
+            "pt": "Módulo Abastecedor"
+          },
+          "icon": {
+            "item": "item/module_supplier"
+          },
+          "desc": {
+            "en": "Circuit, redstone and a dropper. Keeps a target stock in the inventory, requesting the deficit every 40 ticks. Crafts lets it order crafting.",
+            "pt": "Circuito, redstone e um dropper. Mantém um estoque-alvo no inventário, pedindo o que falta a cada 40 ticks. Crafts deixa ele encomendar crafts."
+          }
+        },
+        {
+          "name": {
+            "en": "Collector Module",
+            "pt": "Módulo Coletor"
+          },
+          "icon": {
+            "item": "item/module_collector"
+          },
+          "desc": {
+            "en": "Circuit, redstone, hopper and string. Vacuums dropped items within about a block of each free face every 5 ticks into a 9-slot buffer, then routes them to sinks.",
+            "pt": "Circuito, redstone, funil e linha. Aspira itens caídos a cerca de um bloco de cada face livre a cada 5 ticks pra um buffer de 9 slots, depois manda aos sinks."
+          }
+        },
+        {
+          "name": {
+            "en": "Ejector Module",
+            "pt": "Módulo Ejetor"
+          },
+          "icon": {
+            "item": "item/module_ejector"
+          },
+          "desc": {
+            "en": "Circuit, redstone and a dispenser. A sink that throws whatever arrives out of a free face of the chassis.",
+            "pt": "Circuito, redstone e um dispensador. Um sink que joga pra fora, por uma face livre do chassi, tudo que chega."
+          }
+        },
+        {
+          "name": {
+            "en": "Disposal Module",
+            "pt": "Módulo Descarte"
+          },
+          "icon": {
+            "item": "item/module_disposal"
+          },
+          "desc": {
+            "en": "Circuit, redstone and a lava bucket. A sink that destroys whatever arrives: the network's trash can.",
+            "pt": "Circuito, redstone e um balde de lava. Um sink que destrói tudo que chega: a lixeira da rede."
+          }
+        },
+        {
+          "name": {
+            "en": "Throughput Upgrade",
+            "pt": "Melhoria de Vazão"
+          },
+          "icon": {
+            "item": "item/upgrade/throughput"
+          },
+          "desc": {
+            "en": "Circuit, redstone and sugar. In a chassis upgrade slot: +16 items per operation and parallel crafts. Does not make items travel faster.",
+            "pt": "Circuito, redstone e açúcar. No slot de melhoria do chassi: +16 itens por operação e crafts em paralelo. Não faz os itens viajarem mais rápido."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Docking and opening a chassis",
+      "pt": "Acoplando e abrindo o chassi"
+    },
+    {
+      "type": "list",
+      "en": [
+        "A chassis docks against **exactly one** neighbouring inventory; other network blocks are skipped. With two or more inventories around it, **sneak and right-click with a Wrench** to cycle the docked side; the chat says which one is active.",
+        "The chassis screen opens only with a **Wrench** (or Electric Wrench) in your main hand. Modules go in the module slots, Throughput Upgrades in the upgrade slots.",
+        "Click a module slot to open that module's configuration: the same filter screen for every module, plus its own options."
+      ],
+      "pt": [
+        "O chassi acopla em **exatamente um** inventário vizinho; outros blocos da rede são ignorados. Com dois ou mais inventários em volta, **agache e clique com a Chave inglesa** pra alternar o lado acoplado; o chat diz qual está ativo.",
+        "A tela do chassi só abre com a **Chave inglesa** (ou Chave elétrica) na mão principal. Módulos vão nos slots de módulo, Melhorias de Vazão nos slots de melhoria.",
+        "Clique num slot de módulo pra abrir a configuração daquele módulo: a mesma tela de filtro pra todo módulo, mais as opções próprias."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "The filter screen",
+      "pt": "A tela de filtro"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Six lines.** Click a line holding an item to filter that item, or click an empty line and type **#tag**, **mod:*** (everything from one mod) or an item id. Right-click clears the line.",
+        "Each line has **NBT** and **Dmg** toggles, off by default: any enchantment or damage matches until you turn them on.",
+        "On the **Supplier Module** the number next to each line is the target stock: scroll changes it by 1, shift-scroll by 16.",
+        "**Tree filter**: an alternative view of every item in the game grouped by mod and category. **All** allows everything, **None** blocks everything; green is allowed, red denied, yellow a mixed group. A supplier's tree target starts at 64 per item; click the number to type it.",
+        "**Copy / paste** buttons carry a whole configuration to another module of the same kind."
+      ],
+      "pt": [
+        "**Seis linhas.** Clique numa linha segurando um item pra filtrar aquele item, ou clique numa linha vazia e digite **#tag**, **mod:*** (tudo de um mod) ou o id de um item. Botão direito limpa a linha.",
+        "Cada linha tem os botões **NBT** e **Dano**, desligados por padrão: qualquer encantamento ou dano combina até você ligar.",
+        "No **Módulo Abastecedor** o número ao lado de cada linha é o estoque-alvo: rolagem muda de 1 em 1, shift + rolagem de 16 em 16.",
+        "**Filtro em árvore**: uma visão alternativa de todos os itens do jogo agrupados por mod e categoria. **Tudo** libera tudo, **Nada** bloqueia tudo; verde é liberado, vermelho bloqueado, amarelo é grupo misto. No abastecedor o alvo da árvore começa em 64 por item; clique no número pra digitar.",
+        "Os botões de **copiar / colar** levam a configuração inteira pra outro módulo do mesmo tipo."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Module options",
+      "pt": "Opções dos módulos"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Priority** (Sink, Provider, Ejector, Disposal): higher is served first. Fill the main chest before the overflow chest, pull from the buffer before the vault.",
+        "**Default route** (Sink, Ejector, Disposal): takes whatever no other sink accepted. An overflow chest with an empty filter and this on is the classic catch-all.",
+        "**Exclude** (Provider): offers everything in the inventory **except** the filtered items.",
+        "**Reserve** (Provider): the network never pulls an item below this amount. Keep 64 coal by the furnace, offer the rest.",
+        "**Crafts** (Supplier): when the network has no stock of a missing item, the supplier orders it [crafted](#/autocrafting). Each chassis keeps one request in flight at a time."
+      ],
+      "pt": [
+        "**Prioridade** (Sink, Provider, Ejetor, Descarte): maior é atendida primeiro. Encha o baú principal antes do de excedente, puxe do buffer antes do cofre.",
+        "**Rota padrão** (Sink, Ejetor, Descarte): recebe o que nenhum outro sink aceitou. Um baú de excedente com filtro vazio e isto ligado é o pega-tudo clássico.",
+        "**Excluir** (Provider): oferece tudo do inventário **menos** os itens do filtro.",
+        "**Reserva** (Provider): a rede nunca retira um item abaixo dessa quantidade. Deixe 64 carvões junto da fornalha e ofereça o resto.",
+        "**Crafts** (Abastecedor): quando a rede não tem estoque de um item faltando, o abastecedor manda [fabricar](#/autocrafting). Cada chassi mantém um pedido em andamento por vez."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Which sink gets the item?",
+      "pt": "Qual sink recebe o item?"
+    },
+    {
+      "type": "p",
+      "en": "When something needs a home, the network ranks the sinks: an **explicit filter match beats a Default route**; among those, **higher Priority wins**; among equals, the **shortest pipe distance** wins. A sink only counts if its inventory can take at least part of the stack, so a full chest is skipped and the next candidate gets it. If nobody accepts, the item stays where it is.",
+      "pt": "Quando algo precisa de destino, a rede ranqueia os sinks: **filtro explícito vence Rota padrão**; entre esses, **Prioridade maior vence**; entre iguais, a **menor distância em tubos** vence. Um sink só conta se o inventário couber pelo menos parte da pilha, então baú cheio é pulado e o próximo candidato leva. Se ninguém aceita, o item fica onde está."
+    },
+    {
+      "type": "h",
+      "en": "Timing and throughput",
+      "pt": "Tempo e vazão"
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Action", "Every", "Per operation"],
+        "pt": ["Ação", "A cada", "Por operação"]
+      },
+      "rows": [
+        [{"en": "Collector vacuums dropped items", "pt": "Coletor aspira itens caídos"}, {"en": "5 ticks", "pt": "5 ticks"}, {"en": "into its 9-slot buffer", "pt": "pro buffer de 9 slots"}],
+        [{"en": "Extractor and Collector dispatch", "pt": "Extrator e Coletor despacham"}, {"en": "20 ticks", "pt": "20 ticks"}, {"en": "16 items (32 / 48 with upgrades)", "pt": "16 itens (32 / 48 com melhorias)"}],
+        [{"en": "Supplier checks its stock", "pt": "Abastecedor confere o estoque"}, {"en": "40 ticks", "pt": "40 ticks"}, {"en": "one request in flight", "pt": "um pedido em andamento"}],
+        [{"en": "Energy per item moved", "pt": "Energia por item movido"}, "-", "2 IE"]
+      ]
+    },
+    {
+      "type": "p",
+      "en": "The 16-item budget grows by 16 for each **Throughput Upgrade**: 32 with one, 48 with the two slots of a Chassis Pipe II. Upgrades also let a chassis run several crafts in parallel, but they do **not** change travel speed; for that, use [Golden Pipes](#/logistics).",
+      "pt": "O orçamento de 16 itens cresce 16 pra cada **Melhoria de Vazão**: 32 com uma, 48 com os dois slots do Tubo de chassi II. As melhorias também deixam o chassi rodar vários crafts em paralelo, mas **não** mudam a velocidade da viagem; pra isso, use [Tubos de ouro](#/logistics)."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "A Chassis Pipe II on your main chest with a Provider Module (empty filter) and a Sink Module with Default route on turns it into the network's warehouse: everything is offered, everything unclaimed ends up there.",
+      "pt": "Um Tubo de chassi II no seu baú principal com um Módulo Provider (filtro vazio) e um Módulo Sink com Rota padrão ligada transforma ele no depósito da rede: tudo é oferecido, tudo que ninguém reclamou acaba ali."
+    },
+    {
+      "type": "callout",
+      "en": "Modules only act while the Logistics Core is online. If extractors stop mid-run, check the core's energy first: an empty buffer freezes the whole network.",
+      "pt": "Os módulos só agem enquanto o Núcleo logístico está online. Se os extratores param no meio, confira a energia do núcleo primeiro: buffer vazio congela a rede inteira."
+    }
+  ]
+}

@@ -1,6 +1,10 @@
 {
   "blocks": [
     {
+      "type": "banner",
+      "src": "banners/query.webp"
+    },
+    {
       "type": "p",
       "en": "The quarry mines a rectangular area for you, layer by layer, with a moving frame and drill you can watch work. It runs on **High tier** power.",
       "pt": "A mineradora escava uma área retangular por você, camada por camada, com uma moldura e uma broca móveis que dá para ver trabalhando. Funciona com energia de tensão **Alta**."
@@ -77,6 +81,12 @@
       "style": "tip",
       "en": "A quarry plus a chassis with an **extractor module** on its inventory face is the classic set-and-forget mining rig.",
       "pt": "Mineradora + chassi com **módulo extractor** na face do inventário é o combo clássico de mineração esquece-e-deixa-rodar."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Survey before you dig: the [Prospector](#/prospector) or a [Geological Scanner](#/geological-scanner) tells you which chunks are worth a quarry.",
+      "pt": "Prospecte antes de cavar: o [Prospector](#/prospector) ou um [Scanner geológico](#/geological-scanner) mostra quais chunks valem uma mineradora."
     }
   ]
 }

@@ -1,0 +1,221 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "banner",
+      "src": "banners/destilery.webp"
+    },
+    {
+      "type": "p",
+      "en": "Refining is where [Crude Oil](#/oil) turns into things you can burn and build with. The **Fuel Distillery** makes **Fuel**, the **Polymerizer** makes Plastic and Rubber, the **Fluid Enricher** supplies the acid the distillery needs, and the **Fermenter** offers a renewable **Biofuel** for when the pockets run dry. All of it is Medium tier except the Fermenter.",
+      "pt": "O refino é onde o [Petróleo](#/oil) vira coisa que dá para queimar e construir. A **Destiladora de combustível** faz **Combustível**, o **Polimerizador** faz Plástico e Borracha, a **Enriquecedora de fluídos** fornece o ácido que a destiladora pede, e o **Fermentador** oferece um **Biocombustível** renovável para quando os bolsões secarem. Tudo de tensão Média, menos o Fermentador."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Fuel Distillery",
+            "pt": "Destiladora de combustível"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/distillery_top",
+              "front": "block/machines/distillery_front",
+              "side": "block/machines/distillery_side"
+            }
+          },
+          "desc": {
+            "en": "Iron Plates, a Tank, 2 Electronic Circuits, a Basic Machine Casing and a Fluid Cell. Medium tier, 10 000 IE buffer, 16 IE/t. Raises a 5-segment tower above itself.",
+            "pt": "Placas de ferro, um Tanque, 2 Circuitos eletrônicos, um Revestimento de máquina básico e uma Célula de fluído. Tensão Média, buffer de 10 000 IE, 16 IE/t. Ergue uma torre de 5 segmentos acima de si."
+          }
+        },
+        {
+          "name": {
+            "en": "Fluid Enricher",
+            "pt": "Enriquecedora de fluídos"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/fluid_enricher_top",
+              "front": "block/machines/basic/fluid_enricher_front",
+              "side": "block/machines/basic/fluid_enricher_leftright"
+            }
+          },
+          "desc": {
+            "en": "Tin Plates, 2 Fluid Cells, a casing and an Electronic Circuit. Medium tier, three 8000 mB tanks. Makes Sulfuric Acid, Biomass and Coolant at 16 IE/t.",
+            "pt": "Placas de estanho, 2 Células de fluído, um revestimento e um Circuito eletrônico. Tensão Média, três tanques de 8000 mB. Faz Ácido sulfúrico, Biomassa e Refrigerante a 16 IE/t."
+          }
+        },
+        {
+          "name": {
+            "en": "Polymerizer",
+            "pt": "Polimerizador"
+          },
+          "icon": {
+            "block": {
+              "top": "block/basic_machine_casing",
+              "front": "block/machines/basic/polymerizer_front_l0",
+              "side": "block/basic_machine_casing"
+            }
+          },
+          "desc": {
+            "en": "Iron Plates, 3 Rubber, a casing and an Electronic Circuit. Medium tier, 16 000 IE buffer, 8000 mB oil tank. Plastic and Rubber at 24 IE/t.",
+            "pt": "Placas de ferro, 3 Borrachas, um revestimento e um Circuito eletrônico. Tensão Média, buffer de 16 000 IE, tanque de 8000 mB de petróleo. Plástico e Borracha a 24 IE/t."
+          }
+        },
+        {
+          "name": {
+            "en": "Fermenter",
+            "pt": "Fermentador"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/fermenter_top",
+              "front": "block/machines/basic/fermenter_front",
+              "side": "block/machines/basic/fermenter_leftright"
+            }
+          },
+          "desc": {
+            "en": "Tin Plates, 2 Fluid Cells, a casing and a Heat Conductor. High tier, only 5 IE/t. 1000 mB Biomass becomes 250 mB Biofuel.",
+            "pt": "Placas de estanho, 2 Células de fluído, um revestimento e um Condutor de calor. Tensão Alta, só 5 IE/t. 1000 mB de Biomassa viram 250 mB de Biocombustível."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Building the distillery",
+      "pt": "Montando a destiladora"
+    },
+    {
+      "type": "list",
+      "en": [
+        "The distillery is a **multiblock that builds itself**. When you place it, it raises a tower of 5 **Distillery Tower** segments straight above and reserves a 3x3 ring around that tower up to 4 blocks high.",
+        "Placement is **refused** if that space is not free; pipes are allowed inside the ring, anything else has to go. A knocked-out tower segment is rebuilt every 10 seconds, and the tower shows flames and smoke while it runs.",
+        "Fluids connect on **every side except the front**. Each input is routed to its own tank by type (oil, acid, water), and whatever you extract is always Fuel, so one pipe in and one pipe out is enough.",
+        "The only item slot is the output for **Sulfur Dust**. Overclocker and efficiency upgrades fit in the usual slots."
+      ],
+      "pt": [
+        "A destiladora é um **multibloco que se monta sozinho**. Quando você coloca, ela ergue uma torre de 5 segmentos de **Torre da destiladora** logo acima e reserva um anel 3x3 em volta dessa torre até 4 blocos de altura.",
+        "A colocação é **recusada** se esse espaço não estiver livre; tubos podem ficar dentro do anel, o resto tem que sair. Um segmento derrubado da torre é reconstruído a cada 10 segundos, e a torre mostra chamas e fumaça enquanto roda.",
+        "Fluidos ligam por **todos os lados menos a frente**. Cada entrada vai para o próprio tanque conforme o tipo (petróleo, ácido, água), e o que você extrai é sempre Combustível, então um tubo entrando e um saindo bastam.",
+        "O único slot de item é a saída de **Pó de enxofre**. Melhorias de overclock e de eficiência entram nos slots de sempre."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "The recipe",
+      "pt": "A receita"
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Fluid", "Per operation", "Internal tank"],
+        "pt": ["Fluido", "Por operação", "Tanque interno"]
+      },
+      "rows": [
+        [{"en": "Crude Oil (in)", "pt": "Petróleo (entra)"}, "100 mB", "4000 mB"],
+        [{"en": "Sulfuric Acid (in)", "pt": "Ácido sulfúrico (entra)"}, "20 mB", "2000 mB"],
+        [{"en": "Water (in)", "pt": "Água (entra)"}, "40 mB", "4000 mB"],
+        [{"en": "Fuel (out)", "pt": "Combustível (sai)"}, "80 mB", "4000 mB"]
+      ]
+    },
+    {
+      "type": "p",
+      "en": "One operation takes **100 ticks (5 s) at 16 IE/t**, 1600 IE in total, with a **5% chance** of dropping a Sulfur Dust in the output slot. At full speed that is 960 mB of Fuel per minute; a Combustion Generator burns 1200, so two distilleries keep one generator going nonstop.",
+      "pt": "Uma operação leva **100 ticks (5 s) a 16 IE/t**, 1600 IE no total, com **5% de chance** de deixar um Pó de enxofre no slot de saída. A toda velocidade são 960 mB de Combustível por minuto; um Gerador à combustão queima 1200, então duas destiladoras mantêm um gerador sem parar."
+    },
+    {
+      "type": "h",
+      "en": "Where the acid comes from",
+      "pt": "De onde vem o ácido"
+    },
+    {
+      "type": "p",
+      "en": "The **Fluid Enricher** makes **Sulfuric Acid** from **1 Sulfur Dust + 250 mB of Water** in 180 ticks at 16 IE/t. Those 250 mB cover **12 distillery operations**, and every 20 operations the distillery hands you back a Sulfur Dust on average, so a small pile of dust goes a long way. Mine Sulfur Ore for the rest ([Ores and world](#/world)). The same machine makes **Coolant** from water, acid, lapis and Diamond Dust; see [Fluids](#/fluids).",
+      "pt": "A **Enriquecedora de fluídos** faz **Ácido sulfúrico** com **1 Pó de enxofre + 250 mB de Água** em 180 ticks a 16 IE/t. Esses 250 mB cobrem **12 operações da destiladora**, e a cada 20 operações a destiladora devolve um Pó de enxofre em média, então um montinho de pó rende muito. Minere Minério de enxofre para o resto ([Minérios e mundo](#/world)). A mesma máquina faz **Refrigerante** com água, ácido, lápis-lazúli e Pó de diamante; veja [Fluidos](#/fluids)."
+    },
+    {
+      "type": "h",
+      "en": "What Fuel is for",
+      "pt": "Para que serve o Combustível"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Combustion Generator**: 1 mB per tick at **40 IE/mB**, so 1000 mB is 40 000 IE. It only restarts once its buffer drops below 85% and never burns a drop it cannot store. Medium output: use at least a copper cable. See [Generators](#/generators).",
+        "**Fueling Station**: park a [Jetpack](#/jetpack), a Fluid Cell or a cooling kit in its slot and it fills from a 16 000 mB tank at 50 mB per tick; the gauge on the block face shows the tank level. See [Fluids](#/fluids).",
+        "**Combustion Alloy Smelter**: the fuel-fired alloy furnace; 1 mB of Fuel lasts 2 ticks, Biofuel 1 tick. See [Alloy Smelter](#/alloy-smelter).",
+        "**Jetpacks** drink Fuel directly: fill them at the Fueling Station and fly."
+      ],
+      "pt": [
+        "**Gerador à combustão**: 1 mB por tick a **40 IE/mB**, então 1000 mB são 40 000 IE. Ele só religa quando o buffer cai abaixo de 85% e nunca queima uma gota que não consiga guardar. Saída Média: use pelo menos cabo de cobre. Veja [Geradores](#/generators).",
+        "**Estação de abastecimento**: deixe uma [Jetpack](#/jetpack), uma Célula de fluído ou um kit de refrigeração no slot e ela enche de um tanque de 16 000 mB a 50 mB por tick; o medidor na face do bloco mostra o nível. Veja [Fluidos](#/fluids).",
+        "**Forno de fundição a combustão**: o forno de ligas movido a combustível; 1 mB de Combustível dura 2 ticks, Biocombustível 1 tick. Veja [Forno de fundição](#/alloy-smelter).",
+        "**Jetpacks** bebem Combustível direto: encha na Estação de abastecimento e voe."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Plastic and rubber",
+      "pt": "Plástico e borracha"
+    },
+    {
+      "type": "p",
+      "en": "The **Polymerizer** takes raw oil, not Fuel, so feed it straight from the pump. **1 Coal Dust + 500 mB of oil** gives **2 Plastic**; **1 Sulfur Dust + 500 mB of oil** gives **3 Rubber**. Both take 300 ticks at 24 IE/t. Its 8000 mB tank accepts nothing but oil, and the block face shows the oil level. This is the only way to make rubber at industrial scale without a forest.",
+      "pt": "O **Polimerizador** pega petróleo cru, não Combustível, então alimente direto da bomba. **1 Pó de carvão + 500 mB de petróleo** dá **2 Plásticos**; **1 Pó de enxofre + 500 mB de petróleo** dá **3 Borrachas**. Os dois levam 300 ticks a 24 IE/t. O tanque de 8000 mB só aceita petróleo, e a face do bloco mostra o nível. É o único jeito de fazer borracha em escala industrial sem uma floresta."
+    },
+    {
+      "type": "h",
+      "en": "The renewable line: Biofuel",
+      "pt": "A linha renovável: Biocombustível"
+    },
+    {
+      "type": "list",
+      "en": [
+        "1. Grind plant matter into **Bio Chaff** and put it in the **Fluid Enricher** with 1000 mB of water: **1000 mB of Biomass**.",
+        "2. Pipe the Biomass into the **Fermenter** (10 000 mB tank) with a **Mud Pile**, **Sawdust** or **Sugar** in its slot: **1000 mB Biomass becomes 250 mB Biofuel** in a 2000 mB output tank.",
+        "3. The Fermenter heats up while powered (about 0.2 per second) and at full heat runs **twice as fast**: 600 ticks cold, 300 ticks hot. Keep it powered and busy instead of switching it on and off.",
+        "4. Every 1400 ticks of fermenting it drops one **Fertilizer** in the slot next to the waste bar, good for the [Forester](#/forester) and your crops.",
+        "5. Biofuel burns in the Combustion Generator at **20 IE/mB**, half of Fuel, and in the Combustion Alloy Smelter."
+      ],
+      "pt": [
+        "1. Moa matéria vegetal em **Pilha biótica** e ponha na **Enriquecedora de fluídos** com 1000 mB de água: **1000 mB de Biomassa**.",
+        "2. Leve a Biomassa por tubo até o **Fermentador** (tanque de 10 000 mB) com um **Monte de lama**, **Serragem** ou **Açúcar** no slot: **1000 mB de Biomassa viram 250 mB de Biocombustível** num tanque de saída de 2000 mB.",
+        "3. O Fermentador esquenta enquanto energizado (uns 0,2 por segundo) e no calor máximo roda **duas vezes mais rápido**: 600 ticks frio, 300 ticks quente. Deixe ligado e ocupado em vez de ficar ligando e desligando.",
+        "4. A cada 1400 ticks fermentando ele solta um **Fertilizante** no slot ao lado da barra de rejeito, bom para a [Florestadora](#/forester) e suas plantações.",
+        "5. O Biocombustível queima no Gerador à combustão a **20 IE/mB**, metade do Combustível, e no Forno de fundição a combustão."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Energy balance",
+      "pt": "Balanço de energia"
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Route", "Spent to make it", "Returned by the generator", "Net"],
+        "pt": ["Rota", "Gasto para fazer", "Devolvido pelo gerador", "Saldo"]
+      },
+      "rows": [
+        [{"en": "100 mB oil, distillery only", "pt": "100 mB de petróleo, só a destiladora"}, "1 600", "3 200", "+1 600"],
+        [{"en": "1000 mB oil, whole chain (pump, distillery, acid, water)", "pt": "1000 mB de petróleo, cadeia inteira (bomba, destiladora, ácido, água)"}, {"en": "about 20 500", "pt": "uns 20 500"}, "32 000", {"en": "about +11 500", "pt": "uns +11 500"}],
+        [{"en": "1000 mB Biomass, Fermenter cold", "pt": "1000 mB de Biomassa, Fermentador frio"}, "5 880", "5 000", "-880"],
+        [{"en": "1000 mB Biomass, Fermenter at full heat", "pt": "1000 mB de Biomassa, Fermentador quente"}, "4 380", "5 000", "+620"]
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "Biofuel is about **renewability, not profit**: a cold Fermenter loses energy and a hot one barely wins, before you count the water. Treat it as a way to keep jetpacks and the alloy smelter running when the oil is gone, and keep the Fermenter hot.",
+      "pt": "Biocombustível é sobre **renovação, não lucro**: um Fermentador frio perde energia e um quente mal ganha, antes de contar a água. Trate como um jeito de manter jetpacks e o forno de fundição rodando quando o petróleo acabar, e mantenha o Fermentador quente."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Feed the distillery its own byproduct: pipe the Sulfur Dust output into the Fluid Enricher next door and its water from a pump over an infinite pool, and the acid loop runs itself. Two distilleries per Combustion Generator keep it burning nonstop.",
+      "pt": "Alimente a destiladora com o próprio subproduto: leve o Pó de enxofre da saída para a Enriquecedora de fluídos ao lado e a água de uma bomba sobre uma poça infinita, e o ciclo do ácido roda sozinho. Duas destiladoras por Gerador à combustão mantêm ele queimando sem parar."
+    }
+  ]
+}

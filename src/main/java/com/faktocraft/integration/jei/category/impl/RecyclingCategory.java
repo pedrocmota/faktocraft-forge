@@ -51,10 +51,12 @@ public class RecyclingCategory extends AbstractRecipeCategory<RecyclingRecipe> {
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, RecyclingRecipe recipe, IFocusGroup focuses) {
-    List<ItemStack> inputs = ForgeRegistries.ITEMS.getValues().stream()
-        .map(Item::getDefaultInstance)
-        .filter(stack -> !stack.isEmpty() && !recipe.isExcluded(stack))
-        .toList();
+    List<ItemStack> inputs = recipe.isSpecific()
+        ? List.of(recipe.getIngredient().getItems())
+        : ForgeRegistries.ITEMS.getValues().stream()
+            .map(Item::getDefaultInstance)
+            .filter(stack -> !stack.isEmpty() && !recipe.isExcluded(stack))
+            .toList();
 
     builder.addSlot(RecipeIngredientRole.INPUT, 9, 19).addItemStacks(inputs);
     builder.addSlot(RecipeIngredientRole.OUTPUT, halfX + 8, 19).addItemStack(recipe.getResultItem())

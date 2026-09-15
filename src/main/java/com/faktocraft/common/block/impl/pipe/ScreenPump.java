@@ -26,6 +26,7 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
       "textures/gui/container/pipe_machine.png");
 
   private com.faktocraft.common.screen.bar.GuiElectricBarVertical energyBar;
+  private com.faktocraft.common.screen.bar.GuiFluidBarVertical fluidBar;
   private final net.minecraft.client.gui.components.Button[] runModeButtons =
       new net.minecraft.client.gui.components.Button[3];
 
@@ -44,6 +45,8 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
     if (menu.getPump() != null) {
       energyBar = addRenderableWidget(new com.faktocraft.common.screen.bar.GuiElectricBarVertical(
           this, 151, 42, menu.getPump().getEnergyStorage(), menu.getPump()));
+      fluidBar = addRenderableWidget(new com.faktocraft.common.screen.bar.GuiFluidBarVertical(
+          this, 128, 42, menu.getPump().tank));
     }
     for (int i = 0; i < 3; i++) {
       final int id = i;
@@ -78,6 +81,9 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
     if (energyBar != null) {
       energyBar.renderWidgetToolTip(this, graphics, mouseX, mouseY);
     }
+    if (fluidBar != null) {
+      fluidBar.renderWidgetToolTip(this, graphics, mouseX, mouseY);
+    }
   }
 
   private void renderEmptySlotTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -89,7 +95,7 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
         : hoveredSlot.index == 2
             ? "gui." + Faktocraft.MODID + ".slot.tension"
             : hoveredSlot.index < 6
-                ? "gui." + Faktocraft.MODID + ".motor.overclock"
+                ? "gui." + Faktocraft.MODID + ".slot.overclock"
                 : "gui." + Faktocraft.MODID + ".slot.dock_battery";
     graphics.renderTooltip(GuiUtil.getFont(), Component.translatable(key), mouseX, mouseY);
   }

@@ -1,4 +1,5 @@
 {
+  "stackedCards": true,
   "blocks": [
     {
       "type": "p",
@@ -62,7 +63,8 @@
           "desc": {
             "en": "Burns **fuel** (40 E/t) or **biofuel** (20 E/t) - the strongest mid-game option.",
             "pt": "Queima **fuel** (40 E/t) ou **biocombustível** (20 E/t) - a opção mais forte do meio de jogo."
-          }
+          },
+          "link": "distillery"
         }
       ]
     },
@@ -85,9 +87,8 @@
             "pt": "Gerador Solar"
           },
           "icon": {
-            "block": {
+            "panel": {
               "top": "block/generator/solar_generator_top_cells",
-              "front": "block/generator/solar_generator_side",
               "side": "block/generator/solar_generator_side"
             }
           },
@@ -102,9 +103,8 @@
             "pt": "Solar Avançado"
           },
           "icon": {
-            "block": {
+            "panel": {
               "top": "block/generator/advanced_solar_generator_top_cells",
-              "front": "block/generator/advanced_solar_generator_side",
               "side": "block/generator/advanced_solar_generator_side"
             }
           },
@@ -119,9 +119,8 @@
             "pt": "Solar Híbrido"
           },
           "icon": {
-            "block": {
+            "panel": {
               "top": "block/generator/hybrid_solar_generator_top_cells",
-              "front": "block/generator/hybrid_solar_generator_side",
               "side": "block/generator/hybrid_solar_generator_side"
             }
           },
@@ -136,9 +135,8 @@
             "pt": "Solar Quântico"
           },
           "icon": {
-            "block": {
+            "panel": {
               "top": "block/generator/quantum_solar_generator_top_cells",
-              "front": "block/generator/quantum_solar_generator_side",
               "side": "block/generator/quantum_solar_generator_side"
             }
           },
@@ -153,9 +151,8 @@
             "pt": "Solar Estelar"
           },
           "icon": {
-            "block": {
+            "panel": {
               "top": "block/generator/stellar_solar_generator_top_cells",
-              "front": "block/generator/stellar_solar_generator_side",
               "side": "block/generator/stellar_solar_generator_side"
             }
           },
@@ -185,8 +182,10 @@
             "pt": "Gerador Eólico"
           },
           "icon": {
-            "block": {
-              "all": "block/generator/wind_generator_casing"
+            "windmill": {
+              "top": "block/generator/generator_top",
+              "front": "block/generator/wind_generator_fan_idle",
+              "side": "block/generator/wind_generator_casing"
             }
           },
           "desc": {

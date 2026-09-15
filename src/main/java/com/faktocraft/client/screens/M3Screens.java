@@ -9,9 +9,12 @@ import com.faktocraft.common.block.impl.machines.extruder.ScreenExtruder;
 import com.faktocraft.common.block.impl.machines.fermenter.ScreenFermenter;
 import com.faktocraft.common.block.impl.machines.fluid_enricher.ScreenFluidEnricher;
 import com.faktocraft.common.block.impl.machines.metal_former.ScreenMetalFormer;
+import com.faktocraft.common.block.impl.machines.nuclear_reactor.NuclearReactorRegistry;
+import com.faktocraft.common.block.impl.machines.nuclear_reactor.ScreenNuclearReactor;
 import com.faktocraft.common.block.impl.machines.ore_washing_plant.ScreenOreWashingPlant;
 import com.faktocraft.common.block.impl.machines.polymerizer.ScreenPolymerizer;
 import com.faktocraft.common.block.impl.machines.thermal_centrifuge.ScreenThermalCentrifuge;
+import com.faktocraft.common.block.impl.machines.uranium_centrifuge.ScreenUraniumCentrifuge;
 import com.faktocraft.common.registries.machines.M3Registry;
 import net.minecraft.client.gui.screens.MenuScreens;
 
@@ -34,6 +37,8 @@ public class M3Screens {
     MenuScreens.register(M3Registry.ORE_WASHING_PLANT_MENU, ScreenOreWashingPlant::new);
     MenuScreens.register(M3Registry.METAL_FORMER_MENU, ScreenMetalFormer::new);
     MenuScreens.register(M3Registry.THERMAL_CENTRIFUGE_MENU, ScreenThermalCentrifuge::new);
+    MenuScreens.register(M3Registry.URANIUM_CENTRIFUGE_MENU, ScreenUraniumCentrifuge::new);
+    MenuScreens.register(NuclearReactorRegistry.NUCLEAR_REACTOR_MENU, ScreenNuclearReactor::new);
     MenuScreens.register(M3Registry.CANNING_MACHINE_MENU, ScreenCanningMachine::new);
     MenuScreens.register(M3Registry.POLYMERIZER_MENU, ScreenPolymerizer::new);
   }

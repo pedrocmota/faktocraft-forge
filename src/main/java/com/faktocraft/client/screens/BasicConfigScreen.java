@@ -42,6 +42,9 @@ public class BasicConfigScreen extends Screen {
     addToggle(left, y, "gui.faktocraft.config.chunk_loader",
         BasicConfig.SERVER.chunkLoaderEnabled, BasicConfig.SERVER_SPEC, editable);
     y += ROW_HEIGHT;
+    addToggle(left, y, "gui.faktocraft.config.nuke",
+        BasicConfig.SERVER.nukeEnabled, BasicConfig.SERVER_SPEC, editable);
+    y += ROW_HEIGHT;
     addToggle(left, y, "gui.faktocraft.config.tank_break_fluid",
         BasicConfig.SERVER.tankBreakPlacesFluid, BasicConfig.SERVER_SPEC, editable);
 

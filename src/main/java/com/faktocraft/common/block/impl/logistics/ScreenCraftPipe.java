@@ -24,20 +24,20 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
       "textures/gui/container/craft_pipe.png");
 
   public static final int ARROW_X = 94 + PAD;
-  public static final int ARROW_Y = 118;
+  public static final int ARROW_Y = 58;
 
   private static final int PATTERN_X = 30 + PAD;
-  private static final int PATTERN_Y = 100;
+  private static final int PATTERN_Y = 40;
   private static final int RESULT_X = 128 + PAD;
-  private static final int RESULT_Y = 118;
+  private static final int RESULT_Y = 58;
+  private static final int STATUS_Y = PATTERN_Y + 62;
 
   private static final int FLEXIBLE_TINT = 0x2055CCFF;
 
   private Button strictButton;
 
   public ScreenCraftPipe(MenuCraftPipe menu, Inventory inventory, Component title) {
-    super(menu, inventory, title, MenuPipeRecipes.WIDTH, 320);
-    this.inventoryLabelY = MenuCraftPipe.PLAYER_INV_Y - 11;
+    super(menu, inventory, title, MenuPipeRecipes.WIDTH);
   }
 
   private BlockEntityCraftPipe pipe() {
@@ -108,13 +108,18 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
   }
 
   @Override
-  protected int addButtonY() {
-    return 200;
+  protected int detailBottom() {
+    return this.menu.hasAssembly() ? PATTERN_Y + 54 : STATUS_Y + statusLines().size() * 10;
+  }
+
+  private List<FormattedCharSequence> statusLines() {
+    return this.font.split(Component.translatable(key("craft.bench_missing")).withStyle(ChatFormatting.DARK_RED),
+        180);
   }
 
   @Override
   protected int removeButtonX() {
-    return 120 + PAD;
+    return 120;
   }
 
   @Override
@@ -132,7 +137,7 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
     strictButton = addRenderableWidget(Button.builder(strictLabel(),
         b -> press(MenuPipeRecipes.encode(MenuCraftPipe.ACTION_TOGGLE_STRICT, 0)))
         .tooltip(strictTooltip())
-        .bounds(left + PAD + 56, top + 18, 60, 14).build());
+        .bounds(left + 56, top + 18, 60, 14).build());
   }
 
   private boolean isStrict() {
@@ -240,9 +245,8 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
     if (this.menu.hasAssembly()) {
       return;
     }
-    Component status = Component.translatable(key("craft.bench_missing")).withStyle(ChatFormatting.DARK_RED);
-    int y = 166;
-    for (FormattedCharSequence sequence : this.font.split(status, 180)) {
+    int y = STATUS_Y;
+    for (FormattedCharSequence sequence : statusLines()) {
       graphics.drawString(this.font, sequence, (this.imageWidth - this.font.width(sequence)) / 2, y,
           0x404040, false);
       y += 10;

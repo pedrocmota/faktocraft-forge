@@ -15,7 +15,7 @@ public class GuiCopyPasteButton extends Button {
     setTooltip(Tooltip.create(tooltip));
   }
 
-  private void outline(GuiGraphics graphics, int x0, int y0, int x1, int y1, int color) {
+  private static void outline(GuiGraphics graphics, int x0, int y0, int x1, int y1, int color) {
     graphics.fill(x0, y0, x1, y0 + 1, color);
     graphics.fill(x0, y1 - 1, x1, y1, color);
     graphics.fill(x0, y0, x0 + 1, y1, color);
@@ -24,10 +24,12 @@ public class GuiCopyPasteButton extends Button {
 
   @Override
   protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    int line = isHoveredOrFocused() ? 0xFF101010 : 0xFF4A4A4A;
-    int fill = isHoveredOrFocused() ? 0x50FFFFFF : 0x30FFFFFF;
-    int x = getX();
-    int y = getY();
+    drawIcon(graphics, getX(), getY(), paste, isHoveredOrFocused());
+  }
+
+  public static void drawIcon(GuiGraphics graphics, int x, int y, boolean paste, boolean highlighted) {
+    int line = highlighted ? 0xFF101010 : 0xFF4A4A4A;
+    int fill = highlighted ? 0x50FFFFFF : 0x30FFFFFF;
     if (paste) {
 
       outline(graphics, x + 2, y + 2, x + 10, y + 11, line);

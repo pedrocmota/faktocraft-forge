@@ -25,6 +25,7 @@ import com.faktocraft.common.recipe.impl.FluidEnrichingRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
+import com.faktocraft.common.util.EnergyCosts;
 import com.faktocraft.common.util.StackHandlerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
@@ -54,7 +55,7 @@ public class BlockEntityFluidEnricher extends FaktocraftBlockEntity
 
   public final FluidStorage fluidInputStorage = new FluidStorage(8000);
   public final FluidStorage fluidInputStorage2 = new FluidStorage(8000);
-  public final FluidStorage fluidOutputStorage = new FluidStorage(8000);
+  public final FluidStorage fluidOutputStorage = new FluidStorage(8000).markOutputOnly();
 
   private int cachedInput = 0;
   private int cachedInput2 = 0;
@@ -238,7 +239,7 @@ public class BlockEntityFluidEnricher extends FaktocraftBlockEntity
           progress.setData(0, currentRecipe.getDuration());
         }
         progress.rescaleMax(getSpeedFactor() * currentRecipe.getDuration());
-        int energyCost = (int) (currentRecipe.getPowerCost() * getEnergyUsageFactor());
+        int energyCost = EnergyCosts.perTick(currentRecipe.getPowerCost(), getEnergyUsageFactor());
 
         if (getEnergyStorage().consumeEnergy(energyCost, true) == energyCost
             && progress.getProgress() <= progress.getProgressMax()) {
@@ -266,8 +267,6 @@ public class BlockEntityFluidEnricher extends FaktocraftBlockEntity
           addRecipeUsed(recipe);
           progress.setBoth(-1);
         }
-      } else {
-        progress.setBoth(-1);
       }
     } else {
       progress.setBoth(-1);

@@ -1,6 +1,7 @@
 package com.faktocraft.common.block.impl.logistics;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -23,6 +24,7 @@ public abstract class MenuPipeRecipes extends AbstractContainerMenu {
 
   public static final int ACTION_COPY_CONFIG = 20;
   public static final int ACTION_PASTE_CONFIG = 21;
+  public static final int ACTION_COPY_ENTRY = 22;
 
   private static final int VALUES = 8192;
 
@@ -98,6 +100,11 @@ public abstract class MenuPipeRecipes extends AbstractContainerMenu {
 
   protected abstract void moveEntry(int from, int to);
 
+  @Nullable
+  protected abstract CompoundTag copyEntry(int index);
+
+  protected abstract boolean pasteEntry(CompoundTag entry);
+
   protected abstract boolean handleAction(Player player, int action, int value);
 
   @Override
@@ -134,11 +141,28 @@ public abstract class MenuPipeRecipes extends AbstractContainerMenu {
         player.displayClientMessage(
             net.minecraft.network.chat.Component.translatable("chat.faktocraft.config_copied"), true);
       }
+      case ACTION_COPY_ENTRY -> {
+        CompoundTag entry = value < entryCount() ? copyEntry(value) : null;
+        if (entry == null) {
+          return true;
+        }
+        CompoundTag payload = new CompoundTag();
+        payload.put("entry", entry);
+        ConfigClipboard.put(player, clipboardKind(), payload);
+        player.displayClientMessage(
+            net.minecraft.network.chat.Component.translatable("chat.faktocraft.recipe_copied"), true);
+      }
       case ACTION_PASTE_CONFIG -> {
-        net.minecraft.nbt.CompoundTag payload = ConfigClipboard.get(player, clipboardKind());
+        CompoundTag payload = ConfigClipboard.get(player, clipboardKind());
         if (payload == null) {
           player.displayClientMessage(
               net.minecraft.network.chat.Component.translatable("chat.faktocraft.config_paste_empty"), true);
+          return true;
+        }
+        if (payload.contains("entry")) {
+          boolean pasted = pasteEntry(payload.getCompound("entry"));
+          player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+              pasted ? "chat.faktocraft.recipe_pasted" : "chat.faktocraft.recipe_paste_full"), true);
           return true;
         }
         pipe.pasteConfig(payload);

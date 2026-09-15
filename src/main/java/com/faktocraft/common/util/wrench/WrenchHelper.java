@@ -11,7 +11,7 @@ import com.faktocraft.common.util.BlockStateHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -82,6 +82,11 @@ public class WrenchHelper {
   }
 
   public static boolean onWrenchUse(BlockState state, Level level, BlockPos pos, Player player, Direction clickedFace) {
+    return onWrenchUse(state, level, pos, player, InteractionHand.MAIN_HAND, clickedFace);
+  }
+
+  public static boolean onWrenchUse(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
+      Direction clickedFace) {
     if (player.isCrouching()
         && level.getBlockEntity(pos) instanceof com.faktocraft.common.block.impl.pipe.IValveHolder holder
         && holder.getValve().isPresent()) {
@@ -119,7 +124,7 @@ public class WrenchHelper {
       return false;
     }
 
-    ItemStack held = player.getMainHandItem();
+    ItemStack held = player.getItemInHand(hand);
     boolean electric = held.getItem() instanceof IElectricItem;
 
     if (electric) {
@@ -140,7 +145,7 @@ public class WrenchHelper {
           level.playSound(null, pos, ModSounds.ELECTRIC_WRENCH, SoundSource.BLOCKS, 1F, pitch);
         } else {
           level.playSound(null, pos, ModSounds.WRENCH, SoundSource.BLOCKS, 1F, pitch);
-          held.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+          held.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
         }
         return true;
       }

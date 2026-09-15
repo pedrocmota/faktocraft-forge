@@ -25,9 +25,10 @@ public class MultiTool extends ElectricHoe {
     BlockPos pos = context.getClickedPos();
     BlockState state = level.getBlockState(pos);
     if (!state.isAir() && WrenchHelper.hasAction(state.getBlock())) {
-      return WrenchHelper.onWrenchUse(state, level, pos, context.getPlayer(), context.getClickedFace())
-          ? InteractionResult.SUCCESS
-          : InteractionResult.PASS;
+      return WrenchHelper.onWrenchUse(state, level, pos, context.getPlayer(), context.getHand(),
+          context.getClickedFace())
+              ? InteractionResult.SUCCESS
+              : InteractionResult.PASS;
     }
     return super.useOn(context);
   }

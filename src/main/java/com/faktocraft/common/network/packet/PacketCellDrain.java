@@ -39,8 +39,17 @@ public record PacketCellDrain(BlockPos blockPos, int tankIndex, boolean all) {
         }
         var tanks = machine.getGuiTanks();
         ItemStack carried = player.containerMenu.getCarried();
-        if (msg.tankIndex() < 0 || msg.tankIndex() >= tanks.size()
-            || !(carried.getItem() instanceof FluidCell)
+        if (msg.tankIndex() < 0 || msg.tankIndex() >= tanks.size()) {
+          return;
+        }
+        if (com.faktocraft.common.util.FluidInteractionHelper.isContainer(carried)) {
+          if (com.faktocraft.common.util.FluidInteractionHelper.fillCarried(player, tanks.get(msg.tankIndex()),
+              msg.all())) {
+            player.containerMenu.broadcastChanges();
+          }
+          return;
+        }
+        if (!(carried.getItem() instanceof FluidCell)
             || FluidItem.getFluid(carried) != Fluids.EMPTY) {
           return;
         }

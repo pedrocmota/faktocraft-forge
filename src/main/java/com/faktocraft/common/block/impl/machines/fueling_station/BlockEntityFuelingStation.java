@@ -10,6 +10,7 @@ import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.enums.GuiSlotType;
 import com.faktocraft.common.enums.InventorySlotType;
 import com.faktocraft.common.interfaces.entity.IElectricSlot;
+import com.faktocraft.common.util.EnergyCosts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -104,7 +105,7 @@ public class BlockEntityFuelingStation extends FaktocraftBlockEntity implements 
         FluidStack offer = new FluidStack(tank.getFluidStack().getFluid(),
             Math.min(TRANSFER_MB_PER_TICK, tank.getFluidAmount()));
         int accepted = handler.fill(offer.copy(), IFluidHandler.FluidAction.SIMULATE);
-        int energyCost = (int) (POWER_PER_TICK * getEnergyUsageFactor());
+        int energyCost = EnergyCosts.perTick(POWER_PER_TICK, getEnergyUsageFactor());
         if (accepted > 0 && getEnergyStorage().consumeEnergy(energyCost, true) == energyCost) {
           getEnergyStorage().consumeEnergy(energyCost, false);
           getEnergyStorage().updateConsumed(energyCost);
@@ -207,6 +208,11 @@ public class BlockEntityFuelingStation extends FaktocraftBlockEntity implements 
             return slot == ITEM_SLOT && isFinished(getStackInSlot(slot))
                 ? super.extractItem(slot, amount, simulate)
                 : ItemStack.EMPTY;
+          }
+
+          @Override
+          public int getSlotLimit(int slot) {
+            return getCustomSlotLimit(slot);
           }
         });
       }

@@ -1,0 +1,214 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "p",
+      "en": "**Uranium** is the fuel of the [Nuclear Reactor](#/nuclear-reactor) and the only road to the Nuke. The chain is short - ore, dust, the **Uranium Centrifuge**, fuel rods - but every step of it is [radioactive](#/radiation), so build the line behind lead and keep the [Hazmat suit](#/hazmat-suit) close.",
+      "pt": "O **urânio** é o combustível do [Reator nuclear](#/nuclear-reactor) e o único caminho até a Nuke. A cadeia é curta - minério, pó, a **Centrífuga de urânio**, varetas - mas cada passo dela é [radioativo](#/radiation), então monte a linha atrás de chumbo e deixe o [Traje hazmat](#/hazmat-suit) por perto."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {"en": "Deepslate Uranium Ore", "pt": "Minério de urânio de ardósia"},
+          "icon": {"block": {"all": "block/ore/deepslate_uranium"}},
+          "desc": {
+            "en": "Veins of 4 in deepslate, Y -64 to 32, iron pickaxe or better. Drops Natural Uranium.",
+            "pt": "Veios de 4 na ardósia, Y -64 a 32, picareta de ferro ou melhor. Solta Urânio natural."
+          }
+        },
+        {
+          "name": {"en": "Natural Uranium", "pt": "Urânio natural"},
+          "icon": {"item": "item/raw/uranium"},
+          "desc": {
+            "en": "The raw drop. 3 of them crush into 4 Uranium Dust.",
+            "pt": "O drop bruto. 3 deles viram 4 Pós de urânio no Macerador."
+          }
+        },
+        {
+          "name": {"en": "Uranium Dust", "pt": "Pó de urânio"},
+          "icon": {"item": "item/dust/uranium"},
+          "desc": {
+            "en": "What the centrifuge eats: 400 ticks and 24 IE/t per dust.",
+            "pt": "O que a centrífuga come: 400 ticks e 24 IE/t por pó."
+          }
+        },
+        {
+          "name": {"en": "Uranium Centrifuge", "pt": "Centrífuga de urânio"},
+          "icon": {"centrifuge": {"base_top": "block/uranium_centrifuge_base_top", "base_side": "block/machines/distillery_side", "drum": "block/uranium_centrifuge_drum", "band": "block/uranium_centrifuge_band", "cap": "block/uranium_centrifuge_cap"}},
+          "desc": {
+            "en": "4 Lead Plates, 2 Electric Motors, 2 Electronic Circuits and a Basic Machine Casing. Medium tier, 12000 IE buffer, takes overclockers.",
+            "pt": "4 Placas de chumbo, 2 Motores elétricos, 2 Circuitos eletrônicos e um Revestimento de máquina básico. Tensão Média, buffer de 12000 IE, aceita overclockers."
+          }
+        },
+        {
+          "name": {"en": "Enriched Uranium Dust", "pt": "Pó de urânio enriquecido"},
+          "icon": {"item": "item/dust/enriched_uranium"},
+          "desc": {
+            "en": "40% chance per centrifuged dust. Three fill a fuel rod.",
+            "pt": "40% de chance por pó centrifugado. Três enchem uma vareta."
+          }
+        },
+        {
+          "name": {"en": "Uranium Fuel Rod", "pt": "Vareta de combustível de urânio"},
+          "icon": {"item": "item/reactor/fuel_rod"},
+          "desc": {
+            "en": "Empty Fuel Rod + 3 Enriched Uranium Dust. 40 minutes in the reactor; the most radioactive item there is.",
+            "pt": "Vareta de combustível vazia + 3 Pós de urânio enriquecido. 40 minutos no reator; o item mais radioativo que existe."
+          }
+        },
+        {
+          "name": {"en": "Plutonium", "pt": "Plutônio"},
+          "icon": {"item": "item/reactor/plutonium"},
+          "desc": {
+            "en": "One reprocessed rod in ten. Rare and deadly; three make a Nuke.",
+            "pt": "Uma vareta reprocessada em dez. Raro e mortal; três fazem uma Nuke."
+          }
+        },
+        {
+          "name": {"en": "Nuke", "pt": "Nuke"},
+          "icon": {"block": {"top": "block/nuke_top", "front": "block/nuke_side"}},
+          "desc": {
+            "en": "3 Plutonium, 5 Lead Plates and an Advanced Circuit. Vaporises everything within 45 blocks, 90 deep.",
+            "pt": "3 Plutônios, 5 Placas de chumbo e um Circuito eletrônico avançado. Vaporiza tudo num raio de 45 blocos, 90 de fundura."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "The ore",
+      "pt": "O minério"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Only **Deepslate Uranium Ore** generates: veins of 4, seven tries per chunk, between Y -64 and 32, in every biome. Half of the ore exposed to air is discarded, so caves show less of it than there is. The plain Uranium Ore block exists but is not generated.",
+        "It needs an **iron pickaxe or better** and drops one **Natural Uranium**; Fortune multiplies the drop and Silk Touch gives the block. Smelting or blasting the ore also gives one Natural Uranium.",
+        "Find veins with the [Prospector](#/prospector), the [Geological Scanner](#/geological-scanner) or a Geiger Counter (a vein reads faintly through rock). The [Quarry](#/quarry) mines it like any other ore."
+      ],
+      "pt": [
+        "Só o **Minério de urânio de ardósia** é gerado: veios de 4, sete tentativas por chunk, entre Y -64 e 32, em todo bioma. Metade do minério exposto ao ar é descartada, então as cavernas mostram menos do que existe. O bloco de Minério de urânio comum existe, mas não é gerado.",
+        "Precisa de **picareta de ferro ou melhor** e solta um **Urânio natural**; Fortuna multiplica o drop e Toque de Seda dá o bloco. Fundir o minério na fornalha ou no alto-forno também dá um Urânio natural.",
+        "Ache veios com o [Prospector](#/prospector), o [Scanner geológico](#/geological-scanner) ou um Contador Geiger (um veio dá uma leitura fraca através da rocha). A [Mineradora](#/quarry) minera ele como qualquer outro minério."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "From ore to dust",
+      "pt": "Do minério ao pó"
+    },
+    {
+      "type": "table",
+      "headers": {"en": ["Crusher input", "Output", "Time", "Power"], "pt": ["Entrada no Macerador", "Saída", "Tempo", "Energia"]},
+      "rows": [
+        [{"en": "1 uranium ore block", "pt": "1 bloco de minério de urânio"}, {"en": "1 Uranium Dust + 10% chance of a second", "pt": "1 Pó de urânio + 10% de chance de um segundo"}, {"en": "180 ticks", "pt": "180 ticks"}, "8 IE/t"],
+        [{"en": "3 Natural Uranium", "pt": "3 Urânios naturais"}, {"en": "4 Uranium Dust", "pt": "4 Pós de urânio"}, {"en": "180 ticks", "pt": "180 ticks"}, "8 IE/t"]
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Uranium Centrifuge",
+      "pt": "Centrífuga de urânio"
+    },
+    {
+      "type": "p",
+      "en": "Craft it with **Lead Plate** - **Electric Motor** - Lead Plate on the top and bottom rows and **Electronic Circuit** - **Basic Machine Casing** - Electronic Circuit in the middle. It is a **Medium** tier machine with a 12000 IE buffer, accepts [overclockers](#/upgrades), and has its own JEI category, **Uranium Centrifuging**. Item [pipes](#/logistics) only connect on the **bottom** face, cables on the sides.",
+      "pt": "Faça com **Placa de chumbo** - **Motor elétrico** - Placa de chumbo nas fileiras de cima e de baixo e **Circuito eletrônico** - **Revestimento de máquina básico** - Circuito eletrônico no meio. É uma máquina de tensão **Média** com buffer de 12000 IE, aceita [overclockers](#/upgrades) e tem categoria própria no JEI, **Centrifugação de urânio**. [Tubos](#/logistics) de item só conectam na face de **baixo**, cabos nos lados."
+    },
+    {
+      "type": "table",
+      "headers": {"en": ["Input", "Always", "Chance", "Time / power"], "pt": ["Entrada", "Sempre", "Chance", "Tempo / energia"]},
+      "rows": [
+        [{"en": "Uranium Dust", "pt": "Pó de urânio"}, {"en": "1 Depleted Uranium Dust", "pt": "1 Pó de urânio empobrecido"}, {"en": "40%: 1 Enriched Uranium Dust", "pt": "40%: 1 Pó de urânio enriquecido"}, {"en": "400 ticks, 24 IE/t", "pt": "400 ticks, 24 IE/t"}],
+        [{"en": "Depleted Fuel Rod", "pt": "Vareta de combustível esgotada"}, {"en": "1 Empty Fuel Rod", "pt": "1 Vareta de combustível vazia"}, {"en": "30% Enriched Uranium Dust, 60% Nuclear Waste, 10% Plutonium", "pt": "30% Pó de urânio enriquecido, 60% Lixo nuclear, 10% Plutônio"}, {"en": "400 ticks, 24 IE/t", "pt": "400 ticks, 24 IE/t"}]
+      ]
+    },
+    {
+      "type": "p",
+      "en": "Each dust costs 9600 IE and 20 seconds; on average you centrifuge 7.5 dusts (72000 IE, 2.5 minutes) per fuel rod, and a rod pays that back in under a minute even cold. Sort the output: **Depleted Uranium Dust** goes to the Recycler, enriched dust to a chest behind shielding, and depleted rods come back through the same machine.",
+      "pt": "Cada pó custa 9600 IE e 20 segundos; em média você centrifuga 7,5 pós (72000 IE, 2,5 minutos) por vareta, e uma vareta devolve isso em menos de um minuto mesmo fria. Separe a saída: **Pó de urânio empobrecido** vai para o Reciclador, pó enriquecido para um baú atrás de blindagem, e varetas esgotadas voltam pela mesma máquina."
+    },
+    {
+      "type": "h",
+      "en": "Fuel rods and by-products",
+      "pt": "Varetas e subprodutos"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Empty Fuel Rod**: an **Iron Rod** and a **Tin Plate**, shapeless. Every reprocessed rod gives it back.",
+        "**Uranium Fuel Rod**: the empty rod and 3 Enriched Uranium Dust, shapeless. It runs for **40 minutes** in the [Nuclear Reactor](#/nuclear-reactor); the tooltip shows the fuel left, and rods placed side by side excite each other for more heat and power.",
+        "**Depleted Fuel Rod**: what comes out after 40 minutes. Still 0.5 rad, so reprocess it instead of leaving it in a chest: the empty rod plus enriched dust (30%), **Nuclear Waste** (60%) or **Plutonium** (10%).",
+        "**Nuclear Waste** (1.5 rad) becomes 6 **Scrap** in the [Recycler](#/machines-processing), Depleted Uranium Dust (0.05 rad) becomes 3. Plutonium (3 rad) has one use: three of them make the Nuke."
+      ],
+      "pt": [
+        "**Vareta de combustível vazia**: uma **Vara de ferro** e uma **Placa de estanho**, sem forma. Toda vareta reprocessada devolve ela.",
+        "**Vareta de combustível de urânio**: a vareta vazia e 3 Pós de urânio enriquecido, sem forma. Roda por **40 minutos** no [Reator nuclear](#/nuclear-reactor); a dica mostra o combustível restante, e varetas lado a lado se excitam para mais calor e energia.",
+        "**Vareta de combustível esgotada**: o que sai depois de 40 minutos. Ainda são 0,5 rad, então reprocesse em vez de deixar num baú: a vareta vazia mais pó enriquecido (30%), **Lixo nuclear** (60%) ou **Plutônio** (10%).",
+        "**Lixo nuclear** (1,5 rad) vira 6 **Sucatas** no [Reciclador](#/machines-processing), Pó de urânio empobrecido (0,05 rad) vira 3. Plutônio (3 rad) tem um uso só: três deles fazem a Nuke."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Yield",
+      "pt": "Rendimento"
+    },
+    {
+      "type": "table",
+      "headers": {"en": ["Mining method", "Dust per ore", "Enriched per ore", "Ores per fuel rod"], "pt": ["Como minerar", "Pó por minério", "Enriquecido por minério", "Minérios por vareta"]},
+      "rows": [
+        [{"en": "Plain pickaxe, crusher", "pt": "Picareta comum, Macerador"}, "1.33", "0.53", {"en": "about 5.6", "pt": "uns 5,6"}],
+        [{"en": "Fortune III, crusher", "pt": "Fortuna III, Macerador"}, "2.93", "1.17", {"en": "about 2.6", "pt": "uns 2,6"}],
+        [{"en": "Silk Touch, crusher", "pt": "Toque de Seda, Macerador"}, "1.1", "0.44", {"en": "about 6.8", "pt": "uns 6,8"}]
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Fortune beats Silk Touch here: Fortune III averages 2.2 Natural Uranium per ore, so a vein of 4 is worth about 1.5 rods. Averages, so expect swings; reprocessing adds 0.3 enriched dust per spent rod on top.",
+      "pt": "Fortuna ganha do Toque de Seda aqui: Fortuna III dá em média 2,2 Urânios naturais por minério, então um veio de 4 vale uns 1,5 vareta. São médias, espere variação; o reprocessamento soma 0,3 pó enriquecido por vareta gasta."
+    },
+    {
+      "type": "h",
+      "en": "The Nuke, in short",
+      "pt": "A Nuke, em resumo"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Recipe: 3 Lead Plates on top, 3 Plutonium in the middle, Lead Plate - **Advanced Circuit** - Lead Plate at the bottom.",
+        "Light it with flint and steel, a fire charge, redstone or another explosion: 6 seconds of quickening beeps, then everything within **45 blocks** and **90 deep** is vaporised. Only obsidian, reinforced stone and bedrock survive, and the crater stays at 8000 rad fading over 2 hours.",
+        "The **Nuke** toggle in the Faktocraft server options turns it off: it cannot be placed, is hidden, and placed ones refuse to detonate. Blast rules and damage are on the [Nuclear Reactor](#/nuclear-reactor) page."
+      ],
+      "pt": [
+        "Receita: 3 Placas de chumbo em cima, 3 Plutônios no meio, Placa de chumbo - **Circuito eletrônico avançado** - Placa de chumbo embaixo.",
+        "Acenda com isqueiro, bola de fogo, redstone ou outra explosão: 6 segundos de bipes acelerando, depois tudo num raio de **45 blocos** e **90 de fundura** é vaporizado. Só obsidiana, pedra reforçada e bedrock sobrevivem, e a cratera fica em 8000 rad caindo ao longo de 2 horas.",
+        "A opção **Nuke** nas opções de servidor do Faktocraft desliga ela: não pode ser colocada, fica escondida, e as já colocadas se recusam a detonar. Regras da explosão e dano estão na página do [Reator nuclear](#/nuclear-reactor)."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Lead and Reinforced Stone",
+      "pt": "Chumbo e Pedra reforçada"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Lead Plate**: a Lead Ingot and the Hammer, or the Metal Former. Plates go into the centrifuge, the Geiger Counter and the Nuke; nine ingots make the **Lead Block**.",
+        "**Reinforced Stone**: 8 stone around an **Advanced Alloy** makes 8, or two rows of stone around three Lead Ingots makes 6. It has a slab, stairs and a **Reinforced Stone Door** (6 blocks make 3; opens with redstone like an iron door).",
+        "Both let only 2% of radiation through per block, and reinforced stone survives a nuke. Two blocks of either around the uranium chest and the reactor is the standard [shielding](#/radiation)."
+      ],
+      "pt": [
+        "**Placa de chumbo**: um Lingote de chumbo e o Martelo, ou a Formadora de metais. Placas entram na centrífuga, no Contador Geiger e na Nuke; nove lingotes fazem o **Bloco de chumbo**.",
+        "**Pedra reforçada**: 8 pedras em volta de uma **Liga avançada** fazem 8, ou duas fileiras de pedra em volta de três Lingotes de chumbo fazem 6. Tem laje, escada e uma **Porta de pedra reforçada** (6 blocos fazem 3; abre com redstone como porta de ferro).",
+        "Os dois deixam passar só 2% da radiação por bloco, e a pedra reforçada sobrevive a uma nuke. Dois blocos de qualquer um em volta do baú de urânio e do reator é a [blindagem](#/radiation) padrão."
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "Safety first: a stack of Enriched Uranium Dust in your inventory is 48 rad on top of you - immediate damage. Move uranium with pipes, store it behind two blocks of lead, hold a Geiger Counter and wear the full [Hazmat suit](#/hazmat-suit) whenever you touch rods. Doses are explained on the [radiation](#/radiation) page.",
+      "pt": "Segurança primeiro: uma pilha de Pó de urânio enriquecido no inventário são 48 rad em cima de você - dano imediato. Mova urânio por tubos, guarde atrás de dois blocos de chumbo, segure um Contador Geiger e vista o [Traje hazmat](#/hazmat-suit) completo sempre que mexer em varetas. As doses estão explicadas na página de [radiação](#/radiation)."
+    }
+  ]
+}

@@ -52,4 +52,12 @@ public final class ModDamageTypes {
     return new DamageSource(
         level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(ROTOR));
   }
+
+  public static final ResourceKey<DamageType> RADIATION = ResourceKey.create(Registries.DAMAGE_TYPE,
+      new ResourceLocation(Faktocraft.MODID, "radiation"));
+
+  public static DamageSource radiation(Level level) {
+    return new DamageSource(
+        level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(RADIATION));
+  }
 }

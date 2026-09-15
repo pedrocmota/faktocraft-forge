@@ -11,6 +11,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
@@ -36,20 +37,42 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
   private static final int GRID_COLUMNS = 9;
   private static final int MAX_GRID_ROWS = 6;
 
-  private static final int GRID_BOTTOM = 226;
-
   private static final int FLEXIBLE_TINT = 0x2055CCFF;
+
+  private static final int SETTING_MINUS_X = 164;
+  private static final int SETTING_VALUE_X = 176;
+  private static final int SETTING_VALUE_W = 36;
+  private static final int SETTING_PLUS_X = 212;
+  private static final int SETTING_BUTTON_W = 12;
+  private static final int SETTING_ROW_H = 16;
+  private static final int SETTINGS_GAP = 8;
+  private static final int SHARE_W = 60;
+  private static final int LABEL_COLOR = 0x404040;
+
+  private static final int BADGE_SIZE = 7;
+  private static final int BADGE_OFFSET_X = 10;
+  private static final int BADGE_OFFSET_Y = -1;
+  private static final int[] MODE_COLORS = { 0xFF6F6F6F, 0xFF3C8AD6, 0xFFD68A3C };
+  private static final String[] MODE_KEYS = { "craft.mode.per_unit", "craft.mode.per_batch",
+      "craft.mode.maintain" };
+  private static final String[] HELP_TOPICS = { "recipes", "io", "tag", "mode", "bind", "timeout", "batch",
+      "share" };
 
   private final Map<Integer, String> cachedTag = new HashMap<>();
   private final Map<Integer, List<ItemKey>> cachedOptions = new HashMap<>();
+  private Button timeoutMinus;
+  private Button timeoutPlus;
+  private Button batchMinus;
+  private Button batchPlus;
+  private Button shareButton;
+  private boolean shareShown;
 
   private int selectedBind = Integer.MIN_VALUE;
   private int scrollRow;
   private int builtFor = Integer.MIN_VALUE;
 
   public ScreenRecipePipe(MenuRecipePipe menu, Inventory inventory, Component title) {
-    super(menu, inventory, title, MenuPipeRecipes.WIDTH, 320);
-    this.inventoryLabelY = MenuRecipePipe.PLAYER_INV_Y - 11;
+    super(menu, inventory, title, MenuPipeRecipes.WIDTH);
   }
 
   private BlockEntityRecipePipe pipe() {
@@ -68,6 +91,16 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
   @Override
   protected int listRows() {
     return 8;
+  }
+
+  @Override
+  protected List<HelpTopic> helpTopics() {
+    List<HelpTopic> topics = new ArrayList<>();
+    for (String name : HELP_TOPICS) {
+      topics.add(new HelpTopic(Component.translatable(key("craft.help." + name + ".title")),
+          Component.translatable(key("craft.help." + name + ".text"))));
+    }
+    return topics;
   }
 
   @Override
@@ -118,14 +151,29 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
         : Component.translatable(key("craft.no_machine"));
   }
 
+  private List<FormattedCharSequence> noMachineLines() {
+    return this.font.split(Component.translatable(key("craft.no_machine")), LIST_W - 4);
+  }
+
+  private int machineBottom() {
+    if (this.menu.machineSlotCount() > 0) {
+      return gridY() + gridRows() * 18;
+    }
+    return gridY() - 9 + noMachineLines().size() * 10 - 2;
+  }
+
+  private int settingsY() {
+    return machineBottom() + SETTINGS_GAP;
+  }
+
   @Override
-  protected int addButtonY() {
-    return 200;
+  protected int detailBottom() {
+    return settingsY() + 3 * SETTING_ROW_H - 2;
   }
 
   @Override
   protected int removeButtonX() {
-    return 56 + PAD;
+    return 56;
   }
 
   @Override
@@ -142,19 +190,56 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
   protected void buildDetailWidgets(int left, int top) {
     selectedBind = Integer.MIN_VALUE;
     scrollRow = 0;
-    addRenderableWidget(Button.builder(Component.literal("-"),
+    int y = top + settingsY();
+    Tooltip timeoutTip = Tooltip.create(Component.translatable(key("craft.timeout")));
+    timeoutMinus = addRenderableWidget(Button.builder(Component.literal("-"),
         b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_TIMEOUT_DOWN, hasShiftDown() ? 1 : 0)))
-        .tooltip(Tooltip.create(Component.translatable(key("craft.timeout"))))
-        .bounds(left + PAD + 120, top + 18, 12, 14).build());
-    addRenderableWidget(Button.builder(Component.literal("+"),
+        .tooltip(timeoutTip).bounds(left + SETTING_MINUS_X, y, SETTING_BUTTON_W, 14).build());
+    timeoutPlus = addRenderableWidget(Button.builder(Component.literal("+"),
         b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_TIMEOUT_UP, hasShiftDown() ? 1 : 0)))
-        .tooltip(Tooltip.create(Component.translatable(key("craft.timeout"))))
-        .bounds(left + PAD + 156, top + 18, 12, 14).build());
+        .tooltip(timeoutTip).bounds(left + SETTING_PLUS_X, y, SETTING_BUTTON_W, 14).build());
+    Tooltip batchTip = Tooltip.create(Component.empty().append(Component.translatable(key("craft.batch")))
+        .append("\n").append(Component.translatable(key("craft.batch_tip")).withStyle(ChatFormatting.GRAY)));
+    batchMinus = addRenderableWidget(Button.builder(Component.literal("-"),
+        b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_BATCH_DOWN, hasShiftDown() ? 1 : 0)))
+        .tooltip(batchTip).bounds(left + SETTING_MINUS_X, y + SETTING_ROW_H, SETTING_BUTTON_W, 14).build());
+    batchPlus = addRenderableWidget(Button.builder(Component.literal("+"),
+        b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_BATCH_UP, hasShiftDown() ? 1 : 0)))
+        .tooltip(batchTip).bounds(left + SETTING_PLUS_X, y + SETTING_ROW_H, SETTING_BUTTON_W, 14).build());
+    shareShown = this.menu.shared();
+    shareButton = addRenderableWidget(Button.builder(shareLabel(),
+        b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_TOGGLE_SHARE, 0)))
+        .tooltip(Tooltip.create(shareTip()))
+        .bounds(left + SETTING_MINUS_X, y + 2 * SETTING_ROW_H, SHARE_W, 14).build());
+  }
+
+  private Component shareLabel() {
+    return Component.translatable(key(this.menu.shared() ? "craft.share_on" : "craft.share_off"));
+  }
+
+  private Component shareTip() {
+    return Component.empty().append(Component.translatable(key("craft.share")))
+        .append(": ")
+        .append(Component.translatable(key(this.menu.shared() ? "craft.share_on" : "craft.share_off")))
+        .append("\n").append(Component.translatable(key("craft.share_tip")).withStyle(ChatFormatting.GRAY));
   }
 
   @Override
   protected void containerTick() {
     super.containerTick();
+    if (isEditing() && timeoutMinus != null) {
+      int y = this.topPos + settingsY();
+      timeoutMinus.setY(y);
+      timeoutPlus.setY(y);
+      batchMinus.setY(y + SETTING_ROW_H);
+      batchPlus.setY(y + SETTING_ROW_H);
+      shareButton.setY(y + 2 * SETTING_ROW_H);
+    }
+    if (shareButton != null && shareShown != this.menu.shared()) {
+      shareShown = this.menu.shared();
+      shareButton.setMessage(shareLabel());
+      shareButton.setTooltip(Tooltip.create(shareTip()));
+    }
     if (this.menu.editIndex() != builtFor) {
       builtFor = this.menu.editIndex();
       selectedBind = Integer.MIN_VALUE;
@@ -211,7 +296,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
   }
 
   private int gridRows() {
-    return Math.max(1, Math.min(MAX_GRID_ROWS, (GRID_BOTTOM - gridY()) / 18));
+    return Math.max(1, Math.min(MAX_GRID_ROWS, machineRows()));
   }
 
   private List<ItemKey> optionsFor(int ioId, BlockEntityRecipePipe.Io io) {
@@ -268,8 +353,46 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
     return slot < this.menu.machineSlotCount() ? slot : -1;
   }
 
+  private int modeBadgeAt(double mouseX, double mouseY) {
+    BlockEntityRecipePipe.MachineRecipe recipe = recipe();
+    if (recipe == null) {
+      return Integer.MIN_VALUE;
+    }
+    int left = (this.width - this.imageWidth) / 2;
+    int top = (this.height - this.imageHeight) / 2;
+    int inputs = visibleInputs(recipe);
+    for (int i = 0; i < inputs; i++) {
+      if (recipe.inputs[i].isEmpty()) {
+        continue;
+      }
+      int x = left + IN_X + (i % IN_COLUMNS) * 18 + BADGE_OFFSET_X;
+      int y = top + IO_Y + (i / IN_COLUMNS) * 18 + BADGE_OFFSET_Y;
+      if (mouseX >= x && mouseX < x + BADGE_SIZE && mouseY >= y && mouseY < y + BADGE_SIZE) {
+        return i;
+      }
+    }
+    return Integer.MIN_VALUE;
+  }
+
+  private String modeLetter(IoMode mode) {
+    String letter = Component.translatable(key(MODE_KEYS[mode.ordinal()] + "_short")).getString();
+    return letter.isEmpty() ? "?" : letter;
+  }
+
+  private boolean boundToDock(BlockEntityRecipePipe.Io io) {
+    BlockEntityRecipePipe pipe = pipe();
+    BlockPos docked = pipe != null ? pipe.dockedPos() : null;
+    return io.bindSlot >= 0 && io.bindBlock.equals(dockedBlockId(docked))
+        && io.bindSlots == this.menu.machineSlotCount();
+  }
+
   @Override
   protected boolean detailMouseClicked(double mouseX, double mouseY, int button) {
+    int badge = modeBadgeAt(mouseX, mouseY);
+    if (badge != Integer.MIN_VALUE && button == 0 && this.menu.getCarried().isEmpty()) {
+      press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_CYCLE_MODE, MenuRecipePipe.ioValue(badge)));
+      return true;
+    }
     int io = ioAt(mouseX, mouseY);
     if (io != Integer.MIN_VALUE) {
       BlockEntityRecipePipe.MachineRecipe recipe = recipe();
@@ -290,10 +413,36 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
     }
     int slot = machineSlotAt(mouseX, mouseY);
     if (slot >= 0) {
-      bindTo(slot);
+      if (button == 1) {
+        unbindAt(slot);
+      } else {
+        bindTo(slot);
+      }
       return true;
     }
     return false;
+  }
+
+  private List<Integer> boundAt(BlockEntityRecipePipe.MachineRecipe recipe, int slot) {
+    List<Integer> ids = new ArrayList<>();
+    for (int ioId : allIoIds()) {
+      BlockEntityRecipePipe.Io io = recipe.io(ioId);
+      if (!io.isEmpty() && boundToDock(io) && slot >= io.bindSlot && slot <= io.lastSlot()) {
+        ids.add(ioId);
+      }
+    }
+    return ids;
+  }
+
+  private void unbindAt(int slot) {
+    BlockEntityRecipePipe.MachineRecipe recipe = recipe();
+    if (recipe == null) {
+      return;
+    }
+    for (int ioId : boundAt(recipe, slot)) {
+      ModNetworking.sendToServer(new PacketRecipePipeBind(this.menu.getPipePos(), ioId, -1));
+    }
+    selectedBind = Integer.MIN_VALUE;
   }
 
   private void bindTo(int slot) {
@@ -301,7 +450,15 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
       return;
     }
     BlockEntityRecipePipe.MachineRecipe recipe = recipe();
-    int target = recipe != null && recipe.io(selectedBind).bindSlot == slot ? -1 : slot;
+    BlockEntityRecipePipe.Io io = recipe != null ? recipe.io(selectedBind) : null;
+    if (io != null && hasShiftDown() && boundToDock(io)) {
+      int start = Math.min(io.bindSlot, slot);
+      int end = Math.max(io.lastSlot(), slot);
+      ModNetworking.sendToServer(new PacketRecipePipeBind(this.menu.getPipePos(), selectedBind, start, end));
+      selectedBind = Integer.MIN_VALUE;
+      return;
+    }
+    int target = io != null && io.bindSlot == slot && io.lastSlot() == slot ? -1 : slot;
     ModNetworking.sendToServer(new PacketRecipePipeBind(this.menu.getPipePos(), selectedBind, target));
     selectedBind = Integer.MIN_VALUE;
   }
@@ -375,9 +532,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
     if (recipe == null) {
       return;
     }
-    String seconds = (this.menu.timeoutTicks() / 20) + "s";
-    GuiUtil.renderScaled(graphics, seconds,
-        PAD + 144 - Math.round(this.font.width(seconds) * LABEL_SCALE) / 2, 21, LABEL_SCALE, 0x404040, false);
+    renderSettings(graphics, recipe);
     GuiUtil.renderScaled(graphics, Component.translatable(key("craft.inputs")).getString(), IN_X,
         IO_Y - 9, LABEL_SCALE, 0x404040, false);
     GuiUtil.renderScaled(graphics, Component.translatable(key("craft.outputs")).getString(), OUT_X,
@@ -394,6 +549,24 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
     }
 
     renderMachineGrid(graphics, recipe);
+  }
+
+  private void renderSettings(GuiGraphics graphics, BlockEntityRecipePipe.MachineRecipe recipe) {
+    int separator = machineBottom() + 3;
+    graphics.fill(LIST_X, separator, LIST_X + LIST_W, separator + 1, 0xFF8B8B8B);
+    graphics.fill(LIST_X, separator + 1, LIST_X + LIST_W, separator + 2, 0xFFFFFFFF);
+    int y = settingsY();
+    settingRow(graphics, "craft.help.timeout.title", (this.menu.timeoutTicks() / 20) + "s", y);
+    settingRow(graphics, "craft.help.batch.title", "x" + recipe.batchSize, y + SETTING_ROW_H);
+    settingRow(graphics, "craft.share", null, y + 2 * SETTING_ROW_H);
+  }
+
+  private void settingRow(GuiGraphics graphics, String captionKey, String value, int y) {
+    graphics.drawString(this.font, Component.translatable(key(captionKey)), LIST_X, y + 3, LABEL_COLOR, false);
+    if (value != null) {
+      graphics.drawString(this.font, value, SETTING_VALUE_X + (SETTING_VALUE_W - this.font.width(value)) / 2,
+          y + 3, LABEL_COLOR, false);
+    }
   }
 
   private void drawIo(GuiGraphics graphics, BlockEntityRecipePipe.MachineRecipe recipe, int ioId, int x, int y) {
@@ -413,13 +586,27 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
       graphics.renderOutline(x - 1, y - 1, 18, 18,
           BlockEntityRecipePipe.isOutputId(ioId) ? 0x803C8AD6 : 0x802E8B2E);
     }
+    if (!io.isEmpty() && !BlockEntityRecipePipe.isOutputId(ioId)) {
+      int bx = x + BADGE_OFFSET_X;
+      int by = y + BADGE_OFFSET_Y;
+      graphics.pose().pushPose();
+      graphics.pose().translate(0, 0, 200);
+      graphics.fill(bx, by, bx + BADGE_SIZE, by + BADGE_SIZE, MODE_COLORS[io.mode.ordinal()]);
+      String letter = modeLetter(io.mode);
+      GuiUtil.renderScaled(graphics, letter, bx + (BADGE_SIZE - Math.round(this.font.width(letter) * 0.5f)) / 2,
+          by + 1, 0.5f, 0xFFFFFF, false);
+      graphics.pose().popPose();
+    }
   }
 
   private void renderMachineGrid(GuiGraphics graphics, BlockEntityRecipePipe.MachineRecipe recipe) {
     int count = this.menu.machineSlotCount();
     if (count <= 0) {
-      GuiUtil.renderScaled(graphics, Component.translatable(key("craft.no_machine")).getString(), GRID_X,
-          gridY() - 9, LABEL_SCALE, 0xAA3333, false);
+      int y = gridY() - 9;
+      for (FormattedCharSequence line : noMachineLines()) {
+        graphics.drawString(this.font, line, LIST_X + 2, y, 0xAA3333, false);
+        y += 10;
+      }
       return;
     }
     GuiUtil.renderScaled(graphics,
@@ -450,15 +637,17 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
           || io.bindSlots != count) {
         continue;
       }
-      int index = io.bindSlot - scrollRow * GRID_COLUMNS;
-      if (index < 0 || index >= GRID_COLUMNS * gridRows()) {
-        continue;
+      for (int slot = io.bindSlot; slot <= Math.min(io.lastSlot(), count - 1); slot++) {
+        int index = slot - scrollRow * GRID_COLUMNS;
+        if (index < 0 || index >= GRID_COLUMNS * gridRows()) {
+          continue;
+        }
+        int x = GRID_X + (index % GRID_COLUMNS) * 18;
+        int y = gridY() + (index / GRID_COLUMNS) * 18;
+        graphics.renderItem(displayStack(ioId, io), x, y);
+        graphics.renderOutline(x - 1, y - 1, 18, 18,
+            BlockEntityRecipePipe.isOutputId(ioId) ? 0xFF3C8AD6 : 0xFF2E8B2E);
       }
-      int x = GRID_X + (index % GRID_COLUMNS) * 18;
-      int y = gridY() + (index / GRID_COLUMNS) * 18;
-      graphics.renderItem(displayStack(ioId, io), x, y);
-      graphics.renderOutline(x - 1, y - 1, 18, 18,
-          BlockEntityRecipePipe.isOutputId(ioId) ? 0xFF3C8AD6 : 0xFF2E8B2E);
     }
   }
 
@@ -499,8 +688,14 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
       return;
     }
     List<Component> tooltip = new ArrayList<>();
-    int io = ioAt(mouseX, mouseY);
-    if (io != Integer.MIN_VALUE) {
+    int badge = modeBadgeAt(mouseX, mouseY);
+    int io = badge != Integer.MIN_VALUE ? badge : ioAt(mouseX, mouseY);
+    if (badge != Integer.MIN_VALUE) {
+      IoMode mode = recipe.io(badge).mode;
+      tooltip.add(Component.translatable(key(MODE_KEYS[mode.ordinal()])));
+      tooltip.add(Component.translatable(key(MODE_KEYS[mode.ordinal()] + "_tip")).withStyle(ChatFormatting.GRAY));
+      tooltip.add(Component.translatable(key("craft.mode_hint")).withStyle(ChatFormatting.DARK_GRAY));
+    } else if (io != Integer.MIN_VALUE) {
       BlockEntityRecipePipe.Io entry = recipe.io(io);
       if (entry.isEmpty()) {
         tooltip.add(Component.translatable(key(BlockEntityRecipePipe.isOutputId(io)
@@ -520,11 +715,18 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
                 .withStyle(ChatFormatting.DARK_GRAY));
           }
           tooltip.add(Component.translatable(key("craft.tag_hint")).withStyle(ChatFormatting.DARK_GRAY));
+          tooltip.add(Component.translatable(key(MODE_KEYS[entry.mode.ordinal()])).withStyle(ChatFormatting.GOLD));
         }
-        tooltip.add(entry.bindSlot < 0
-            ? Component.translatable(key("craft.unbound")).withStyle(ChatFormatting.DARK_GRAY)
-            : Component.translatable(key("craft.bound_slot"), entry.bindSlot).withStyle(ChatFormatting.GREEN));
+        if (entry.bindSlot < 0) {
+          tooltip.add(Component.translatable(key("craft.unbound")).withStyle(ChatFormatting.DARK_GRAY));
+        } else if (entry.lastSlot() > entry.bindSlot) {
+          tooltip.add(Component.translatable(key("craft.bound_slots"), entry.bindSlot, entry.lastSlot())
+              .withStyle(ChatFormatting.GREEN));
+        } else {
+          tooltip.add(Component.translatable(key("craft.bound_slot"), entry.bindSlot).withStyle(ChatFormatting.GREEN));
+        }
         tooltip.add(Component.translatable(key("craft.scroll_hint")).withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.add(Component.translatable(key("craft.clear_hint")).withStyle(ChatFormatting.DARK_GRAY));
       }
     } else {
       int slot = machineSlotAt(mouseX, mouseY);
@@ -534,6 +736,12 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
       tooltip.add(Component.translatable(key("craft.slot_number"), slot));
       tooltip.add(Component.translatable(key(selectedBind == Integer.MIN_VALUE
           ? "craft.bind_hint" : "craft.bind_click")).withStyle(ChatFormatting.DARK_GRAY));
+      if (selectedBind != Integer.MIN_VALUE && boundToDock(recipe.io(selectedBind))) {
+        tooltip.add(Component.translatable(key("craft.bind_range_hint")).withStyle(ChatFormatting.DARK_GRAY));
+      }
+      if (!boundAt(recipe, slot).isEmpty()) {
+        tooltip.add(Component.translatable(key("craft.unbind_hint")).withStyle(ChatFormatting.DARK_GRAY));
+      }
     }
     if (!tooltip.isEmpty()) {
       graphics.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);

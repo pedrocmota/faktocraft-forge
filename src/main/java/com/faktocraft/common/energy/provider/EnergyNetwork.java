@@ -15,7 +15,6 @@ public class EnergyNetwork implements IEnergy {
   private static final Random RANDOM = new Random();
 
   private int energy;
-  private int energyMax;
   private final HashSet<BlockPos> connections = new HashSet<>();
   private final HashSet<BlockPos> electrics = new HashSet<>();
   private final HashSet<BlockPos> transmitters = new HashSet<>();
@@ -36,7 +35,6 @@ public class EnergyNetwork implements IEnergy {
 
   public EnergyNetwork(BlockPos pos, EnergyTier tier) {
     this.energyTier = tier;
-    this.energyMax = tier.getBasicTransfer();
     this.connections.add(pos);
     randomColor();
   }
@@ -44,7 +42,6 @@ public class EnergyNetwork implements IEnergy {
   public EnergyNetwork(int energy, EnergyTier tier) {
     this.energy = energy;
     this.energyTier = tier;
-    this.energyMax = tier.getBasicTransfer();
     randomColor();
   }
 
@@ -154,7 +151,6 @@ public class EnergyNetwork implements IEnergy {
 
   @Override
   public void setMaxEnergy(int amount) {
-    this.energyMax = amount;
   }
 
   @Override
@@ -164,7 +160,7 @@ public class EnergyNetwork implements IEnergy {
 
   @Override
   public int maxReceiveTick() {
-    return energyMax;
+    return energyTier.getBasicTransfer();
   }
 
   @Override
@@ -174,7 +170,7 @@ public class EnergyNetwork implements IEnergy {
 
   @Override
   public int maxExtractTick() {
-    return energyMax;
+    return energyTier.getBasicTransfer();
   }
 
   @Override
@@ -195,7 +191,6 @@ public class EnergyNetwork implements IEnergy {
   public CompoundTag serializeNBT() {
     CompoundTag tag = new CompoundTag();
     tag.putInt("energy", energy);
-    tag.putInt("energyMax", energyMax);
     tag.putInt("energyTier", energyTier.getLvl());
     tag.putLongArray("connections", connections.stream().mapToLong(BlockPos::asLong).toArray());
     tag.putLongArray("electrics", electrics.stream().mapToLong(BlockPos::asLong).toArray());
@@ -212,10 +207,6 @@ public class EnergyNetwork implements IEnergy {
   public void deserializeNBT(CompoundTag tag) {
     this.energy = tag.contains("energy") ? tag.getInt("energy") : 0;
     this.energyTier = EnergyTier.getTierFromLvl(tag.contains("energyTier") ? tag.getInt("energyTier") : 1);
-
-    this.energyMax = tag.contains("energyMax") && tag.getInt("energyMax") > 0
-        ? tag.getInt("energyMax")
-        : energyTier.getBasicTransfer();
     connections.clear();
     for (long pos : tag.getLongArray("connections")) {
       connections.add(BlockPos.of(pos));

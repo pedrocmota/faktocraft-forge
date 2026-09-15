@@ -22,6 +22,11 @@ public class JadePlugin implements IWailaPlugin {
     registration.registerBlockDataProvider(JadeEnergyDataProvider.INSTANCE,
         com.faktocraft.common.block.impl.pipe.BlockEntityFluidExtractorPipe.class);
     registration.registerBlockDataProvider(JadeCableDataProvider.INSTANCE, BlockEntityCable.class);
+    registration.registerItemStorage(com.faktocraft.integration.jade.provider.JadeItemStorageProvider.INSTANCE,
+        FaktocraftBlockEntity.class);
+    registration.registerBlockDataProvider(
+        com.faktocraft.integration.jade.provider.JadeReactorDataProvider.INSTANCE,
+        com.faktocraft.common.block.impl.machines.nuclear_reactor.BlockEntityNuclearReactor.class);
   }
 
   @Override
@@ -30,6 +35,11 @@ public class JadePlugin implements IWailaPlugin {
     registration.registerBlockComponent(JadeEnergyProvider.INSTANCE,
         com.faktocraft.common.block.impl.pipe.BlockFluidExtractorPipe.class);
     registration.registerBlockComponent(JadeCableProvider.INSTANCE, BlockCable.class);
+    registration.registerItemStorageClient(com.faktocraft.integration.jade.provider.JadeItemStorageProvider.INSTANCE);
+    registration.registerBlockComponent(JadeEnergyProvider.INSTANCE,
+        com.faktocraft.common.block.impl.machines.nuclear_reactor.BlockNuclearReactor.class);
+    registration.registerBlockComponent(com.faktocraft.integration.jade.provider.JadeReactorProvider.INSTANCE,
+        com.faktocraft.common.block.impl.machines.nuclear_reactor.BlockNuclearReactor.class);
     registration.registerBlockComponent(com.faktocraft.integration.jade.provider.JadeBreakerProvider.INSTANCE,
         com.faktocraft.common.block.impl.cable.BlockBreaker.class);
     registration.registerBlockComponent(com.faktocraft.integration.jade.provider.JadeValveProvider.INSTANCE,
@@ -37,6 +47,19 @@ public class JadePlugin implements IWailaPlugin {
     registration.hideTarget(com.faktocraft.common.registries.PipeRegistry.PUMP_TUBE_BLOCK);
     registration.hideTarget(com.faktocraft.common.registries.ModBlocks.HANDLE_GUARD);
     registration.addRayTraceCallback((hit, accessor, original) -> {
+      if (accessor instanceof snownee.jade.api.BlockAccessor part
+          && part.getBlock() instanceof com.faktocraft.common.block.impl.machines.nuclear_reactor.BlockNuclearReactor) {
+        net.minecraft.core.BlockPos core = com.faktocraft.common.block.impl.machines.nuclear_reactor.BlockNuclearReactor
+            .corePos(part.getBlockState(), part.getPosition());
+        if (core != null && !core.equals(part.getPosition())) {
+          var level = part.getLevel();
+          return registration.blockAccessor().from(part)
+              .blockState(level.getBlockState(core))
+              .blockEntity(() -> level.getBlockEntity(core))
+              .hit(part.getHitResult().withPosition(core))
+              .build();
+        }
+      }
       if (accessor instanceof snownee.jade.api.BlockAccessor block
           && block.getBlock() instanceof com.faktocraft.common.block.impl.machines.distillery.BlockDistilleryTower) {
         var level = block.getLevel();

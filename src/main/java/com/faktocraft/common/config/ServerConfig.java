@@ -71,6 +71,8 @@ public class ServerConfig {
   public int canning_machine_duration = 30;
   public int canning_machine_tick_usage = 2;
 
+  public int status_monitor_refresh_ticks = 10;
+
   public int alloy_smelter_energy_capacity = 2400;
   public int alloy_smelter_energy_heat_cost = 50;
   public int combustion_alloy_smelter_fluid_capacity = 8000;
@@ -99,6 +101,51 @@ public class ServerConfig {
 
   public int thermal_centrifuge_energy_capacity = 48_000;
   public int thermal_centrifuge_temp_cost = 48;
+  public int uranium_centrifuge_energy_capacity = 12_000;
+
+  public boolean radiation_enabled = true;
+  public int radiation_interval = 20;
+  public int radiation_range = 16;
+  public double radiation_safe_dose = 0.5;
+  public double radiation_sickness = 30.0;
+  public double radiation_chronic_damage = 0.02;
+  public double radiation_recovery = 2.0;
+  public double radiation_recovery_rate = 0.5;
+  public double radiation_acute_dose = 30.0;
+  public double radiation_acute_damage = 0.05;
+  public double radiation_pocket_factor = 0.5;
+  public double radiation_shield_factor = 0.02;
+  public double radiation_block_factor = 0.85;
+  public double reactor_radiation = 2000.0;
+  public double meltdown_radiation = 4000.0;
+  public int meltdown_decay_ticks = 72_000;
+  public int reactor_energy_capacity = 1_000_000;
+  public int reactor_water_capacity = 16_000;
+  public int reactor_rod_energy = 40;
+  public int reactor_rod_bonus = 30;
+  public double reactor_heat_boost = 1.0;
+  public int reactor_rod_heat = 6;
+  public int reactor_rod_heat_bonus = 3;
+  public int reactor_reflector_heat = 3;
+  public int reactor_max_heat = 10_000;
+  public int reactor_bucket_cooling = 15_000;
+  public int reactor_water_per_tick = 4;
+  public int reactor_cell_cooling = 6;
+  public int reactor_cell_coolant = 3_000;
+  public int reactor_cell_life_ticks = 72_000;
+  public int reactor_passive_cooling = 2;
+  public int reactor_rod_life_ticks = 48_000;
+  public double reactor_meltdown_power = 10.0;
+  public int priority_nuclear_reactor = 1;
+  public int nuke_radius = 45;
+  public int nuke_depth = 90;
+  public int nuke_fuse_ticks = 120;
+  public double nuke_resistance_limit = 1000.0;
+  public double nuke_damage = 500.0;
+  public double nuke_radiation = 8000.0;
+  public int nuke_decay_ticks = 144_000;
+  public int nuke_blocks_per_tick = 6000;
+  public double ore_radiation = 0.05;
 
   public int scanner_energy_capacity = 1_000_000;
 

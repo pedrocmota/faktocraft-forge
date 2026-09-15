@@ -49,8 +49,7 @@ public class BlockItemElectric extends FaktocraftBlockItem {
     if (energy > 0 && !level.isClientSide()) {
       BlockEntity blockEntity = level.getBlockEntity(pos);
       if (blockEntity instanceof FaktocraftBlockEntity faktocraftBlockEntity && faktocraftBlockEntity.hasEnergy()) {
-        faktocraftBlockEntity.getEnergyStorage().setEnergy(energy);
-        blockEntity.setChanged();
+        faktocraftBlockEntity.restoreStoredEnergy(energy);
       }
     }
     return result;

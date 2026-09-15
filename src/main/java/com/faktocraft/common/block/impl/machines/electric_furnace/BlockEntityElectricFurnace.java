@@ -18,6 +18,7 @@ import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketExperience;
 import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.registries.machines.M2Registry;
+import com.faktocraft.common.util.EnergyCosts;
 import com.faktocraft.common.util.StackHandlerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -119,7 +120,7 @@ public class BlockEntityElectricFurnace extends FaktocraftBlockEntity
       if (canSmelt(inputStack, outputStack, resultStack) && progress.getProgress() != -1) {
 
         progress.rescaleMax(getSpeedFactor() * furnaceRecipe.getCookingTime() * 0.70F);
-        int energyCost = (int) (ModConfig.server().electric_furnace_tick_usage * getEnergyUsageFactor());
+        int energyCost = EnergyCosts.perTick(ModConfig.server().electric_furnace_tick_usage, getEnergyUsageFactor());
 
         if (getEnergyStorage().consumeEnergy(energyCost, true) == energyCost) {
           active = true;

@@ -7,7 +7,7 @@
         "items": [
           {
             "items": [
-              "faktocraft:carbon_plate"
+              "faktocraft:advanced_capacitor"
             ]
           }
         ]
@@ -19,7 +19,7 @@
         "items": [
           {
             "items": [
-              "faktocraft:advanced_circuit"
+              "minecraft:lapis_block"
             ]
           }
         ]
@@ -31,7 +31,7 @@
         "items": [
           {
             "items": [
-              "faktocraft:energy_crystal"
+              "faktocraft:lapotron_crystal"
             ]
           }
         ]
@@ -43,7 +43,7 @@
         "items": [
           {
             "items": [
-              "minecraft:lapis_block"
+              "faktocraft:advanced_solar_generator"
             ]
           }
         ]
@@ -55,7 +55,19 @@
         "items": [
           {
             "items": [
-              "faktocraft:iridium_plate"
+              "faktocraft:advanced_circuit"
+            ]
+          }
+        ]
+      }
+    },
+    "has_ingredient_5": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "faktocraft:energy_crystal"
             ]
           }
         ]
@@ -75,6 +87,7 @@
       "has_ingredient_2",
       "has_ingredient_3",
       "has_ingredient_4",
+      "has_ingredient_5",
       "has_the_recipe"
     ]
   ],

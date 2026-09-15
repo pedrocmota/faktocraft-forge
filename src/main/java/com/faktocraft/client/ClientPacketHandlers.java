@@ -53,6 +53,13 @@ public class ClientPacketHandlers {
     }
   }
 
+  public static void handleProspectorState(com.faktocraft.common.network.packet.PacketProspectorState payload) {
+    ProspectorClientData.apply(payload);
+    if (Minecraft.getInstance().screen instanceof ProspectorScreen screen) {
+      screen.refresh();
+    }
+  }
+
   public static void handleAnchorScreen(com.faktocraft.common.network.packet.PacketAnchorScreen payload) {
     AnchorBufferScreen.open(payload.blockPos(), payload.current(), payload.min(), payload.max());
   }

@@ -29,6 +29,7 @@ public class BlockEntityTransformer extends FaktocraftBlockEntity
 
     BlockTransformer block = (BlockTransformer) state.getBlock();
     tier = block.getTransformerTier();
+    transformerMode = defaultMode();
     createEnergyStorage(0, tier.getMaxTier().getBasicTransfer(), EnergyType.TRANSFORMER, tier.getMaxTier());
 
     setRedstoneOnly(true);
@@ -90,7 +91,14 @@ public class BlockEntityTransformer extends FaktocraftBlockEntity
   public void load(CompoundTag tag) {
     super.load(tag);
     transformerMode = TransformerMode.getModeFromId(
-        tag.contains("transformerMode") ? tag.getInt("transformerMode") : TransformerMode.STEP_UP.getId());
+        tag.contains("transformerMode") ? tag.getInt("transformerMode") : defaultMode().getId());
+    if (!tier.isStepUpAllowed()) {
+      transformerMode = TransformerMode.STEP_DOWN;
+    }
+  }
+
+  private TransformerMode defaultMode() {
+    return tier.isStepUpAllowed() ? TransformerMode.STEP_UP : TransformerMode.STEP_DOWN;
   }
 
   public Runnable changeMode() {
@@ -100,6 +108,9 @@ public class BlockEntityTransformer extends FaktocraftBlockEntity
 
   @Override
   public void updateMode() {
+    if (!tier.isStepUpAllowed()) {
+      return;
+    }
     switch (transformerMode) {
       case STEP_UP -> transformerMode = TransformerMode.STEP_DOWN;
       case STEP_DOWN -> transformerMode = TransformerMode.STEP_UP;

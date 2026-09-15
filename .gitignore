@@ -12,6 +12,7 @@ run-gametest/
 runs/
 logs/
 crash-reports/
+docs/tools/__pycache__/**
 
 bin/
 .classpath

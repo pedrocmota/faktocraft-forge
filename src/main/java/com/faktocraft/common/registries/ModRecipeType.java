@@ -18,6 +18,7 @@ import com.faktocraft.common.recipe.impl.SawingRecipe;
 import com.faktocraft.common.recipe.impl.ScannerRecipe;
 import com.faktocraft.common.recipe.impl.ScrapBoxRecipe;
 import com.faktocraft.common.recipe.impl.ThermalCentrifugingRecipe;
+import com.faktocraft.common.recipe.impl.UraniumCentrifugingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 
@@ -38,6 +39,7 @@ public final class ModRecipeType {
   public static final RecipeType<PolymerizingRecipe> POLYMERIZING = registerType("polymerizing");
   public static final RecipeType<ScrapBoxRecipe> SCRAP_BOX = registerType("scrap_box");
   public static final RecipeType<ThermalCentrifugingRecipe> THERMAL_CENTRIFUGING = registerType("thermal_centrifuging");
+  public static final RecipeType<UraniumCentrifugingRecipe> URANIUM_CENTRIFUGING = registerType("uranium_centrifuging");
   public static final RecipeType<ScannerRecipe> SCANNER = registerType("scanner");
   public static final RecipeType<RollingRecipe> ROLLING = registerType("rolling");
   public static final RecipeType<CuttingRecipe> CUTTING = registerType("cutting");

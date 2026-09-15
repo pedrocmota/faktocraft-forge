@@ -42,6 +42,7 @@ public final class BasicConfig {
 
     public final ForgeConfigSpec.BooleanValue teleportAnchorEnabled;
     public final ForgeConfigSpec.BooleanValue chunkLoaderEnabled;
+    public final ForgeConfigSpec.BooleanValue nukeEnabled;
     public final ForgeConfigSpec.BooleanValue tankBreakPlacesFluid;
 
     private Server(ForgeConfigSpec.Builder builder) {
@@ -60,6 +61,10 @@ public final class BasicConfig {
           .comment("Whether the chunk loader exists.",
               "Disabled it is hidden from the creative tabs and from JEI.")
           .define("chunkLoader", true);
+      nukeEnabled = builder
+          .comment("Whether the nuke can be placed and detonated.",
+              "Disabled it is hidden from the creative tabs and from JEI, and placed nukes will not go off.")
+          .define("nuke", true);
       builder.pop();
     }
   }
@@ -78,6 +83,10 @@ public final class BasicConfig {
 
   public static boolean chunkLoaderEnabled() {
     return read(SERVER_SPEC, SERVER.chunkLoaderEnabled);
+  }
+
+  public static boolean nukeEnabled() {
+    return read(SERVER_SPEC, SERVER.nukeEnabled);
   }
 
   public static boolean tankBreakPlacesFluid() {

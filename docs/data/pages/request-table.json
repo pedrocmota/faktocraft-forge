@@ -1,28 +1,32 @@
 {
+  "stackedCards": true,
   "blocks": [
     {
+      "type": "banner",
+      "src": "banners/request.webp"
+    },
+    {
       "type": "p",
-      "en": "The autocrafting layer sits on top of the pipe network: you ask for an item, and the network finds ingredients, drives machines and delivers the result - including multi-step chains.",
-      "pt": "A camada de autocraft fica sobre a rede de tubos: você pede um item, e a rede encontra ingredientes, aciona máquinas e entrega o resultado - inclusive cadeias de várias etapas."
+      "en": "The **Logistics Core** is the brain of a [logistics network](#/logistics) and the **Request Table** is how you talk to it: browse everything the network holds or can make, ask for a quantity, and watch the task run. A **Remote Requester** opens that table from anywhere in the world.",
+      "pt": "O **Núcleo logístico** é o cérebro da [rede de logística](#/logistics) e a **Mesa de Requisição** é como você fala com ele: navegue por tudo que a rede tem ou consegue fazer, peça uma quantidade e acompanhe a tarefa rodando. Um **Requisitor Remoto** abre essa mesa de qualquer lugar do mundo."
     },
     {
       "type": "icons",
       "items": [
         {
           "name": {
-            "en": "Logistics Controller",
-            "pt": "Controlador de Logística"
+            "en": "Logistics Core",
+            "pt": "Núcleo logístico"
           },
           "icon": {
             "block": {
               "top": "block/logistics_controller_top",
-              "front": "block/logistics_controller_side",
-              "side": "block/logistics_controller_side"
+              "front": "block/logistics_controller_side"
             }
           },
           "desc": {
-            "en": "The brain - coordinates jobs across one network.",
-            "pt": "O cérebro - coordena os trabalhos de uma rede."
+            "en": "Six Steel Plates around redstone, an Electronic Circuit and redstone. Medium voltage, 40 000 IE buffer, exactly one per network. Pays 2 IE per item moved and 20 IE per craft.",
+            "pt": "Seis Placas de aço em volta de redstone, um Circuito eletrônico e redstone. Tensão Média, buffer de 40 000 IE, exatamente um por rede. Paga 2 IE por item movido e 20 IE por craft."
           }
         },
         {
@@ -38,51 +42,8 @@
             }
           },
           "desc": {
-            "en": "Browse everything the network can provide or craft, and request it.",
-            "pt": "Navegue por tudo que a rede pode fornecer ou produzir, e peça."
-          }
-        },
-        {
-          "name": {
-            "en": "Craft Pipe",
-            "pt": "Tubo de Craft"
-          },
-          "icon": {
-            "pipe": "block/pipe/craft_pipe"
-          },
-          "desc": {
-            "en": "Holds crafting-table patterns the network can execute.",
-            "pt": "Guarda padrões de bancada que a rede executa."
-          }
-        },
-        {
-          "name": {
-            "en": "Recipe Pipe",
-            "pt": "Tubo de Receita"
-          },
-          "icon": {
-            "pipe": "block/pipe/recipe_pipe"
-          },
-          "desc": {
-            "en": "Teaches the network what a docked machine consumes and produces.",
-            "pt": "Ensina à rede o que a máquina encostada consome e produz."
-          }
-        },
-        {
-          "name": {
-            "en": "Assembly Table",
-            "pt": "Mesa de Montagem"
-          },
-          "icon": {
-            "block": {
-              "top": "block/assembly_table_top",
-              "front": "block/assembly_table_side",
-              "side": "block/assembly_table_side"
-            }
-          },
-          "desc": {
-            "en": "A crafting station the network operates directly.",
-            "pt": "Uma estação de craft que a rede opera diretamente."
+            "en": "Steel Plates, a crafting table, a chest and an Electronic Circuit. Right-click to open. Request 1 to 1728 of anything the network can supply or craft; deliveries land in its 27-slot buffer.",
+            "pt": "Placas de aço, uma bancada, um baú e um Circuito eletrônico. Clique direito abre. Peça de 1 a 1728 de qualquer coisa que a rede fornece ou fabrica; as entregas caem no depósito de 27 slots."
           }
         },
         {
@@ -94,37 +55,112 @@
             "item": "item/remote_requester"
           },
           "desc": {
-            "en": "A portable Request Table linked to your network.",
-            "pt": "Uma Mesa de Requisição portátil vinculada à sua rede."
+            "en": "Electronic Circuit, ender pearl and Steel Plate. Right-click a Request Table to bind it, then use it in the air to open that table from any distance or dimension while its chunk is loaded.",
+            "pt": "Circuito eletrônico, pérola de ender e Placa de aço. Clique direito numa Mesa de Requisição pra vincular, depois use no ar pra abrir aquela mesa de qualquer distância ou dimensão enquanto a chunk dela estiver carregada."
           }
         }
       ]
     },
     {
       "type": "h",
-      "en": "How a request runs",
-      "pt": "Como uma requisição roda"
+      "en": "Logistics Core",
+      "pt": "Núcleo logístico"
     },
     {
       "type": "list",
       "en": [
-        "You request, say, 16 circuits at the Request Table.",
-        "The controller checks providers for ready stock and delivers what exists.",
-        "For the rest it walks the known recipes (craft pipes and recipe pipes), requests the ingredients - recursively - and dispatches them to the right machines.",
-        "Products come back through the network until the request is fulfilled at the table."
+        "It joins the network only through an adjacent **chassis pipe, Craft Pipe or Recipe Pipe**, never a plain Stone or Golden Pipe.",
+        "Feed it a Medium line (see [Energy](#/energy)). The network is built from the core outward; if two cores can reach each other everything stops with **Two cores on the same network!**",
+        "Without energy the network is **offline**: you can still browse at the Request Table, but nothing moves or crafts until the buffer refills.",
+        "Its screen has the energy bar and a **Tasks** button that opens the **Task book**: every task on the network, filtered by **All / User / System** (yours versus the ones modules created) and **Active / Completed / Failed**, with a search box, **Remove from history** per entry and **Clear** for all completed ones. It keeps the last 100 entries of each kind."
       ],
       "pt": [
-        "Você pede, digamos, 16 circuitos na Mesa de Requisição.",
-        "O controlador confere estoque pronto nos providers e entrega o que existe.",
-        "Para o resto, ele percorre as receitas conhecidas (craft pipes e recipe pipes), pede os ingredientes - recursivamente - e os despacha para as máquinas certas.",
-        "Os produtos voltam pela rede até a requisição ser cumprida na mesa."
+        "Ele entra na rede só por um **tubo de chassi, Tubo de craft ou Tubo de receita** vizinho, nunca por um Tubo de pedra ou de ouro comum.",
+        "Alimente com uma linha Média (veja [Energia](#/energy)). A rede é montada a partir do núcleo; se dois núcleos se alcançam, tudo para com **Dois núcleos na mesma rede!**",
+        "Sem energia a rede fica **offline**: ainda dá pra navegar na Mesa de Requisição, mas nada se move ou fabrica até o buffer encher de novo.",
+        "A tela tem a barra de energia e o botão **Tarefas**, que abre o **Livro de tarefas**: todas as tarefas da rede, filtradas por **Todas / Usuário / Sistema** (as suas contra as que os módulos criaram) e **Ativas / Concluídas / Falhas**, com busca, **Remover do histórico** por entrada e **Limpar** pra todas as concluídas. Ele guarda as últimas 100 entradas de cada tipo."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Request Table",
+      "pt": "Mesa de Requisição"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Place it touching a chassis pipe or docking pipe, same rule as the core. Right-click opens it, no wrench needed.",
+        "The **Requests** tab is a grid of 8 by 7, 56 entries per page, with a search box. Items the network can only make are marked **Craftable**; entries that cannot be made right now are dimmed and their tooltip says **Missing: X**.",
+        "Click an entry to make it the target, set the quantity from **1 to 1728** and press **Request**. Deliveries land in the table's 27-slot **Buffer**; take them out by hand.",
+        "**Auto-extract** pushes whatever sits in the buffer back into the network, like an Extractor Module, so you can request into a chest with a sink instead of your inventory. It turns itself off when you close the screen.",
+        "The **Tasks** tab lists your own requests with expandable subtasks (Deliver, Craft) and leftovers, and lets you cancel one: a cancelled user task returns its items."
+      ],
+      "pt": [
+        "Coloque encostada num tubo de chassi ou tubo de acoplamento, mesma regra do núcleo. Clique direito abre, sem precisar de chave.",
+        "A aba **Pedidos** é uma grade de 8 por 7, 56 entradas por página, com busca. Itens que a rede só consegue fabricar aparecem como **Craftável**; entradas que não dá pra fazer agora ficam apagadas e a dica diz **Falta: X**.",
+        "Clique numa entrada pra torná-la alvo, ajuste a quantidade de **1 a 1728** e aperte **Pedir**. As entregas caem no **Depósito** de 27 slots da mesa; tire na mão.",
+        "**Extração automática** empurra o que estiver no depósito de volta pra rede, como um Módulo Extrator, então você pode pedir pra um baú com sink em vez do seu inventário. Ela se desliga sozinha quando você fecha a tela.",
+        "A aba **Tarefas** lista os seus pedidos com subtarefas expansíveis (Entregar, Craftar) e sobras, e deixa cancelar: tarefa de usuário cancelada devolve os itens."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "How a request runs",
+      "pt": "Como um pedido roda"
+    },
+    {
+      "type": "list",
+      "en": [
+        "You ask for, say, 64 Electronic Circuits. The core plans the job in the background on a snapshot of the network, so a big request never freezes the game.",
+        "The plan is then checked against the live network (stock still there, energy enough) and every withdrawal is **reserved**, so two requests never promise the same item. Provider reserves and earlier reservations are subtracted first.",
+        "One parent task appears with subtasks: **Deliver N** for anything already in stock, sent immediately and in parallel, and **Craft N** for each recipe stage the [autocrafting](#/autocrafting) planner needs.",
+        "Craft stages run in order: collect the outputs of earlier stages, take the rest from providers by priority, wait for production, and the final stage delivers to the table.",
+        "Items ride the pipes at 4 ticks per pipe (2 on Golden Pipes). If a chunk on the route unloads, the task freezes until it is back. When everything has arrived the task reads **Completed**."
+      ],
+      "pt": [
+        "Você pede, digamos, 64 Circuitos eletrônicos. O núcleo planeja o trabalho em segundo plano sobre uma foto da rede, então um pedido grande nunca trava o jogo.",
+        "O plano é conferido contra a rede ao vivo (estoque ainda lá, energia suficiente) e cada retirada é **reservada**, então dois pedidos nunca prometem o mesmo item. Reservas dos providers e reservas anteriores são descontadas antes.",
+        "Uma tarefa-mãe aparece com subtarefas: **Entregar N** pra tudo que já está em estoque, enviado na hora e em paralelo, e **Craftar N** pra cada estágio de receita que o planejador de [autocraft](#/autocrafting) precisa.",
+        "Os estágios de craft rodam em ordem: recolher as saídas dos estágios anteriores, pegar o resto dos providers por prioridade, esperar a produção, e o último estágio entrega na mesa.",
+        "Os itens andam nos tubos a 4 ticks por tubo (2 nos Tubos de ouro). Se uma chunk da rota descarrega, a tarefa congela até ela voltar. Quando tudo chegou a tarefa fica **Concluído**."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Task states and failures",
+      "pt": "Estados e falhas das tarefas"
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Shown as", "Meaning"],
+        "pt": ["Aparece como", "Significado"]
+      },
+      "rows": [
+        [{"en": "Pending", "pt": "Pendente"}, {"en": "planned, waiting for its turn", "pt": "planejada, esperando a vez"}],
+        [{"en": "Waiting for a free machine", "pt": "Aguardando máquina livre"}, {"en": "every machine with that recipe is busy", "pt": "toda máquina com aquela receita está ocupada"}],
+        [{"en": "Collecting / Producing / Delivering / In transit", "pt": "Coletando / Produzindo / Entregando / Em trânsito"}, {"en": "the normal life of a craft stage", "pt": "a vida normal de um estágio de craft"}],
+        [{"en": "Completed / Cancelled / Not completed", "pt": "Concluído / Cancelada / Não concluída"}, {"en": "final states; the reason is in the tooltip", "pt": "estados finais; o motivo fica na dica"}],
+        [{"en": "Failed: machine or pipe removed", "pt": "Falhou: máquina ou tubo removido"}, {"en": "a block on the plan disappeared", "pt": "um bloco do plano sumiu"}],
+        [{"en": "Failed: no production", "pt": "Falhou: sem produção"}, {"en": "no progress for the Recipe Pipe's timeout (default 2 min)", "pt": "sem progresso pelo tempo limite do Tubo de receita (padrão 2 min)"}],
+        [{"en": "Failed: missing X", "pt": "Falhou: faltando X"}, {"en": "an ingredient is nowhere in the network", "pt": "um ingrediente não existe em lugar nenhum da rede"}],
+        [{"en": "Failed: not enough energy", "pt": "Falhou: energia insuficiente"}, {"en": "the core cannot pay for the moves and crafts", "pt": "o núcleo não consegue pagar os movimentos e crafts"}],
+        [{"en": "Failed: network stock changed", "pt": "Falhou: estoque da rede mudou"}, {"en": "the items vanished between planning and reservation; request again", "pt": "os itens sumiram entre o planejamento e a reserva; peça de novo"}],
+        [{"en": "Failed: recipe cycle detected", "pt": "Falhou: ciclo de receitas detectado"}, {"en": "recipe A needs B which needs A", "pt": "a receita A precisa de B que precisa de A"}],
+        [{"en": "Failed: request too complex", "pt": "Falhou: pedido complexo demais"}, {"en": "more than 16 nested stages or 4096 crafts", "pt": "mais de 16 estágios aninhados ou 4096 crafts"}],
+        [{"en": "Failed: two cores on the same network", "pt": "Falhou: dois núcleos na mesma rede"}, {"en": "remove one core", "pt": "remova um dos núcleos"}]
       ]
     },
     {
       "type": "callout",
       "style": "tip",
-      "en": "The recipe pipe can pin ingredients to specific machine slots - use it for machines whose slots have different roles.",
-      "pt": "O tubo de receita pode fixar ingredientes em slots específicos da máquina - use com máquinas cujos slots têm papéis diferentes."
+      "en": "Bind a Remote Requester to a Request Table next to your warehouse and keep it in your hotbar: with a [Chunk Loader](#/chunk-loader) on that base you can order gear from the other side of the world and pick it up when you get home.",
+      "pt": "Vincule um Requisitor Remoto a uma Mesa de Requisição ao lado do seu armazém e deixe na hotbar: com um [Carregador de Chunks](#/chunk-loader) naquela base você encomenda equipamento do outro lado do mundo e pega quando chegar em casa."
+    },
+    {
+      "type": "callout",
+      "en": "The Request Table only reaches providers on **its own** network, the one whose core it can walk to through chassis and pipes. A table next to a bare Stone Pipe shows nothing at all: give it a chassis or docking pipe to touch.",
+      "pt": "A Mesa de Requisição só alcança providers da **própria** rede, aquela cujo núcleo ela consegue chegar por chassis e tubos. Uma mesa ao lado de um Tubo de pedra pelado não mostra nada: dê a ela um chassi ou tubo de acoplamento pra encostar."
     }
   ]
 }

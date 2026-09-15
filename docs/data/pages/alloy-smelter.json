@@ -1,0 +1,145 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "p",
+      "en": "Alloy smelters melt up to three ingredients into one alloy: bronze from copper and tin, steel, and the Mixed Metal Ingot that the Compressor presses into **Advanced Alloy**. There are three of them, with the same recipes and the same three input slots plus one output - they differ only in what heats them and how fast they go.",
+      "pt": "Fornos de fundição derretem até três ingredientes numa liga: bronze de cobre e estanho, aço, e a Liga de metais que o Compressor prensa em **Liga avançada**. Existem três, com as mesmas receitas e os mesmos três slots de entrada mais um de saída - eles só diferem no que os esquenta e na velocidade."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Coal Alloy Smelter",
+            "pt": "Forno de fundição a carvão"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/coal_alloy_smelter_top",
+              "front": "block/machines/basic/coal_alloy_smelter_front",
+              "side": "block/machines/basic/coal_alloy_smelter_side"
+            }
+          },
+          "desc": {
+            "en": "Iron ingots above and below, two furnaces around bricks. Burns any furnace fuel, no power needed. Speed 0.5.",
+            "pt": "Lingotes de ferro em cima e embaixo, duas fornalhas em volta de tijolos. Queima qualquer combustível de fornalha, sem energia. Velocidade 0,5."
+          }
+        },
+        {
+          "name": {
+            "en": "Electric Alloy Smelter",
+            "pt": "Forno de fundição elétrico"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/alloy_smelter_top",
+              "front": "block/machines/basic/alloy_smelter_front",
+              "side": "block/machines/basic/alloy_smelter_side"
+            }
+          },
+          "desc": {
+            "en": "Advanced Circuit on top, two Electric Furnaces around a Basic Machine Casing, Heat Conductor below. High voltage, 2 400 IE buffer. Speed 0.8 cold, 1.6 at full heat.",
+            "pt": "Circuito eletrônico avançado em cima, duas Fornalhas elétricas em volta de um Revestimento de máquina básico, Condutor de calor embaixo. Tensão Alta, buffer de 2 400 IE. Velocidade 0,8 frio, 1,6 no calor máximo."
+          }
+        },
+        {
+          "name": {
+            "en": "Combustion Alloy Smelter",
+            "pt": "Forno de fundição a combustão"
+          },
+          "icon": {
+            "block": {
+              "top": "block/machines/basic/combustion_alloy_smelter_top",
+              "front": "block/machines/basic/combustion_alloy_smelter_front",
+              "side": "block/machines/basic/combustion_alloy_smelter_side"
+            }
+          },
+          "desc": {
+            "en": "Iron Plates around a Heat Conductor and an Electronic Circuit, two Fluid Cells beside a Coal Alloy Smelter. Burns Fuel or Biofuel from an 8 000 mB tank. Speed 2.0, always.",
+            "pt": "Placas de ferro em volta de um Condutor de calor e um Circuito eletrônico, duas Células de fluído ao lado de um Forno de fundição a carvão. Queima Combustível ou Biocombustível de um tanque de 8 000 mB. Velocidade 2,0, sempre."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Side by side",
+      "pt": "Lado a lado"
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Smelter", "Runs on", "Speed", "Extras"],
+        "pt": ["Forno", "Funciona com", "Velocidade", "Extras"]
+      },
+      "rows": [
+        [
+          {"en": "Coal Alloy Smelter", "pt": "Forno de fundição a carvão"},
+          {"en": "Coal, charcoal, wood - any furnace fuel", "pt": "Carvão, carvão vegetal, madeira - qualquer combustível de fornalha"},
+          {"en": "0.5, constant", "pt": "0,5, constante"},
+          {"en": "No cables; only lights with a valid recipe inside", "pt": "Sem cabos; só acende com uma receita válida dentro"}
+        ],
+        [
+          {"en": "Electric Alloy Smelter", "pt": "Forno de fundição elétrico"},
+          {"en": "High voltage, 2 400 IE buffer", "pt": "Tensão Alta, buffer de 2 400 IE"},
+          {"en": "0.8 cold → 1.6 hot", "pt": "0,8 frio → 1,6 quente"},
+          {"en": "Heats up while working; takes Overclocker and Efficiency upgrades", "pt": "Esquenta enquanto trabalha; aceita Melhoria de overclock e de eficiência"}
+        ],
+        [
+          {"en": "Combustion Alloy Smelter", "pt": "Forno de fundição a combustão"},
+          {"en": "Fuel (1 mB = 2 ticks) or Biofuel (1 mB = 1 tick), 8 000 mB tank", "pt": "Combustível (1 mB = 2 ticks) ou Biocombustível (1 mB = 1 tick), tanque de 8 000 mB"},
+          {"en": "2.0, constant", "pt": "2,0, constante"},
+          {"en": "No cables, no warm-up; fed by fluid pipe or by cell", "pt": "Sem cabos, sem aquecimento; alimentado por tubo de fluido ou por célula"}
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "en": "How each one works",
+      "pt": "Como cada um funciona"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Coal**: put fuel in the fuel slot and the ingredients in the three inputs. It only lights when the inputs form a valid recipe, so a lump of coal in an idle smelter is not wasted. Steady but slow - about three times slower than a hot electric smelter.",
+        "**Electric**: it starts at speed 0.8 and warms up while it runs, spending 50 IE per heat step until it reaches full heat and speed 1.6. Idle, it loses heat at 1 point per second - unless it has a redstone signal, which keeps it heating (and paying for it) with nothing inside. A smelter working through a stack is far more efficient than one doing a single ingot. Plug in [Overclocker and Efficiency upgrades](#/upgrades) to go beyond that.",
+        "**Combustion**: fill the 8 000 mB tank with [Fuel or Biofuel](#/fluids) - by fluid pipe on any side but the front, or by clicking the gauge with a cell or bucket. Every millibucket of fuel buys 2 ticks of work, every millibucket of biofuel 1 tick. It runs at speed 2.0 from the first tick and never slows."
+      ],
+      "pt": [
+        "**A carvão**: coloque combustível no slot de combustível e os ingredientes nas três entradas. Ele só acende quando as entradas formam uma receita válida, então um carvão num forno parado não é desperdiçado. Constante mas lento - cerca de três vezes mais lento que um forno elétrico quente.",
+        "**Elétrico**: começa na velocidade 0,8 e esquenta enquanto roda, gastando 50 IE por passo de calor até chegar ao calor máximo e à velocidade 1,6. Parado, perde 1 ponto de calor por segundo - a não ser que tenha sinal de redstone, que o mantém esquentando (e pagando por isso) mesmo vazio. Um forno trabalhando numa pilha rende muito mais do que um fazendo um lingote só. Encaixe [Melhorias de overclock e de eficiência](#/upgrades) para ir além.",
+        "**A combustão**: encha o tanque de 8 000 mB com [Combustível ou Biocombustível](#/fluids) - por tubo de fluido em qualquer lado menos a frente, ou clicando no medidor com uma célula ou balde. Cada milibalde de combustível compra 2 ticks de trabalho, cada milibalde de biocombustível 1 tick. Ele roda na velocidade 2,0 desde o primeiro tick e nunca desacelera."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Which one to build",
+      "pt": "Qual construir"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Day one**: the Coal Alloy Smelter. Iron, two furnaces and bricks - no circuits, no power - and it unlocks bronze, which every early machine needs. See [Getting started](#/getting-started).",
+        "**Once you have High voltage**: the Electric Alloy Smelter fits into an automated line, runs from the grid and accepts upgrades. Keep it busy so it stays hot.",
+        "**Once oil or biofuel flows**: the Combustion Alloy Smelter is the fastest and needs no cables - one [Fuel Distillery](#/distillery) or Fermenter feeding it by pipe makes a lot of alloy. It is built from a Coal Alloy Smelter, so the first one is never wasted."
+      ],
+      "pt": [
+        "**Primeiro dia**: o Forno de fundição a carvão. Ferro, duas fornalhas e tijolos - sem circuitos, sem energia - e ele libera o bronze, que toda máquina inicial precisa. Veja [Começando](#/getting-started).",
+        "**Quando tiver tensão Alta**: o Forno de fundição elétrico entra numa linha automatizada, roda da rede e aceita melhorias. Mantenha ocupado para ficar quente.",
+        "**Quando o petróleo ou o biocombustível fluir**: o Forno de fundição a combustão é o mais rápido e não precisa de cabos - uma [Destiladora de combustível](#/distillery) ou uma Fermentadora alimentando por tubo faz muita liga. Ele é feito a partir de um Forno de fundição a carvão, então o primeiro nunca é desperdiçado."
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "The three smelters share one recipe list, so the coal smelter makes exactly the same alloys as the combustion one - only slower. Do not delay bronze waiting for power.",
+      "pt": "Os três fornos compartilham uma lista de receitas só, então o forno a carvão faz exatamente as mesmas ligas que o a combustão - só mais devagar. Não atrase o bronze esperando energia."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Feed the electric smelter with a [Recipe Pipe](#/autocrafting) or a supplier module so it never sits empty: every idle minute is heat you paid for and lost.",
+      "pt": "Alimente o forno elétrico com um [Tubo de receita](#/autocrafting) ou um módulo fornecedor para ele nunca ficar vazio: cada minuto parado é calor que você pagou e perdeu."
+    }
+  ]
+}

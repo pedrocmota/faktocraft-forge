@@ -1,18 +1,47 @@
 # Faktocraft
 
-<img src="docs/banners/main.png" alt="Faktocraft" width="700">
+<img src="docs/banners/main.webp" alt="Faktocraft" width="700">
 
-Faktocraft is a modern port of several classic tech mods - **IndustrialCraft 2**, **BuildCraft** and **Logistics Pipes** - brought together into a single mod: electrical machines, tiered power grids, item and fluid pipes, quarries and a full logistics system.
+Faktocraft is a modern port of several classic tech mods - **IndustrialCraft 2**, **BuildCraft** and **Logistics Pipes** - brought together into a single mod: electrical machines, tiered power grids, item and fluid pipes, automated mining and a request-based logistics system.
 
-> ⚠️ The mod is in its **first alpha version** - bugs may occur.
+> ℹ️ The mod is in **beta**. The feature set is complete and every system has been played through, but balance is still being tuned and bugs may remain.
 
 ## Features
 
-- Electrical machines with a tiered voltage system (low to ultra), transformers and circuit breakers
-- Power generation: solar, wind, geothermal, combustion and more
-- Item and fluid pipes with a request-based logistics network
-- BuildCraft-style quarry with landmarks
-- Jetpacks, electric armor and tools
+### Power
+- Five voltage tiers (Low to Ultra) with their own cables, transformers, circuit breakers and battery boxes. Feeding a machine the wrong tier makes it explode; bare cables shock whoever touches them.
+- Generators for every stage: fuel burners, geothermal, combustion, five solar panels and a wind generator driven by a live wind simulation.
+- A 3x3x3 **Nuclear Reactor** with a real heat model: rods and reflectors heat it, water and coolant kits cool it, and it melts down if you let it.
+- Charge pads, capacitors and machine upgrades (overclocker, efficiency, tension).
+
+### Machines
+- Ore processing chain: crusher, ore washing plant and thermal centrifuge for extra output.
+- Manufacturing: compressor, metal former, extruder, circuit assembler, sawmill, three alloy smelters (coal, combustion, electric), canning machine and more.
+- Endgame: recycler, matter fabricator, scanner and replicator.
+
+### Oil and chemistry
+- Oil pockets, giant underground reservoirs and surface lakes in dry biomes.
+- Fluid pump, tanks, fluid pipes with valves, and the Ender Tank that shares its contents across any distance or dimension.
+- Fuel Distillery, Polymerizer (plastic and rubber), Fluid Enricher (sulfuric acid, coolant) and Fermenter (biofuel).
+
+### Logistics
+- Transparent item pipes: you can watch items travel.
+- Chassis pipes with modules (sink, provider, extractor, supplier, collector, ejector, disposal) and a RimWorld-style item filter.
+- Logistics Core and Request Table: ask for an item and the network gathers it or crafts it through craft pipes, recipe pipes and the assembly table, splitting work across machines.
+
+### World and mining
+- Rubber trees, seven new ores and uranium.
+- Geological Prospector and Geological Scanner with shared scan channels.
+- BuildCraft-style Quarry with landmarks, and a Forester that plants, fertilizes and harvests trees.
+- Hole Drill: bore through walls and hide cables and pipes inside the blocks.
+
+### Radiation
+- Uranium items, the reactor, meltdowns and the Nuke irradiate their surroundings. Lead and reinforced stone shield it.
+- Geiger Counter and a four-piece Hazmat suit.
+
+### Gear and utility
+- Jetpacks, nano and quantum armor, electric tools, night vision goggles.
+- Status Monitor wall panel that shows live information about any block, Teleport Anchors (including a dimensional one), Chunk Loader, Luminator, reinforced stone and glass.
 
 ## Requirements
 
@@ -26,7 +55,7 @@ Faktocraft has no mixins, coremods or access transformers, so it rarely conflict
 ### Compatible
 
 - **JEI** - recipe categories for every machine, recipe transfer (the `+` button) into machines, the request table and the craft/recipe pipes.
-- **Jade** - energy, cable, circuit breaker, valve and machine info in the overlay.
+- **Jade** - energy, cable, circuit breaker, valve, reactor and machine info in the overlay. When Jade is on both the server and the client, the Status Monitor shows Jade's own tooltip for the watched block.
 - **REI** - native plugin with the same categories and recipe transfer as JEI.
 - **WTHIT** - native plugin with the same overlay information as Jade.
 - **Embeddium** and **Oculus** - including shader packs.
@@ -36,9 +65,9 @@ Faktocraft has no mixins, coremods or access transformers, so it rarely conflict
 ### Compatible without integration
 
 - Minimaps, inventory tweaks, UI mods and most performance mods.
-- **Any mod using Forge item and fluid capabilities** - inventories, tanks and hoppers work with the pipes, the quarry and the machines. Storage networks such as Applied Energistics 2 and Refined Storage are reachable as ordinary inventories.
-- **Forge tags** - ores, ingots, dusts and other materials use `forge:` tags, so shared ores and ingredients from other mods are recognized. The quarry mines any ordinary block from any mod and can be tuned with the `faktocraft:quarry_blacklist` and `faktocraft:quarry_mineable` block tags.
-- **Datapacks, KubeJS, CraftTweaker** - every recipe type has a JSON serializer, so Faktocraft recipes can be added, changed or removed.
+- **Any mod using Forge item and fluid capabilities** - inventories, tanks, buckets and hoppers work with the pipes, the quarry and the machines. Storage networks such as Applied Energistics 2 and Refined Storage are reachable as ordinary inventories.
+- **Forge tags** - ores, ingots, dusts and other materials use `forge:` tags, so shared ores and ingredients from other mods are recognized. The quarry mines any ordinary block from any mod and can be tuned with the `faktocraft:quarry_blacklist` and `faktocraft:quarry_mineable` block tags; radiation shielding uses the `faktocraft:radiation_shielding` tag.
+- **Datapacks, KubeJS, CraftTweaker** - every recipe type has a JSON serializer, so Faktocraft recipes can be added, changed or removed. Oil generation is plain worldgen JSON.
 - **Forge Energy mods** (Mekanism, Thermal, Powah, Create and others) - Faktocraft power is its own system and is not exposed as FE. There is no converter yet.
 - **Curios** - the jetpack and the night vision goggles must be worn in the armor slots.
 - **Land claim mods** (FTB Chunks, Flan and similar) - the quarry and the forester do not enforce claims yet, the hole drill does.
@@ -53,7 +82,7 @@ A Fabric port is unlikely - the mod is deeply tied to Forge internals (energy ca
 
 ## Wiki
 
-The official wiki is available at **[pedrocmota.github.io/faktocraft-forge](https://pedrocmota.github.io/faktocraft-forge)** (English and Portuguese). It is still under development, so some pages may change.
+The official wiki is available at **[pedrocmota.github.io/faktocraft-forge](https://pedrocmota.github.io/faktocraft-forge)** (English and Portuguese). It covers every system and every important block, from the first rubber tree to the replicator, with recipes, numbers and step-by-step guides.
 
 ## Translations
 

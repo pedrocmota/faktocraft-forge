@@ -1,0 +1,161 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The **Hazmat suit** is a cheap four-piece set of **Rubber** and **Plastic** that trades armor for immunities: with all four pieces on you take no [radiation](#/radiation), no fire damage and no harm from the mod's fluids. It is the suit you put on to load the [Nuclear Reactor](#/nuclear-reactor), to walk through fallout or to wade an [oil pocket](#/oil-pockets) - not the one you fight in.",
+      "pt": "O **Traje hazmat** é um conjunto barato de quatro peças de **Borracha** e **Plástico** que troca armadura por imunidades: com as quatro peças você não recebe [radiação](#/radiation), nem dano de fogo, nem mal dos fluidos do mod. É o traje que você veste para carregar o [Reator nuclear](#/nuclear-reactor), atravessar uma área contaminada ou entrar num [bolsão de petróleo](#/oil-pockets) - não o traje para lutar."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {"en": "Hazmat Helmet", "pt": "Capacete hazmat"},
+          "icon": {"tinted": {"base": "item/hazmat_helmet", "overlay": "item/hazmat_helmet_overlay", "color": "e8c43a"}},
+          "desc": {
+            "en": "Plastic - Rubber - Plastic over Rubber - glass pane - Rubber. 55 durability, 1 armor point. Shows a respirator on the 3D model.",
+            "pt": "Plástico - Borracha - Plástico sobre Borracha - vidraça - Borracha. 55 de durabilidade, 1 ponto de armadura. Mostra um respirador no modelo 3D."
+          }
+        },
+        {
+          "name": {"en": "Hazmat Chestplate", "pt": "Peitoral hazmat"},
+          "icon": {"tinted": {"base": "item/hazmat_chestplate", "overlay": "item/hazmat_chestplate_overlay", "color": "e8c43a"}},
+          "desc": {
+            "en": "6 Rubber around 2 Plastic, chestplate shape. 80 durability, 3 armor points, air tank on the back.",
+            "pt": "6 Borrachas em volta de 2 Plásticos, no formato de peitoral. 80 de durabilidade, 3 pontos de armadura, cilindro nas costas."
+          }
+        },
+        {
+          "name": {"en": "Hazmat Leggings", "pt": "Calças hazmat"},
+          "icon": {"tinted": {"base": "item/hazmat_leggings", "overlay": "item/hazmat_leggings_overlay", "color": "e8c43a"}},
+          "desc": {
+            "en": "Plastic - Rubber - Plastic on top, then two rows of Rubber legs. 75 durability, 2 armor points.",
+            "pt": "Plástico - Borracha - Plástico em cima, depois duas fileiras de pernas de Borracha. 75 de durabilidade, 2 pontos de armadura."
+          }
+        },
+        {
+          "name": {"en": "Hazmat Boots", "pt": "Botas hazmat"},
+          "icon": {"tinted": {"base": "item/hazmat_boots", "overlay": "item/hazmat_boots_overlay", "color": "e8c43a"}},
+          "desc": {
+            "en": "2 Rubber over 2 Plastic. 65 durability, 1 armor point. Useful on their own: soft landings and no shocks from bare cables.",
+            "pt": "2 Borrachas sobre 2 Plásticos. 65 de durabilidade, 1 ponto de armadura. Úteis sozinhas: quedas macias e nenhum choque de cabo desencapado."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "The pieces",
+      "pt": "As peças"
+    },
+    {
+      "type": "table",
+      "headers": {"en": ["Piece", "Durability", "Armor points", "Recipe"], "pt": ["Peça", "Durabilidade", "Pontos de armadura", "Receita"]},
+      "rows": [
+        [{"en": "Hazmat Helmet", "pt": "Capacete hazmat"}, "55", "1", {"en": "2 Plastic, 3 Rubber, 1 glass pane", "pt": "2 Plásticos, 3 Borrachas, 1 vidraça"}],
+        [{"en": "Hazmat Chestplate", "pt": "Peitoral hazmat"}, "80", "3", {"en": "6 Rubber, 2 Plastic", "pt": "6 Borrachas, 2 Plásticos"}],
+        [{"en": "Hazmat Leggings", "pt": "Calças hazmat"}, "75", "2", {"en": "5 Rubber, 2 Plastic", "pt": "5 Borrachas, 2 Plásticos"}],
+        [{"en": "Hazmat Boots", "pt": "Botas hazmat"}, "65", "1", {"en": "2 Rubber, 2 Plastic", "pt": "2 Borrachas, 2 Plásticos"}]
+      ]
+    },
+    {
+      "type": "p",
+      "en": "The whole set is 7 armor points with no toughness, 15 Rubber and 8 Plastic. Plastic comes from the Polymerizer - see [oil](#/oil) - and Rubber from the very first [rubber trees](#/getting-started), so the suit is available long before the reactor is.",
+      "pt": "O conjunto inteiro são 7 pontos de armadura sem resistência extra, 15 Borrachas e 8 Plásticos. Plástico vem do Polimerizador - veja [petróleo](#/oil) - e Borracha das primeiras [seringueiras](#/getting-started), então o traje fica disponível bem antes do reator."
+    },
+    {
+      "type": "h",
+      "en": "What the full set does",
+      "pt": "O que o conjunto completo faz"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Radiation immunity**: with all four pieces on you take no dose at all, your exposure keeps decaying, and the suit does not wear from it. Everything on the [radiation](#/radiation) page stops applying to you.",
+        "**Fire immunity**: every fire, lava, magma and burning hit is cancelled. The flames still show on you, but each cancelled hit has a 50% chance of costing 1 durability on every piece, so a lava swim is not free.",
+        "**Contact fluids**: standing in the mod's liquids does nothing to you. That covers the poison and slowness of oil and fuel, the poison of coolant, the nausea and darkness of liquid matter, and the acid burn of **sulfuric acid**. Only the acid is corrosive: while you stand in it, every piece loses 1 durability every 2 seconds.",
+        "The **Nano** and **Quantum** suits from the [gear](#/gear) page give the same hazmat-grade protection paid with energy instead of durability."
+      ],
+      "pt": [
+        "**Imunidade à radiação**: com as quatro peças você não recebe dose nenhuma, sua exposição continua caindo, e o traje não gasta com isso. Tudo da página de [radiação](#/radiation) deixa de valer para você.",
+        "**Imunidade ao fogo**: todo golpe de fogo, lava, magma e queimadura é cancelado. As chamas ainda aparecem em você, mas cada golpe cancelado tem 50% de chance de custar 1 de durabilidade em cada peça, então um mergulho na lava não sai de graça.",
+        "**Fluidos de contato**: ficar dentro dos líquidos do mod não faz nada com você. Isso cobre o veneno e a lentidão do petróleo e do fuel, o veneno do refrigerante, o enjoo e a escuridão da matéria líquida, e a queimadura do **ácido sulfúrico**. Só o ácido é corrosivo: enquanto você está nele, cada peça perde 1 de durabilidade a cada 2 segundos.",
+        "Os trajes **Nano** e **Quantum** da página de [equipamentos](#/gear) dão a mesma proteção de nível hazmat paga com energia em vez de durabilidade."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "What the boots do alone",
+      "pt": "O que as botas fazem sozinhas"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Soft landings**: any fall distance is divided by 3.3 before damage is worked out. A 10-block drop counts as 3 blocks and does nothing; a 20-block drop counts as 6 and costs a heart and a half instead of eight and a half.",
+        "**No shocks**: walking over a bare (uninsulated) [cable](#/energy) normally electrocutes you, and a Glass Fibre Cable carrying Ultra is lethal. With the boots on, none of that touches you.",
+        "Neither needs the rest of the set, so many players keep the boots on permanently."
+      ],
+      "pt": [
+        "**Quedas macias**: qualquer distância de queda é dividida por 3,3 antes de calcular o dano. Uma queda de 10 blocos conta como 3 e não faz nada; uma de 20 conta como 6 e custa um coração e meio em vez de oito e meio.",
+        "**Sem choques**: pisar num [cabo](#/energy) desencapado normalmente eletrocuta você, e um Cabo de fibra de vidro carregando Ultra é mortal. Com as botas, nada disso encosta em você.",
+        "Nenhuma das duas precisa do resto do conjunto, então muita gente deixa as botas no pé o tempo todo."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Dyeing, repair and the model",
+      "pt": "Tingimento, reparo e o modelo"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Dyeing**: the suit dyes like leather armor - piece plus dyes in the crafting grid. It starts yellow. Only the base layer takes the colour; the straps, visor and tank details keep their own.",
+        "**Repair**: on an anvil with **Rubber**, or by combining two damaged pieces in the crafting grid. Enchantability is 15, the same as leather, so Unbreaking and Mending stretch the durability a lot.",
+        "**Model**: the helmet adds a respirator to your face and the chestplate an air tank to your back; the leggings use the normal armor model."
+      ],
+      "pt": [
+        "**Tingimento**: o traje tinge como armadura de couro - peça mais corantes na grade de criação. Começa amarelo. Só a camada base pega a cor; alças, visor e detalhes do cilindro mantêm as deles.",
+        "**Reparo**: na bigorna com **Borracha**, ou juntando duas peças gastas na grade de criação. A encantabilidade é 15, igual à de couro, então Inquebrável e Remendo esticam bastante a durabilidade.",
+        "**Modelo**: o capacete põe um respirador no seu rosto e o peitoral um cilindro de ar nas suas costas; as calças usam o modelo normal de armadura."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Limits",
+      "pt": "Limites"
+    },
+    {
+      "type": "callout",
+      "en": "7 armor points in total is less than a full iron set, with no toughness and low durability. The suit stops hazards, not swords or creepers, and the immunities only work with **all four pieces** worn - swap the helmet for something better and the radiation comes straight back. Fire and acid wear it down; check the durability before a long job.",
+      "pt": "7 pontos de armadura no total é menos que um conjunto de ferro, sem resistência extra e com pouca durabilidade. O traje segura perigos, não espadas ou creepers, e as imunidades só funcionam com **as quatro peças** vestidas - troque o capacete por algo melhor e a radiação volta na hora. Fogo e ácido gastam o traje; olhe a durabilidade antes de um trabalho longo."
+    },
+    {
+      "type": "h",
+      "en": "When to wear it",
+      "pt": "Quando vestir"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Loading and unloading the [Nuclear Reactor](#/nuclear-reactor), or carrying fuel rods and enriched dust by hand - see the [uranium](#/uranium) page.",
+        "Crossing a meltdown crater or a nuke site during the hours of fallout.",
+        "Pumping an oil pocket or a surface lake, and handling sulfuric acid around the [Fuel Distillery](#/distillery).",
+        "Nether trips and lava-level mining, where fire immunity replaces potions.",
+        "Boots only: cable trenches, tall builds and quarry pits."
+      ],
+      "pt": [
+        "Carregar e descarregar o [Reator nuclear](#/nuclear-reactor), ou levar varetas e pó enriquecido na mão - veja a página de [urânio](#/uranium).",
+        "Atravessar a cratera de uma fusão ou o local de uma nuke durante as horas de radiação residual.",
+        "Bombear um bolsão de petróleo ou um lago de superfície, e mexer com ácido sulfúrico perto da [Destiladora de combustível](#/distillery).",
+        "Viagens ao Nether e mineração no nível da lava, onde a imunidade ao fogo substitui poções.",
+        "Só as botas: valas de cabos, construções altas e o buraco da quarry."
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Keep a spare set in a chest next to the reactor room door and a Geiger Counter in your offhand: the suit makes you immune, but it does not tell you how hot the room is, and whoever walks in after you without a suit will want to know.",
+      "pt": "Deixe um conjunto reserva num baú ao lado da porta da sala do reator e um Contador Geiger na mão secundária: o traje deixa você imune, mas não diz o quão quente a sala está, e quem entrar depois de você sem traje vai querer saber."
+    }
+  ]
+}

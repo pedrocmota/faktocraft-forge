@@ -23,6 +23,7 @@ import com.faktocraft.common.recipe.impl.ThermalCentrifugingRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
+import com.faktocraft.common.util.EnergyCosts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -140,7 +141,7 @@ public class BlockEntityThermalCentrifuge extends FaktocraftBlockEntity
       progress.rescaleMax(getSpeedFactor() * currentRecipe.getDuration());
 
       if (tempLevel.getProgress() >= currentRecipe.getTemperature()) {
-        int energyCost = (int) (currentRecipe.getPowerCost() * getEnergyUsageFactor());
+        int energyCost = EnergyCosts.perTick(currentRecipe.getPowerCost(), getEnergyUsageFactor());
 
         if (canWork(inputStack, currentRecipe) && getEnergyStorage().consumeEnergy(energyCost, true) >= energyCost) {
 

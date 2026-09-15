@@ -27,7 +27,9 @@ public class ScreenTransformer extends BetterScreen<MenuTransformer> {
         new GuiText(this, 88, 5, 8, 46, Component.translatable("gui." + Faktocraft.MODID + ".output")));
 
     addRenderableOnlyComponent(new GuiTransformerInfo(this, be.getTransformerTier(), be::getTransformerMode));
-    addRenderableComponent(new GuiTransformerButton(this, 140, 32, be.changeMode()));
+    if (be.getTransformerTier().isStepUpAllowed()) {
+      addRenderableComponent(new GuiTransformerButton(this, 140, 32, be.changeMode()));
+    }
 
     drawComponents(true);
   }

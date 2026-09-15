@@ -59,15 +59,19 @@ public class Faktocraft {
     com.faktocraft.common.block.impl.machines.distillery.DistilleryRegistry.register();
     com.faktocraft.common.block.impl.machines.fueling_station.FuelingStationRegistry.register();
     com.faktocraft.common.block.impl.machines.geo_scanner.GeoScannerRegistry.register();
+    com.faktocraft.common.block.impl.machines.nuclear_reactor.NuclearReactorRegistry.register();
+    com.faktocraft.common.block.impl.nuke.NukeRegistry.register();
     com.faktocraft.common.block.impl.chunk_loader.ChunkLoaderRegistry.register();
     com.faktocraft.common.block.impl.quarry.QuarryRegistry.register();
     com.faktocraft.common.block.impl.forester.ForesterRegistry.register();
     com.faktocraft.common.block.impl.logistics.LogisticsRegistry.register();
+    com.faktocraft.common.block.impl.monitor.MonitorRegistry.register();
     com.faktocraft.common.worldgen.ModFeatures.register();
     com.faktocraft.common.registries.ModCreativeTab.register();
     com.faktocraft.common.registries.ModRecipeType.register();
     com.faktocraft.common.registries.ModRecipeSerializer.register();
     ModSounds.register();
+    com.faktocraft.common.registries.ModEffects.register();
 
     com.faktocraft.common.registries.machines.M1Registry.register();
     com.faktocraft.common.registries.machines.M2Registry.register();

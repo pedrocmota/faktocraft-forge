@@ -48,6 +48,9 @@ import com.faktocraft.common.block.impl.machines.scanner.ScreenScanner;
 import com.faktocraft.common.block.impl.machines.thermal_centrifuge.BlockEntityThermalCentrifuge;
 import com.faktocraft.common.block.impl.machines.thermal_centrifuge.MenuThermalCentrifuge;
 import com.faktocraft.common.block.impl.machines.thermal_centrifuge.ScreenThermalCentrifuge;
+import com.faktocraft.common.block.impl.machines.uranium_centrifuge.BlockEntityUraniumCentrifuge;
+import com.faktocraft.common.block.impl.machines.uranium_centrifuge.MenuUraniumCentrifuge;
+import com.faktocraft.common.block.impl.machines.uranium_centrifuge.ScreenUraniumCentrifuge;
 import com.faktocraft.common.recipe.impl.ScrapBoxRecipe;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.registries.ModRecipeType;
@@ -75,6 +78,7 @@ import com.faktocraft.integration.jei.category.impl.SawingCategory;
 import com.faktocraft.integration.jei.category.impl.ScannerCategory;
 import com.faktocraft.integration.jei.category.impl.ScrapBoxCategory;
 import com.faktocraft.integration.jei.category.impl.ThermalCentrifugingCategory;
+import com.faktocraft.integration.jei.category.impl.UraniumCentrifugingCategory;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
@@ -143,6 +147,7 @@ public class JEIPlugin implements IModPlugin {
     registration.addRecipeCategories(new OreWashingCategory(guiHelper));
     registration.addRecipeCategories(new PolymerizingCategory(guiHelper));
     registration.addRecipeCategories(new ThermalCentrifugingCategory(guiHelper));
+    registration.addRecipeCategories(new UraniumCentrifugingCategory(guiHelper));
     registration.addRecipeCategories(new ScannerCategory(guiHelper));
     registration.addRecipeCategories(new ScrapBoxCategory(guiHelper));
     registration.addRecipeCategories(new RollingCategory(guiHelper));
@@ -181,6 +186,8 @@ public class JEIPlugin implements IModPlugin {
     registration.addRecipes(PolymerizingCategory.TYPE, recipes(recipeManager, ModRecipeType.POLYMERIZING));
     registration.addRecipes(ThermalCentrifugingCategory.TYPE,
         recipes(recipeManager, ModRecipeType.THERMAL_CENTRIFUGING));
+    registration.addRecipes(UraniumCentrifugingCategory.TYPE,
+        recipes(recipeManager, ModRecipeType.URANIUM_CENTRIFUGING));
     registration.addRecipes(ScannerCategory.TYPE, recipes(recipeManager, ModRecipeType.SCANNER));
     registration.addRecipes(RollingCategory.TYPE, recipes(recipeManager, ModRecipeType.ROLLING));
     registration.addRecipes(CuttingCategory.TYPE, recipes(recipeManager, ModRecipeType.CUTTING));
@@ -270,6 +277,7 @@ public class JEIPlugin implements IModPlugin {
     registration.addRecipeCatalysts(OreWashingCategory.TYPE, M3Registry.ORE_WASHING_PLANT);
     registration.addRecipeCatalysts(PolymerizingCategory.TYPE, M3Registry.POLYMERIZER);
     registration.addRecipeCatalysts(ThermalCentrifugingCategory.TYPE, M3Registry.THERMAL_CENTRIFUGE);
+    registration.addRecipeCatalysts(UraniumCentrifugingCategory.TYPE, M3Registry.URANIUM_CENTRIFUGE);
     registration.addRecipeCatalysts(RollingCategory.TYPE, M3Registry.METAL_FORMER);
     registration.addRecipeCatalysts(CuttingCategory.TYPE, M3Registry.METAL_FORMER);
     registration.addRecipeCatalysts(ExtrudingCategory.TYPE, M3Registry.METAL_FORMER);
@@ -362,6 +370,7 @@ public class JEIPlugin implements IModPlugin {
     registration.addRecipeClickArea(ScreenOreWashingPlant.class, 90, 32, 19, 19, OreWashingCategory.TYPE);
     registration.addRecipeClickArea(ScreenPolymerizer.class, 88, 35, 24, 16, PolymerizingCategory.TYPE);
     registration.addRecipeClickArea(ScreenThermalCentrifuge.class, 82, 33, 24, 16, ThermalCentrifugingCategory.TYPE);
+    registration.addRecipeClickArea(ScreenUraniumCentrifuge.class, 71, 35, 24, 16, UraniumCentrifugingCategory.TYPE);
     registration.addRecipeClickArea(ScreenFermenter.class, 76, 35, 24, 16, FermentingCategory.TYPE);
     registration.addRecipeClickArea(com.faktocraft.common.block.impl.machines.distillery.ScreenDistillery.class,
         94, 43, 24, 16, DistillingCategory.TYPE);
@@ -522,6 +531,9 @@ public class JEIPlugin implements IModPlugin {
     registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuThermalCentrifuge.class,
         M3Registry.THERMAL_CENTRIFUGE_MENU, ThermalCentrifugingCategory.TYPE, BlockEntityThermalCentrifuge.INPUT_SLOT,
         1));
+    registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuUraniumCentrifuge.class,
+        M3Registry.URANIUM_CENTRIFUGE_MENU, UraniumCentrifugingCategory.TYPE,
+        BlockEntityUraniumCentrifuge.INPUT_SLOT, 1));
     registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuScanner.class, M4Registry.SCANNER_MENU,
         ScannerCategory.TYPE, BlockEntityScanner.INPUT_SLOT, 1));
     registration.addRecipeTransferHandler(new MachineTransferInfo<>(MenuMetalFormer.class,
@@ -541,6 +553,8 @@ public class JEIPlugin implements IModPlugin {
     registration.useNbtForSubtypes(ModItems.NANO_BOOTS);
 
     registration.useNbtForSubtypes(ModItems.FLUID_CELL);
+    registration.useNbtForSubtypes(ModItems.MEDIUM_COOLANT_CELL);
+    registration.useNbtForSubtypes(ModItems.LARGE_COOLANT_CELL);
 
     registration.useNbtForSubtypes(ModItems.ELECTRIC_HOE);
     registration.useNbtForSubtypes(ModItems.ELECTRIC_WRENCH);

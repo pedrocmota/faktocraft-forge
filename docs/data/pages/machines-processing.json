@@ -1,4 +1,5 @@
 {
+  "stackedCards": true,
   "blocks": [
     {
       "type": "p",
@@ -92,6 +93,26 @@
             "en": "The last refining stage - squeezes out the final byproducts.",
             "pt": "A última etapa de refino - extrai os subprodutos finais."
           }
+        },
+        {
+          "name": {
+            "en": "Uranium Centrifuge",
+            "pt": "Centrífuga de Urânio"
+          },
+          "icon": {
+            "centrifuge": {
+              "base_top": "block/uranium_centrifuge_base_top",
+              "base_side": "block/machines/distillery_side",
+              "drum": "block/uranium_centrifuge_drum",
+              "band": "block/uranium_centrifuge_band",
+              "cap": "block/uranium_centrifuge_cap"
+            }
+          },
+          "desc": {
+            "en": "Spins uranium dust: always yields depleted dust (waste) and has a 40% chance of enriched dust, the reactor fuel. Item pipes only connect underneath it; cables plug into any side.",
+            "pt": "Gira o pó de urânio: sempre rende pó empobrecido (lixo) e tem 40% de chance de dar pó enriquecido, o combustível do reator. Tubos de item só conectam por baixo; cabos entram por qualquer lado."
+          },
+          "link": "uranium"
         },
         {
           "name": {

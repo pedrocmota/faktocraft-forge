@@ -1,0 +1,163 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "p",
+      "en": "The **Status Monitor** is a wall screen that shows live information about any block you point it at with a **Monitor Card**: the charge of a battery box, the heat of a reactor, the contents of a tank, the progress of a machine. No cables, no distance limit, works across dimensions. It is how you build a control room.",
+      "pt": "O **Monitor de status** é uma tela de parede que mostra informações ao vivo de qualquer bloco que você apontar com um **Cartão de monitor**: a carga de uma caixa de baterias, o calor de um reator, o conteúdo de um tanque, o progresso de uma máquina. Sem cabos, sem limite de distância, funciona entre dimensões. É assim que você monta uma sala de controle."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Status Monitor",
+            "pt": "Monitor de status"
+          },
+          "icon": {
+            "item": "item/status_monitor"
+          },
+          "desc": {
+            "en": "Three glass panes over an Electronic Circuit flanked by redstone, three Iron Plates below. A 3x2 wall panel, 2 px thick, that needs no energy.",
+            "pt": "Três painéis de vidro sobre um Circuito eletrônico ladeado por redstone, três Placas de ferro embaixo. Um painel de parede 3x2, com 2 px de espessura, que não precisa de energia."
+          }
+        },
+        {
+          "name": {
+            "en": "Monitor Card",
+            "pt": "Cartão de monitor"
+          },
+          "icon": {
+            "item": "item/crafting/monitor_card"
+          },
+          "desc": {
+            "en": "Memory Card + Electronic Circuit + redstone, shapeless. Copies a block with a right-click and pastes it onto a monitor.",
+            "pt": "Cartão de memória + Circuito eletrônico + redstone, sem formato. Copia um bloco com o botão direito e cola num monitor."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Placing the panel",
+      "pt": "Colocando o painel"
+    },
+    {
+      "type": "list",
+      "en": [
+        "Right-click a wall with the monitor item: all six parts of the 3 wide x 2 tall panel are placed at once, so make sure the space is free.",
+        "Break any part and the whole panel comes down, dropping one monitor.",
+        "The panel needs no energy and no cable. It can watch a block at any distance and in any dimension.",
+        "The watched block's chunk must be loaded - the monitor never loads it for you. Keep a [Chunk Loader](#/chunk-loader) near remote targets or the screen reads \"Area not loaded\".",
+        "The screen refreshes every half second when the data changes. The text is only drawn while you are within 32 blocks of the panel."
+      ],
+      "pt": [
+        "Clique com o botão direito numa parede com o item do monitor: as seis partes do painel de 3 de largura x 2 de altura são colocadas de uma vez, então garanta que o espaço esteja livre.",
+        "Quebre qualquer parte e o painel inteiro cai, soltando um monitor.",
+        "O painel não precisa de energia nem de cabo. Ele consegue observar um bloco a qualquer distância e em qualquer dimensão.",
+        "O chunk do bloco observado precisa estar carregado - o monitor nunca carrega por você. Mantenha um [Carregador de chunks](#/chunk-loader) perto de alvos distantes ou a tela mostra \"Área descarregada\".",
+        "A tela atualiza a cada meio segundo quando os dados mudam. O texto só é desenhado enquanto você está a até 32 blocos do painel."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Copy and paste with the Monitor Card",
+      "pt": "Copiar e colar com o Cartão de monitor"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Right-click a block** with the card to copy it: \"Copied X\". This works on blocks with a GUI too - the copy happens before the GUI opens.",
+        "**Right-click a Status Monitor** with the card to paste: \"Monitor now shows X\". Any part of the panel works.",
+        "**Sneak + right-click the monitor** to clear it (\"Monitor cleared\"); it goes back to \"No target. Use the Monitor Card.\"",
+        "**Sneak + right-click in the air** to clear the card (\"Card cleared\"). The card tooltip always tells you what it holds.",
+        "Point the card at any block of a [Nuclear Reactor](#/nuclear-reactor) cube and it resolves to the reactor core, so the panel shows the whole reactor."
+      ],
+      "pt": [
+        "**Botão direito num bloco** com o cartão copia: \"Copiado X\". Funciona também em blocos com GUI - a cópia acontece antes de a GUI abrir.",
+        "**Botão direito num Monitor de status** com o cartão cola: \"O monitor agora mostra X\". Qualquer parte do painel serve.",
+        "**Agachado + botão direito no monitor** limpa o monitor (\"Monitor limpo\"); ele volta para \"Sem alvo. Use o Cartão de monitor.\"",
+        "**Agachado + botão direito no ar** limpa o cartão (\"Cartão limpo\"). O tooltip do cartão sempre diz o que ele guarda.",
+        "Aponte o cartão para qualquer bloco de um cubo do [Reator nuclear](#/nuclear-reactor) e ele resolve para o núcleo do reator, então o painel mostra o reator inteiro."
+      ]
+    },
+    {
+      "type": "h",
+      "en": "What the screen shows",
+      "pt": "O que a tela mostra"
+    },
+    {
+      "type": "p",
+      "en": "The monitor reads what the block exposes and prints it as short lines. For Faktocraft machines that means the fields you would see in the GUI; for vanilla and other mods' blocks it falls back to whatever they expose.",
+      "pt": "O monitor lê o que o bloco expõe e imprime em linhas curtas. Para máquinas do Faktocraft isso significa os campos que você veria na GUI; para blocos vanilla e de outros mods ele mostra o que eles expõem."
+    },
+    {
+      "type": "list",
+      "en": [
+        "Stored energy and capacity of anything with a buffer: machines, [battery boxes](#/battery-box), [generators](#/generators), transformers.",
+        "Every fluid tank: fluid name, amount and capacity.",
+        "Inventories: \"N items in M slots\".",
+        "Furnaces and fuel burners: \"Burning\" while the fuel lasts.",
+        "\"Progress\" of the current recipe.",
+        "\"Lit\" / \"Off\" for anything that can be lit, \"Powered\" / \"Unpowered\" for redstone state.",
+        "\"Level\" for blocks with a fill level and \"Growth\" for crops."
+      ],
+      "pt": [
+        "Energia armazenada e capacidade de tudo que tem buffer: máquinas, [caixas de baterias](#/battery-box), [geradores](#/generators), transformadores.",
+        "Todo tanque de fluido: nome do fluido, quantidade e capacidade.",
+        "Inventários: \"N itens em M espaços\".",
+        "Fornalhas e queimadores de combustível: \"Queimando\" enquanto o combustível dura.",
+        "\"Progresso\" da receita atual.",
+        "\"Aceso\" / \"Apagado\" para o que pode ser aceso, \"Energizado\" / \"Sem sinal\" para o estado de redstone.",
+        "\"Nível\" para blocos com nível de enchimento e \"Crescimento\" para plantações."
+      ]
+    },
+    {
+      "type": "callout",
+      "en": "**Dependencies:** the monitor needs no other mod - everything above is read natively by Faktocraft, for its own machines and, generically, for blocks of any mod that expose Forge energy, tanks or an inventory. **Jade** is optional and is the only mod wired into the panel: with Jade on the server **and** on your client, the screen shows Jade's own tooltip instead, including whatever other mods publish through it. Missing on either side, the panel simply falls back to the native readouts. Jade's tooltip also needs the watched block to be **in your dimension and loaded on your client** (inside your render distance); a target on the far side of the map still works, with the native lines. **WTHIT** has no bridge: with WTHIT the panel is always native.",
+      "pt": "**Dependências:** o monitor não precisa de nenhum outro mod - tudo acima é lido nativamente pelo Faktocraft, nas máquinas dele e, de forma genérica, em blocos de qualquer mod que exponham energia Forge, tanques ou inventário. O **Jade** é opcional e é a única integração ligada ao painel: com o Jade no servidor **e** no seu cliente, a tela passa a mostrar o tooltip do próprio Jade, inclusive o que outros mods publicam por ele. Faltando de um dos lados, o painel volta para as leituras nativas. O tooltip do Jade também exige que o bloco observado esteja **na sua dimensão e carregado no seu cliente** (dentro da distância de renderização); um alvo do outro lado do mapa continua funcionando, com as linhas nativas. O **WTHIT** não tem ponte: com ele o painel é sempre nativo."
+    },
+    {
+      "type": "h",
+      "en": "Status messages",
+      "pt": "Mensagens de status"
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": ["Screen says", "Meaning"],
+        "pt": ["A tela diz", "Significado"]
+      },
+      "rows": [
+        [
+          {"en": "No target. Use the Monitor Card.", "pt": "Sem alvo. Use o Cartão de monitor."},
+          {"en": "Nothing pasted yet, or the monitor was cleared.", "pt": "Nada colado ainda, ou o monitor foi limpo."}
+        ],
+        [
+          {"en": "Area not loaded", "pt": "Área descarregada"},
+          {"en": "The target's chunk is not loaded. Load it (or place a Chunk Loader) and the readout comes back.", "pt": "O chunk do alvo não está carregado. Carregue (ou coloque um Carregador de chunks) e a leitura volta."}
+        ],
+        [
+          {"en": "Block removed", "pt": "Bloco removido"},
+          {"en": "The block at the copied position is gone or was replaced by something else. Paste a new target.", "pt": "O bloco na posição copiada sumiu ou foi trocado por outra coisa. Cole um alvo novo."}
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "en": "Joining panels",
+      "pt": "Unindo painéis"
+    },
+    {
+      "type": "p",
+      "en": "Place two panels side by side, facing the same way, and the frame between them disappears: they look like one wide screen. Each panel still shows its own target, so a row of four monitors above the workbench gives you four readouts in one clean strip.",
+      "pt": "Coloque dois painéis lado a lado, virados para o mesmo lado, e a moldura entre eles some: eles parecem uma tela larga só. Cada painel continua mostrando o próprio alvo, então uma fileira de quatro monitores acima da bancada te dá quatro leituras numa faixa limpa."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Watch the reactor from the control room: copy the reactor with the card, walk back to your base and paste it on a monitor. Heat, stored energy and rod status update live while you stand safely behind [Reinforced Stone](#/construction-blocks). Add a second monitor on the water tank that feeds it and you will see trouble coming before the alarm.",
+      "pt": "Vigie o reator da sala de controle: copie o reator com o cartão, volte para a base e cole num monitor. Calor, energia armazenada e estado das varetas atualizam ao vivo enquanto você fica em segurança atrás de [Pedra reforçada](#/construction-blocks). Coloque um segundo monitor no tanque de água que o alimenta e você vê o problema chegando antes do alarme."
+    }
+  ]
+}

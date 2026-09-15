@@ -19,8 +19,8 @@ import com.faktocraft.common.enums.UpgradeType;
 import com.faktocraft.common.interfaces.entity.IElectricSlot;
 import com.faktocraft.common.interfaces.entity.IMachineActions;
 import com.faktocraft.common.interfaces.entity.ISupportUpgrades;
-import com.faktocraft.common.item.base.FluidItem;
 import com.faktocraft.common.registries.machines.M3Registry;
+import com.faktocraft.common.util.EnergyCosts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.Direction;
@@ -71,7 +71,7 @@ public class BlockEntityCanningMachine extends FaktocraftBlockEntity
   }
 
   private boolean hasJob(ItemStack up, ItemStack down) {
-    if (up.isEmpty() || !(up.getItem() instanceof FluidItem)) {
+    if (!FluidCellTankHelper.acceptsInput(up)) {
       return false;
     }
     if (mode == CanningMachineMode.FILL) {
@@ -99,7 +99,7 @@ public class BlockEntityCanningMachine extends FaktocraftBlockEntity
         progress.setData(0, ModConfig.server().canning_machine_duration);
       }
       progress.rescaleMax(getSpeedFactor() * ModConfig.server().canning_machine_duration);
-      int energyCost = (int) (ModConfig.server().canning_machine_tick_usage * getEnergyUsageFactor());
+      int energyCost = EnergyCosts.perTick(ModConfig.server().canning_machine_tick_usage, getEnergyUsageFactor());
 
       if (getEnergyStorage().consumeEnergy(energyCost, true) == energyCost
           && progress.getProgress() <= progress.getProgressMax()) {
@@ -181,7 +181,7 @@ public class BlockEntityCanningMachine extends FaktocraftBlockEntity
   @Override
   public boolean isItemValidForSlot(int slot, ItemStack stack) {
     if (slot == CELL_UP) {
-      return stack.getItem() instanceof FluidItem;
+      return FluidCellTankHelper.acceptsInput(stack);
     }
     return false;
   }

@@ -4,6 +4,8 @@ import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.item.base.ElectricItem;
+import com.faktocraft.common.scan.ScanChannel;
+import com.faktocraft.common.scan.ScanChannels;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -20,28 +22,35 @@ public class Prospector extends ElectricItem {
 
   public static final int SCAN_COST = 10000;
   public static final float FALSE_NEGATIVE_CHANCE = 0.08F;
-  public static final int MAX_SAVED_CHUNKS = 96;
   public static final int SCAN_DURATION_TICKS = 160;
+  public static final int VIEW_RADIUS = 3;
   public static final String TAG_SCANS = "Scans";
   public static final String TAG_JOB = "ScanJob";
+  public static final String TAG_CODE = "ScanCode";
 
   public Prospector(Properties properties) {
     super(properties.stacksTo(1), 0, 400000, EnergyType.RECEIVE, EnergyTier.HIGH);
   }
 
-  public static String chunkKey(Level level, int chunkX, int chunkZ) {
-    return level.dimension().location() + "|" + chunkX + "|" + chunkZ;
+  public static ItemStack held(Player player) {
+    if (player.getMainHandItem().getItem() instanceof Prospector) {
+      return player.getMainHandItem();
+    }
+    if (player.getOffhandItem().getItem() instanceof Prospector) {
+      return player.getOffhandItem();
+    }
+    return ItemStack.EMPTY;
   }
 
-  @Nullable
-  public static CompoundTag getScan(ItemStack stack, String key) {
-    if (stack.hasTag() && stack.getTag().contains(TAG_SCANS)) {
-      CompoundTag scans = stack.getTag().getCompound(TAG_SCANS);
-      if (scans.contains(key)) {
-        return scans.getCompound(key);
-      }
+  public static int getCode(ItemStack stack) {
+    if (stack.hasTag() && stack.getTag().contains(TAG_CODE)) {
+      return ScanChannels.sanitize(stack.getTag().getInt(TAG_CODE));
     }
-    return null;
+    return ScanChannels.DEFAULT_CODE;
+  }
+
+  public static void setCode(ItemStack stack, int code) {
+    stack.getOrCreateTag().putInt(TAG_CODE, ScanChannels.sanitize(code));
   }
 
   @Nullable
@@ -56,6 +65,7 @@ public class Prospector extends ElectricItem {
     if (level.isClientSide() || !(level instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
       return;
     }
+    importLegacyScans(serverLevel, stack);
     CompoundTag job = getJob(stack);
     if (job == null) {
       return;
@@ -72,6 +82,17 @@ public class Prospector extends ElectricItem {
       serverLevel.playSound(null, owner.blockPosition(), net.minecraft.sounds.SoundEvents.BEACON_POWER_SELECT,
           net.minecraft.sounds.SoundSource.PLAYERS, 0.6F, 1.7F);
     }
+  }
+
+  private static void importLegacyScans(net.minecraft.server.level.ServerLevel level, ItemStack stack) {
+    if (!stack.hasTag() || !stack.getTag().contains(TAG_SCANS)) {
+      return;
+    }
+    CompoundTag legacy = stack.getTag().getCompound(TAG_SCANS);
+    if (!legacy.isEmpty()) {
+      ScanChannels.get(level).channel(getCode(stack)).importKeyed(legacy);
+    }
+    stack.getTag().remove(TAG_SCANS);
   }
 
   public static CompoundTag computeScanEntries(net.minecraft.server.level.ServerLevel level, int chunkX, int chunkZ) {
@@ -122,21 +143,8 @@ public class Prospector extends ElectricItem {
     CompoundTag scan = new CompoundTag();
     scan.putLong("t", level.getGameTime());
     scan.put("entries", computeScanEntries(level, chunkX, chunkZ));
-    CompoundTag scans = stack.getOrCreateTag().getCompound(TAG_SCANS);
-    scans.put(chunkKey(level, chunkX, chunkZ), scan);
-    while (scans.getAllKeys().size() > MAX_SAVED_CHUNKS) {
-      String oldest = null;
-      long oldestTime = Long.MAX_VALUE;
-      for (String key : scans.getAllKeys()) {
-        long t = scans.getCompound(key).getLong("t");
-        if (t < oldestTime) {
-          oldestTime = t;
-          oldest = key;
-        }
-      }
-      scans.remove(oldest);
-    }
-    stack.getOrCreateTag().put(TAG_SCANS, scans);
+    ScanChannel channel = ScanChannels.get(level).channel(getCode(stack));
+    channel.put(level, chunkX, chunkZ, scan);
   }
 
   @Override
@@ -154,6 +162,8 @@ public class Prospector extends ElectricItem {
         .withStyle(ChatFormatting.GRAY));
     tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".prospector_accuracy")
         .withStyle(ChatFormatting.DARK_GRAY));
+    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".scan_code",
+        ScanChannels.codeText(getCode(stack))).withStyle(ChatFormatting.LIGHT_PURPLE));
     super.appendHoverText(stack, level, tooltip, flag);
   }
 }

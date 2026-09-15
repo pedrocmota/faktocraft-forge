@@ -83,8 +83,11 @@ public final class ModItems {
 
   public static final Item BASIC_MACHINE_CASING = fromBlock(ModBlocks.BASIC_MACHINE_CASING);
   public static final Item ADVANCED_MACHINE_CASING = fromBlock(ModBlocks.ADVANCED_MACHINE_CASING);
+  public static final Item NUCLEAR_REACTOR = fromBlock(ModBlocks.NUCLEAR_REACTOR);
+  public static final Item NUKE = fromBlock(ModBlocks.NUKE);
   public static final Item RESIN_SHEET = fromBlock(ModBlocks.RESIN_SHEET);
-  public static final Item RUBBER_SHEET = fromBlock(ModBlocks.RUBBER_SHEET);
+  public static final Item RUBBER_CARPET = fromBlock(ModBlocks.RUBBER_CARPET);
+  public static final Item RUBBER_BLOCK = fromBlock(ModBlocks.RUBBER_BLOCK);
 
   public static final Item TELEPORT_ANCHOR = registerBlockItem(ModBlocks.TELEPORT_ANCHOR, Rarity.RARE);
   public static final Item DIMENSIONAL_TELEPORT_ANCHOR = registerBlockItem(ModBlocks.DIMENSIONAL_TELEPORT_ANCHOR,
@@ -103,6 +106,7 @@ public final class ModItems {
   public static final Item REINFORCED_STONE = fromBlock(ModBlocks.REINFORCED_STONE);
   public static final Item REINFORCED_STONE_SLAB = fromBlock(ModBlocks.REINFORCED_STONE_SLAB);
   public static final Item REINFORCED_STONE_STAIRS = fromBlock(ModBlocks.REINFORCED_STONE_STAIRS);
+  public static final Item REINFORCED_STONE_DOOR = fromBlock(ModBlocks.REINFORCED_STONE_DOOR);
   public static final Item IRON_SCAFFOLDING = fromBlock(ModBlocks.IRON_SCAFFOLDING);
   public static final Item IRON_FENCE = fromBlock(ModBlocks.IRON_FENCE);
   public static final Item LUMINATOR = fromBlock(ModBlocks.LUMINATOR);
@@ -126,6 +130,8 @@ public final class ModItems {
   public static final Item GOLD_DUST = register("gold_dust", MaterialItem::new);
   public static final Item LEAD_DUST = register("lead_dust", MaterialItem::new);
   public static final Item URANIUM_DUST = register("uranium_dust", MaterialItem::new);
+  public static final Item ENRICHED_URANIUM_DUST = register("enriched_uranium_dust", MaterialItem::new);
+  public static final Item DEPLETED_URANIUM_DUST = register("depleted_uranium_dust", MaterialItem::new);
   public static final Item SILVER_DUST = register("silver_dust", MaterialItem::new);
   public static final Item LITHIUM_DUST = register("lithium_dust", MaterialItem::new);
 
@@ -309,6 +315,10 @@ public final class ModItems {
   public static final Item WIND_METER = register("wind_meter",
       com.faktocraft.common.item.impl.tools.WindMeter::new);
   public static final Item IE_METER = register("ie_meter", IEMeter::new);
+  public static final Item GEIGER_COUNTER = register("geiger_counter",
+      com.faktocraft.common.item.impl.tools.GeigerCounter::new);
+  public static final Item DECONTAMINATOR = register("decontaminator",
+      com.faktocraft.common.item.impl.tools.Decontaminator::new);
   public static final Item PROSPECTOR = register("prospector",
       p -> new com.faktocraft.common.item.impl.tools.Prospector(p.rarity(Rarity.RARE)));
   public static final Item PLUNGER = register("plunger", com.faktocraft.common.item.impl.tools.Plunger::new);
@@ -349,8 +359,21 @@ public final class ModItems {
       p -> new com.faktocraft.common.item.impl.upgrade.ItemUpgrade(p,
           com.faktocraft.common.enums.UpgradeType.EFFICIENCY, true));
 
-  public static final Item MEDIUM_COOLANT_CELL = register("medium_coolant_cell", MaterialItem::new);
-  public static final Item LARGE_COOLANT_CELL = register("large_coolant_cell", MaterialItem::new);
+  public static final Item MEDIUM_COOLANT_CELL = register("medium_coolant_cell",
+      p -> new com.faktocraft.common.item.impl.reactor.CoolantCell(p.stacksTo(1), 1));
+  public static final Item LARGE_COOLANT_CELL = register("large_coolant_cell",
+      p -> new com.faktocraft.common.item.impl.reactor.CoolantCell(p.stacksTo(1), 2));
+  public static final Item EMPTY_FUEL_ROD = register("empty_fuel_rod",
+      p -> new com.faktocraft.common.item.impl.reactor.ReactorComponentItem(p, "empty_fuel_rod"));
+  public static final Item NUCLEAR_WASTE = register("nuclear_waste",
+      p -> new com.faktocraft.common.item.impl.reactor.ReactorComponentItem(p, "nuclear_waste"));
+  public static final Item PLUTONIUM = register("plutonium",
+      p -> new com.faktocraft.common.item.impl.reactor.ReactorComponentItem(p, "plutonium"));
+  public static final Item FUEL_ROD = register("fuel_rod", com.faktocraft.common.item.impl.reactor.FuelRodItem::new);
+  public static final Item DEPLETED_FUEL_ROD = register("depleted_fuel_rod",
+      p -> new com.faktocraft.common.item.impl.reactor.ReactorComponentItem(p, "depleted_fuel_rod"));
+  public static final Item NEUTRON_REFLECTOR = register("neutron_reflector",
+      p -> new com.faktocraft.common.item.impl.reactor.ReactorComponentItem(p, "neutron_reflector"));
 
   public static final Item CIRCUIT_BREAKER = registerBlockItem(ModBlocks.CIRCUIT_BREAKER);
   public static final Item PIPE_VALVE = register("pipe_valve",
@@ -387,6 +410,11 @@ public final class ModItems {
 
   public static Item registerBlockItem(Block block, Rarity rarity) {
     return registerBlockItemInternal(block, rarity, FaktocraftBlockItem::new);
+  }
+
+  public static Item registerBlockItem(Block block, Rarity rarity,
+      java.util.function.BiFunction<Block, Item.Properties, Item> factory) {
+    return registerBlockItemInternal(block, rarity, factory);
   }
 
   public static Item registerElectricBlockItem(Block block) {

@@ -178,7 +178,7 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
     return count;
   }
 
-  public record AdjacentHandler(BlockPos pos, IItemHandler handler) {
+  public record AdjacentHandler(BlockPos pos, IItemHandler handler, @Nullable Direction side) {
   }
 
   public List<Direction> inventoryDirections() {
@@ -234,11 +234,7 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
     if (level == null || !(getBlockState().getBlock() instanceof BlockChassis block)) {
       return;
     }
-    BlockState state = getBlockState();
-    for (Direction direction : Direction.values()) {
-      state = state.setValue(com.faktocraft.common.block.VoxelBlock.FACING_TO_PROPERTY_MAP.get(direction),
-          block.connects(level, worldPosition, direction));
-    }
+    BlockState state = block.withConnections(getBlockState(), level, worldPosition);
     level.setBlock(worldPosition, state, 3);
     level.sendBlockUpdated(worldPosition, state, state, 3);
   }
@@ -255,7 +251,7 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
     }
     IItemHandler handler = TransferUtil.findItemHandler(level, relative, direction.getOpposite());
     if (handler != null) {
-      handlers.add(new AdjacentHandler(relative, handler));
+      handlers.add(new AdjacentHandler(relative, handler, direction.getOpposite()));
     }
     return handlers;
   }
@@ -371,7 +367,7 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
           core.consumeEnergy(extracted.getCount() * perItem);
           List<BlockPos> route = graph.route(worldPosition, sink.nodePos());
           TaskLedger.DeliveryTask moved = core.getLedger().createDelivery(extracted,
-              Endpoint.inventory(source.pos()), sink.endpoint(), route, 0);
+              Endpoint.inventory(source.pos(), source.side()), sink.endpoint(), route, 0);
           moved.originPos = worldPosition.asLong();
           budget -= extracted.getCount();
         }
@@ -604,6 +600,8 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
 
     private final BlockPos chassisPos;
     private final BlockPos inventoryPos;
+    @Nullable
+    private final Direction inventorySide;
     private final ItemStack module;
     @Nullable
     private List<ModuleSettings.FilterLine> lines;
@@ -614,9 +612,10 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
     private int reserve = -1;
     private int priority = Integer.MIN_VALUE;
 
-    ProviderRef(BlockPos chassisPos, BlockPos inventoryPos, ItemStack module) {
+    ProviderRef(BlockPos chassisPos, BlockPos inventoryPos, @Nullable Direction inventorySide, ItemStack module) {
       this.chassisPos = chassisPos;
       this.inventoryPos = inventoryPos;
+      this.inventorySide = inventorySide;
       this.module = module;
     }
 
@@ -626,6 +625,11 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
 
     public BlockPos inventoryPos() {
       return inventoryPos;
+    }
+
+    @Nullable
+    public Direction inventorySide() {
+      return inventorySide;
     }
 
     public ItemStack module() {
@@ -674,7 +678,7 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
       if (!allows(key.stack())) {
         return 0;
       }
-      int count = Endpoint.inventory(inventoryPos).count(level, key);
+      int count = Endpoint.inventory(inventoryPos, inventorySide).count(level, key);
       return Math.max(0, count - reserve());
     }
   }
@@ -696,7 +700,7 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
           handlers = chassis.adjacentHandlers();
         }
         for (AdjacentHandler handler : handlers) {
-          result.add(new ProviderRef(pos, handler.pos(), module));
+          result.add(new ProviderRef(pos, handler.pos(), handler.side(), module));
         }
       }
     }
@@ -710,7 +714,7 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
       if (!seen.add(provider.inventoryPos())) {
         continue;
       }
-      IItemHandler handler = TransferUtil.findItemHandler(level, provider.inventoryPos(), null);
+      IItemHandler handler = Endpoint.resolveHandler(level, provider.inventoryPos(), provider.inventorySide());
       if (handler == null) {
         continue;
       }

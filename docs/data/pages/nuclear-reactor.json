@@ -1,0 +1,181 @@
+{
+  "stackedCards": true,
+  "blocks": [
+    {
+      "type": "banner",
+      "src": "banners/nuclear_reactor.webp"
+    },
+    {
+      "type": "p",
+      "en": "The **Nuclear Reactor** is a solid 3x3x3 cube of Advanced Machine Casing with one reactor block; the whole cube becomes the reactor. Open it through the hatch on top, the centre block of the top face. Cables and water pipes connect to **any block of the cube**.",
+      "pt": "O **Reator Nuclear** é um cubo maciço 3x3x3 de Revestimento de Máquina Avançado com um bloco de reator; o cubo inteiro vira o reator. Abra pela escotilha do topo, o bloco central da face de cima. Cabos e tubos de água ligam em **qualquer bloco do cubo**."
+    },
+    {
+      "type": "icons",
+      "items": [
+        {
+          "name": {
+            "en": "Nuclear Reactor",
+            "pt": "Reator Nuclear"
+          },
+          "icon": {
+            "block": {
+              "top": "block/nuclear_reactor_top_center",
+              "front": "block/nuclear_reactor_center"
+            }
+          },
+          "desc": {
+            "en": "Ultra voltage generator. Burns fuel rods, makes heat, drinks water. Melts down if it overheats.",
+            "pt": "Gerador de tensão Ultra. Queima varetas, gera calor, bebe água. Entra em fusão se superaquecer."
+          }
+        },
+        {
+          "name": {
+            "en": "Empty Fuel Rod",
+            "pt": "Vareta de combustível vazia"
+          },
+          "icon": {
+            "item": "item/reactor/empty_fuel_rod"
+          },
+          "desc": {
+            "en": "Iron rod + tin plate. Fill it with 3 enriched uranium dust to get a fuel rod; the Uranium Centrifuge gives it back from a depleted rod.",
+            "pt": "Haste de ferro + chapa de estanho. Encha com 3 pós de urânio enriquecido para ter uma vareta de combustível; a Centrífuga de Urânio devolve a vareta vazia da esgotada."
+          }
+        },
+        {
+          "name": {
+            "en": "Uranium Fuel Rod",
+            "pt": "Vareta de combustível de urânio"
+          },
+          "icon": {
+            "item": "item/reactor/fuel_rod"
+          },
+          "desc": {
+            "en": "Empty rod + 3 enriched uranium dust. Lasts 40 minutes of operation.",
+            "pt": "Vareta vazia + 3 pós de urânio enriquecido. Dura 40 minutos de operação."
+          }
+        },
+        {
+          "name": {
+            "en": "Neutron Reflector",
+            "pt": "Refletor de nêutrons"
+          },
+          "icon": {
+            "item": "item/reactor/neutron_reflector"
+          },
+          "desc": {
+            "en": "Tin plates, coal dust and a copper plate. Boosts every rod next to it and heats it up: free power, as long as the cooling keeps up.",
+            "pt": "Chapas de estanho, pó de carvão e uma chapa de cobre. Reforça cada vareta vizinha e a esquenta: energia de graça, desde que o resfriamento dê conta."
+          }
+        },
+        {
+          "name": {
+            "en": "Coolant Cells",
+            "pt": "Células de refrigerante"
+          },
+          "icon": {
+            "item": "item/reactor/medium_coolant_cell"
+          },
+          "desc": {
+            "en": "Medium (6 cooling, 3000 mB) and large (12 cooling, 6000 mB) kits full of coolant. They cool without water and spend coolant while the reactor is hot: a full kit lasts an hour. Refill them at the Fueling Station.",
+            "pt": "Kits médio (6 de resfriamento, 3000 mB) e grande (12, 6000 mB) cheios de refrigerante. Resfriam sem água e gastam refrigerante enquanto o reator está quente: um kit cheio dura uma hora. Recarregue na Estação de Abastecimento."
+          }
+        },
+        {
+          "name": {
+            "en": "Depleted Fuel Rod",
+            "pt": "Vareta de combustível esgotada"
+          },
+          "icon": {
+            "item": "item/reactor/depleted_fuel_rod"
+          },
+          "desc": {
+            "en": "What is left of a rod. The Uranium Centrifuge returns the empty rod plus one of: enriched uranium dust (30%), nuclear waste (60%) or plutonium (10%).",
+            "pt": "O que sobra da vareta. A Centrífuga de Urânio devolve a vareta vazia mais um destes: pó de urânio enriquecido (30%), lixo nuclear (60%) ou plutônio (10%)."
+          }
+        },
+        {
+          "name": {
+            "en": "Nuclear Waste",
+            "pt": "Lixo nuclear"
+          },
+          "icon": {
+            "item": "item/reactor/nuclear_waste"
+          },
+          "desc": {
+            "en": "Very radioactive. The Recycler turns each one into 6 scrap, and depleted uranium dust into 3.",
+            "pt": "Muito radioativo. O Reciclador transforma cada um em 6 sucatas, e o pó de urânio empobrecido em 3."
+          }
+        },
+        {
+          "name": {
+            "en": "Plutonium",
+            "pt": "Plutônio"
+          },
+          "icon": {
+            "item": "item/reactor/plutonium"
+          },
+          "desc": {
+            "en": "One rod in ten leaves plutonium behind. Three of them, lead plates and an advanced circuit make a nuke.",
+            "pt": "Uma vareta em dez deixa plutônio. Três deles, chapas de chumbo e um circuito avançado fazem uma nuke."
+          }
+        },
+        {
+          "name": {
+            "en": "Nuke",
+            "pt": "Nuke"
+          },
+          "icon": {
+            "block": {
+              "top": "block/nuke_top",
+              "front": "block/nuke_side"
+            }
+          },
+          "desc": {
+            "en": "Light it with flint and steel or a redstone signal: 6 seconds of beeping, then everything within 45 blocks is vaporised and the crater goes 90 blocks deep. Only obsidian, reinforced stone and bedrock survive, and the crater stays radioactive for two hours. Can be switched off in the Faktocraft options.",
+            "pt": "Acenda com isqueiro ou sinal de redstone: 6 segundos de bipes e tudo num raio de 45 blocos é vaporizado, com uma cratera de 90 blocos de fundura. Só obsidiana, pedra reforçada e bedrock sobrevivem, e a cratera fica radioativa por duas horas. Pode ser desligada nas opções do Faktocraft."
+          }
+        }
+      ]
+    },
+    {
+      "type": "h",
+      "en": "How it runs",
+      "pt": "Como funciona"
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Grid**: 12 slots, 4 by 3. Fuel rods and neutron reflectors make heat; cooling kits and water take it away. What you mix in the grid decides where the heat settles.",
+        "**Heating**: each rod makes 6 heat per tick, +3 for every rod next to it and +3 for every reflector next to it.",
+        "**Cooling**: the cube itself removes 2 per tick, a medium kit 6, a large kit 12 and water 60 (up to 4 mB per tick, 15 heat per mB). Cooling only works in proportion to the heat: at 40% heat it removes 40% of that. So the heat climbs until heating equals cooling times heat%, and if the heating is bigger than all the cooling it never stops. Kits spend their coolant while there is heat (a full one lasts an hour) and stop cooling when empty; refill them at the Fueling Station.",
+        "**Output**: every rod gives a base of 40 IE/t, +30 IE/t per neighbouring rod or reflector, no matter the heat. Heat is a booster on top of that base: up to +100% at maximum heat, so at 50% heat the reactor makes 1.5 times its base and at 75% it makes 1.75 times. A cold reactor still runs at its base.",
+        "**Danger**: above 50% the reactor's radiation climbs; above 80% the alarm sounds and lead walls stop being optional; at 100% it **melts down**: the cube is destroyed in an explosion and the crater stays hot for an hour of game time. In creative mode the Decontaminator (a debug item) wipes that residual radiation within 64 blocks.",
+        "**Power** leaves through any block of the cube as Ultra. When the buffer is full the reactor keeps running at half speed: half the heat, half the fuel use, until there is room again.",
+        "**Redstone**: with the redstone mode on, the reactor only runs while any face of the cube is powered.",
+        "**Taking it apart**: the cube remembers which block was the reactor. Break any casing side and it drops a casing, the rest turns back into casing and the reactor block stays where you placed it; put the casing back and the cube re-forms. Break the reactor block itself and it drops the reactor. Whatever was in the grid drops either way."
+      ],
+      "pt": [
+        "**Grade**: 12 vagas, 4 por 3. Varetas e refletores de nêutrons geram calor; kits de refrigeração e água tiram. A mistura na grade decide onde o calor se estabiliza.",
+        "**Aquecimento**: cada vareta gera 6 de calor por tick, +3 por vareta vizinha e +3 por refletor vizinho.",
+        "**Resfriamento**: o próprio cubo tira 2 por tick, kit médio 6, kit grande 12 e água 60 (até 4 mB por tick, 15 de calor por mB). O resfriamento só age na proporção do calor: a 40% de calor tira 40% disso. Então o calor sobe até o aquecimento igualar resfriamento vezes calor%, e se o aquecimento for maior que todo o resfriamento ele nunca para. Kits gastam refrigerante enquanto há calor (um cheio dura uma hora) e param de resfriar vazios; recarregue na Estação de Abastecimento.",
+        "**Geração**: cada vareta dá uma base de 40 IE/t, +30 IE/t por vareta ou refletor vizinho, independente do calor. O calor é um reforço em cima dessa base: até +100% no calor máximo, então a 50% de calor o reator gera 1,5 vez a base e a 75% gera 1,75 vez. Reator frio continua gerando a base.",
+        "**Perigo**: acima de 50% a radiação do reator sobe; acima de 80% o alarme toca e as paredes de chumbo deixam de ser opcionais; em 100% ele **entra em fusão**: o cubo é destruído numa explosão e a cratera fica quente por uma hora de jogo. No criativo, o Descontaminador (item de debug) apaga essa radiação residual num raio de 64 blocos.",
+        "**Energia** sai por qualquer bloco do cubo como Ultra. Com o buffer cheio o reator continua na metade da velocidade: metade do calor, metade do gasto de combustível, até sobrar espaço de novo.",
+        "**Redstone**: com o modo redstone ligado, o reator só roda enquanto alguma face do cubo estiver energizada.",
+        "**Desmontando**: o cubo lembra qual bloco era o reator. Quebre qualquer lado de revestimento e cai um revestimento, o resto volta a ser revestimento e o bloco do reator fica onde você colocou; recoloque o revestimento e o cubo se forma de novo. Quebre o próprio bloco do reator e cai o reator. O que estava na grade cai de qualquer jeito."
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "en": "Four rods in a row with water settle near 68% heat: a base of 250 IE/t boosted to about 420 IE/t. Eight rods in two rows over four large kits, with water, sit near 68% for about 1140 IE/t. Twelve rods melt down no matter what. Watch the heat bar tooltip: it shows heating and cooling per tick.",
+      "pt": "Quatro varetas em fila com água estabilizam perto de 68% de calor: base de 250 IE/t reforçada para uns 420 IE/t. Oito varetas em duas fileiras sobre quatro kits grandes, com água, ficam perto de 68% por uns 1140 IE/t. Doze varetas entram em fusão de qualquer jeito. Olhe a dica da barra de calor: ela mostra aquecimento e resfriamento por tick."
+    },
+    {
+      "type": "callout",
+      "en": "Where the rods come from, how to reprocess them and how to protect yourself: [Uranium & fuel](#/uranium), [Radiation](#/radiation) and the [hazmat suit](#/hazmat-suit).",
+      "pt": "De onde vêm as varetas, como reprocessá-las e como se proteger: [Urânio e combustível](#/uranium), [Radiação](#/radiation) e o [traje hazmat](#/hazmat-suit)."
+    }
+  ]
+}

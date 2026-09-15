@@ -5,6 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 public class ModTags {
 
@@ -18,6 +19,12 @@ public class ModTags {
   public static final TagKey<Item> CHESTPLATE = itemTag("chestplate");
   public static final TagKey<Item> LEGGINGS = itemTag("leggings");
   public static final TagKey<Item> BOOTS = itemTag("boots");
+
+  public static final TagKey<Block> RADIATION_SHIELDING = blockTag("radiation_shielding");
+
+  public static TagKey<Block> blockTag(String path) {
+    return TagKey.create(Registries.BLOCK, new ResourceLocation(Faktocraft.MODID, path));
+  }
 
   public static TagKey<Item> itemTag(String path) {
     return TagKey.create(Registries.ITEM, new ResourceLocation(Faktocraft.MODID, path));

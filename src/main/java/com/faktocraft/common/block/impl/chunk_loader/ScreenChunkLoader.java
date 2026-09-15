@@ -64,11 +64,11 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
 
     Component statusText = switch (menu.getStatus()) {
       case BlockEntityChunkLoader.STATUS_ACTIVE -> Component.translatable("gui.faktocraft.chunk_loader.status_active");
-      case BlockEntityChunkLoader.STATUS_NO_ENERGY ->
-        Component.translatable("gui.faktocraft.chunk_loader.status_no_energy");
+      case BlockEntityChunkLoader.STATUS_NO_ENERGY -> Component
+          .translatable("gui.faktocraft.chunk_loader.status_no_energy");
       case BlockEntityChunkLoader.STATUS_LIMIT -> Component.translatable("gui.faktocraft.chunk_loader.status_limit");
-      case BlockEntityChunkLoader.STATUS_CHARGING ->
-        Component.translatable("gui.faktocraft.chunk_loader.status_charging", menu.getChargePercent());
+      case BlockEntityChunkLoader.STATUS_CHARGING -> Component
+          .translatable("gui.faktocraft.chunk_loader.status_charging", menu.getChargePercent());
       default -> Component.translatable("gui.faktocraft.chunk_loader.status_off");
     };
     int statusColor = switch (menu.getStatus()) {

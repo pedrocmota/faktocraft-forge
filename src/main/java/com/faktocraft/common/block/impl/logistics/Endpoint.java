@@ -2,6 +2,7 @@ package com.faktocraft.common.block.impl.logistics;
 
 import com.faktocraft.common.util.TransferUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -10,15 +11,27 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
-public record Endpoint(Type type, BlockPos pos, int slot) {
+public record Endpoint(Type type, BlockPos pos, int slot, @Nullable Direction side, int slotEnd) {
 
   public enum Type {
     INVENTORY, ASSEMBLY_IN, ASSEMBLY_OUT, TABLE_BUFFER, MACHINE_SLOT, CHASSIS, EJECTOR, DISPOSAL,
     CHASSIS_BUFFER
   }
 
+  public Endpoint(Type type, BlockPos pos, int slot) {
+    this(type, pos, slot, null, slot);
+  }
+
+  public Endpoint(Type type, BlockPos pos, int slot, @Nullable Direction side) {
+    this(type, pos, slot, side, slot);
+  }
+
   public static Endpoint inventory(BlockPos pos) {
     return new Endpoint(Type.INVENTORY, pos, -1);
+  }
+
+  public static Endpoint inventory(BlockPos pos, @Nullable Direction side) {
+    return new Endpoint(Type.INVENTORY, pos, -1, side);
   }
 
   public static Endpoint assemblyIn(BlockPos pos) {
@@ -35,6 +48,31 @@ public record Endpoint(Type type, BlockPos pos, int slot) {
 
   public static Endpoint machineSlot(BlockPos pos, int slot) {
     return new Endpoint(Type.MACHINE_SLOT, pos, slot);
+  }
+
+  public static Endpoint machineSlot(BlockPos pos, int slot, @Nullable Direction side) {
+    return new Endpoint(Type.MACHINE_SLOT, pos, slot, side);
+  }
+
+  public static Endpoint machineSlots(BlockPos pos, int slot, int slotEnd, @Nullable Direction side) {
+    return new Endpoint(Type.MACHINE_SLOT, pos, slot, side, Math.max(slot, slotEnd));
+  }
+
+  private int firstSlot() {
+    return Math.max(0, slot);
+  }
+
+  private int lastSlotExclusive(IItemHandler handler) {
+    return Math.min(handler.getSlots(), Math.max(firstSlot(), slotEnd) + 1);
+  }
+
+  @Nullable
+  public static IItemHandler resolveHandler(Level level, BlockPos pos, @Nullable Direction side) {
+    IItemHandler handler = TransferUtil.findItemHandler(level, pos, null);
+    if (handler == null && side != null) {
+      handler = TransferUtil.findItemHandler(level, pos, side);
+    }
+    return handler;
   }
 
   public static Endpoint chassis(BlockPos pos) {
@@ -57,10 +95,20 @@ public record Endpoint(Type type, BlockPos pos, int slot) {
     return level.isLoaded(pos);
   }
 
+  public boolean missing(Level level) {
+    if (!isLoaded(level)) {
+      return false;
+    }
+    if (type == Type.CHASSIS || type == Type.EJECTOR || type == Type.DISPOSAL) {
+      return !(level.getBlockEntity(pos) instanceof BlockEntityChassis);
+    }
+    return handler(level) == null;
+  }
+
   @Nullable
   private IItemHandler handler(Level level) {
     return switch (type) {
-      case INVENTORY, MACHINE_SLOT -> TransferUtil.findItemHandler(level, pos, null);
+      case INVENTORY, MACHINE_SLOT -> resolveHandler(level, pos, side);
       case ASSEMBLY_IN -> level.getBlockEntity(pos) instanceof BlockEntityAssemblyTable assembly
           ? new InvWrapper(assembly.getIngredients())
           : null;
@@ -124,7 +172,12 @@ public record Endpoint(Type type, BlockPos pos, int slot) {
       if (slot < 0 || slot >= handler.getSlots()) {
         return stack;
       }
-      return handler.insertItem(slot, stack.copy(), simulate);
+      ItemStack remaining = stack.copy();
+      int end = lastSlotExclusive(handler);
+      for (int i = firstSlot(); i < end && !remaining.isEmpty(); i++) {
+        remaining = handler.insertItem(i, remaining, simulate);
+      }
+      return remaining;
     }
     return ItemHandlerHelper.insertItemStacked(handler, stack.copy(), simulate);
   }
@@ -150,8 +203,15 @@ public record Endpoint(Type type, BlockPos pos, int slot) {
       if (slot < 0 || slot >= handler.getSlots()) {
         return 0;
       }
-      ItemStack inSlot = handler.getStackInSlot(slot);
-      return key.matches(inSlot) ? inSlot.getCount() : 0;
+      int total = 0;
+      int end = lastSlotExclusive(handler);
+      for (int i = firstSlot(); i < end; i++) {
+        ItemStack inSlot = handler.getStackInSlot(i);
+        if (key.matches(inSlot)) {
+          total += inSlot.getCount();
+        }
+      }
+      return total;
     }
     return countIn(handler, key);
   }
@@ -176,8 +236,8 @@ public record Endpoint(Type type, BlockPos pos, int slot) {
       return 0;
     }
     int extracted = 0;
-    int start = type == Type.MACHINE_SLOT ? Math.max(0, slot) : 0;
-    int end = type == Type.MACHINE_SLOT ? Math.max(0, slot) + 1 : handler.getSlots();
+    int start = type == Type.MACHINE_SLOT ? firstSlot() : 0;
+    int end = type == Type.MACHINE_SLOT ? lastSlotExclusive(handler) : handler.getSlots();
     for (int i = start; i < Math.min(end, handler.getSlots()) && extracted < amount; i++) {
       ItemStack inSlot = handler.getStackInSlot(i);
       if (!key.matches(inSlot)) {
@@ -197,11 +257,19 @@ public record Endpoint(Type type, BlockPos pos, int slot) {
     tag.putByte("t", (byte) type.ordinal());
     tag.putLong("p", pos.asLong());
     tag.putInt("s", slot);
+    if (side != null) {
+      tag.putByte("d", (byte) side.get3DDataValue());
+    }
+    if (slotEnd > slot) {
+      tag.putInt("e", slotEnd);
+    }
     return tag;
   }
 
   public static Endpoint load(CompoundTag tag) {
+    Direction side = tag.contains("d") ? Direction.from3DDataValue(tag.getByte("d")) : null;
+    int slot = tag.getInt("s");
     return new Endpoint(Type.values()[Math.floorMod(tag.getByte("t"), Type.values().length)],
-        BlockPos.of(tag.getLong("p")), tag.getInt("s"));
+        BlockPos.of(tag.getLong("p")), slot, side, tag.contains("e") ? Math.max(slot, tag.getInt("e")) : slot);
   }
 }

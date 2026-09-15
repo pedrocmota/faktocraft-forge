@@ -297,8 +297,22 @@
       text-decoration: none;
     }
 
-    a.card:hover {
+    .card.clickable {
+      cursor: pointer;
+    }
+
+    .card.clickable:hover {
       border-color: var(--accent);
+    }
+
+    .stackedcards .card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .stackedcards .card .ic {
+      flex: 0 0 auto;
     }
 
     .card .ic {
@@ -429,11 +443,29 @@
       if (spec.item) {
         return '<img class="pix" src="assets/tex/' + esc(spec.item) + '.png" alt="" loading="lazy">';
       }
+      if (spec.tinted) {
+        const k = spec.tinted;
+        const name = ["tinted", k.base, k.overlay, k.color].join("~").replace(/\//g, ".");
+        return '<img class="pix" src="assets/render/' + esc(name) + '.png" alt="" loading="lazy">';
+      }
       let slug = null;
       if (spec.block) {
         const b = spec.block;
         const top = b.top || b.all, front = b.front || b.all, side = b.side || front;
         slug = [top, front, side].join("~");
+      } else if (spec.centrifuge) {
+        const c = spec.centrifuge;
+        slug = ["centrifuge", c.base_top, c.base_side, c.drum, c.band, c.cap].join("~");
+      } else if (spec.windmill) {
+        const w = spec.windmill;
+        slug = ["windmill", w.top || w.all, w.front || w.all, w.side || w.front || w.all].join("~");
+      } else if (spec.glass_tank) {
+        slug = ["glass_tank", spec.glass_tank.end, spec.glass_tank.side].join("~");
+      } else if (spec.tank) {
+        const k = spec.tank;
+        slug = ["tank", k.frame, k.band, k.panel, k.end].join("~");
+      } else if (spec.panel) {
+        slug = ["panel", spec.panel.top, spec.panel.side].join("~");
       } else if (spec.pipe) {
         slug = "pipe~" + spec.pipe;
       } else if (spec.cable) {
@@ -463,12 +495,12 @@
         }
         case "icons":
           return '<div class="cards">' + b.items.map(it => {
-            const tag = it.link ? "a" : "div";
-            const href = it.link ? ' href="#/' + esc(it.link) + '"' : "";
-            return "<" + tag + ' class="card"' + href + '><span class="ic">' + icon(it.icon) + "</span>" +
-              '<span class="tx"><span class="nm">' + fmt(t(it.name)) + "</span>" +
+            const href = it.link ? ' data-card="#/' + esc(it.link) + '"' : "";
+            return '<div class="card' + (it.link ? " clickable" : "") + '"' + href + '>' +
+              '<span class="ic">' + icon(it.icon) + "</span>" +
+              '<div class="tx"><div class="nm">' + fmt(t(it.name)) + "</div>" +
               (it.desc ? '<div class="ds">' + fmt(t(it.desc)) + "</div>" : "") +
-              "</span></" + tag + ">";
+              "</div></div>";
           }).join("") + "</div>";
         default: return "";
       }
@@ -507,6 +539,7 @@
           "<h1>" + (page.icon ? '<span class="ic">' + icon(page.icon, "big") + "</span>" : "") + fmt(t(nav.title)) + "</h1>" +
           page.blocks.map(renderBlock).join("") +
           "<footer>" + fmt(t(state.meta.ui.footer)) + "</footer>";
+        main.classList.toggle("stackedcards", page.stackedCards === true);
         main.scrollTop = 0;
         window.scrollTo(0, 0);
       } catch (e) {
@@ -547,6 +580,11 @@
       buildLangs();
       buildNav();
       document.getElementById("search").addEventListener("input", buildNav);
+      document.getElementById("content").addEventListener("click", e => {
+        if (e.target.closest("a")) return;
+        const card = e.target.closest(".card.clickable");
+        if (card) location.hash = card.dataset.card;
+      });
       document.getElementById("burger").onclick = () => document.body.classList.toggle("menuopen");
       window.addEventListener("hashchange", route);
       route();

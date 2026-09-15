@@ -9,7 +9,12 @@
       "item": "faktocraft:advanced_charging_battery"
     },
     "h": {
-      "item": "faktocraft:medium_coolant_cell"
+      "type": "forge:nbt",
+      "item": "faktocraft:medium_coolant_cell",
+      "nbt": {
+        "fluid": "faktocraft:coolant",
+        "fluid_amount": 3000
+      }
     }
   },
   "pattern": [

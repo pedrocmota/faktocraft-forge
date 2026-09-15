@@ -122,14 +122,39 @@
     },
     {
       "type": "p",
-      "en": "**Oil** spawns as underground pockets (small and giant) and surface lakes in dry biomes. Pump it, distill it into **fuel** and burn it in the [Combustion Generator](#/generators) - or polymerize it into **plastic**.",
-      "pt": "O **petróleo** aparece como bolsões subterrâneos (pequenos e gigantes) e lagos de superfície em biomas secos. Bombeie, destile em **fuel** e queime no [Gerador de Combustão](#/generators) - ou polimerize em **plástico**."
+      "en": "**Oil** spawns as underground pockets (small and giant) and surface lakes in dry biomes. Pump it, distill it into **fuel** and burn it in the [Combustion Generator](#/generators) - or polymerize it into **plastic**. Every deposit type, depth and rarity is on the [oil pockets](#/oil-pockets) page.",
+      "pt": "O **petróleo** aparece como bolsões subterrâneos (pequenos e gigantes) e lagos de superfície em biomas secos. Bombeie, destile em **fuel** e queime no [Gerador de Combustão](#/generators) - ou polimerize em **plástico**. Cada tipo de depósito, profundidade e raridade está na página de [bolsões de petróleo](#/oil-pockets)."
     },
     {
       "type": "callout",
       "style": "tip",
       "en": "The commands `/faktocraft locateoil` and `/faktocraft locateore` exist for operators - handy when testing worldgen.",
       "pt": "Os comandos `/faktocraft locateoil` e `/faktocraft locateore` existem para operadores - úteis ao testar a geração de mundo."
+    },
+    {
+      "type": "h",
+      "en": "Radiation",
+      "pt": "Radiação"
+    },
+    {
+      "type": "p",
+      "en": "Uranium items are **radioactive**: raw uranium, uranium dust and especially enriched dust hurt every living thing nearby, whether they sit in a chest, in your pockets or on the ground. A formed Nuclear Reactor radiates too, and uranium ore still in the ground gives off a faint glow that a big deposit adds up. The dose falls quickly with distance and grows with the amount: a few dusts barely register, a chest full of enriched dust makes you sick if you linger, and only a Nuclear Reactor kills in seconds. The full rules are on the [radiation](#/radiation) and [uranium](#/uranium) pages.",
+      "pt": "Itens de urânio são **radioativos**: urânio bruto, pó de urânio e principalmente o pó enriquecido machucam tudo que é vivo por perto, esteja num baú, no seu bolso ou no chão. Um Reator Nuclear formado também irradia, e o minério de urânio ainda na rocha solta um brilho fraco que um depósito grande soma. A dose cai rápido com a distância e cresce com a quantidade: uns poucos pós mal registram, um baú cheio de pó enriquecido adoece quem fica por perto, e só um Reator Nuclear mata em segundos. As regras completas estão nas páginas de [radiação](#/radiation) e [urânio](#/uranium)."
+    },
+    {
+      "type": "list",
+      "en": [
+        "**Shielding**: lead blocks, reinforced stone (and its door, while closed), obsidian and bedrock absorb 98% of the radiation per block, so two blocks stop nearly everything; ordinary solid blocks only a little. Line a uranium vault with lead.",
+        "**Hazmat suit**: the full set makes you immune.",
+        "**Dose and time**: a weak dose only starts to hurt after it builds up for a while, and keeps hurting a bit after you leave until it wears off; a very strong dose hurts at once. Damage ignores armor, but a single hit never kills from full health.",
+        "**Geiger Counter**: hold it to hear the clicks and read the dose; the needle on its screen climbs as it gets hotter."
+      ],
+      "pt": [
+        "**Blindagem**: blocos de chumbo, pedra reforçada (e a porta dela, fechada), obsidiana e bedrock absorvem 98% da radiação por bloco, então dois blocos param quase tudo; blocos sólidos comuns só um pouco. Revista o cofre de urânio com chumbo.",
+        "**Traje hazmat**: o conjunto completo dá imunidade.",
+        "**Dose e tempo**: uma dose fraca só começa a doer depois de acumular por um tempo, e continua doendo um pouco depois que você sai até passar; uma dose muito forte dói na hora. O dano ignora armadura, mas um único golpe nunca mata com a vida cheia.",
+        "**Contador Geiger**: segure para ouvir os estalos e ler a dose; o ponteiro na tela sobe conforme esquenta."
+      ]
     }
   ]
 }

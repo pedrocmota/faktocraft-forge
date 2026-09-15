@@ -1,4 +1,5 @@
 {
+  "stackedCards": true,
   "blocks": [
     {
       "type": "p",
@@ -74,7 +75,8 @@
           "desc": {
             "en": "Cheap alloy smelter that burns coal and other furnace fuels. Slow, but needs no power.",
             "pt": "Forno de fundição barato que queima carvão e outros combustíveis de fornalha. Lento, mas dispensa energia."
-          }
+          },
+          "link": "alloy-smelter"
         },
         {
           "name": {
@@ -91,7 +93,8 @@
           "desc": {
             "en": "Burns fuel or biogas to smelt alloys at full speed with no warm-up and no cables. The most efficient way to make alloys.",
             "pt": "Queima combustível ou biogás para fundir ligas na velocidade máxima, sem aquecimento nem cabos. A forma mais eficiente de produzir ligas."
-          }
+          },
+          "link": "alloy-smelter"
         },
         {
           "name": {
@@ -108,7 +111,8 @@
           "desc": {
             "en": "Combines up to three inputs into alloys like bronze. Heats up over time and accepts overclockers.",
             "pt": "Combina até três entradas em ligas como o bronze. Aquece com o tempo e aceita overclocks."
-          }
+          },
+          "link": "alloy-smelter"
         },
         {
           "name": {
@@ -176,7 +180,8 @@
           "desc": {
             "en": "Ferments biomass towards biofuel.",
             "pt": "Fermenta biomassa rumo ao biocombustível."
-          }
+          },
+          "link": "distillery"
         },
         {
           "name": {
@@ -193,7 +198,8 @@
           "desc": {
             "en": "Makes plastic from oil products.",
             "pt": "Produz plástico a partir de derivados do petróleo."
-          }
+          },
+          "link": "distillery"
         },
         {
           "name": {
@@ -208,9 +214,10 @@
             }
           },
           "desc": {
-            "en": "Fills cells and cans with fluids and food.",
-            "pt": "Enche células e latas com fluidos e comida."
-          }
+            "en": "Fills cells and cans with fluids and food; also fills glass bottles with water.",
+            "pt": "Enche células e latas com fluidos e comida; também enche frascos de vidro com água."
+          },
+          "link": "canning-machine"
         },
         {
           "name": {
@@ -227,7 +234,8 @@
           "desc": {
             "en": "Distills oil into fuel through its tower.",
             "pt": "Destila petróleo em fuel pela sua torre."
-          }
+          },
+          "link": "distillery"
         },
         {
           "name": {
@@ -244,7 +252,8 @@
           "desc": {
             "en": "Mixes items into fluids for advanced recipes.",
             "pt": "Mistura itens em fluidos para receitas avançadas."
-          }
+          },
+          "link": "distillery"
         }
       ]
     },
