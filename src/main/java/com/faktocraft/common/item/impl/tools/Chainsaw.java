@@ -17,6 +17,8 @@ import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.enchantment.DamageEnchantment;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -56,14 +58,26 @@ public class Chainsaw extends DiggerElectricItem {
 
   private final int energyCostMine;
   private final int energyCostHurt;
+  private final float efficiencyScale;
 
-  public Chainsaw(Tier material, float attackDamage, float attackSpeed, Properties properties,
-      int energyStored, int maxEnergy, int energyCostMine, int energyCostHurt,
+  public Chainsaw(Tier material, float efficiencyScale, float attackDamage, float attackSpeed,
+      Properties properties, int energyStored, int maxEnergy, int energyCostMine, int energyCostHurt,
       EnergyType energyType, EnergyTier energyTier) {
     super(material, attackDamage, attackSpeed, 5.0F, List.of(BlockTags.MINEABLE_WITH_AXE),
         properties, energyStored, maxEnergy, energyType, energyTier);
     this.energyCostMine = energyCostMine;
     this.energyCostHurt = energyCostHurt;
+    this.efficiencyScale = efficiencyScale;
+  }
+
+  @Override
+  protected float efficiencyScale() {
+    return efficiencyScale;
+  }
+
+  @Override
+  public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+    return enchantment instanceof DamageEnchantment || super.canApplyAtEnchantingTable(stack, enchantment);
   }
 
   @Override
@@ -74,6 +88,26 @@ public class Chainsaw extends DiggerElectricItem {
   @Override
   public int getMineCost() {
     return energyCostMine;
+  }
+
+  @Override
+  public boolean animatesWhileWorking() {
+    return true;
+  }
+
+  @Override
+  public boolean minesVeins() {
+    return tier() == com.faktocraft.common.registries.ModTiers.IRIDIUM_TOOL;
+  }
+
+  @Override
+  public net.minecraft.tags.TagKey<Block> veinFamily() {
+    return VeinMining.LOGS;
+  }
+
+  @Override
+  protected String veinTooltipKey() {
+    return "tooltip.faktocraft.vein_chopping";
   }
 
   @Override

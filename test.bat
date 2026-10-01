@@ -13,6 +13,10 @@ rem                                   "pump" (several: -only "a,b" - the
 rem                                   quotes matter, cmd splits on commas)
 rem        test.bat -profile alternative -> run with another mod profile
 rem                                   (default, alternative, production)
+rem        test.bat -fixture build   -> build the legacy save fixture (world +
+rem                                   manifest) into docs\fixtures\legacy-1201
+rem        test.bat -fixture verify  -> seed the test world from that fixture
+rem                                   and run the save parity checks
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 set "GRADLEW=%~dp0gradlew.bat"
@@ -22,6 +26,8 @@ rem The single quotes ride along into the powershell command below, where a
 rem bare comma would otherwise split the argument.
 set "FILTER="
 set "PROFILE=default"
+set "FIXTURE="
+set "FIXDIR=%~dp0docs\fixtures\legacy-1201"
 :options
 if /i "%~1"=="-only" (
   set "FILTER='-Ptests=%~2'"
@@ -35,8 +41,24 @@ if /i "%~1"=="-profile" (
   shift
   goto options
 )
+if /i "%~1"=="-fixture" (
+  set "FIXTURE=%~2"
+  set "FILTER='-Ptests=legacy'"
+  shift
+  shift
+  goto options
+)
 set "PROFILE_ARG=-Pprofile=%PROFILE%"
 echo [Gametest] Mod profile: %PROFILE%
+set "FIXTURE_ARG="
+if not "%FIXTURE%"=="" (
+  set "FIXTURE_ARG=-PlegacyFixture=%FIXTURE%"
+  echo [Gametest] Legacy fixture mode: %FIXTURE%
+)
+if /i "%FIXTURE%"=="verify" if not exist "%FIXDIR%\world\level.dat" (
+  echo No fixture world at %FIXDIR%\world - run "test.bat -fixture build" on the 1.20.1 branch first.
+  exit /b 1
+)
 
 set RUNS=%~1
 if "%RUNS%"=="" set RUNS=1
@@ -69,9 +91,24 @@ for /L %%i in (1,1,%RUNS%) do (
   rem Tee-Object keeps the whole log while the filter prints the interesting
   rem lines as they arrive; cmd alone cannot do both.
   if exist "%GTDIR%\world" rmdir /s /q "%GTDIR%\world"
+  if exist "%GTDIR%\legacy-fixture" rmdir /s /q "%GTDIR%\legacy-fixture"
+  if /i "%FIXTURE%"=="verify" (
+    echo [Gametest] Seeding the test world from %FIXDIR%
+    xcopy /e /i /q "%FIXDIR%\world" "%GTDIR%\world" >nul
+    xcopy /e /i /q "%FIXDIR%\legacy-fixture" "%GTDIR%\legacy-fixture" >nul
+  )
   echo [Gametest] Booting the test server, this can take a minute...
-  powershell -NoProfile -ExecutionPolicy Bypass -Command "$booting = $true; & '%GRADLEW%' runGameTestServer %AUDIT% %FILTER% %PROFILE_ARG% --console=plain 2>&1 | Tee-Object -FilePath '%LOG%' | Select-String -SimpleMatch -Pattern '[Gametest]','LogTestReporter','required tests','energyAudit','Running test batch' | ForEach-Object { if ($booting) { $booting = $false; Write-Host '[Gametest] test server ready - running the suite' }; $_.Line -replace '^\[[\d:]+\] \[[^\]]+\] \[[^\]]+\]: ', '' }; exit $LASTEXITCODE"
+  powershell -NoProfile -ExecutionPolicy Bypass -Command "$booting = $true; & '%GRADLEW%' runGameTestServer %AUDIT% %FILTER% %PROFILE_ARG% %FIXTURE_ARG% --console=plain 2>&1 | Tee-Object -FilePath '%LOG%' | Select-String -SimpleMatch -Pattern '[Gametest]','LogTestReporter','required tests','energyAudit','Running test batch','LegacyFixture','LegacySave' | ForEach-Object { if ($booting) { $booting = $false; Write-Host '[Gametest] test server ready - running the suite' }; $_.Line -replace '^\[[\d:]+\] \[[^\]]+\] \[[^\]]+\]: ', '' }; exit $LASTEXITCODE"
   if not "!ERRORLEVEL!"=="0" goto failed
+  if /i "%FIXTURE%"=="build" (
+    echo [Gametest] Saving the fixture to %FIXDIR%
+    if exist "%FIXDIR%" rmdir /s /q "%FIXDIR%"
+    mkdir "%FIXDIR%"
+    xcopy /e /i /q "%GTDIR%\world" "%FIXDIR%\world" >nul
+    xcopy /e /i /q "%GTDIR%\legacy-fixture" "%FIXDIR%\legacy-fixture" >nul
+    if exist "%FIXDIR%\world\session.lock" del /q "%FIXDIR%\world\session.lock"
+    if exist "%FIXDIR%\world\level.dat_old" del /q "%FIXDIR%\world\level.dat_old"
+  )
 )
 
 echo.

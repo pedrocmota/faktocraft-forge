@@ -328,6 +328,31 @@ public class JEIPlugin implements IModPlugin {
     };
   }
 
+  private static final List<mezz.jei.api.recipe.RecipeType<?>> MACHINE_TYPES = List.of(
+      CrushingCategory.TYPE, CompressingCategory.TYPE, ExtractingCategory.TYPE, FluidExtrudingCategory.TYPE,
+      SawingCategory.TYPE, AlloySmeltingCategory.TYPE, CircuitAssemblingCategory.TYPE, RecyclingCategory.TYPE,
+      FluidEnrichingCategory.TYPE, OreWashingCategory.TYPE, PolymerizingCategory.TYPE,
+      ThermalCentrifugingCategory.TYPE, UraniumCentrifugingCategory.TYPE, ScannerCategory.TYPE,
+      RollingCategory.TYPE, CuttingCategory.TYPE, ExtrudingCategory.TYPE, FermentingCategory.TYPE,
+      DistillingCategory.TYPE, MatterFabricatingCategory.TYPE);
+
+  private static mezz.jei.api.gui.handlers.IGuiClickableArea typesArea(int x, int y,
+      List<mezz.jei.api.recipe.RecipeType<?>> types) {
+    net.minecraft.client.renderer.Rect2i area = new net.minecraft.client.renderer.Rect2i(x, y, 24, 16);
+    return new mezz.jei.api.gui.handlers.IGuiClickableArea() {
+      @Override
+      public net.minecraft.client.renderer.Rect2i getArea() {
+        return area;
+      }
+
+      @Override
+      public void onClick(mezz.jei.api.recipe.IFocusFactory focusFactory,
+          mezz.jei.api.runtime.IRecipesGui recipesGui) {
+        recipesGui.showTypes(types);
+      }
+    };
+  }
+
   private static mezz.jei.api.gui.handlers.IGuiClickableArea focusArea(int x, int y,
       mezz.jei.api.recipe.RecipeIngredientRole role, net.minecraft.world.item.ItemStack stack) {
     net.minecraft.client.renderer.Rect2i area = new net.minecraft.client.renderer.Rect2i(x, y, 24, 16);
@@ -466,7 +491,9 @@ public class JEIPlugin implements IModPlugin {
               stack = screen.declaredInput();
             }
             if (stack.isEmpty()) {
-              return List.of();
+              return List.of(typesArea(
+                  com.faktocraft.common.block.impl.logistics.ScreenRecipePipe.ARROW_X,
+                  screen.arrowY(), MACHINE_TYPES));
             }
             return List.of(focusArea(
                 com.faktocraft.common.block.impl.logistics.ScreenRecipePipe.ARROW_X,

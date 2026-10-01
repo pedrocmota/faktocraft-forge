@@ -1,6 +1,7 @@
 package com.faktocraft.common.registries;
 
 import net.minecraftforge.common.util.Lazy;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 import java.util.function.Supplier;
@@ -10,7 +11,10 @@ public class ModTiers {
   public static final Tier BRONZE = new ModTier(2, 280, 7.0F, 2.0F, 14,
       () -> Ingredient.of(ModTags.commonItemTag("ingots/bronze")));
 
-  public static final Tier IRIDIUM = new ModTier(4, 3046, 30.0F, 4.0F, 15,
+  public static final Tier DIAMOND_TOOL = new ModTier(3, 1561, 8.4F, 3.0F, 10,
+      () -> Ingredient.of(Items.DIAMOND));
+
+  public static final Tier IRIDIUM_TOOL = new ModTier(4, 3046, 10.8F, 4.0F, 15,
       () -> Ingredient.of(ModTags.itemTag("repairs_iridium")));
 
   private static final class ModTier implements Tier {

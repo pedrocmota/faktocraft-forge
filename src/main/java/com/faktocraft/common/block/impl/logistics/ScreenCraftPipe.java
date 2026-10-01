@@ -151,7 +151,8 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
 
   private Tooltip strictTooltip() {
     return Tooltip.create(Component.translatable(key(isStrict()
-        ? "craft.exact_tip" : "craft.flexible_tip")));
+        ? "craft.exact_tip"
+        : "craft.flexible_tip")));
   }
 
   @Override

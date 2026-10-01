@@ -18,6 +18,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,7 @@ public abstract class ScanMapScreen extends Screen {
   private int viewZ;
   private boolean viewInitialized;
   private static final Map<String, int[]> SAVED_VIEWS = new HashMap<>();
+  private final Map<Long, int[]> chunkColorCache = new HashMap<>();
 
   private int mapW;
   private int mapH;
@@ -69,6 +71,8 @@ public abstract class ScanMapScreen extends Screen {
   protected int panelH;
   protected int panelLeft;
   protected int panelTop;
+
+  private static final ResourceLocation MAP_TEXTURE = new ResourceLocation(Faktocraft.MODID, "dynamic/scan_map");
 
   private DynamicTexture mapTexture;
   private ResourceLocation mapLocation;
@@ -407,31 +411,63 @@ public abstract class ScanMapScreen extends Screen {
     int baseX = (centerChunkX + viewX) << 4;
     int baseZ = (centerChunkZ + viewZ) << 4;
     NativeImage image = new NativeImage(blocksW, blocksH, false);
-    BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-    for (int z = 0; z < blocksH; z++) {
-      for (int x = 0; x < blocksW; x++) {
-        int worldX = baseX + x;
-        int worldZ = baseZ + z;
-
-        int rgb = ((x / 8) + (z / 8)) % 2 == 0 ? 0x1E2126 : 0x23262C;
-        if (minecraft.level.hasChunk((worldX >> 4), (worldZ >> 4))) {
-          int h = minecraft.level.getHeight(Heightmap.Types.WORLD_SURFACE, worldX, worldZ);
-          if (h > minecraft.level.getMinBuildHeight()) {
-            cursor.set(worldX, h - 1, worldZ);
-            rgb = minecraft.level.getBlockState(cursor).getMapColor(minecraft.level, cursor).col;
-            int hNorth = minecraft.level.getHeight(Heightmap.Types.WORLD_SURFACE, worldX, worldZ - 1);
-            float shade = h > hNorth ? 1.14F : h < hNorth ? 0.82F : 1.0F;
-            int r = Mth.clamp((int) (((rgb >> 16) & 0xFF) * shade), 0, 255);
-            int g = Mth.clamp((int) (((rgb >> 8) & 0xFF) * shade), 0, 255);
-            int b = Mth.clamp((int) ((rgb & 0xFF) * shade), 0, 255);
-            rgb = (r << 16) | (g << 8) | b;
+    for (int gz = 0; gz < gridH; gz++) {
+      for (int gx = 0; gx < gridW; gx++) {
+        int[] colors = chunkColors((baseX >> 4) + gx, (baseZ >> 4) + gz);
+        int px0 = gx * 16;
+        int pz0 = gz * 16;
+        for (int z = 0; z < 16; z++) {
+          for (int x = 0; x < 16; x++) {
+            int px = px0 + x;
+            int pz = pz0 + z;
+            int rgb = colors != null ? colors[z * 16 + x] : -1;
+            if (rgb < 0) {
+              rgb = ((px / 8) + (pz / 8)) % 2 == 0 ? 0x1E2126 : 0x23262C;
+            }
+            image.setPixelRGBA(px, pz, 0xFF000000 | ((rgb & 0xFF) << 16) | (rgb & 0xFF00) | ((rgb >> 16) & 0xFF));
           }
         }
-        image.setPixelRGBA(x, z, 0xFF000000 | ((rgb & 0xFF) << 16) | (rgb & 0xFF00) | ((rgb >> 16) & 0xFF));
       }
     }
     mapTexture = new DynamicTexture(image);
-    mapLocation = minecraft.getTextureManager().register("scan_map", mapTexture);
+    mapLocation = MAP_TEXTURE;
+    minecraft.getTextureManager().register(mapLocation, mapTexture);
+  }
+
+  @Nullable
+  private int[] chunkColors(int chunkX, int chunkZ) {
+    long key = (chunkX & 0xFFFFFFFFL) | ((long) chunkZ << 32);
+    int[] cached = chunkColorCache.get(key);
+    if (cached != null) {
+      return cached;
+    }
+    if (minecraft == null || minecraft.level == null || !minecraft.level.hasChunk(chunkX, chunkZ)) {
+      return null;
+    }
+    int[] colors = new int[256];
+    BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+    int minY = minecraft.level.getMinBuildHeight();
+    for (int z = 0; z < 16; z++) {
+      for (int x = 0; x < 16; x++) {
+        int worldX = (chunkX << 4) + x;
+        int worldZ = (chunkZ << 4) + z;
+        int rgb = -1;
+        int h = minecraft.level.getHeight(Heightmap.Types.WORLD_SURFACE, worldX, worldZ);
+        if (h > minY) {
+          cursor.set(worldX, h - 1, worldZ);
+          rgb = minecraft.level.getBlockState(cursor).getMapColor(minecraft.level, cursor).col;
+          int hNorth = minecraft.level.getHeight(Heightmap.Types.WORLD_SURFACE, worldX, worldZ - 1);
+          float shade = h > hNorth ? 1.14F : h < hNorth ? 0.82F : 1.0F;
+          int r = Mth.clamp((int) (((rgb >> 16) & 0xFF) * shade), 0, 255);
+          int g = Mth.clamp((int) (((rgb >> 8) & 0xFF) * shade), 0, 255);
+          int b = Mth.clamp((int) ((rgb & 0xFF) * shade), 0, 255);
+          rgb = (r << 16) | (g << 8) | b;
+        }
+        colors[z * 16 + x] = rgb;
+      }
+    }
+    chunkColorCache.put(key, colors);
+    return colors;
   }
 
   private void closeMapTexture() {
@@ -735,20 +771,28 @@ public abstract class ScanMapScreen extends Screen {
     long tick = minecraft != null && minecraft.player != null ? minecraft.player.tickCount : 0;
     JobMarker job = activeJob();
 
+    RectBatch batch = new RectBatch(graphics, gridLeft, gridTop, drawnW, drawnH);
+    RectBatch overlay = new RectBatch(graphics, gridLeft, gridTop, drawnW, drawnH);
+    int[] columnRun = new int[gridW];
+    Arrays.fill(columnRun, -1);
+    int rowEnd = gridLeft + gridW * cell;
+
     for (int gz = 0; gz < gridH; gz++) {
+      int cy = gridTop + gz * cell;
+      int tintStart = -1;
+      int tintColor = 0;
+      int lineStart = -1;
       for (int gx = 0; gx < gridW; gx++) {
         int chunkX = centerChunkX + viewX + gx;
         int chunkZ = centerChunkZ + viewZ + gz;
         int cx = gridLeft + gx * cell;
-        int cy = gridTop + gz * cell;
-        if (outsideScanArea(chunkX, chunkZ)) {
-          graphics.fill(cx, cy, cx + cell, cy + cell, 0xE0080A0C);
-          continue;
-        }
-        CompoundTag scan = scanAt(chunkX, chunkZ);
-
-        if (scan == null) {
-          graphics.fill(cx, cy, cx + cell, cy + cell, 0x66101014);
+        boolean outside = outsideScanArea(chunkX, chunkZ);
+        CompoundTag scan = outside ? null : scanAt(chunkX, chunkZ);
+        int color;
+        if (outside) {
+          color = 0xE0080A0C;
+        } else if (scan == null) {
+          color = 0x66101014;
         } else {
           CompoundTag entries = scan.getCompound("entries");
           int total = 0;
@@ -756,17 +800,39 @@ public abstract class ScanMapScreen extends Screen {
             total += entries.getInt(key);
           }
           if (total == 0) {
-            graphics.fill(cx, cy, cx + cell, cy + cell, 0x50204060);
+            color = 0x50204060;
           } else {
             float heat = Mth.clamp(total / 400.0F, 0.0F, 1.0F);
             int r = (int) (60 + heat * 195);
             int g = (int) (150 + heat * 60);
-            graphics.fill(cx, cy, cx + cell, cy + cell, 0x58000000 | (r << 16) | (g << 8) | 45);
+            color = 0x58000000 | (r << 16) | (g << 8) | 45;
           }
         }
-
-        graphics.fill(cx, cy, cx + cell, cy + 1, 0x50000000);
-        graphics.fill(cx, cy, cx + 1, cy + cell, 0x50000000);
+        if (tintStart < 0) {
+          tintStart = cx;
+          tintColor = color;
+        } else if (color != tintColor) {
+          batch.fill(tintStart, cy, cx, cy + cell, tintColor);
+          tintStart = cx;
+          tintColor = color;
+        }
+        if (outside) {
+          if (lineStart >= 0) {
+            batch.fill(lineStart, cy, cx, cy + 1, 0x50000000);
+            lineStart = -1;
+          }
+          if (columnRun[gx] >= 0) {
+            batch.fill(cx, gridTop + columnRun[gx] * cell, cx + 1, cy, 0x50000000);
+            columnRun[gx] = -1;
+          }
+          continue;
+        }
+        if (lineStart < 0) {
+          lineStart = cx;
+        }
+        if (columnRun[gx] < 0) {
+          columnRun[gx] = gz;
+        }
 
         if (scan != null) {
           CompoundTag entries = scan.getCompound("entries");
@@ -781,12 +847,12 @@ public abstract class ScanMapScreen extends Screen {
             float pulse = 0.7F + 0.3F * Mth.sin((tick + partialTick) * 0.3F);
             int gold = ((int) (pulse * 255) << 24) | 0xE8C43A;
             if (iridium && oil) {
-              drawDiamond(graphics, cx + cell / 3, cy + cell / 3, r, 0xFF14161A, gold);
-              drawDiamond(graphics, cx + 2 * cell / 3, cy + 2 * cell / 3, r, gold, 0xFF14161A);
+              drawDiamond(overlay, cx + cell / 3, cy + cell / 3, r, 0xFF14161A, gold);
+              drawDiamond(overlay, cx + 2 * cell / 3, cy + 2 * cell / 3, r, gold, 0xFF14161A);
             } else if (iridium) {
-              drawDiamond(graphics, cx + cell / 2, cy + cell / 2, r, 0xFF14161A, gold);
+              drawDiamond(overlay, cx + cell / 2, cy + cell / 2, r, 0xFF14161A, gold);
             } else {
-              drawDiamond(graphics, cx + cell / 2, cy + cell / 2, r, gold, 0xFF14161A);
+              drawDiamond(overlay, cx + cell / 2, cy + cell / 2, r, gold, 0xFF14161A);
             }
           }
         }
@@ -794,31 +860,46 @@ public abstract class ScanMapScreen extends Screen {
         if (hasSelection && selectedCx == chunkX && selectedCz == chunkZ) {
           float pulse = 0.6F + 0.4F * Mth.sin((tick + partialTick) * 0.35F);
           int alpha = (int) (pulse * 255) << 24;
-          drawCellBorder(graphics, cx, cy, 0xFFFFFFFF);
-          graphics.fill(cx + 1, cy + 1, cx + cell - 1, cy + 2, alpha | 0x4FC3F7);
-          graphics.fill(cx + 1, cy + cell - 2, cx + cell - 1, cy + cell - 1, alpha | 0x4FC3F7);
-          graphics.fill(cx + 1, cy + 1, cx + 2, cy + cell - 1, alpha | 0x4FC3F7);
-          graphics.fill(cx + cell - 2, cy + 1, cx + cell - 1, cy + cell - 1, alpha | 0x4FC3F7);
+          drawCellBorder(overlay, cx, cy, 0xFFFFFFFF);
+          overlay.fill(cx + 1, cy + 1, cx + cell - 1, cy + 2, alpha | 0x4FC3F7);
+          overlay.fill(cx + 1, cy + cell - 2, cx + cell - 1, cy + cell - 1, alpha | 0x4FC3F7);
+          overlay.fill(cx + 1, cy + 1, cx + 2, cy + cell - 1, alpha | 0x4FC3F7);
+          overlay.fill(cx + cell - 2, cy + 1, cx + cell - 1, cy + cell - 1, alpha | 0x4FC3F7);
         } else if (job != null && job.chunkX() == chunkX && job.chunkZ() == chunkZ) {
           float pulse = 0.55F + 0.45F * Mth.sin((tick + partialTick) * 0.35F);
           int alpha = (int) (pulse * 255) << 24;
-          drawCellBorder(graphics, cx, cy, alpha | 0xE8C43A);
+          drawCellBorder(overlay, cx, cy, alpha | 0xE8C43A);
         } else if (isPendingChunk(chunkX, chunkZ)) {
           float pulse = 0.55F + 0.45F * Mth.sin((tick + partialTick) * 0.35F);
           int alpha = (int) (pulse * 255) << 24;
-          drawCellBorder(graphics, cx, cy, alpha | 0x4FC3F7);
+          drawCellBorder(overlay, cx, cy, alpha | 0x4FC3F7);
         } else if (isHomeChunk(chunkX, chunkZ)) {
-          drawCellBorder(graphics, cx, cy, 0xFFFFFFFF);
+          drawCellBorder(overlay, cx, cy, 0xFFFFFFFF);
         }
 
         boolean known = scan != null
             || (minecraft != null && minecraft.level != null && minecraft.level.hasChunk(chunkX, chunkZ));
         if (known && mouseX >= cx && mouseX < cx + cell && mouseY >= cy && mouseY < cy + cell) {
-          graphics.fill(cx, cy, cx + cell, cy + cell, 0x28FFFFFF);
+          overlay.fill(cx, cy, cx + cell, cy + cell, 0x28FFFFFF);
           hoverLines = buildHoverSummary(chunkX, chunkZ, scan);
         }
       }
+      if (tintStart >= 0) {
+        batch.fill(tintStart, cy, rowEnd, cy + cell, tintColor);
+      }
+      if (lineStart >= 0) {
+        batch.fill(lineStart, cy, rowEnd, cy + 1, 0x50000000);
+      }
     }
+    int gridBottom = gridTop + gridH * cell;
+    for (int gx = 0; gx < gridW; gx++) {
+      if (columnRun[gx] >= 0) {
+        int cx = gridLeft + gx * cell;
+        batch.fill(cx, gridTop + columnRun[gx] * cell, cx + 1, gridBottom, 0x50000000);
+      }
+    }
+    batch.submit(graphics);
+    overlay.submit(graphics);
     drawPlayerMarker(graphics, gridLeft, gridTop);
     graphics.fill(gridLeft, gridTop + drawnH - 1, gridLeft + drawnW, gridTop + drawnH, 0x50000000);
     graphics.fill(gridLeft + drawnW - 1, gridTop, gridLeft + drawnW, gridTop + drawnH, 0x50000000);
@@ -885,24 +966,24 @@ public abstract class ScanMapScreen extends Screen {
     }
   }
 
-  private void drawDiamond(GuiGraphics graphics, int centerX, int centerY, int r, int fill, int outline) {
+  private void drawDiamond(RectBatch batch, int centerX, int centerY, int r, int fill, int outline) {
     for (int dy = -r - 1; dy <= r + 1; dy++) {
       int w = r + 1 - Math.abs(dy);
       if (w >= 0) {
-        graphics.fill(centerX - w, centerY + dy, centerX + w + 1, centerY + dy + 1, outline);
+        batch.fill(centerX - w, centerY + dy, centerX + w + 1, centerY + dy + 1, outline);
       }
     }
     for (int dy = -r; dy <= r; dy++) {
       int w = r - Math.abs(dy);
-      graphics.fill(centerX - w, centerY + dy, centerX + w + 1, centerY + dy + 1, fill);
+      batch.fill(centerX - w, centerY + dy, centerX + w + 1, centerY + dy + 1, fill);
     }
   }
 
-  private void drawCellBorder(GuiGraphics graphics, int cx, int cy, int color) {
-    graphics.fill(cx, cy, cx + cell, cy + 1, color);
-    graphics.fill(cx, cy + cell - 1, cx + cell, cy + cell, color);
-    graphics.fill(cx, cy, cx + 1, cy + cell, color);
-    graphics.fill(cx + cell - 1, cy, cx + cell, cy + cell, color);
+  private void drawCellBorder(RectBatch batch, int cx, int cy, int color) {
+    batch.fill(cx, cy, cx + cell, cy + 1, color);
+    batch.fill(cx, cy + cell - 1, cx + cell, cy + cell, color);
+    batch.fill(cx, cy, cx + 1, cy + cell, color);
+    batch.fill(cx + cell - 1, cy, cx + cell, cy + cell, color);
   }
 
   private List<Component> buildHoverSummary(int chunkX, int chunkZ, @Nullable CompoundTag scan) {

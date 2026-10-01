@@ -295,18 +295,18 @@ public final class ModItems {
       p -> new ElectricWrench(p, 0, 10000, EnergyType.RECEIVE, EnergyTier.LOW));
 
   public static final Item CHAINSAW = register("chainsaw",
-      p -> new Chainsaw(Tiers.IRON, 6.0F, -3.1F, p, 0, 30000, 50, 100, EnergyType.RECEIVE, EnergyTier.LOW));
-  public static final Item DIAMOND_CHAINSAW = register("diamond_chainsaw", p -> new Chainsaw(Tiers.DIAMOND, 5.0F,
-      -3.0F, p, 0, 80000, 70, 120, EnergyType.RECEIVE, EnergyTier.MEDIUM));
-  public static final Item IRIDIUM_CHAINSAW = register("iridium_chainsaw", p -> new Chainsaw(ModTiers.IRIDIUM, 5.0F,
-      -3.0F, p.rarity(Rarity.RARE), 0, 300000, 200, 400, EnergyType.RECEIVE, EnergyTier.HIGH));
+      p -> new Chainsaw(Tiers.IRON, 1.0F, 6.0F, -3.1F, p, 0, 30000, 50, 100, EnergyType.RECEIVE, EnergyTier.LOW));
+  public static final Item DIAMOND_CHAINSAW = register("diamond_chainsaw", p -> new Chainsaw(ModTiers.DIAMOND_TOOL,
+      1.05F, 5.0F, -3.0F, p, 0, 80000, 70, 120, EnergyType.RECEIVE, EnergyTier.MEDIUM));
+  public static final Item IRIDIUM_CHAINSAW = register("iridium_chainsaw", p -> new Chainsaw(ModTiers.IRIDIUM_TOOL,
+      1.2F, 5.0F, -3.0F, p.rarity(Rarity.RARE), 0, 300000, 200, 400, EnergyType.RECEIVE, EnergyTier.HIGH));
 
   public static final Item MINING_DRILL = register("mining_drill",
-      p -> new MiningDrill(Tiers.IRON, 1, -2.8F, p, 0, 30000, 50, 100, EnergyType.RECEIVE, EnergyTier.LOW));
-  public static final Item DIAMOND_DRILL = register("diamond_drill", p -> new MiningDrill(Tiers.DIAMOND, 1,
-      -2.8F, p, 0, 80000, 70, 120, EnergyType.RECEIVE, EnergyTier.MEDIUM));
-  public static final Item IRIDIUM_DRILL = register("iridium_drill", p -> new MiningDrill(ModTiers.IRIDIUM, 1, -2.8F,
-      p.rarity(Rarity.RARE), 0, 300000, 200, 400, EnergyType.RECEIVE, EnergyTier.HIGH));
+      p -> new MiningDrill(Tiers.IRON, 1.0F, 1, -2.8F, p, 0, 30000, 50, 100, EnergyType.RECEIVE, EnergyTier.LOW));
+  public static final Item DIAMOND_DRILL = register("diamond_drill", p -> new MiningDrill(ModTiers.DIAMOND_TOOL, 1.05F,
+      1, -2.8F, p, 0, 80000, 70, 120, EnergyType.RECEIVE, EnergyTier.MEDIUM));
+  public static final Item IRIDIUM_DRILL = register("iridium_drill", p -> new MiningDrill(ModTiers.IRIDIUM_TOOL,
+      1.2F, 1, -2.8F, p.rarity(Rarity.RARE), 0, 300000, 200, 400, EnergyType.RECEIVE, EnergyTier.HIGH));
 
   public static final Item HOLE_DRILL = register("hole_drill",
       com.faktocraft.common.item.impl.tools.HoleDrill::new);

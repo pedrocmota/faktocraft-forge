@@ -36,12 +36,10 @@ public class BlockBreaker extends BlockCable {
 
   public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.AXIS;
   public static final BooleanProperty ON = BlockStateProperties.ENABLED;
-  public static final net.minecraft.world.level.block.state.properties.DirectionProperty HANDLE =
-      net.minecraft.world.level.block.state.properties.DirectionProperty
-          .create("handle");
-  public static final net.minecraft.world.level.block.state.properties.IntegerProperty DIAL =
-      net.minecraft.world.level.block.state.properties.IntegerProperty
-          .create("dial", 0, 3);
+  public static final net.minecraft.world.level.block.state.properties.DirectionProperty HANDLE = net.minecraft.world.level.block.state.properties.DirectionProperty
+      .create("handle");
+  public static final net.minecraft.world.level.block.state.properties.IntegerProperty DIAL = net.minecraft.world.level.block.state.properties.IntegerProperty
+      .create("dial", 0, 3);
 
   public BlockBreaker(Properties properties) {
     super(0.5F, CableTier.COPPER_CABLE, properties);

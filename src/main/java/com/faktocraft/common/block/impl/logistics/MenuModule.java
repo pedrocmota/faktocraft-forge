@@ -176,7 +176,8 @@ public class MenuModule extends AbstractContainerMenu {
     }
     java.util.List<ModuleSettings.FilterLine> lines = ModuleSettings.lines(module);
     ModuleSettings.FilterLine current = line < ModuleSettings.MAX_LINES && line < lines.size()
-        ? lines.get(line) : null;
+        ? lines.get(line)
+        : null;
     switch (action) {
       case ACTION_CLEAR_LINE -> {
         if (current != null) {

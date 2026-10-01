@@ -44,6 +44,9 @@ public final class BasicConfig {
     public final ForgeConfigSpec.BooleanValue chunkLoaderEnabled;
     public final ForgeConfigSpec.BooleanValue nukeEnabled;
     public final ForgeConfigSpec.BooleanValue tankBreakPlacesFluid;
+    public final ForgeConfigSpec.BooleanValue veinMiningEnabled;
+    public final ForgeConfigSpec.IntValue veinMiningMaxBlocks;
+    public final ForgeConfigSpec.IntValue veinMiningEnergyMultiplier;
 
     private Server(ForgeConfigSpec.Builder builder) {
       builder.push("tank");
@@ -65,6 +68,18 @@ public final class BasicConfig {
           .comment("Whether the nuke can be placed and detonated.",
               "Disabled it is hidden from the creative tabs and from JEI, and placed nukes will not go off.")
           .define("nuke", true);
+      builder.pop();
+      builder.push("tools");
+      veinMiningEnabled = builder
+          .comment("Whether the iridium drill and iridium chainsaw break a whole ore vein or tree",
+              "when the player holds Alt while mining.")
+          .define("veinMining", true);
+      veinMiningMaxBlocks = builder
+          .comment("Maximum number of blocks broken in one vein, counting the block the player hit.")
+          .defineInRange("veinMiningMaxBlocks", 64, 2, 512);
+      veinMiningEnergyMultiplier = builder
+          .comment("Energy cost of each extra block of the vein, as a multiple of the tool's normal mining cost.")
+          .defineInRange("veinMiningEnergyMultiplier", 3, 1, 20);
       builder.pop();
     }
   }
@@ -91,5 +106,18 @@ public final class BasicConfig {
 
   public static boolean tankBreakPlacesFluid() {
     return read(SERVER_SPEC, SERVER.tankBreakPlacesFluid);
+  }
+
+  public static boolean veinMiningEnabled() {
+    return read(SERVER_SPEC, SERVER.veinMiningEnabled);
+  }
+
+  public static int veinMiningMaxBlocks() {
+    return SERVER_SPEC.isLoaded() ? SERVER.veinMiningMaxBlocks.get() : SERVER.veinMiningMaxBlocks.getDefault();
+  }
+
+  public static int veinMiningEnergyMultiplier() {
+    return SERVER_SPEC.isLoaded() ? SERVER.veinMiningEnergyMultiplier.get()
+        : SERVER.veinMiningEnergyMultiplier.getDefault();
   }
 }

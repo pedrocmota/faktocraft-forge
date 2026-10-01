@@ -91,7 +91,8 @@ public final class PipeSupport {
     }
     if (walked >= MAX_RUN_WALK) {
       return Math.floorMod(axis.choose(pos.getX(), pos.getY(), pos.getZ()), spacing) == 0
-          ? attach : null;
+          ? attach
+          : null;
     }
 
     int forward = 0;

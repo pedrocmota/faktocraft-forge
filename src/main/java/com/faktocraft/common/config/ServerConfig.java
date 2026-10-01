@@ -8,6 +8,14 @@ public class ServerConfig {
   public int very_high_tier_transfer = 2048;
   public int ultra_tier_transfer = 8192;
 
+  public int low_transformer_step_up_loss_percent = 25;
+  public int medium_transformer_step_up_loss_percent = 30;
+  public int high_transformer_step_up_loss_percent = 40;
+  public int low_transformer_step_down_loss_percent = 5;
+  public int medium_transformer_step_down_loss_percent = 8;
+  public int high_transformer_step_down_loss_percent = 12;
+  public int very_high_transformer_step_down_loss_percent = 15;
+
   public int wooden_battery_box_capacity = 40_000;
   public int cesu_capacity = 300_000;
   public int mfe_capacity = 4_000_000;

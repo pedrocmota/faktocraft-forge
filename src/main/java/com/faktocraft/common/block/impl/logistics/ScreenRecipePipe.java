@@ -699,7 +699,8 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
       BlockEntityRecipePipe.Io entry = recipe.io(io);
       if (entry.isEmpty()) {
         tooltip.add(Component.translatable(key(BlockEntityRecipePipe.isOutputId(io)
-            ? "craft.result_empty" : "craft.ingredient_empty")).withStyle(ChatFormatting.GRAY));
+            ? "craft.result_empty"
+            : "craft.ingredient_empty")).withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable(key("craft.io_set_hint")).withStyle(ChatFormatting.DARK_GRAY));
       } else {
         tooltip.add(displayStack(io, entry).getHoverName());
@@ -735,7 +736,8 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
       }
       tooltip.add(Component.translatable(key("craft.slot_number"), slot));
       tooltip.add(Component.translatable(key(selectedBind == Integer.MIN_VALUE
-          ? "craft.bind_hint" : "craft.bind_click")).withStyle(ChatFormatting.DARK_GRAY));
+          ? "craft.bind_hint"
+          : "craft.bind_click")).withStyle(ChatFormatting.DARK_GRAY));
       if (selectedBind != Integer.MIN_VALUE && boundToDock(recipe.io(selectedBind))) {
         tooltip.add(Component.translatable(key("craft.bind_range_hint")).withStyle(ChatFormatting.DARK_GRAY));
       }

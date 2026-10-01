@@ -99,11 +99,11 @@ public class M3Registry {
       "fluid_enricher", BlockEntityFluidEnricher::new, FLUID_ENRICHER);
   public static final BlockEntityType<BlockEntityAlloySmelter> ALLOY_SMELTER_BLOCK_ENTITY = registerBlockEntity(
       "alloy_smelter", BlockEntityAlloySmelter::new, ALLOY_SMELTER);
-  public static final BlockEntityType<BlockEntityCoalAlloySmelter> COAL_ALLOY_SMELTER_BLOCK_ENTITY =
-      registerBlockEntity("coal_alloy_smelter", BlockEntityCoalAlloySmelter::new, COAL_ALLOY_SMELTER);
-  public static final BlockEntityType<BlockEntityCombustionAlloySmelter> COMBUSTION_ALLOY_SMELTER_BLOCK_ENTITY =
-      registerBlockEntity("combustion_alloy_smelter", BlockEntityCombustionAlloySmelter::new,
-          COMBUSTION_ALLOY_SMELTER);
+  public static final BlockEntityType<BlockEntityCoalAlloySmelter> COAL_ALLOY_SMELTER_BLOCK_ENTITY = registerBlockEntity(
+      "coal_alloy_smelter", BlockEntityCoalAlloySmelter::new, COAL_ALLOY_SMELTER);
+  public static final BlockEntityType<BlockEntityCombustionAlloySmelter> COMBUSTION_ALLOY_SMELTER_BLOCK_ENTITY = registerBlockEntity(
+      "combustion_alloy_smelter", BlockEntityCombustionAlloySmelter::new,
+      COMBUSTION_ALLOY_SMELTER);
   public static final BlockEntityType<BlockEntityCircuitAssembler> CIRCUIT_ASSEMBLER_BLOCK_ENTITY = registerBlockEntity(
       "circuit_assembler", BlockEntityCircuitAssembler::new, CIRCUIT_ASSEMBLER);
   public static final BlockEntityType<BlockEntityFermenter> FERMENTER_BLOCK_ENTITY = registerBlockEntity("fermenter",
@@ -112,11 +112,10 @@ public class M3Registry {
       "ore_washing_plant", BlockEntityOreWashingPlant::new, ORE_WASHING_PLANT);
   public static final BlockEntityType<BlockEntityMetalFormer> METAL_FORMER_BLOCK_ENTITY = registerBlockEntity(
       "metal_former", BlockEntityMetalFormer::new, METAL_FORMER);
-  public static final BlockEntityType<BlockEntityThermalCentrifuge> THERMAL_CENTRIFUGE_BLOCK_ENTITY =
-      registerBlockEntity(
-          "thermal_centrifuge", BlockEntityThermalCentrifuge::new, THERMAL_CENTRIFUGE);
-  public static final BlockEntityType<BlockEntityUraniumCentrifuge> URANIUM_CENTRIFUGE_BLOCK_ENTITY =
-      registerBlockEntity("uranium_centrifuge", BlockEntityUraniumCentrifuge::new, URANIUM_CENTRIFUGE);
+  public static final BlockEntityType<BlockEntityThermalCentrifuge> THERMAL_CENTRIFUGE_BLOCK_ENTITY = registerBlockEntity(
+      "thermal_centrifuge", BlockEntityThermalCentrifuge::new, THERMAL_CENTRIFUGE);
+  public static final BlockEntityType<BlockEntityUraniumCentrifuge> URANIUM_CENTRIFUGE_BLOCK_ENTITY = registerBlockEntity(
+      "uranium_centrifuge", BlockEntityUraniumCentrifuge::new, URANIUM_CENTRIFUGE);
   public static final BlockEntityType<BlockEntityCanningMachine> CANNING_MACHINE_BLOCK_ENTITY = registerBlockEntity(
       "canning_machine", BlockEntityCanningMachine::new, CANNING_MACHINE);
   public static final BlockEntityType<BlockEntityPolymerizer> POLYMERIZER_BLOCK_ENTITY = registerBlockEntity(

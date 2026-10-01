@@ -288,7 +288,7 @@ public class MenuRequestTable extends AbstractContainerMenu {
         player.drop(leftover, false);
       }
       slot.onTake(player, crafted);
-      return ItemStack.EMPTY;
+      return crafted;
     } else if (index < PLAYER_START) {
       if (!moveItemStackTo(stack, PLAYER_START, this.slots.size(), true)) {
         return ItemStack.EMPTY;

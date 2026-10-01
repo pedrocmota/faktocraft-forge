@@ -505,7 +505,8 @@ public final class TaskLedger {
           maintainEnds.add(Endpoint.load((CompoundTag) endTag));
         }
         List<LogisticsPlanner.Maintain> maintains = entry.contains("maint")
-            ? loadMaintains(entry.getList("maint", Tag.TAG_COMPOUND)) : legacyMaintains;
+            ? loadMaintains(entry.getList("maint", Tag.TAG_COMPOUND))
+            : legacyMaintains;
         stations.add(new LogisticsPlanner.StationChoice(BlockPos.of(entry.getLong("node")),
             Endpoint.load(entry.getCompound("out")), ends, maintains, maintainEnds, !entry.getBoolean("solo")));
       }

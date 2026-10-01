@@ -42,14 +42,18 @@ public record PacketReqTableState(BlockPos blockPos, String dimension) {
           || !menu.getTablePos().equals(msg.blockPos)) {
         return;
       }
-      BlockEntityRequestTable table = menu.getTable();
-      Level level = table != null ? table.getLevel() : null;
-      if (table == null || table.isRemoved() || level == null) {
-        return;
-      }
-      ModNetworking.sendToPlayer(player, build(level, table));
+      sendTo(player, menu);
     });
     ctx.get().setPacketHandled(true);
+  }
+
+  public static void sendTo(ServerPlayer player, com.faktocraft.common.block.impl.logistics.MenuRequestTable menu) {
+    BlockEntityRequestTable table = menu.getTable();
+    Level level = table != null ? table.getLevel() : null;
+    if (table == null || table.isRemoved() || level == null) {
+      return;
+    }
+    ModNetworking.sendToPlayer(player, build(level, table));
   }
 
   private static List<PacketTableState.SubLine> subLines(List<TaskLedger.SubRecord> subs) {

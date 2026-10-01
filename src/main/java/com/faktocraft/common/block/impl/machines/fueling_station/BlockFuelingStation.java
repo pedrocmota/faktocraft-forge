@@ -13,9 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class BlockFuelingStation extends BlockElectricMachine implements IHasMenu {
 
-  public static final net.minecraft.world.level.block.state.properties.IntegerProperty LEVEL =
-      net.minecraft.world.level.block.state.properties.IntegerProperty
-          .create("level", 0, 4);
+  public static final net.minecraft.world.level.block.state.properties.IntegerProperty LEVEL = net.minecraft.world.level.block.state.properties.IntegerProperty
+      .create("level", 0, 4);
 
   public BlockFuelingStation(Properties properties) {
     super(EnergyTier.LOW, properties);
@@ -23,8 +22,7 @@ public class BlockFuelingStation extends BlockElectricMachine implements IHasMen
 
   @Override
   protected void createBlockStateDefinition(
-      net.minecraft.world.level.block.state.StateDefinition.Builder<net.minecraft.world.level.block.Block,
-          BlockState> builder) {
+      net.minecraft.world.level.block.state.StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
     super.createBlockStateDefinition(builder);
     builder.add(LEVEL);
   }

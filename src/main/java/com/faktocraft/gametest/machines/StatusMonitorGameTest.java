@@ -148,7 +148,8 @@ public class StatusMonitorGameTest {
   public static void statusMonitorCarriesJadeFluidDataForTank(GameTestHelper helper) {
     helper.setBlock(MACHINE, PipeRegistry.TANK.defaultBlockState());
     IFluidHandler handler = helper.getBlockEntity(MACHINE) != null
-        ? helper.getBlockEntity(MACHINE).getCapability(ForgeCapabilities.FLUID_HANDLER).orElse(null) : null;
+        ? helper.getBlockEntity(MACHINE).getCapability(ForgeCapabilities.FLUID_HANDLER).orElse(null)
+        : null;
     if (handler == null) {
       helper.fail("tank has no fluid handler");
       return;

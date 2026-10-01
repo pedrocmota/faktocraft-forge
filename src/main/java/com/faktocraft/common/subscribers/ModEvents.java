@@ -106,4 +106,23 @@ public class ModEvents {
       living.clearFire();
     }
   }
+
+  @SubscribeEvent
+  public static void onBlockBreak(net.minecraftforge.event.level.BlockEvent.BreakEvent event) {
+    com.faktocraft.common.item.impl.tools.VeinMining.onBreak(event);
+  }
+
+  @SubscribeEvent
+  public static void onPlayerLoggedOut(
+      net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent event) {
+    com.faktocraft.common.item.impl.tools.VeinMining.forget(event.getEntity());
+  }
+
+  @SubscribeEvent
+  public static void onContainerOpen(net.minecraftforge.event.entity.player.PlayerContainerEvent.Open event) {
+    if (event.getEntity() instanceof ServerPlayer player
+        && event.getContainer() instanceof com.faktocraft.common.block.impl.logistics.MenuRequestTable menu) {
+      com.faktocraft.common.network.packet.PacketReqTableState.sendTo(player, menu);
+    }
+  }
 }

@@ -142,8 +142,7 @@ public final class ModCommands {
     }
     List<Predicted> found = new ArrayList<>();
 
-    outer:
-    for (int r = 0; r <= chunkRadius; r++) {
+    outer: for (int r = 0; r <= chunkRadius; r++) {
       for (int cx = centerChunk.x - r; cx <= centerChunk.x + r; cx++) {
         for (int cz = centerChunk.z - r; cz <= centerChunk.z + r; cz++) {
           if (Math.max(Math.abs(cx - centerChunk.x), Math.abs(cz - centerChunk.z)) != r) {

@@ -30,14 +30,13 @@ public class BlockEntityRequestTable extends FaktocraftBlockEntity {
   private boolean autoExtract;
   private int extractCooldown;
   private final Set<MenuRequestTable> openMenus = new LinkedHashSet<>();
-  private final com.faktocraft.common.util.ItemStackHandler craftMatrix =
-      new com.faktocraft.common.util.ItemStackHandler(
-          9) {
-        @Override
-        protected void onContentsChanged(int slot) {
-          BlockEntityRequestTable.this.setChanged();
-        }
-      };
+  private final com.faktocraft.common.util.ItemStackHandler craftMatrix = new com.faktocraft.common.util.ItemStackHandler(
+      9) {
+    @Override
+    protected void onContentsChanged(int slot) {
+      BlockEntityRequestTable.this.setChanged();
+    }
+  };
 
   public BlockEntityRequestTable(BlockPos pos, BlockState state) {
     super(LogisticsRegistry.REQUEST_TABLE_BLOCK_ENTITY, pos, state);

@@ -47,9 +47,8 @@ public class BlockEntityDistillery extends FaktocraftBlockEntity
   public final FluidStorage fuelTank = new FluidStorage(4000, v -> v.getFluid() == ModFluids.FUEL.still())
       .markOutputOnly();
 
-  public final com.faktocraft.common.entity.block.BlockEntityProgress progress =
-      new com.faktocraft.common.entity.block.BlockEntityProgress(
-          0, DURATION_TICKS);
+  public final com.faktocraft.common.entity.block.BlockEntityProgress progress = new com.faktocraft.common.entity.block.BlockEntityProgress(
+      0, DURATION_TICKS);
   private int healTimer = 0;
   private boolean tanksDirty = false;
 

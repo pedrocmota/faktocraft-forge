@@ -30,9 +30,8 @@ public final class ModRecipeType {
   public static final RecipeType<SawingRecipe> SAWING = registerType("sawing");
   public static final RecipeType<FluidExtrudingRecipe> FLUID_EXTRUDING = registerType("fluid_extruding");
   public static final RecipeType<AlloySmeltingRecipe> ALLOY_SMELTING = registerType("alloy_smelting");
-  public static final RecipeType<com.faktocraft.common.recipe.impl.CircuitAssemblingRecipe> CIRCUIT_ASSEMBLING =
-      registerType(
-          "circuit_assembling");
+  public static final RecipeType<com.faktocraft.common.recipe.impl.CircuitAssemblingRecipe> CIRCUIT_ASSEMBLING = registerType(
+      "circuit_assembling");
   public static final RecipeType<RecyclingRecipe> RECYCLING = registerType("recycling");
   public static final RecipeType<FluidEnrichingRecipe> FLUID_ENRICHING = registerType("fluid_enriching");
   public static final RecipeType<OreWashingRecipe> ORE_WASHING = registerType("ore_washing");

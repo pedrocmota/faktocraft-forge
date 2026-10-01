@@ -47,6 +47,7 @@ public class FaktocraftClient {
   public static KeyMapping NIGHT_VISION_KEY;
   public static KeyMapping JETPACK_MODE_KEY;
   public static KeyMapping SLOT_IDS_KEY;
+  public static KeyMapping VEIN_MINING_KEY;
 
   @SubscribeEvent
   public static void onModifyBakingResult(net.minecraftforge.client.event.ModelEvent.ModifyBakingResult event) {
@@ -137,6 +138,14 @@ public class FaktocraftClient {
     ItemProperties.register(ModItems.GEIGER_COUNTER, new ResourceLocation(Faktocraft.MODID, "dose"),
         (stack, level, entity, seed) -> com.faktocraft.common.item.impl.tools.GeigerCounter.doseLevel(stack));
 
+    ResourceLocation working = new ResourceLocation(Faktocraft.MODID, "working");
+    for (net.minecraft.world.item.Item tool : new net.minecraft.world.item.Item[] { ModItems.MINING_DRILL,
+        ModItems.DIAMOND_DRILL, ModItems.IRIDIUM_DRILL, ModItems.CHAINSAW, ModItems.DIAMOND_CHAINSAW,
+        ModItems.IRIDIUM_CHAINSAW }) {
+      ItemProperties.register(tool, working,
+          (stack, level, entity, seed) -> ToolWorkAnimation.working(stack, entity));
+    }
+
     ItemProperties.register(ModItems.PLUNGER, new ResourceLocation(Faktocraft.MODID, "plunging"),
         (stack, level, entity, seed) -> {
           if (entity == null || !entity.isUsingItem() || entity.getUseItem().getItem() != stack.getItem()) {
@@ -184,6 +193,9 @@ public class FaktocraftClient {
     SLOT_IDS_KEY = new KeyMapping("key.faktocraft.slot_ids", GLFW.GLFW_KEY_F9,
         "key.categories.faktocraft.main");
     event.register(SLOT_IDS_KEY);
+    VEIN_MINING_KEY = new KeyMapping("key.faktocraft.vein_mining", GLFW.GLFW_KEY_LEFT_ALT,
+        "key.categories.faktocraft.main");
+    event.register(VEIN_MINING_KEY);
   }
 
   @SubscribeEvent
@@ -355,6 +367,8 @@ public class FaktocraftClient {
     @SubscribeEvent
     public static void onLoggingOut(net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
       com.faktocraft.client.render.ChunkBorderOverlay.reset();
+      ToolWorkAnimation.clear();
+      VeinMiningKey.clear();
     }
 
     @SubscribeEvent
@@ -368,7 +382,8 @@ public class FaktocraftClient {
     }
 
     @SubscribeEvent
-    public static void onScreenRender(net.minecraftforge.client.event.ScreenEvent.Render.Post event) {
+    public static void onContainerForeground(
+        net.minecraftforge.client.event.ContainerScreenEvent.Render.Foreground event) {
       SlotIdOverlay.onRender(event);
     }
 
@@ -381,6 +396,8 @@ public class FaktocraftClient {
       JetpackSoundHandler.tick(Minecraft.getInstance());
       LogisticsGhosts.tick(Minecraft.getInstance());
       com.faktocraft.client.render.DrillCrackOverlay.tick(Minecraft.getInstance());
+      ToolWorkAnimation.tick(Minecraft.getInstance());
+      VeinMiningKey.tick(Minecraft.getInstance());
       if (NIGHT_VISION_KEY == null) {
         return;
       }

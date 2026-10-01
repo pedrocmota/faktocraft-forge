@@ -449,18 +449,16 @@ public class EnergyNetworkGameTest {
         shared,
         com.faktocraft.common.enums.EnergyTier.VERY_HIGH);
     first.getConnections().add(onlyMine);
-    com.faktocraft.common.energy.provider.EnergyNetwork second =
-        new com.faktocraft.common.energy.provider.EnergyNetwork(
-            shared,
-            com.faktocraft.common.enums.EnergyTier.VERY_HIGH);
+    com.faktocraft.common.energy.provider.EnergyNetwork second = new com.faktocraft.common.energy.provider.EnergyNetwork(
+        shared,
+        com.faktocraft.common.enums.EnergyTier.VERY_HIGH);
 
     net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
     tag.put("1", first.serializeNBT());
     tag.put("2", second.serializeNBT());
 
-    com.faktocraft.common.energy.provider.EnergyNetworks networks =
-        new com.faktocraft.common.energy.provider.EnergyNetworks(
-            helper.getLevel());
+    com.faktocraft.common.energy.provider.EnergyNetworks networks = new com.faktocraft.common.energy.provider.EnergyNetworks(
+        helper.getLevel());
     networks.deserializeNBT(tag);
 
     int claims = 0;

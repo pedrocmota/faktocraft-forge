@@ -8,10 +8,12 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
+import net.minecraftforge.client.event.ContainerScreenEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 
 public final class SlotIdOverlay {
 
+  private static final float Z_ABOVE_ITEMS = 220.0F;
   private static boolean enabled;
 
   private SlotIdOverlay() {
@@ -31,23 +33,22 @@ public final class SlotIdOverlay {
     }
   }
 
-  public static void onRender(ScreenEvent.Render.Post event) {
-    if (!enabled || !(event.getScreen() instanceof AbstractContainerScreen<?> screen)) {
+  public static void onRender(ContainerScreenEvent.Render.Foreground event) {
+    if (!enabled) {
       return;
     }
+    AbstractContainerScreen<?> screen = event.getContainerScreen();
     Font font = Minecraft.getInstance().font;
     GuiGraphics graphics = event.getGuiGraphics();
-    int left = screen.getGuiLeft();
-    int top = screen.getGuiTop();
     graphics.pose().pushPose();
 
-    graphics.pose().translate(0, 0, 400);
+    graphics.pose().translate(0, 0, Z_ABOVE_ITEMS);
     for (Slot slot : screen.getMenu().slots) {
       if (!slot.isActive()) {
         continue;
       }
-      int x = left + slot.x;
-      int y = top + slot.y;
+      int x = slot.x;
+      int y = slot.y;
       graphics.fill(x, y, x + 16, y + 16, 0xB0000000);
       String text = String.valueOf(slot.getSlotIndex());
 

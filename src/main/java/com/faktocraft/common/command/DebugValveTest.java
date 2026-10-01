@@ -101,7 +101,8 @@ public final class DebugValveTest {
     BlockEntityFluidPipe b = pipeAt(level, 1, z);
     BlockEntityFluidPipe c = pipeAt(level, 2, z);
     int tankMb = level.getBlockEntity(base.offset(3, 0, z)) instanceof BlockEntityTank tankEntity
-        ? tankEntity.columnStorage.totalMb() : -1;
+        ? tankEntity.columnStorage.totalMb()
+        : -1;
     return "A=" + (a != null ? a.tank.getFluidAmount() : -1)
         + " B=" + (b != null ? b.tank.getFluidAmount() + "(" + b.getValve()
             + ",rs=" + b.isValveRedstoneOnly() + ",closed=" + b.valveClosed() + ")" : "?")

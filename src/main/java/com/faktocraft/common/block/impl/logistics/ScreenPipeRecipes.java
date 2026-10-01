@@ -553,7 +553,8 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
         draggingHelpBar = true;
         double thumbTop = this.topPos + helpThumbY();
         helpBarGrab = mouseY >= thumbTop && mouseY < thumbTop + helpThumb()
-            ? mouseY - thumbTop : helpThumb() / 2.0;
+            ? mouseY - thumbTop
+            : helpThumb() / 2.0;
         dragHelpBarTo(mouseY);
         return true;
       }
@@ -572,7 +573,8 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
       draggingBar = true;
       double thumbTop = this.topPos + thumbY();
       barGrab = mouseY >= thumbTop && mouseY < thumbTop + thumbHeight()
-          ? mouseY - thumbTop : thumbHeight() / 2.0;
+          ? mouseY - thumbTop
+          : thumbHeight() / 2.0;
       dragBarTo(mouseY);
       return true;
     }

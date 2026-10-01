@@ -99,8 +99,10 @@ public final class StatusMonitorContent {
     }
     List<StatusLine> lines = monitor.lines();
     for (StatusLine line : lines) {
-      int needed = line instanceof StatusLine.Bar ? BAR_H + 2 : line instanceof StatusLine.Item
-          ? ICON_SIZE : LINE_H;
+      int needed = line instanceof StatusLine.Bar ? BAR_H + 2
+          : line instanceof StatusLine.Item
+              ? ICON_SIZE
+              : LINE_H;
       if (y + needed > height) {
         break;
       }

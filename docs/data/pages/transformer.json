@@ -83,6 +83,95 @@
       ]
     },
     {
+      "type": "h",
+      "en": "Conversion losses",
+      "pt": "Perdas na conversão"
+    },
+    {
+      "type": "p",
+      "en": "Every conversion burns part of the energy that goes in. **Stepping up** is expensive and gets worse with each tier, so a Low generator park is a poor way to feed Very High machines - build generators of the tier you need. **Stepping down** is cheap by comparison. The percentages are configurable.",
+      "pt": "Toda conversão queima parte da energia que entra. **Elevar** é caro e piora a cada tensão, então um parque de geradores Baixos é um jeito ruim de alimentar máquinas Altíssimas - construa geradores da tensão de que precisa. **Rebaixar** é barato em comparação. As porcentagens são configuráveis."
+    },
+    {
+      "type": "table",
+      "headers": {
+        "en": [
+          "Transformer",
+          "Step up loss",
+          "Step down loss"
+        ],
+        "pt": [
+          "Transformador",
+          "Perda ao elevar",
+          "Perda ao rebaixar"
+        ]
+      },
+      "rows": [
+        [
+          {
+            "en": "Low Transformer",
+            "pt": "Transformador Baixo"
+          },
+          {
+            "en": "25%",
+            "pt": "25%"
+          },
+          {
+            "en": "5%",
+            "pt": "5%"
+          }
+        ],
+        [
+          {
+            "en": "Medium Transformer",
+            "pt": "Transformador Médio"
+          },
+          {
+            "en": "30%",
+            "pt": "30%"
+          },
+          {
+            "en": "8%",
+            "pt": "8%"
+          }
+        ],
+        [
+          {
+            "en": "High Transformer",
+            "pt": "Transformador Alto"
+          },
+          {
+            "en": "40%",
+            "pt": "40%"
+          },
+          {
+            "en": "12%",
+            "pt": "12%"
+          }
+        ],
+        [
+          {
+            "en": "Very High Transformer",
+            "pt": "Transformador Muito Alto"
+          },
+          {
+            "en": "-",
+            "pt": "-"
+          },
+          {
+            "en": "15%",
+            "pt": "15%"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "warning",
+      "en": "Chaining three step-up transformers from Low to Very High delivers only about 31% of what went in. Small trickles are not rounded away: the transformer keeps the fractional remainder between ticks.",
+      "pt": "Encadear três elevadores da Baixa até a Altíssima entrega só cerca de 31% do que entrou. Fluxos pequenos não somem no arredondamento: o transformador guarda o resto fracionário entre ticks."
+    },
+    {
       "type": "callout",
       "style": "tip",
       "en": "The tooltip of every transformer item tells you which pair of tiers it converts.",

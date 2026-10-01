@@ -263,7 +263,8 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
       return null;
     }
     return level.getBlockEntity(worldPosition.relative(direction)) instanceof BlockEntityAssemblyTable assembly
-        ? assembly : null;
+        ? assembly
+        : null;
   }
 
   public List<ItemStack> modulesOf(ModuleType type) {
@@ -811,8 +812,7 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
   }
 
   @Override
-  public net.minecraft.network.protocol.Packet<
-      net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+  public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
     return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(
         this, entity -> ((BlockEntityChassis) entity).getUpdateTag());
   }

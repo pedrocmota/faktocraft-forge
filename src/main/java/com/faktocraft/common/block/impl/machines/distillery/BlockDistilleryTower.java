@@ -19,10 +19,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class BlockDistilleryTower extends Block implements net.minecraft.world.level.block.EntityBlock {
 
-  public static final net.minecraft.world.level.block.state.properties.IntegerProperty SEGMENT =
-      net.minecraft.world.level.block.state.properties.IntegerProperty
-          .create("segment", 1,
-              BlockDistillery.TOWER_HEIGHT + 1);
+  public static final net.minecraft.world.level.block.state.properties.IntegerProperty SEGMENT = net.minecraft.world.level.block.state.properties.IntegerProperty
+      .create("segment", 1,
+          BlockDistillery.TOWER_HEIGHT + 1);
 
   private static final VoxelShape OUTLINE = Block.box(2.4, 0, 2.4, 13.6, 16, 13.6);
   private static final VoxelShape CHIMNEY = Block.box(3.8, 0, 3.8, 12.2, 13, 12.2);

@@ -88,8 +88,7 @@ public class BlockEntityCable extends BlockEntity
 
   @Nullable
   @Override
-  public net.minecraft.network.protocol.Packet<
-      net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+  public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
     return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
   }
 

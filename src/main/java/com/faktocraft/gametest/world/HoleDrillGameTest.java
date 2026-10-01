@@ -86,8 +86,9 @@ public class HoleDrillGameTest {
     ServerLevel level = helper.getLevel();
     BlockPos abs = helper.absolutePos(TARGET);
     helper.setBlock(TARGET, Blocks.STONE.defaultBlockState());
-    helper.assertTrue(DrillOps.drillFace(level, abs, helper.getBlockState(TARGET), null, Direction.NORTH)
-        == Direction.NORTH, "a solid block should be drilled on the aimed side");
+    helper.assertTrue(
+        DrillOps.drillFace(level, abs, helper.getBlockState(TARGET), null, Direction.NORTH) == Direction.NORTH,
+        "a solid block should be drilled on the aimed side");
     helper.assertTrue(DrillOps.drill(level, abs, Direction.NORTH), "stone could not be drilled");
     Direction through = DrillOps.drillFace(level, abs, helper.getBlockState(TARGET), null, Direction.NORTH);
     helper.assertTrue(through == Direction.SOUTH, "aiming at the open side should target the opposite side, got "
@@ -132,8 +133,9 @@ public class HoleDrillGameTest {
     helper.assertTrue(state.is(ModBlocks.COPPER_CABLE), "drilled block was not replaced by the cable");
     helper.assertTrue(CoverSupport.isCovered(state), "cable is not flagged as covered");
     helper.assertTrue(Blocks.STONE.defaultBlockState().equals(cover(helper, TARGET)), "cable lost the cover");
-    helper.assertTrue(((ICoverHost) helper.getBlockEntity(TARGET)).getCoverHoles()
-        == (CoverSupport.bit(Direction.NORTH) | CoverSupport.bit(Direction.SOUTH)),
+    helper.assertTrue(
+        ((ICoverHost) helper.getBlockEntity(TARGET))
+            .getCoverHoles() == (CoverSupport.bit(Direction.NORTH) | CoverSupport.bit(Direction.SOUTH)),
         "cable did not inherit the open sides");
     helper.assertTrue(state.isCollisionShapeFullBlock(level, abs), "covered cable should collide as a full block");
     helper.assertTrue(state.getLightBlock(level, abs) == CoverSupport.HOLE_LIGHT_BLOCK,

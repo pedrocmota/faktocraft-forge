@@ -428,6 +428,40 @@ public class FaktocraftBlockEntity extends BlockEntity {
       }
 
       @Override
+      public int maxReceive() {
+        int loss = energyReceiveLossPercent();
+        if (loss <= 0) {
+          return super.maxReceive();
+        }
+        long gross = (long) (maxEnergy() - energyStored()) * 100 / (100 - loss);
+        return (int) Math.max(0, Math.min(maxReceiveTick(), gross));
+      }
+
+      @Override
+      public int receiveEnergy(@Nullable Direction side, int amount, boolean simulate) {
+        if (energyReceiveLossPercent() <= 0) {
+          return super.receiveEnergy(side, amount, simulate);
+        }
+        if (!canReceiveEnergy(side) && side != null) {
+          return 0;
+        }
+        int accepted = Math.max(0, Math.min(amount, maxReceive()));
+        int free = maxEnergy() - energyStored();
+        int stored = energyAfterReceiveLoss(accepted, true);
+        while (stored > free && accepted > 0) {
+          accepted -= stored - free;
+          stored = energyAfterReceiveLoss(accepted, true);
+        }
+        if (accepted <= 0) {
+          return 0;
+        }
+        if (!simulate) {
+          setEnergy(energyStored() + energyAfterReceiveLoss(accepted, false));
+        }
+        return accepted;
+      }
+
+      @Override
       public void updated() {
         setChanged();
         shouldUpdateState = true;
@@ -461,6 +495,14 @@ public class FaktocraftBlockEntity extends BlockEntity {
 
   public int customEnergyExtractTick() {
     return -1;
+  }
+
+  public int energyReceiveLossPercent() {
+    return 0;
+  }
+
+  public int energyAfterReceiveLoss(int accepted, boolean simulate) {
+    return accepted;
   }
 
   public float getSpeedFactor() {

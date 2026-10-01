@@ -143,7 +143,8 @@ public class ModuleTreePanel {
     builtTag = currentTag != null ? currentTag.copy() : null;
     Map<String, Boolean> overrides = ModuleSettings.treeOverrides(menu.getModuleStack());
     Map<String, Integer> counts = isSupplier()
-        ? ModuleSettings.treeCounts(menu.getModuleStack()) : Map.of();
+        ? ModuleSettings.treeCounts(menu.getModuleStack())
+        : Map.of();
     Map<String, Map<ResourceLocation, List<Item>>> index = LogisticsItemTree.byNamespace();
     String needle = query.trim().toLowerCase(Locale.ROOT);
     boolean searching = !needle.isEmpty();
@@ -396,7 +397,8 @@ public class ModuleTreePanel {
         draggingBar = true;
         int thumbTop = thumbY(top);
         dragGrab = mouseY >= thumbTop && mouseY < thumbTop + thumbHeight()
-            ? mouseY - thumbTop : thumbHeight() / 2.0;
+            ? mouseY - thumbTop
+            : thumbHeight() / 2.0;
         dragTo(top, mouseY);
       }
       return true;

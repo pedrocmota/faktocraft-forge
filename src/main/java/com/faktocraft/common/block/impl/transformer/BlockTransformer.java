@@ -54,6 +54,12 @@ public class BlockTransformer extends FaktocraftEntityBlock implements IStateFac
         low.getLang().getTranslationComponent(),
         com.faktocraft.common.util.TextComponentUtil.getFormattedLong(low.getBasicTransfer()))
         .withStyle(net.minecraft.ChatFormatting.GRAY));
+    tooltip.add((transformerTier.isStepUpAllowed()
+        ? net.minecraft.network.chat.Component.translatable("tooltip.faktocraft.transformer_loss",
+            transformerTier.getStepUpLossPercent(), transformerTier.getStepDownLossPercent())
+        : net.minecraft.network.chat.Component.translatable("tooltip.faktocraft.transformer_loss_step_down",
+            transformerTier.getStepDownLossPercent()))
+        .withStyle(net.minecraft.ChatFormatting.GRAY));
     tooltip.add(net.minecraft.network.chat.Component.translatable(
         "tooltip.faktocraft.transformer_redstone_default")
         .withStyle(net.minecraft.ChatFormatting.GOLD));

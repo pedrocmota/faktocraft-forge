@@ -114,9 +114,8 @@ public class BlockEntityPump extends FaktocraftBlockEntity
     return tubeDepth != tubeTarget ? 1 : super.worldSyncIntervalTicks();
   }
 
-  private final com.faktocraft.common.util.NeighborFluidCache neighborFluidCache =
-      new com.faktocraft.common.util.NeighborFluidCache(
-          this);
+  private final com.faktocraft.common.util.NeighborFluidCache neighborFluidCache = new com.faktocraft.common.util.NeighborFluidCache(
+      this);
 
   private boolean allowedToRun() {
     return runMode != PipeExtractor.RUN_OFF

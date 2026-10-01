@@ -21,10 +21,13 @@ public class ScreenTransformer extends BetterScreen<MenuTransformer> {
 
     BlockEntityTransformer be = (BlockEntityTransformer) getBlockEntity();
 
-    addRenderableOnlyComponent(
-        new GuiText(this, 88, 5, 8, 30, Component.translatable("gui." + Faktocraft.MODID + ".input")));
-    addRenderableOnlyComponent(
-        new GuiText(this, 88, 5, 8, 46, Component.translatable("gui." + Faktocraft.MODID + ".output")));
+    int labelWidth = GuiTransformerInfo.BOX_LEFT - 10;
+    addRenderableOnlyComponent(new GuiText(this, labelWidth, 8, 8, GuiTransformerInfo.ROW_INPUT + 1,
+        Component.translatable("gui." + Faktocraft.MODID + ".input")));
+    addRenderableOnlyComponent(new GuiText(this, labelWidth, 8, 8, GuiTransformerInfo.ROW_LOSS + 1,
+        Component.translatable("gui." + Faktocraft.MODID + ".loss")));
+    addRenderableOnlyComponent(new GuiText(this, labelWidth, 8, 8, GuiTransformerInfo.ROW_OUTPUT + 1,
+        Component.translatable("gui." + Faktocraft.MODID + ".output")));
 
     addRenderableOnlyComponent(new GuiTransformerInfo(this, be.getTransformerTier(), be::getTransformerMode));
     if (be.getTransformerTier().isStepUpAllowed()) {

@@ -240,6 +240,11 @@ public class ModNetworking {
         com.faktocraft.common.network.packet.PacketCoreTasksReq::decode,
         com.faktocraft.common.network.packet.PacketCoreTasksReq::handle,
         Optional.of(NetworkDirection.PLAY_TO_SERVER));
+    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketVeinMining.class,
+        com.faktocraft.common.network.packet.PacketVeinMining::encode,
+        com.faktocraft.common.network.packet.PacketVeinMining::decode,
+        com.faktocraft.common.network.packet.PacketVeinMining::handle,
+        Optional.of(NetworkDirection.PLAY_TO_SERVER));
   }
 
   public static void sendToServer(Object msg) {

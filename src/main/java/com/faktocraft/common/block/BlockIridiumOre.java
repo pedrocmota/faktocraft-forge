@@ -24,11 +24,14 @@ public class BlockIridiumOre extends BlockOre {
       return;
     }
     double x = pos.getX() + 0.5 + (direction.getStepX() == 0
-        ? random.nextDouble() - 0.5 : direction.getStepX() * 0.55);
+        ? random.nextDouble() - 0.5
+        : direction.getStepX() * 0.55);
     double y = pos.getY() + 0.5 + (direction.getStepY() == 0
-        ? random.nextDouble() - 0.5 : direction.getStepY() * 0.55);
+        ? random.nextDouble() - 0.5
+        : direction.getStepY() * 0.55);
     double z = pos.getZ() + 0.5 + (direction.getStepZ() == 0
-        ? random.nextDouble() - 0.5 : direction.getStepZ() * 0.55);
+        ? random.nextDouble() - 0.5
+        : direction.getStepZ() * 0.55);
     level.addParticle(ParticleTypes.GLOW, x, y, z, 0.0, 0.0, 0.0);
   }
 }

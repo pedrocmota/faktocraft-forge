@@ -20,9 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class BlockPolymerizer extends BlockElectricMachine implements IHasMenu {
 
-  public static final net.minecraft.world.level.block.state.properties.IntegerProperty LEVEL =
-      net.minecraft.world.level.block.state.properties.IntegerProperty
-          .create("level", 0, 4);
+  public static final net.minecraft.world.level.block.state.properties.IntegerProperty LEVEL = net.minecraft.world.level.block.state.properties.IntegerProperty
+      .create("level", 0, 4);
 
   public BlockPolymerizer(Properties properties) {
     super(EnergyTier.MEDIUM, properties);
@@ -30,8 +29,7 @@ public class BlockPolymerizer extends BlockElectricMachine implements IHasMenu {
 
   @Override
   protected void createBlockStateDefinition(
-      net.minecraft.world.level.block.state.StateDefinition.Builder<net.minecraft.world.level.block.Block,
-          BlockState> builder) {
+      net.minecraft.world.level.block.state.StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
     super.createBlockStateDefinition(builder);
     builder.add(LEVEL);
   }

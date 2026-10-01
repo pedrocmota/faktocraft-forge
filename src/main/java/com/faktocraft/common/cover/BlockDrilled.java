@@ -37,8 +37,8 @@ public class BlockDrilled extends FaktocraftBlock implements EntityBlock {
   }
 
   @Override
-  protected void createBlockStateDefinition(net.minecraft.world.level.block.state.StateDefinition.Builder<
-      net.minecraft.world.level.block.Block, BlockState> builder) {
+  protected void createBlockStateDefinition(
+      net.minecraft.world.level.block.state.StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
     super.createBlockStateDefinition(builder);
     for (var property : VoxelBlock.FACING_TO_PROPERTY_MAP.values()) {
       builder.add(property);
@@ -83,8 +83,9 @@ public class BlockDrilled extends FaktocraftBlock implements EntityBlock {
   @SuppressWarnings("deprecation")
   public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
     BlockState cover = cover(level, pos);
-    return cover != null ? cover.getDestroyProgress(player, level, pos) : super.getDestroyProgress(state, player,
-        level, pos);
+    return cover != null ? cover.getDestroyProgress(player, level, pos)
+        : super.getDestroyProgress(state, player,
+            level, pos);
   }
 
   @Override
@@ -95,8 +96,8 @@ public class BlockDrilled extends FaktocraftBlock implements EntityBlock {
 
   @Override
   public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-    BlockEntity blockEntity =
-        builder.getOptionalParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY);
+    BlockEntity blockEntity = builder
+        .getOptionalParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY);
     BlockState cover = blockEntity instanceof ICoverHost host ? host.getCover() : null;
     return cover != null ? cover.getDrops(builder) : List.of();
   }

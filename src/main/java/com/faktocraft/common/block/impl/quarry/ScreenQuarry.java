@@ -21,8 +21,7 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
 
   private com.faktocraft.common.screen.bar.GuiElectricBarVertical energyBar;
   private com.faktocraft.common.screen.widgets.GuiCapacitorWarning capacitorWarning;
-  private final net.minecraft.client.gui.components.Button[] runModeButtons =
-      new net.minecraft.client.gui.components.Button[3];
+  private final net.minecraft.client.gui.components.Button[] runModeButtons = new net.minecraft.client.gui.components.Button[3];
 
   public ScreenQuarry(MenuQuarry menu, Inventory inventory, Component title) {
     super(menu, inventory, title);

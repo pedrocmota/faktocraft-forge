@@ -47,6 +47,9 @@ public class BasicConfigScreen extends Screen {
     y += ROW_HEIGHT;
     addToggle(left, y, "gui.faktocraft.config.tank_break_fluid",
         BasicConfig.SERVER.tankBreakPlacesFluid, BasicConfig.SERVER_SPEC, editable);
+    y += ROW_HEIGHT;
+    addToggle(left, y, "gui.faktocraft.config.vein_mining",
+        BasicConfig.SERVER.veinMiningEnabled, BasicConfig.SERVER_SPEC, editable);
 
     addRenderableWidget(Button.builder(Component.translatable("gui.done"),
         b -> onClose()).bounds(width / 2 - 100, height - 30, 200, 20).build());

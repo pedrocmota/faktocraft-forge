@@ -2,5 +2,13 @@
   "parent": "minecraft:item/handheld",
   "textures": {
     "layer0": "faktocraft:item/tool/electric/chainsaw"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "faktocraft:working": 1.0
+      },
+      "model": "faktocraft:item/tool/electric/chainsaw_working"
+    }
+  ]
 }

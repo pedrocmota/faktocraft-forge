@@ -821,10 +821,9 @@ public class LogisticsGameTest {
         helper.fail("no graph yet");
         return;
       }
-      java.util.Map<com.faktocraft.common.block.impl.logistics.ItemKey,
-          Integer> stock = com.faktocraft.common.block.impl.logistics.BlockEntityChassis
-              .stockSnapshot(
-                  helper.getLevel(), graph, core.getLedger());
+      java.util.Map<com.faktocraft.common.block.impl.logistics.ItemKey, Integer> stock = com.faktocraft.common.block.impl.logistics.BlockEntityChassis
+          .stockSnapshot(
+              helper.getLevel(), graph, core.getLedger());
       if (stock.getOrDefault(key(Items.IRON_INGOT), 0) != 62) {
         helper.fail("the legacy provider should still offer its iron, saw "
             + stock.getOrDefault(key(Items.IRON_INGOT), 0));
@@ -976,33 +975,29 @@ public class LogisticsGameTest {
   public void blockedCraftReportsRootCause(GameTestHelper helper) {
     com.faktocraft.common.block.impl.logistics.Endpoint end = com.faktocraft.common.block.impl.logistics.Endpoint
         .inventory(BlockPos.ZERO);
-    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl planks =
-        new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl(
-            BlockPos.ZERO, 0,
-            key(Items.OAK_PLANKS), 4,
-            List.of(com.faktocraft.common.block.impl.logistics.LogisticsPlanner.ItemChoice.of(
-                key(Items.OAK_LOG), 1)),
-            List.of(end), end, 0, false, 0);
-    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl door =
-        new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl(
-            BlockPos.ZERO, 1,
-            key(Items.OAK_DOOR), 3,
-            List.of(com.faktocraft.common.block.impl.logistics.LogisticsPlanner.ItemChoice.of(
-                key(Items.OAK_PLANKS), 6)),
-            List.of(end), end, 0, false, 0);
+    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl planks = new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl(
+        BlockPos.ZERO, 0,
+        key(Items.OAK_PLANKS), 4,
+        List.of(com.faktocraft.common.block.impl.logistics.LogisticsPlanner.ItemChoice.of(
+            key(Items.OAK_LOG), 1)),
+        List.of(end), end, 0, false, 0);
+    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl door = new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl(
+        BlockPos.ZERO, 1,
+        key(Items.OAK_DOOR), 3,
+        List.of(com.faktocraft.common.block.impl.logistics.LogisticsPlanner.ItemChoice.of(
+            key(Items.OAK_PLANKS), 6)),
+        List.of(end), end, 0, false, 0);
     var index = com.faktocraft.common.block.impl.logistics.LogisticsPlanner.index(List.of(planks, door));
 
-    com.faktocraft.common.block.impl.logistics.ItemKey missing =
-        com.faktocraft.common.block.impl.logistics.LogisticsPlanner
-            .blockingIngredient(key(Items.OAK_DOOR), index, java.util.Set.of());
+    com.faktocraft.common.block.impl.logistics.ItemKey missing = com.faktocraft.common.block.impl.logistics.LogisticsPlanner
+        .blockingIngredient(key(Items.OAK_DOOR), index, java.util.Set.of());
     if (!missing.equals(key(Items.OAK_LOG))) {
       helper.fail("expected oak log as the root cause, got " + missing);
     }
 
-    java.util.Set<com.faktocraft.common.block.impl.logistics.ItemKey> known =
-        com.faktocraft.common.block.impl.logistics.LogisticsPlanner
-            .craftableSet(
-                java.util.Map.of(key(Items.OAK_LOG), 4), List.of(planks, door));
+    java.util.Set<com.faktocraft.common.block.impl.logistics.ItemKey> known = com.faktocraft.common.block.impl.logistics.LogisticsPlanner
+        .craftableSet(
+            java.util.Map.of(key(Items.OAK_LOG), 4), List.of(planks, door));
     if (!known.contains(key(Items.OAK_DOOR))) {
       helper.fail("door should be craftable once logs are in stock");
     }
@@ -1011,10 +1006,9 @@ public class LogisticsGameTest {
         .producibleSet(java.util.Map.of(key(Items.OAK_DOOR), 34), List.of()).isEmpty()) {
       helper.fail("stocked items must not be reported as producible without a recipe");
     }
-    java.util.Set<com.faktocraft.common.block.impl.logistics.ItemKey> producible =
-        com.faktocraft.common.block.impl.logistics.LogisticsPlanner
-            .producibleSet(
-                java.util.Map.of(key(Items.OAK_LOG), 4), List.of(planks, door));
+    java.util.Set<com.faktocraft.common.block.impl.logistics.ItemKey> producible = com.faktocraft.common.block.impl.logistics.LogisticsPlanner
+        .producibleSet(
+            java.util.Map.of(key(Items.OAK_LOG), 4), List.of(planks, door));
     if (producible.contains(key(Items.OAK_LOG))) {
       helper.fail("logs have no recipe, so they are not producible");
     }
@@ -1028,35 +1022,31 @@ public class LogisticsGameTest {
   public void flexibleIngredientBacktracksToCraftableVariant(GameTestHelper helper) {
     com.faktocraft.common.block.impl.logistics.Endpoint end = com.faktocraft.common.block.impl.logistics.Endpoint
         .inventory(BlockPos.ZERO);
-    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl junglePlanks =
-        new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl(
-            BlockPos.ZERO, 0,
-            key(Items.JUNGLE_PLANKS), 4,
-            List.of(com.faktocraft.common.block.impl.logistics.LogisticsPlanner.ItemChoice.of(
-                key(Items.JUNGLE_LOG), 1)),
-            List.of(end), end, 0, false, 0);
-    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl oakPlanks =
-        new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl(
-            BlockPos.ZERO, 1,
-            key(Items.OAK_PLANKS), 4,
-            List.of(com.faktocraft.common.block.impl.logistics.LogisticsPlanner.ItemChoice.of(
-                key(Items.OAK_LOG), 1)),
-            List.of(end), end, 0, false, 0);
+    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl junglePlanks = new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl(
+        BlockPos.ZERO, 0,
+        key(Items.JUNGLE_PLANKS), 4,
+        List.of(com.faktocraft.common.block.impl.logistics.LogisticsPlanner.ItemChoice.of(
+            key(Items.JUNGLE_LOG), 1)),
+        List.of(end), end, 0, false, 0);
+    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl oakPlanks = new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl(
+        BlockPos.ZERO, 1,
+        key(Items.OAK_PLANKS), 4,
+        List.of(com.faktocraft.common.block.impl.logistics.LogisticsPlanner.ItemChoice.of(
+            key(Items.OAK_LOG), 1)),
+        List.of(end), end, 0, false, 0);
 
-    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl sticks =
-        new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl(
-            BlockPos.ZERO, 2,
-            key(Items.STICK), 4,
-            List.of(new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.ItemChoice(
-                List.of(key(Items.JUNGLE_PLANKS), key(Items.OAK_PLANKS)), 2)),
-            List.of(end), end, 0, false, 0);
+    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl sticks = new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.CraftDecl(
+        BlockPos.ZERO, 2,
+        key(Items.STICK), 4,
+        List.of(new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.ItemChoice(
+            List.of(key(Items.JUNGLE_PLANKS), key(Items.OAK_PLANKS)), 2)),
+        List.of(end), end, 0, false, 0);
 
-    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.Plan plan =
-        com.faktocraft.common.block.impl.logistics.LogisticsPlanner
-            .plan(
-                new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.PlanRequest(
-                    key(Items.STICK), 4, java.util.Map.of(key(Items.OAK_LOG), 56),
-                    List.of(junglePlanks, oakPlanks, sticks)));
+    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.Plan plan = com.faktocraft.common.block.impl.logistics.LogisticsPlanner
+        .plan(
+            new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.PlanRequest(
+                key(Items.STICK), 4, java.util.Map.of(key(Items.OAK_LOG), 56),
+                List.of(junglePlanks, oakPlanks, sticks)));
     if (!plan.success()) {
       helper.fail("the plan should fall back to oak planks, but failed missing "
           + plan.missingItem());
@@ -1070,12 +1060,11 @@ public class LogisticsGameTest {
       return;
     }
 
-    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.Plan blocked =
-        com.faktocraft.common.block.impl.logistics.LogisticsPlanner
-            .plan(
-                new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.PlanRequest(
-                    key(Items.STICK), 4, java.util.Map.of(),
-                    List.of(junglePlanks, oakPlanks, sticks)));
+    com.faktocraft.common.block.impl.logistics.LogisticsPlanner.Plan blocked = com.faktocraft.common.block.impl.logistics.LogisticsPlanner
+        .plan(
+            new com.faktocraft.common.block.impl.logistics.LogisticsPlanner.PlanRequest(
+                key(Items.STICK), 4, java.util.Map.of(),
+                List.of(junglePlanks, oakPlanks, sticks)));
     if (blocked.success() || !key(Items.JUNGLE_LOG).equals(blocked.missingItem())) {
       helper.fail("expected a failure missing jungle log, got "
           + (blocked.success() ? "success" : String.valueOf(blocked.missingItem())));
@@ -1378,9 +1367,8 @@ public class LogisticsGameTest {
     buildRequestNetwork(helper, cell(0));
     helper.setBlock(new BlockPos(4, 1, 2), LogisticsRegistry.RECIPE_PIPE.defaultBlockState());
 
-    net.minecraft.world.level.block.state.BlockState stationState =
-        FuelingStationRegistry.FUELING_STATION
-            .defaultBlockState();
+    net.minecraft.world.level.block.state.BlockState stationState = FuelingStationRegistry.FUELING_STATION
+        .defaultBlockState();
     if (FuelingStationRegistry.FUELING_STATION instanceof IStateFacing facing) {
       stationState = facing.setDirection(stationState, net.minecraft.core.Direction.SOUTH);
     }
@@ -1464,9 +1452,8 @@ public class LogisticsGameTest {
   }
 
   private static void placeStation(GameTestHelper helper, BlockPos rel, net.minecraft.core.Direction facing) {
-    net.minecraft.world.level.block.state.BlockState state =
-        FuelingStationRegistry.FUELING_STATION
-            .defaultBlockState();
+    net.minecraft.world.level.block.state.BlockState state = FuelingStationRegistry.FUELING_STATION
+        .defaultBlockState();
     if (FuelingStationRegistry.FUELING_STATION instanceof IStateFacing facing2) {
       state = facing2.setDirection(state, facing);
     }

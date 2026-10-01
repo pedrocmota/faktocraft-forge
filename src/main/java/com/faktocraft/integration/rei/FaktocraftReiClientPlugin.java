@@ -309,7 +309,16 @@ public class FaktocraftReiClientPlugin implements REIClientPlugin {
         stack = screen.declaredInput();
         recipes = false;
       }
-      return stack.isEmpty() ? ClickArea.Result.fail() : openUsages(stack, recipes);
+      if (stack.isEmpty()) {
+        ClickArea.Result result = ClickArea.Result.success();
+        for (var category : ReiCategories.ALL) {
+          if (category != ReiCategories.SCRAP_BOX) {
+            result = result.category(category);
+          }
+        }
+        return result;
+      }
+      return openUsages(stack, recipes);
     });
     registry.registerClickArea(ScreenRequestTable.class, context -> {
       ScreenRequestTable screen = context.getScreen();

@@ -27,8 +27,7 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
 
   private com.faktocraft.common.screen.bar.GuiElectricBarVertical energyBar;
   private com.faktocraft.common.screen.bar.GuiFluidBarVertical fluidBar;
-  private final net.minecraft.client.gui.components.Button[] runModeButtons =
-      new net.minecraft.client.gui.components.Button[3];
+  private final net.minecraft.client.gui.components.Button[] runModeButtons = new net.minecraft.client.gui.components.Button[3];
 
   public ScreenPump(MenuPump menu, Inventory inventory, Component title) {
     super(menu, inventory, title);
