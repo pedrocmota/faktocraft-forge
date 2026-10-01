@@ -25,6 +25,13 @@ sourceSets.main.resources {
     exclude 'src/generated/**/.cache'
 }
 
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
 if (project.hasProperty('buildRoot')) {
     layout.buildDirectory = file(project.property('buildRoot').toString())
 }
@@ -75,6 +82,7 @@ neoForge {
     mods {
         "${mod_id}" {
             sourceSet(sourceSets.main)
+            sourceSet(sourceSets.gametest)
         }
     }
 }
@@ -144,7 +152,11 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+neoForge.addModdingDependenciesTo(sourceSets.gametest)
+
 dependencies {
+    gametestCompileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    gametestCompileOnly "maven.modrinth:jade:${jade_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     compileOnly "maven.modrinth:jade:${jade_version}"

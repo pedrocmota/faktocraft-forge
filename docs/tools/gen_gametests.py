@@ -5,8 +5,8 @@ import shutil
 import sys
 
 ROOT = sys.argv[1] if len(sys.argv) > 1 else '.'
-SRC = os.path.join(ROOT, 'src/main/java/com/faktocraft/gametest')
-RES = os.path.join(ROOT, 'src/main/resources/data/faktocraft')
+SRC = os.path.join(ROOT, 'src/gametest/java/com/faktocraft/gametest')
+RES = os.path.join(ROOT, 'src/gametest/resources/data/faktocraft')
 INSTANCES = os.path.join(RES, 'test_instance')
 ENVS = os.path.join(RES, 'test_environment')
 
