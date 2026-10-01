@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:function",
+  "function": "faktocraft:logisticschaingametest.sixstagechainmixesmachinesandbenches",
+  "environment": "minecraft:default",
+  "structure": "faktocraft:gametest_platform",
+  "max_ticks": 4800,
+  "sky_access": true
+}

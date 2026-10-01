@@ -27,22 +27,23 @@ import com.faktocraft.common.recipe.impl.ScrapBoxRecipe;
 import com.faktocraft.common.recipe.impl.ThermalCentrifugingRecipe;
 import com.faktocraft.common.recipe.impl.UraniumCentrifugingRecipe;
 import com.faktocraft.common.registries.ModItems;
+import com.faktocraft.common.util.RecipeUtil;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
-import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.registries.ForgeRegistries;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,10 +53,16 @@ public final class ReiDisplays {
   private ReiDisplays() {
   }
 
+  private static List<ItemStack> stacks(Ingredient ingredient, int count) {
+    List<ItemStack> stacks = new ArrayList<>();
+    for (Holder<Item> holder : RecipeUtil.ingredientItems(ingredient).toList()) {
+      stacks.add(new ItemStack(holder.value(), count));
+    }
+    return stacks;
+  }
+
   private static EntryIngredient items(Ingredient ingredient, int count) {
-    List<ItemStack> stacks = Arrays.stream(ingredient.getItems())
-        .map(stack -> new ItemStack(stack.getItem(), count)).toList();
-    return EntryIngredients.ofItemStacks(stacks);
+    return EntryIngredients.ofItemStacks(stacks(ingredient, count));
   }
 
   private static EntryIngredient item(ItemStack stack) {
@@ -70,55 +77,65 @@ public final class ReiDisplays {
     return EntryIngredients.of(fluid, Math.max(amount, 1));
   }
 
-  private static EntryIngredient chance(ItemStack stack, float chance) {
+  public static EntryIngredient withChance(EntryIngredient ingredient, float chance) {
     Component line = Component.translatable(EnumLang.CHANCE.getTranslationKey(),
         Component.literal((Math.round(chance * 100.0) / 100.0) + "%").withStyle(ChatFormatting.YELLOW))
         .withStyle(ChatFormatting.DARK_GRAY);
-    return EntryIngredient.of(EntryStacks.of(stack).tooltip(line));
+    return ingredient.map(stack -> stack.copy().tooltip(line));
   }
 
-  private static Optional<net.minecraft.resources.ResourceLocation> location(Recipe<?> recipe) {
-    return Optional.ofNullable(recipe.getId());
+  private static Optional<Identifier> location(RecipeHolder<?> holder) {
+    return Optional.of(holder.id().identifier());
   }
 
-  private static MachineDisplay bonusDisplay(CategoryIdentifier<MachineDisplay> category, Recipe<?> recipe,
+  private static MachineDisplay bonusDisplay(CategoryIdentifier<MachineDisplay> category, RecipeHolder<?> holder,
       Ingredient ingredient, int count, ItemStack result, Optional<ChanceResult> bonus, int duration, int power,
       float experience) {
     List<EntryIngredient> outputs = new ArrayList<>();
+    List<Float> chances = new ArrayList<>();
     outputs.add(item(result));
-    bonus.ifPresent(chanceResult -> outputs.add(chance(chanceResult.stack(), chanceResult.chance())));
-    return new MachineDisplay(category, List.of(items(ingredient, count)), outputs, location(recipe),
-        MachineDisplay.Info.of(duration, power, experience));
+    chances.add(0.0F);
+    bonus.ifPresent(chanceResult -> {
+      outputs.add(item(chanceResult.stack()));
+      chances.add(chanceResult.chance());
+    });
+    return new MachineDisplay(category, List.of(items(ingredient, count)), outputs, location(holder),
+        MachineDisplay.Info.of(duration, power, experience), chances);
   }
 
-  public static MachineDisplay crushing(CrushingRecipe recipe) {
-    return bonusDisplay(ReiCategories.CRUSHING, recipe, recipe.getIngredient(), recipe.getIngredientCount(),
+  public static MachineDisplay crushing(RecipeHolder<CrushingRecipe> holder) {
+    CrushingRecipe recipe = holder.value();
+    return bonusDisplay(ReiCategories.CRUSHING, holder, recipe.getIngredient(), recipe.getIngredientCount(),
         recipe.getResultItem(), recipe.getBonusResult().firstResult(), recipe.getDuration(),
         recipe.getPowerCost(), recipe.getExperience());
   }
 
-  public static MachineDisplay compressing(CompressingRecipe recipe) {
-    return bonusDisplay(ReiCategories.COMPRESSING, recipe, recipe.getIngredient(), recipe.getIngredientCount(),
+  public static MachineDisplay compressing(RecipeHolder<CompressingRecipe> holder) {
+    CompressingRecipe recipe = holder.value();
+    return bonusDisplay(ReiCategories.COMPRESSING, holder, recipe.getIngredient(), recipe.getIngredientCount(),
         recipe.getResultItem(), recipe.getBonusResult().firstResult(), recipe.getDuration(),
         recipe.getPowerCost(), recipe.getExperience());
   }
 
-  public static MachineDisplay extracting(ExtractingRecipe recipe) {
-    return bonusDisplay(ReiCategories.EXTRACTING, recipe, recipe.getIngredient(), recipe.getIngredientCount(),
+  public static MachineDisplay extracting(RecipeHolder<ExtractingRecipe> holder) {
+    ExtractingRecipe recipe = holder.value();
+    return bonusDisplay(ReiCategories.EXTRACTING, holder, recipe.getIngredient(), recipe.getIngredientCount(),
         recipe.getResultItem(), recipe.getBonusResult().firstResult(), recipe.getDuration(),
         recipe.getPowerCost(), recipe.getExperience());
   }
 
-  public static MachineDisplay sawing(SawingRecipe recipe) {
-    return bonusDisplay(ReiCategories.SAWING, recipe, recipe.getIngredient(), recipe.getIngredientCount(),
+  public static MachineDisplay sawing(RecipeHolder<SawingRecipe> holder) {
+    SawingRecipe recipe = holder.value();
+    return bonusDisplay(ReiCategories.SAWING, holder, recipe.getIngredient(), recipe.getIngredientCount(),
         recipe.getResultItem(), recipe.getBonusResult().firstResult(), recipe.getDuration(),
         recipe.getPowerCost(), recipe.getExperience());
   }
 
-  public static MachineDisplay fluidExtruding(FluidExtrudingRecipe recipe) {
+  public static MachineDisplay fluidExtruding(RecipeHolder<FluidExtrudingRecipe> holder) {
+    FluidExtrudingRecipe recipe = holder.value();
     return new MachineDisplay(ReiCategories.FLUID_EXTRUDING,
         List.of(fluid(Fluids.WATER, recipe.getWaterCost()), fluid(Fluids.LAVA, recipe.getLavaCost())),
-        List.of(item(recipe.getResultItem())), location(recipe),
+        List.of(item(recipe.getResultItem())), location(holder),
         MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(), recipe.getExperience()));
   }
 
@@ -130,31 +147,35 @@ public final class ReiDisplays {
     return inputs;
   }
 
-  public static MachineDisplay alloySmelting(AlloySmeltingRecipe recipe) {
+  public static MachineDisplay alloySmelting(RecipeHolder<AlloySmeltingRecipe> holder) {
+    AlloySmeltingRecipe recipe = holder.value();
     return new MachineDisplay(ReiCategories.ALLOY_SMELTING, mapped(recipe.getIngredientMap()),
-        List.of(item(recipe.getResultItem())), location(recipe),
+        List.of(item(recipe.getResultItem())), location(holder),
         MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(), recipe.getExperience()));
   }
 
-  public static MachineDisplay circuitAssembling(CircuitAssemblingRecipe recipe) {
+  public static MachineDisplay circuitAssembling(RecipeHolder<CircuitAssemblingRecipe> holder) {
+    CircuitAssemblingRecipe recipe = holder.value();
     return new MachineDisplay(ReiCategories.CIRCUIT_ASSEMBLING, mapped(recipe.getIngredientMap()),
-        List.of(item(recipe.getResultItem())), location(recipe),
+        List.of(item(recipe.getResultItem())), location(holder),
         MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(), 0.0F));
   }
 
-  public static MachineDisplay recycling(RecyclingRecipe recipe) {
+  public static MachineDisplay recycling(RecipeHolder<RecyclingRecipe> holder) {
+    RecyclingRecipe recipe = holder.value();
     List<ItemStack> inputs = recipe.isSpecific()
-        ? List.of(recipe.getIngredient().getItems())
-        : ForgeRegistries.ITEMS.getValues().stream()
+        ? recipe.getIngredient().map(ingredient -> stacks(ingredient, 1)).orElse(List.of())
+        : BuiltInRegistries.ITEM.stream()
             .map(Item::getDefaultInstance)
             .filter(stack -> !stack.isEmpty() && !recipe.isExcluded(stack))
             .toList();
     return new MachineDisplay(ReiCategories.RECYCLING, List.of(EntryIngredients.ofItemStacks(inputs)),
-        List.of(chance(recipe.getResultItem(), recipe.getChance())), location(recipe),
-        MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(), 0.0F));
+        List.of(item(recipe.getResultItem())), location(holder),
+        MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(), 0.0F), List.of(recipe.getChance()));
   }
 
-  public static MachineDisplay fluidEnriching(FluidEnrichingRecipe recipe) {
+  public static MachineDisplay fluidEnriching(RecipeHolder<FluidEnrichingRecipe> holder) {
+    FluidEnrichingRecipe recipe = holder.value();
     boolean dual = recipe.getCountedIngredient2().isPresent() || recipe.getFluidInput2().isPresent();
     List<EntryIngredient> inputs = new ArrayList<>();
     inputs.add(items(recipe.getIngredient(), recipe.getIngredientCount()));
@@ -165,7 +186,7 @@ public final class ReiDisplays {
       inputs.add(recipe.getFluidInput2().map(ReiDisplays::fluid).orElse(EntryIngredient.empty()));
     }
     return new MachineDisplay(ReiCategories.FLUID_ENRICHING, inputs, List.of(fluid(recipe.getResult())),
-        location(recipe),
+        location(holder),
         MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(), recipe.getExperience()).dual(dual));
   }
 
@@ -179,61 +200,70 @@ public final class ReiDisplays {
     return outputs;
   }
 
-  public static MachineDisplay oreWashing(OreWashingRecipe recipe) {
+  public static MachineDisplay oreWashing(RecipeHolder<OreWashingRecipe> holder) {
+    OreWashingRecipe recipe = holder.value();
     List<EntryIngredient> inputs = new ArrayList<>();
     inputs.add(items(recipe.getIngredient(), recipe.getIngredientCount()));
     inputs.add(fluid(recipe.getFluidInput()));
     inputs.add(recipe.getAcidInput().map(ReiDisplays::fluid).orElse(EntryIngredient.empty()));
-    return new MachineDisplay(ReiCategories.ORE_WASHING, inputs, results(recipe.getResults()), location(recipe),
+    return new MachineDisplay(ReiCategories.ORE_WASHING, inputs, results(recipe.getResults()), location(holder),
         MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(), recipe.getExperience()));
   }
 
-  public static MachineDisplay polymerizing(PolymerizingRecipe recipe) {
+  public static MachineDisplay polymerizing(RecipeHolder<PolymerizingRecipe> holder) {
+    PolymerizingRecipe recipe = holder.value();
     return new MachineDisplay(ReiCategories.POLYMERIZING,
         List.of(fluid(recipe.getFluidInput()), items(recipe.getIngredient(), recipe.getIngredientCount())),
-        List.of(item(recipe.getResult())), location(recipe),
+        List.of(item(recipe.getResult())), location(holder),
         MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(), recipe.getExperience()));
   }
 
-  public static MachineDisplay uraniumCentrifuging(UraniumCentrifugingRecipe recipe) {
-    return bonusDisplay(ReiCategories.URANIUM_CENTRIFUGING, recipe, recipe.getIngredient(),
+  public static MachineDisplay uraniumCentrifuging(RecipeHolder<UraniumCentrifugingRecipe> holder) {
+    UraniumCentrifugingRecipe recipe = holder.value();
+    return bonusDisplay(ReiCategories.URANIUM_CENTRIFUGING, holder, recipe.getIngredient(),
         recipe.getIngredientCount(), recipe.getResultItem(), recipe.getBonusResult().firstResult(),
         recipe.getDuration(), recipe.getPowerCost(), recipe.getExperience());
   }
 
-  public static MachineDisplay thermalCentrifuging(ThermalCentrifugingRecipe recipe) {
+  public static MachineDisplay thermalCentrifuging(RecipeHolder<ThermalCentrifugingRecipe> holder) {
+    ThermalCentrifugingRecipe recipe = holder.value();
     return new MachineDisplay(ReiCategories.THERMAL_CENTRIFUGING,
         List.of(items(recipe.getIngredient(), recipe.getIngredientCount())), results(recipe.getResults()),
-        location(recipe), MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(),
+        location(holder), MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(),
             recipe.getExperience()).temperature(recipe.getTemperature()));
   }
 
-  public static MachineDisplay scanner(ScannerRecipe recipe) {
+  public static MachineDisplay scanner(RecipeHolder<ScannerRecipe> holder) {
+    ScannerRecipe recipe = holder.value();
     return new MachineDisplay(ReiCategories.SCANNER, List.of(), List.of(items(recipe.getIngredient(), 1)),
-        location(recipe), MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(),
+        location(holder), MachineDisplay.Info.of(recipe.getDuration(), recipe.getPowerCost(),
             recipe.getExperience()).matterCost(recipe.getMatterCost()).energyCost(recipe.getEnergyCost()));
   }
 
-  public static MachineDisplay scrapBox(ScrapBoxRecipe recipe, float totalWeight) {
+  public static MachineDisplay scrapBox(RecipeHolder<ScrapBoxRecipe> holder, float totalWeight) {
+    ScrapBoxRecipe recipe = holder.value();
     return new MachineDisplay(ReiCategories.SCRAP_BOX, List.of(EntryIngredients.of(ModItems.SCRAP_BOX)),
-        List.of(item(recipe.getResultItem())), location(recipe),
+        List.of(item(recipe.getResultItem())), location(holder),
         MachineDisplay.Info.of(1, 0, 0.0F).chanceText(recipe.getDropChance(totalWeight) + " %"));
   }
 
-  public static MachineDisplay rolling(RollingRecipe recipe) {
-    return bonusDisplay(ReiCategories.ROLLING, recipe, recipe.getIngredient(), recipe.getIngredientCount(),
+  public static MachineDisplay rolling(RecipeHolder<RollingRecipe> holder) {
+    RollingRecipe recipe = holder.value();
+    return bonusDisplay(ReiCategories.ROLLING, holder, recipe.getIngredient(), recipe.getIngredientCount(),
         recipe.getResultItem(), Optional.empty(), recipe.getDuration(), recipe.getPowerCost(),
         recipe.getExperience());
   }
 
-  public static MachineDisplay cutting(CuttingRecipe recipe) {
-    return bonusDisplay(ReiCategories.CUTTING, recipe, recipe.getIngredient(), recipe.getIngredientCount(),
+  public static MachineDisplay cutting(RecipeHolder<CuttingRecipe> holder) {
+    CuttingRecipe recipe = holder.value();
+    return bonusDisplay(ReiCategories.CUTTING, holder, recipe.getIngredient(), recipe.getIngredientCount(),
         recipe.getResultItem(), Optional.empty(), recipe.getDuration(), recipe.getPowerCost(),
         recipe.getExperience());
   }
 
-  public static MachineDisplay extruding(ExtrudingRecipe recipe) {
-    return bonusDisplay(ReiCategories.EXTRUDING, recipe, recipe.getIngredient(), recipe.getIngredientCount(),
+  public static MachineDisplay extruding(RecipeHolder<ExtrudingRecipe> holder) {
+    ExtrudingRecipe recipe = holder.value();
+    return bonusDisplay(ReiCategories.EXTRUDING, holder, recipe.getIngredient(), recipe.getIngredientCount(),
         recipe.getResultItem(), Optional.empty(), recipe.getDuration(), recipe.getPowerCost(),
         recipe.getExperience());
   }

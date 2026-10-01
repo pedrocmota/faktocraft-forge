@@ -1,22 +1,22 @@
 package com.faktocraft.common.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 public final class BasicConfig {
 
   public static final Client CLIENT;
-  public static final ForgeConfigSpec CLIENT_SPEC;
+  public static final ModConfigSpec CLIENT_SPEC;
 
   public static final Server SERVER;
-  public static final ForgeConfigSpec SERVER_SPEC;
+  public static final ModConfigSpec SERVER_SPEC;
 
   static {
-    Pair<Client, ForgeConfigSpec> client = new ForgeConfigSpec.Builder().configure(Client::new);
+    Pair<Client, ModConfigSpec> client = new ModConfigSpec.Builder().configure(Client::new);
     CLIENT = client.getLeft();
     CLIENT_SPEC = client.getRight();
 
-    Pair<Server, ForgeConfigSpec> server = new ForgeConfigSpec.Builder().configure(Server::new);
+    Pair<Server, ModConfigSpec> server = new ModConfigSpec.Builder().configure(Server::new);
     SERVER = server.getLeft();
     SERVER_SPEC = server.getRight();
   }
@@ -26,9 +26,9 @@ public final class BasicConfig {
 
   public static final class Client {
 
-    public final ForgeConfigSpec.BooleanValue showPipeSupports;
+    public final ModConfigSpec.BooleanValue showPipeSupports;
 
-    private Client(ForgeConfigSpec.Builder builder) {
+    private Client(ModConfigSpec.Builder builder) {
       builder.push("visual");
       showPipeSupports = builder
           .comment("Draw the small legs that hold pipes and cables against nearby blocks.",
@@ -40,12 +40,15 @@ public final class BasicConfig {
 
   public static final class Server {
 
-    public final ForgeConfigSpec.BooleanValue teleportAnchorEnabled;
-    public final ForgeConfigSpec.BooleanValue chunkLoaderEnabled;
-    public final ForgeConfigSpec.BooleanValue nukeEnabled;
-    public final ForgeConfigSpec.BooleanValue tankBreakPlacesFluid;
+    public final ModConfigSpec.BooleanValue teleportAnchorEnabled;
+    public final ModConfigSpec.BooleanValue chunkLoaderEnabled;
+    public final ModConfigSpec.BooleanValue nukeEnabled;
+    public final ModConfigSpec.BooleanValue tankBreakPlacesFluid;
+    public final ModConfigSpec.BooleanValue veinMiningEnabled;
+    public final ModConfigSpec.IntValue veinMiningMaxBlocks;
+    public final ModConfigSpec.IntValue veinMiningEnergyMultiplier;
 
-    private Server(ForgeConfigSpec.Builder builder) {
+    private Server(ModConfigSpec.Builder builder) {
       builder.push("tank");
       tankBreakPlacesFluid = builder
           .comment("Whether breaking a tank holding at least 1000mB places one source block of its fluid.",
@@ -66,10 +69,22 @@ public final class BasicConfig {
               "Disabled it is hidden from the creative tabs and from JEI, and placed nukes will not go off.")
           .define("nuke", true);
       builder.pop();
+      builder.push("tools");
+      veinMiningEnabled = builder
+          .comment("Whether the iridium drill and iridium chainsaw break a whole ore vein or tree",
+              "when the player holds Alt while mining.")
+          .define("veinMining", true);
+      veinMiningMaxBlocks = builder
+          .comment("Maximum number of blocks broken in one vein, counting the block the player hit.")
+          .defineInRange("veinMiningMaxBlocks", 64, 2, 512);
+      veinMiningEnergyMultiplier = builder
+          .comment("Energy cost of each extra block of the vein, as a multiple of the tool's normal mining cost.")
+          .defineInRange("veinMiningEnergyMultiplier", 3, 1, 20);
+      builder.pop();
     }
   }
 
-  private static boolean read(ForgeConfigSpec spec, ForgeConfigSpec.BooleanValue value) {
+  private static boolean read(ModConfigSpec spec, ModConfigSpec.BooleanValue value) {
     return !spec.isLoaded() || value.get();
   }
 
@@ -91,5 +106,18 @@ public final class BasicConfig {
 
   public static boolean tankBreakPlacesFluid() {
     return read(SERVER_SPEC, SERVER.tankBreakPlacesFluid);
+  }
+
+  public static boolean veinMiningEnabled() {
+    return read(SERVER_SPEC, SERVER.veinMiningEnabled);
+  }
+
+  public static int veinMiningMaxBlocks() {
+    return SERVER_SPEC.isLoaded() ? SERVER.veinMiningMaxBlocks.get() : SERVER.veinMiningMaxBlocks.getDefault();
+  }
+
+  public static int veinMiningEnergyMultiplier() {
+    return SERVER_SPEC.isLoaded() ? SERVER.veinMiningEnergyMultiplier.get()
+        : SERVER.veinMiningEnergyMultiplier.getDefault();
   }
 }

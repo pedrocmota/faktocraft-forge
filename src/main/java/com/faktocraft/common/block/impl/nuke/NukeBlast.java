@@ -4,6 +4,7 @@ import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.config.ServerConfig;
 import com.faktocraft.common.radiation.RadiationSources;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -13,11 +14,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public final class NukeBlast {
 
@@ -88,8 +91,8 @@ public final class NukeBlast {
   }
 
   static NukeBlast load(CompoundTag tag) {
-    return new NukeBlast(BlockPos.of(tag.getLong("center")), Math.max(1, tag.getInt("radius")),
-        Math.max(1, tag.getInt("depth")), tag.getFloat("limit"), tag.getLong("cursor"));
+    return new NukeBlast(BlockPos.of(tag.getLongOr("center", 0L)), Math.max(1, tag.getIntOr("radius", 0)),
+        Math.max(1, tag.getIntOr("depth", 0)), tag.getFloatOr("limit", 0.0F), tag.getLongOr("cursor", 0L));
   }
 
   CompoundTag save(CompoundTag tag) {
@@ -115,7 +118,8 @@ public final class NukeBlast {
     level.gameEvent(null, GameEvent.EXPLODE, center);
     level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, cx, cy, cz, 40, radius / 3.0, radius / 4.0, radius / 3.0,
         0.0);
-    level.sendParticles(ParticleTypes.FLASH, cx, cy, cz, 3, 0.0, 0.0, 0.0, 0.0);
+    level.sendParticles(ColorParticleOption.create(ParticleTypes.FLASH, 1.0F, 1.0F, 1.0F), cx, cy, cz, 3, 0.0, 0.0,
+        0.0, 0.0);
     double reach = radius * DAMAGE_REACH;
     AABB box = new AABB(center).inflate(reach);
     for (Entity entity : level.getEntities(null, box)) {
@@ -125,7 +129,7 @@ public final class NukeBlast {
       }
       float damage = (float) (config.nuke_damage * (1.0 - distance / reach));
       if (entity instanceof LivingEntity living && damage > 0.0F) {
-        living.hurt(level.damageSources().explosion(null, null), damage);
+        living.hurtServer(level, level.damageSources().explosion(null, null), damage);
       } else if (!(entity instanceof ServerPlayer) && distance < radius) {
         entity.discard();
       }
@@ -134,11 +138,11 @@ public final class NukeBlast {
   }
 
   void step(ServerLevel level, int budget) {
-    Explosion explosion = new Explosion(level, null, center.getX() + 0.5, center.getY() + 0.5,
-        center.getZ() + 0.5, radius, false, Explosion.BlockInteraction.DESTROY);
+    Explosion explosion = new ServerExplosion(level, null, null, null, Vec3.atCenterOf(center), radius, false,
+        Explosion.BlockInteraction.DESTROY);
     BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-    int minY = level.getMinBuildHeight();
-    int maxY = level.getMaxBuildHeight();
+    int minY = level.getMinY();
+    int maxY = level.getMaxY() + 1;
     BlockState air = Blocks.AIR.defaultBlockState();
     double roughness = radius > EDGE_ROUGHNESS * 2 ? 1.0 - EDGE_ROUGHNESS / radius : 1.0;
     int scanned = 0;
@@ -156,7 +160,7 @@ public final class NukeBlast {
       int dz = (int) ((index / side) % side) - radius;
       double vertical = dy < 0 ? depth : radius;
       double norm = Math.sqrt((dx * dx + dz * dz) / ((double) radius * radius) + dy * dy / (vertical * vertical));
-      if (norm > 1.0 || norm > roughness && level.random.nextInt(3) == 0) {
+      if (norm > 1.0 || norm > roughness && level.getRandom().nextInt(3) == 0) {
         continue;
       }
       pos.set(center.getX() + dx, y, center.getZ() + dz);

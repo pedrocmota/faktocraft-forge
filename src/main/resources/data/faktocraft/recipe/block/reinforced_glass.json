@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "a": "faktocraft:advanced_alloy",
+    "g": "minecraft:glass"
+  },
+  "pattern": [
+    "ggg",
+    "aga",
+    "ggg"
+  ],
+  "result": {
+    "id": "faktocraft:reinforced_glass",
+    "count": 7
+  }
+}

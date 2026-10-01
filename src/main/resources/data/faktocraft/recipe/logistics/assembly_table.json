@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "s": "faktocraft:steel_plate",
+    "c": "faktocraft:electronic_circuit",
+    "t": "minecraft:crafting_table"
+  },
+  "pattern": [
+    "scs",
+    "sts",
+    "sss"
+  ],
+  "result": {
+    "id": "faktocraft:assembly_table",
+    "count": 1
+  }
+}

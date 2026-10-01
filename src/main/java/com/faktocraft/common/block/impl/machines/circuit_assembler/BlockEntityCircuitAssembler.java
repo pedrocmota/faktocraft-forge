@@ -17,6 +17,7 @@ import com.faktocraft.common.interfaces.entity.ITileSound;
 import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.recipe.impl.CircuitAssemblingRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
+import com.faktocraft.common.util.RecipeUtil;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.EnergyCosts;
@@ -76,11 +77,10 @@ public class BlockEntityCircuitAssembler extends FaktocraftBlockEntity
   }
 
   protected Optional<CircuitAssemblingRecipe> getRecipe(ItemStack... input) {
-    if (!(level instanceof ServerLevel serverLevel)) {
+    if (!(level instanceof ServerLevel)) {
       return Optional.empty();
     }
-    return serverLevel.getRecipeManager().getRecipeFor(ModRecipeType.CIRCUIT_ASSEMBLING, MachineRecipeInput.of(input),
-        level);
+    return RecipeUtil.findRecipe(level, ModRecipeType.CIRCUIT_ASSEMBLING, MachineRecipeInput.of(input));
   }
 
   private boolean isValidInput(final ItemStack... stack) {
@@ -99,7 +99,7 @@ public class BlockEntityCircuitAssembler extends FaktocraftBlockEntity
   }
 
   private static boolean stackChanged(ItemStack cached, ItemStack current) {
-    return !ItemStack.isSameItemSameTags(cached, current) || cached.getCount() != current.getCount();
+    return !ItemStack.isSameItemSameComponents(cached, current) || cached.getCount() != current.getCount();
   }
 
   @Override
@@ -126,8 +126,7 @@ public class BlockEntityCircuitAssembler extends FaktocraftBlockEntity
         progress.setBoth(-1);
       }
       if (recipe != null && level != null) {
-        resultStack = recipe.assemble(MachineRecipeInput.of(inputStack0, inputStack1, inputStack2),
-            level.registryAccess());
+        resultStack = recipe.assemble(MachineRecipeInput.of(inputStack0, inputStack1, inputStack2));
         energyCostPerTick = recipe.getPowerCost();
         duration = recipe.getDuration();
       }
@@ -210,9 +209,9 @@ public class BlockEntityCircuitAssembler extends FaktocraftBlockEntity
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    this.activeState = tag.getBoolean("active");
+    this.activeState = tag.getBooleanOr("active", false);
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
   }
 

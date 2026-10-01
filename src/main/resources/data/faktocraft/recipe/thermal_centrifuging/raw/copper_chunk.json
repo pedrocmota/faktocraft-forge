@@ -1,0 +1,15 @@
+{
+  "duration": 500,
+  "experience": 0.1,
+  "ingredient": {
+    "count": 1,
+    "tag": "c:raw_materials/copper"
+  },
+  "power_cost": 48,
+  "result_1": {
+    "count": 2,
+    "item": "faktocraft:copper_chunk"
+  },
+  "temperature": 1085,
+  "type": "faktocraft:thermal_centrifuging"
+}

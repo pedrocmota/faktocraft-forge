@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "p": "#c:plates/iron",
+    "e": "faktocraft:electronic_circuit",
+    "f": "faktocraft:fluid_cell",
+    "l": "#c:plates/lead"
+  },
+  "pattern": [
+    "pep",
+    "fpf",
+    "l l"
+  ],
+  "result": {
+    "id": "faktocraft:jetpack",
+    "count": 1
+  }
+}

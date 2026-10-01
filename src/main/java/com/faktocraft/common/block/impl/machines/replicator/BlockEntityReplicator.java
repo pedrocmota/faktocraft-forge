@@ -33,10 +33,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -282,15 +282,15 @@ public class BlockEntityReplicator extends FaktocraftBlockEntity
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
     if (tag.contains("fluidMatterStorage")) {
-      matterTank.load(tag.getCompound("fluidMatterStorage"));
+      matterTank.load(tag.getCompoundOrEmpty("fluidMatterStorage"));
     }
 
-    this.result = tag.contains("result") ? ScannerResult.load(tag.getCompound("result")) : ScannerResult.EMPTY;
+    this.result = tag.contains("result") ? ScannerResult.load(tag.getCompoundOrEmpty("result")) : ScannerResult.EMPTY;
     this.mode = ReplicatorMode
-        .getModeFromId(tag.contains("mode") ? tag.getInt("mode") : ReplicatorMode.WAITING.getId());
+        .getModeFromId(tag.contains("mode") ? tag.getIntOr("mode", 0) : ReplicatorMode.WAITING.getId());
   }
 
   @Override

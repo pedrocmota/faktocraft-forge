@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:dried_rubber_log"
+        }
+      ],
+      "name": "dried_rubber_log",
+      "rolls": 1
+    }
+  ]
+}

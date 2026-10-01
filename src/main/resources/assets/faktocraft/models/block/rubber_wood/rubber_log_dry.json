@@ -1,12 +1,12 @@
 {
-    "parent": "block/cube",
-    "textures": {
-        "up": "faktocraft:block/rubber_wood/rubber_log_top",
-        "down": "faktocraft:block/rubber_wood/rubber_log_top",
-        "south": "faktocraft:block/rubber_wood/rubber_log",
-        "north": "faktocraft:block/rubber_wood/rubber_log",
-        "west": "faktocraft:block/rubber_wood/rubber_log",
-        "east": "faktocraft:block/rubber_wood/rubber_log_dry",
-        "particle": "faktocraft:block/rubber_wood/rubber_log"
-    }
+  "parent": "block/cube",
+  "textures": {
+    "up": "faktocraft:block/rubber_wood/rubber_log_top",
+    "down": "faktocraft:block/rubber_wood/rubber_log_top",
+    "south": "faktocraft:block/rubber_wood/rubber_log",
+    "north": "faktocraft:block/rubber_wood/rubber_log",
+    "west": "faktocraft:block/rubber_wood/rubber_log",
+    "east": "faktocraft:block/rubber_wood/rubber_log_dry",
+    "particle": "faktocraft:block/rubber_wood/rubber_log"
+  }
 }

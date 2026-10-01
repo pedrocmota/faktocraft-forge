@@ -1,13 +1,12 @@
 package com.faktocraft.common.block.impl.quarry;
 
+import com.faktocraft.common.util.LegacyNbtBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEntityLandmark extends BlockEntity {
-
+public class BlockEntityLandmark extends LegacyNbtBlockEntity {
   public long nextScanTime = Long.MIN_VALUE;
 
   @Nullable
@@ -20,7 +19,6 @@ public class BlockEntityLandmark extends BlockEntity {
     super(QuarryRegistry.LANDMARK_BLOCK_ENTITY, pos, state);
   }
 
-  @Override
   public AABB getRenderBoundingBox() {
     return new AABB(worldPosition).expandTowards(BlockLandmark.MAX_SPAN, 0, BlockLandmark.MAX_SPAN).inflate(1);
   }

@@ -12,15 +12,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeManager;
+import com.faktocraft.common.util.RecipeUtil;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.IItemHandler;
+import com.faktocraft.common.util.transfer.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.EnumMap;
@@ -29,7 +28,7 @@ import java.util.Optional;
 
 public class BlockEntityCrusher extends BlockEntityStandardMachine {
 
-  private final RecipeManager.CachedCheck<Container, CrushingRecipe> quickCheck = RecipeManager
+  private final RecipeUtil.CachedCheck<MachineRecipeInput, CrushingRecipe> quickCheck = RecipeUtil
       .createCheck(ModRecipeType.CRUSHING);
 
   private final Map<Direction, LazyOptional<IItemHandler>> sidedItemCaps = new EnumMap<>(Direction.class);

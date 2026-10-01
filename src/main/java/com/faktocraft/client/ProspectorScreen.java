@@ -1,5 +1,6 @@
 package com.faktocraft.client;
 
+import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.item.impl.tools.Prospector;
 import com.faktocraft.common.network.ModNetworking;
@@ -8,7 +9,7 @@ import com.faktocraft.common.network.packet.PacketScanCode;
 import com.faktocraft.common.registries.ModComponents;
 import com.faktocraft.common.util.TextComponentUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -26,7 +27,7 @@ public class ProspectorScreen extends ScanMapScreen {
   private boolean polled;
 
   public ProspectorScreen(ChunkPos center) {
-    super(Component.translatable("item." + Faktocraft.MODID + ".prospector"), center.x, center.z);
+    super(Component.translatable("item." + Faktocraft.MODID + ".prospector"), center.x(), center.z());
     setScans(ProspectorClientData.scans());
   }
 
@@ -73,12 +74,12 @@ public class ProspectorScreen extends ScanMapScreen {
 
   @Override
   protected int focusChunkX() {
-    return minecraft != null && minecraft.player != null ? minecraft.player.chunkPosition().x : centerChunkX;
+    return minecraft != null && minecraft.player != null ? minecraft.player.chunkPosition().x() : centerChunkX;
   }
 
   @Override
   protected int focusChunkZ() {
-    return minecraft != null && minecraft.player != null ? minecraft.player.chunkPosition().z : centerChunkZ;
+    return minecraft != null && minecraft.player != null ? minecraft.player.chunkPosition().z() : centerChunkZ;
   }
 
   @Override
@@ -123,7 +124,7 @@ public class ProspectorScreen extends ScanMapScreen {
   }
 
   @Override
-  protected void renderFooter(GuiGraphics graphics, int footerTop) {
+  protected void renderFooter(GuiGraphicsExtractor graphics, int footerTop) {
     ItemStack stack = heldProspector(minecraft.player);
     CompoundTag job = Prospector.getJob(stack);
     int energy = ModComponents.getEnergy(stack, 0);
@@ -133,21 +134,21 @@ public class ProspectorScreen extends ScanMapScreen {
     Component status;
     ChatFormatting statusColor;
     if (job != null) {
-      status = Component.translatable(GUI_PREFIX + "status_scanning", job.getInt("cx"), job.getInt("cz"));
+      status = Component.translatable(GUI_PREFIX + "status_scanning", job.getIntOr("cx", 0), job.getIntOr("cz", 0));
       statusColor = ChatFormatting.GREEN;
     } else if (!canAfford) {
       status = Component.translatable("gui." + Faktocraft.MODID + ".prospector.no_energy");
       statusColor = ChatFormatting.RED;
     } else {
-      status = Component.translatable("gui." + Faktocraft.MODID + ".prospector.status_ready", here.x, here.z);
+      status = Component.translatable("gui." + Faktocraft.MODID + ".prospector.status_ready", here.x(), here.z());
       statusColor = ChatFormatting.YELLOW;
     }
-    graphics.drawCenteredString(font, status.copy().withStyle(statusColor),
-        panelLeft + panelW / 2, footerTop + 8, 0xFFFFFF);
-    graphics.drawCenteredString(font, energyLine(energy), panelLeft + panelW / 2, footerTop + 22, 0xFFFFFF);
+    graphics.centeredText(font, status.copy().withStyle(statusColor),
+        panelLeft + panelW / 2, footerTop + 8, GuiUtil.opaque(0xFFFFFF));
+    graphics.centeredText(font, energyLine(energy), panelLeft + panelW / 2, footerTop + 22, GuiUtil.opaque(0xFFFFFF));
 
     float progress = job == null ? 0.0F
-        : 1.0F - job.getInt("remaining") / (float) Math.max(1, job.getInt("total"));
+        : 1.0F - job.getIntOr("remaining", 0) / (float) Math.max(1, job.getIntOr("total", 0));
     drawProgressBar(graphics, footerTop + 34, progress, job != null);
 
     scanButton.active = canAfford && job == null;
@@ -157,6 +158,6 @@ public class ProspectorScreen extends ScanMapScreen {
   @Nullable
   protected JobMarker activeJob() {
     CompoundTag job = Prospector.getJob(heldProspector(minecraft.player));
-    return job == null ? null : new JobMarker(job.getInt("cx"), job.getInt("cz"));
+    return job == null ? null : new JobMarker(job.getIntOr("cx", 0), job.getIntOr("cz", 0));
   }
 }

@@ -1,11 +1,12 @@
 package com.faktocraft.common.registries;
 
 import com.faktocraft.Faktocraft;
+import com.faktocraft.common.util.transfer.CapabilityBridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -18,25 +19,28 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.neoforge.network.IContainerFactory;
+import net.neoforged.neoforge.registries.IRegistryExtension;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public final class RegistrationHandler {
-
-  private record Entry(ResourceLocation name, Object value) {
+  private record Entry(Identifier name, Object value) {
   }
 
   private static final Map<ResourceKey<? extends Registry<?>>, List<Entry>> QUEUE = new LinkedHashMap<>();
+  private static final List<Consumer<RegisterEvent>> ALIAS_HOOKS = new ArrayList<>();
 
   private RegistrationHandler() {
   }
 
-  public static ResourceLocation id(String name) {
-    return new ResourceLocation(Faktocraft.MODID, name);
+  public static Identifier id(String name) {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, name);
   }
 
   public static synchronized <T> T enqueue(ResourceKey<? extends Registry<? super T>> registry, String name, T value) {
@@ -50,6 +54,10 @@ public final class RegistrationHandler {
 
   public static Item item(String name, Item item) {
     return enqueue(Registries.ITEM, name, item);
+  }
+
+  public static Item.Properties itemProperties(String name) {
+    return new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id(name)));
   }
 
   public static SoundEvent sound(String name, SoundEvent sound) {
@@ -74,8 +82,9 @@ public final class RegistrationHandler {
 
   public static <T extends BlockEntity> BlockEntityType<T> blockEntity(String name,
       BlockEntityType.BlockEntitySupplier<T> factory, Block... blocks) {
-    return enqueue(Registries.BLOCK_ENTITY_TYPE, name,
-        BlockEntityType.Builder.of(factory, blocks).build(null));
+    BlockEntityType<T> type = new BlockEntityType<>(factory, blocks);
+    CapabilityBridge.track(type);
+    return enqueue(Registries.BLOCK_ENTITY_TYPE, name, type);
   }
 
   public interface PosMenuFactory<T extends AbstractContainerMenu> {
@@ -84,12 +93,22 @@ public final class RegistrationHandler {
 
   public static <T extends AbstractContainerMenu> MenuType<T> menu(String name, PosMenuFactory<T> factory) {
     return enqueue(Registries.MENU, name,
-        IForgeMenuType.create((id, inv, buf) -> factory.create(id, inv, buf.readBlockPos())));
+        IMenuTypeExtension.create((id, inv, buf) -> factory.create(id, inv, buf.readBlockPos())));
   }
 
-  public static <T extends AbstractContainerMenu> MenuType<T> menuBuf(String name,
-      net.minecraftforge.network.IContainerFactory<T> factory) {
-    return enqueue(Registries.MENU, name, IForgeMenuType.create(factory));
+  public static <T extends AbstractContainerMenu> MenuType<T> menuBuf(String name, IContainerFactory<T> factory) {
+    return enqueue(Registries.MENU, name, IMenuTypeExtension.create(factory));
+  }
+
+  public static void addAliasHook(Consumer<RegisterEvent> hook) {
+    ALIAS_HOOKS.add(hook);
+  }
+
+  public static <T> void alias(RegisterEvent event, ResourceKey<? extends Registry<T>> registry, Identifier from,
+      Identifier to) {
+    if (event.getRegistryKey().equals(registry)) {
+      ((IRegistryExtension<T>) event.getRegistry(registry)).addAlias(from, to);
+    }
   }
 
   private static Runnable bootstrap;
@@ -106,18 +125,20 @@ public final class RegistrationHandler {
       b.run();
     }
     List<Entry> entries = QUEUE.get(event.getRegistryKey());
-    if (entries == null) {
-      return;
-    }
-    for (Entry entry : entries) {
-      event.register((ResourceKey) event.getRegistryKey(), entry.name(), entry::value);
-    }
-    if (event.getRegistryKey().equals(Registries.ITEM)) {
+    if (entries != null) {
       for (Entry entry : entries) {
-        if (entry.value() instanceof net.minecraft.world.item.BlockItem blockItem) {
-          blockItem.registerBlocks(Item.BY_BLOCK, blockItem);
+        event.register((ResourceKey) event.getRegistryKey(), entry.name(), entry::value);
+      }
+      if (event.getRegistryKey().equals(Registries.ITEM)) {
+        for (Entry entry : entries) {
+          if (entry.value() instanceof net.minecraft.world.item.BlockItem blockItem) {
+            blockItem.registerBlocks(Item.BY_BLOCK, blockItem);
+          }
         }
       }
+    }
+    for (Consumer<RegisterEvent> hook : ALIAS_HOOKS) {
+      hook.accept(event);
     }
   }
 }

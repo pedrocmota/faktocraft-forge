@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:rubber_block"
+  ],
+  "result": {
+    "id": "faktocraft:rubber",
+    "count": 9
+  }
+}

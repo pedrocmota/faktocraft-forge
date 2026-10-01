@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.generators.generator;
 
+import com.faktocraft.common.util.FuelUtil;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.BlockEntityProgress;
@@ -23,7 +24,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeHooks;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
@@ -80,7 +80,7 @@ public class BlockEntityGenerator extends FaktocraftBlockEntity implements ICool
         progressBurn.setBoth(-1);
         final ItemStack inputStack = getItemStackHandler().getStackInSlot(INPUT_SLOT);
         if (!inputStack.isEmpty() && level != null) {
-          final int burnTime = ForgeHooks.getBurnTime(inputStack, null);
+          final int burnTime = FuelUtil.burnTime(level, inputStack, this);
           if (burnTime > 1) {
             progressBurn.setBoth((int) (burnTime * 0.60));
             StackHandlerHelper.shrinkInputStack(getItemStackHandler(), INPUT_SLOT, 1);
@@ -112,7 +112,7 @@ public class BlockEntityGenerator extends FaktocraftBlockEntity implements ICool
   public boolean isItemValidForSlot(int slot, ItemStack stack) {
     if (slot == INPUT_SLOT) {
       return level != null
-          && ForgeHooks.getBurnTime(stack, null) > 0
+          && FuelUtil.burnTime(level, stack, this) > 0
           && !stack.is(Items.LAVA_BUCKET);
     }
     return super.isItemValidForSlot(slot, stack);
@@ -131,10 +131,10 @@ public class BlockEntityGenerator extends FaktocraftBlockEntity implements ICool
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    activeState = tag.getBoolean("active");
-    refilling = tag.getBoolean("refilling");
+    activeState = tag.getBooleanOr("active", false);
+    refilling = tag.getBooleanOr("refilling", false);
     if (tag.contains("progress")) {
-      progressBurn.load(tag.getCompound("progress"));
+      progressBurn.load(tag.getCompoundOrEmpty("progress"));
     }
   }
 

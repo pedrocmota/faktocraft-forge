@@ -1,5 +1,8 @@
 package com.faktocraft.common.item.impl;
 
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.item.base.BaseItem;
 import com.faktocraft.common.util.TextComponentUtil;
@@ -7,9 +10,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class CapacitorItem extends BaseItem {
 
@@ -25,9 +25,11 @@ public class CapacitorItem extends BaseItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".capacitor_capacity",
+  @SuppressWarnings("deprecation")
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("tooltip." + Faktocraft.MODID + ".capacitor_capacity",
         TextComponentUtil.getFormattedEnergyUnit(capacity)).withStyle(ChatFormatting.GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 }

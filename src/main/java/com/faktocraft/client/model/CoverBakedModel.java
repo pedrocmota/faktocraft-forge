@@ -1,35 +1,28 @@
 package com.faktocraft.client.model;
 
+import net.minecraft.util.TriState;
 import com.faktocraft.common.cover.CoverSupport;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.resources.model.SimpleModelWrapper;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.QuadCollection;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.ChunkRenderTypeSet;
-import net.minecraftforge.client.model.IDynamicBakedModel;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.client.model.data.ModelProperty;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.model.data.ModelData;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CoverBakedModel implements IDynamicBakedModel {
-
-  public static final ModelProperty<Integer> CLOSED = new ModelProperty<>();
-
-  private final BakedModel original;
+public class CoverBakedModel implements BlockStateModel {
+  private final BlockStateModel original;
   private final boolean drilled;
 
-  public CoverBakedModel(BakedModel original, boolean drilled) {
+  public CoverBakedModel(BlockStateModel original, boolean drilled) {
     this.original = original;
     this.drilled = drilled;
   }
@@ -55,98 +48,92 @@ public class CoverBakedModel implements IDynamicBakedModel {
     return connections | (holes != null ? holes : 0);
   }
 
-  private static BakedModel coverModel(BlockState cover) {
-    return Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getBlockModel(cover);
-  }
-
-  @NotNull
-  @Override
-  public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand,
-      @NotNull ModelData data, @Nullable RenderType renderType) {
-    BlockState cover = cover(state, data);
-    if (cover == null || (renderType == null && !drilled)) {
-      return original.getQuads(state, side, rand, data, renderType);
-    }
-    Integer closed = data.get(CLOSED);
-    List<BakedQuad> quads = new ArrayList<>(CoverQuads.get(cover, holes(state, data), closed != null ? closed : 0,
-        side, renderType, rand));
-    if (!drilled) {
-      for (BakedQuad quad : original.getQuads(state, side, rand, data, renderType)) {
-        quads.add(CoverQuads.interior(quad));
-      }
-    }
-    return quads;
-  }
-
-  @NotNull
-  @Override
-  public ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state,
-      @NotNull ModelData data) {
-    if (cover(state, data) == null) {
-      return data;
-    }
-    int holes = holes(state, data);
+  private static int closed(BlockAndTintGetter level, BlockPos pos, int holes) {
     int closed = 0;
     for (Direction direction : Direction.values()) {
       int bit = 1 << direction.get3DDataValue();
       BlockPos neighbor = pos.relative(direction);
-      if ((holes & bit) != 0 && level.getBlockState(neighbor).isSolidRender(level, neighbor)) {
+      if ((holes & bit) != 0 && level.getBlockState(neighbor).isSolidRender()) {
         closed |= bit;
       }
     }
-    return data.derive().with(CLOSED, closed).build();
+    return closed;
   }
 
   @Override
-  public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand,
-      @NotNull ModelData data) {
+  @Deprecated
+  public void collectParts(RandomSource random, List<BlockStateModelPart> output) {
+    original.collectParts(random, output);
+  }
+
+  @Override
+  public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random,
+      List<BlockStateModelPart> parts) {
+    ModelData data = level.getModelData(pos);
     BlockState cover = cover(state, data);
     if (cover == null) {
-      return original.getRenderTypes(state, rand, data);
+      original.collectParts(level, pos, state, random, parts);
+      return;
     }
-    ChunkRenderTypeSet coverTypes = coverModel(cover).getRenderTypes(cover, rand, ModelData.EMPTY);
-    return drilled ? coverTypes : ChunkRenderTypeSet.union(coverTypes, original.getRenderTypes(state, rand, data));
+    int holes = holes(state, data);
+    QuadCollection coverQuads = CoverQuads.get(cover, holes, closed(level, pos, holes), random);
+    QuadCollection.Builder builder = new QuadCollection.Builder().addAll(coverQuads);
+    boolean ambientOcclusion = true;
+    if (!drilled) {
+      List<BlockStateModelPart> originalParts = new ArrayList<>();
+      original.collectParts(level, pos, state, random, originalParts);
+      for (BlockStateModelPart part : originalParts) {
+        ambientOcclusion &= part.ambientOcclusion() != TriState.FALSE;
+        for (BakedQuad quad : part.getQuads(null)) {
+          builder.addUnculledFace(CoverQuads.interior(quad));
+        }
+        for (Direction direction : Direction.values()) {
+          for (BakedQuad quad : part.getQuads(direction)) {
+            builder.addCulledFace(direction, CoverQuads.interior(quad));
+          }
+        }
+      }
+    }
+    parts.add(new SimpleModelWrapper(builder.build(), ambientOcclusion, coverParticle(level, pos, cover)));
+  }
+
+  private static Material.Baked coverParticle(BlockAndTintGetter level, BlockPos pos, BlockState cover) {
+    return CoverQuads.coverModel(cover).particleMaterial(level, pos, cover);
   }
 
   @Override
-  public TextureAtlasSprite getParticleIcon(@NotNull ModelData data) {
-    BlockState cover = data.get(CoverSupport.COVER);
-    return cover != null ? coverModel(cover).getParticleIcon(ModelData.EMPTY) : original.getParticleIcon(data);
+  @Deprecated
+  public Material.Baked particleMaterial() {
+    return original.particleMaterial();
   }
 
   @Override
-  public boolean useAmbientOcclusion() {
-    return original.useAmbientOcclusion();
+  public Material.Baked particleMaterial(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+    BlockState cover = level.getModelData(pos).get(CoverSupport.COVER);
+    return cover != null ? CoverQuads.coverModel(cover).particleMaterial(level, pos, cover)
+        : original.particleMaterial(level, pos, state);
   }
 
   @Override
-  public boolean isGui3d() {
-    return original.isGui3d();
+  @Deprecated
+  public int materialFlags() {
+    return original.materialFlags();
   }
 
   @Override
-  public boolean usesBlockLight() {
-    return original.usesBlockLight();
+  public int materialFlags(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+    BlockState cover = cover(state, level.getModelData(pos));
+    if (cover == null) {
+      return original.materialFlags(level, pos, state);
+    }
+    int coverFlags = CoverQuads.coverModel(cover).materialFlags(level, pos, cover);
+    return drilled ? coverFlags : coverFlags | original.materialFlags(level, pos, state);
   }
 
   @Override
-  public boolean isCustomRenderer() {
-    return original.isCustomRenderer();
-  }
-
-  @Override
-  public TextureAtlasSprite getParticleIcon() {
-    return original.getParticleIcon(ModelData.EMPTY);
-  }
-
-  @Override
-  public ItemOverrides getOverrides() {
-    return original.getOverrides();
-  }
-
-  @Override
-  @SuppressWarnings("deprecation")
-  public ItemTransforms getTransforms() {
-    return original.getTransforms();
+  @Nullable
+  public Object createGeometryKey(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random) {
+    return cover(state, level.getModelData(pos)) == null ? original.createGeometryKey(level, pos, state, random)
+        : null;
   }
 }

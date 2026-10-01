@@ -1,20 +1,25 @@
 package com.faktocraft.common.worldgen;
 
 import com.faktocraft.common.fluid.ModFluids;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-public class GiantOilPocketFeature extends Feature<NoneFeatureConfiguration> {
+public class GiantOilPocketFeature implements Feature {
 
-  public GiantOilPocketFeature(Codec<NoneFeatureConfiguration> codec) {
-    super(codec);
+  public static final MapCodec<GiantOilPocketFeature> CODEC = MapCodec.unit(GiantOilPocketFeature::new);
+
+  public GiantOilPocketFeature() {
+  }
+
+  @Override
+  public MapCodec<GiantOilPocketFeature> codec() {
+    return CODEC;
   }
 
   private record Blob(double cx, double cy, double cz, double rx, double ry, double rz) {
@@ -27,12 +32,8 @@ public class GiantOilPocketFeature extends Feature<NoneFeatureConfiguration> {
   }
 
   @Override
-  public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
-    WorldGenLevel level = context.level();
-    RandomSource random = context.random();
-    BlockPos origin = context.origin();
-
-    if (origin.getY() - 10 <= level.getMinBuildHeight()) {
+  public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
+    if (origin.getY() - 10 <= level.getMinY()) {
       return false;
     }
 

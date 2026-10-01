@@ -26,14 +26,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeManager;
+import com.faktocraft.common.util.RecipeUtil;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ public class BlockEntityRecycler extends FaktocraftBlockEntity implements IEnerg
 
   public final BlockEntityProgress progress = new BlockEntityProgress();
 
-  private final RecipeManager.CachedCheck<Container, RecyclingRecipe> quickCheck = RecipeManager
+  private final RecipeUtil.CachedCheck<MachineRecipeInput, RecyclingRecipe> quickCheck = RecipeUtil
       .createCheck(ModRecipeType.RECYCLING);
 
   private ItemStack cachedInputStack = ItemStack.EMPTY;
@@ -74,7 +73,7 @@ public class BlockEntityRecycler extends FaktocraftBlockEntity implements IEnerg
 
   private boolean canWork(ItemStack outputStack, ItemStack resultStack) {
     return outputStack.isEmpty()
-        || (ItemStack.isSameItemSameTags(outputStack, resultStack)
+        || (ItemStack.isSameItemSameComponents(outputStack, resultStack)
             && resultStack.getCount() + outputStack.getCount() <= outputStack.getMaxStackSize());
   }
 
@@ -90,7 +89,7 @@ public class BlockEntityRecycler extends FaktocraftBlockEntity implements IEnerg
     final ItemStack inputStack = itemStackHandler.getStackInSlot(INPUT_SLOT);
     final ItemStack outputStack = itemStackHandler.getStackInSlot(OUTPUT_SLOT);
 
-    if (!ItemStack.isSameItemSameTags(cachedInputStack, inputStack)) {
+    if (!ItemStack.isSameItemSameComponents(cachedInputStack, inputStack)) {
       cachedInputStack = inputStack.copy();
       recipe = inputStack.isEmpty() ? null : getRecipe(inputStack).orElse(null);
     }
@@ -211,9 +210,9 @@ public class BlockEntityRecycler extends FaktocraftBlockEntity implements IEnerg
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    activeState = tag.getBoolean("active");
+    activeState = tag.getBooleanOr("active", false);
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
   }
 }

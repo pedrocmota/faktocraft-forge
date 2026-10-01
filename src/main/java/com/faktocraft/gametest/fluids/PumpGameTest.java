@@ -1,19 +1,19 @@
 package com.faktocraft.gametest.fluids;
 
-import com.faktocraft.Faktocraft;
+import com.faktocraft.common.util.NbtBridge;
 import com.faktocraft.common.block.impl.pipe.BlockEntityPump;
 import com.faktocraft.common.registries.PipeRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.common.util.transfer.CapabilityBridge;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Blocks;
 
-@net.minecraftforge.gametest.GameTestHolder(Faktocraft.MODID)
-@net.minecraftforge.gametest.PrefixGameTestTemplate(false)
 public class PumpGameTest {
 
   private static final String TEMPLATE = "gametest_shaft";
@@ -42,8 +42,8 @@ public class PumpGameTest {
       }
       out.append(out.length() == 0 ? "" : " ").append(direction).append("=").append(state.getBlock());
       BlockEntity be = helper.getLevel().getBlockEntity(neighbour);
-      if (be != null && (be.getCapability(ForgeCapabilities.FLUID_HANDLER).isPresent()
-          || be.getCapability(ForgeCapabilities.FLUID_HANDLER, direction.getOpposite()).isPresent())) {
+      if (be != null && (CapabilityBridge.get(be, ForgeCapabilities.FLUID_HANDLER, null) != null
+          || CapabilityBridge.get(be, ForgeCapabilities.FLUID_HANDLER, direction.getOpposite()) != null)) {
         out.append("(FLUID)");
       }
     }
@@ -54,7 +54,7 @@ public class PumpGameTest {
     for (Direction direction : Direction.values()) {
       BlockPos neighbour = helper.absolutePos(PUMP_POS.relative(direction));
       BlockEntity be = helper.getLevel().getBlockEntity(neighbour);
-      if (be != null && be.getCapability(ForgeCapabilities.FLUID_HANDLER).isPresent()) {
+      if (be != null && CapabilityBridge.get(be, ForgeCapabilities.FLUID_HANDLER, null) != null) {
         helper.fail("a fluid acceptor sits " + direction + " of the pump ("
             + helper.getLevel().getBlockState(neighbour).getBlock() + "): it would take the bucket");
         return false;
@@ -90,7 +90,7 @@ public class PumpGameTest {
     }
     helper.setBlock(BASIN, Blocks.WATER.defaultBlockState());
     helper.setBlock(PUMP_POS, PipeRegistry.PUMP.defaultBlockState());
-    if (!(helper.getBlockEntity(PUMP_POS) instanceof BlockEntityPump pump)) {
+    if (!(TestUtil.blockEntity(helper, PUMP_POS) instanceof BlockEntityPump pump)) {
       helper.fail("pump block entity missing");
       return null;
     }
@@ -98,7 +98,7 @@ public class PumpGameTest {
     pump.getBatteryStackHandler().setStackInSlot(0,
         new net.minecraft.world.item.ItemStack(com.faktocraft.common.registries.ModItems.INTERMEDIATE_CAPACITOR));
     helper.onEachTick(() -> {
-      if (helper.getBlockEntity(PUMP_POS) instanceof BlockEntityPump p) {
+      if (TestUtil.blockEntity(helper, PUMP_POS) instanceof BlockEntityPump p) {
         p.getEnergyStorage().setEnergy(p.getEnergyStorage().maxEnergy());
       }
     });
@@ -115,7 +115,7 @@ public class PumpGameTest {
   }
 
   private static String pumpState(GameTestHelper helper) {
-    if (!(helper.getBlockEntity(PUMP_POS) instanceof BlockEntityPump pump)) {
+    if (!(TestUtil.blockEntity(helper, PUMP_POS) instanceof BlockEntityPump pump)) {
       return "pump block entity missing";
     }
     return "tank=" + pump.tank.getFluidAmount()
@@ -132,7 +132,7 @@ public class PumpGameTest {
 
   private static void expectTubeStart(GameTestHelper helper, long byTick) {
     helper.runAtTickTime(byTick, () -> {
-      if (!(helper.getBlockEntity(PUMP_POS) instanceof BlockEntityPump pump) || pump.tubeDepth <= 0.0F) {
+      if (!(TestUtil.blockEntity(helper, PUMP_POS) instanceof BlockEntityPump pump) || pump.tubeDepth <= 0.0F) {
         helper.fail("tube has not started descending by tick " + byTick + "; " + pumpState(helper));
       }
     });
@@ -140,7 +140,7 @@ public class PumpGameTest {
 
   private static void succeedWhenPumped(GameTestHelper helper) {
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(PUMP_POS) instanceof BlockEntityPump pump)) {
+      if (!(TestUtil.blockEntity(helper, PUMP_POS) instanceof BlockEntityPump pump)) {
         helper.fail("pump block entity missing");
         return;
       }
@@ -185,7 +185,8 @@ public class PumpGameTest {
     helper.setBlock(tank, PipeRegistry.TANK.defaultBlockState());
 
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(tank) instanceof com.faktocraft.common.block.impl.pipe.BlockEntityTank neighbour)) {
+      if (!(TestUtil.blockEntity(helper,
+          tank) instanceof com.faktocraft.common.block.impl.pipe.BlockEntityTank neighbour)) {
         helper.fail("no tank next to the pump");
         return;
       }
@@ -206,7 +207,7 @@ public class PumpGameTest {
     helper.setBlock(obstruction, Blocks.POLISHED_ANDESITE.defaultBlockState());
 
     helper.runAtTickTime(100, () -> {
-      if (!(helper.getBlockEntity(PUMP_POS) instanceof BlockEntityPump pump)) {
+      if (!(TestUtil.blockEntity(helper, PUMP_POS) instanceof BlockEntityPump pump)) {
         helper.fail("pump block entity missing");
         return;
       }
@@ -230,13 +231,13 @@ public class PumpGameTest {
       helper.setBlock(new BlockPos(PUMP_POS.getX(), y, PUMP_POS.getZ()),
           PipeRegistry.PUMP_TUBE_BLOCK.defaultBlockState());
     }
-    CompoundTag tag = pump.saveWithoutMetadata();
+    CompoundTag tag = pump.saveWithoutMetadata(NbtBridge.registries());
     tag.putFloat("tubeDepth", DEPTH - 1 + 0.4F);
     tag.putFloat("tubeTarget", DEPTH - 1 + 0.4F);
     pump.load(tag);
 
     helper.runAtTickTime(560, () -> {
-      if (helper.getBlockEntity(PUMP_POS) instanceof BlockEntityPump p && p.tank.getFluidAmount() < 1000) {
+      if (TestUtil.blockEntity(helper, PUMP_POS) instanceof BlockEntityPump p && p.tank.getFluidAmount() < 1000) {
 
         helper.fail("resume too slow: " + pumpState(helper));
       }

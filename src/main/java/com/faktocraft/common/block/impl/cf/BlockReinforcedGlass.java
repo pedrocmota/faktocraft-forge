@@ -19,7 +19,7 @@ public class BlockReinforcedGlass extends HalfTransparentBlock {
         .noOcclusion()
         .isValidSpawn((state, level, pos, type) -> false)
         .isSuffocating((state, level, pos) -> false)
-        .isViewBlocking((state, level, pos) -> false)
+        .isViewBlocking((state, level, pos, box) -> false)
         .isRedstoneConductor((state, level, pos) -> false);
   }
 }

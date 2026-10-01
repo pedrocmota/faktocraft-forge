@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": "faktocraft:copper_cable",
+    "i": "#c:ingots/iron"
+  },
+  "pattern": [
+    "ccc",
+    "cic",
+    "ccc"
+  ],
+  "result": {
+    "id": "faktocraft:coil"
+  }
+}

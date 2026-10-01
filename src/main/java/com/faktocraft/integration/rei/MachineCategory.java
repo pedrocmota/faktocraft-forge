@@ -11,8 +11,9 @@ import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.util.EntryStacks;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ItemLike;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +35,14 @@ public class MachineCategory implements DisplayCategory<MachineDisplay> {
   private final CategoryIdentifier<MachineDisplay> id;
   private final Component title;
   private final Renderer icon;
-  private final ResourceLocation texture;
+  private final Identifier texture;
   private final int u;
   private final int v;
   private final int width;
   private final int height;
   private final Layout layout;
 
-  public MachineCategory(CategoryIdentifier<MachineDisplay> id, String name, ItemLike icon, ResourceLocation texture,
+  public MachineCategory(CategoryIdentifier<MachineDisplay> id, String name, ItemLike icon, Identifier texture,
       int u, int v, int width, int height, Layout layout) {
     this.id = id;
     this.title = Component.translatable("jei." + Faktocraft.MODID + "." + name);
@@ -104,7 +105,7 @@ public class MachineCategory implements DisplayCategory<MachineDisplay> {
     out.add(input ? slot.markInput() : slot.markOutput());
   }
 
-  public void frame(List<Widget> out, Point o, int x, int y, ResourceLocation tex, int fu, int fv, int fw, int fh) {
+  public void frame(List<Widget> out, Point o, int x, int y, Identifier tex, int fu, int fv, int fw, int fh) {
     out.add(Widgets.createTexturedWidget(tex, o.x + x, o.y + y, fu, fv, fw, fh));
   }
 
@@ -114,19 +115,20 @@ public class MachineCategory implements DisplayCategory<MachineDisplay> {
       float ratio = (System.currentTimeMillis() % cycle) / (float) cycle;
       int filled = Math.round(pw * ratio);
       if (filled > 0) {
-        graphics.blit(PROCESS, o.x + x, o.y + y, pu, pv, filled, ph);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, PROCESS, o.x + x, o.y + y, pu, pv, filled, ph, 256, 256);
       }
     }));
   }
 
-  private static void rising(List<Widget> out, ResourceLocation tex, int x, int y, int tu, int tv, int tw, int th,
+  private static void rising(List<Widget> out, Identifier tex, int x, int y, int tu, int tv, int tw, int th,
       int ticks) {
     int cycle = ticks * 50;
     out.add(Widgets.createDrawableWidget((graphics, mouseX, mouseY, delta) -> {
       float ratio = (System.currentTimeMillis() % cycle) / (float) cycle;
       int filled = Math.round(th * ratio);
       if (filled > 0) {
-        graphics.blit(tex, x, y + th - filled, tu, tv + th - filled, tw, filled);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, tex, x, y + th - filled, tu, tv + th - filled, tw, filled,
+            256, 256);
       }
     }));
   }

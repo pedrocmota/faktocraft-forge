@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_armour",
+  "key": {
+    "i": "faktocraft:iridium_plate",
+    "n": "faktocraft:nano_leggings"
+  },
+  "pattern": [
+    "iii",
+    "ini",
+    "i i"
+  ],
+  "result": {
+    "id": "faktocraft:quantum_leggings"
+  }
+}

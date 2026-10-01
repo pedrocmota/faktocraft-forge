@@ -87,17 +87,17 @@ public class BlockSolarGenerator extends BlockElectricMachine implements IHasMen
     registerDefaultState(base);
   }
 
-  private static boolean isPanel(net.minecraft.world.level.LevelAccessor level, BlockPos pos) {
+  private static boolean isPanel(net.minecraft.world.level.LevelReader level, BlockPos pos) {
     return level.getBlockState(pos).getBlock() instanceof BlockSolarGenerator;
   }
 
-  private static boolean innerCorner(BlockState state, net.minecraft.world.level.LevelAccessor level,
+  private static boolean innerCorner(BlockState state, net.minecraft.world.level.LevelReader level,
       BlockPos pos, net.minecraft.core.Direction a, net.minecraft.core.Direction b) {
     return state.getValue(PANEL_CONNECT_PROPS.get(a)) && state.getValue(PANEL_CONNECT_PROPS.get(b))
         && !isPanel(level, pos.relative(a).relative(b));
   }
 
-  private static BlockState updateInnerCorners(BlockState state, net.minecraft.world.level.LevelAccessor level,
+  private static BlockState updateInnerCorners(BlockState state, net.minecraft.world.level.LevelReader level,
       BlockPos pos) {
     var north = net.minecraft.core.Direction.NORTH;
     var south = net.minecraft.core.Direction.SOUTH;
@@ -142,10 +142,10 @@ public class BlockSolarGenerator extends BlockElectricMachine implements IHasMen
     return updateInnerCorners(state, context.getLevel(), context.getClickedPos());
   }
 
-  @SuppressWarnings("deprecation")
   @Override
-  public BlockState updateShape(BlockState state, net.minecraft.core.Direction direction, BlockState neighborState,
-      net.minecraft.world.level.LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+  public BlockState updateShape(BlockState state, net.minecraft.world.level.LevelReader level,
+      net.minecraft.world.level.ScheduledTickAccess ticks, BlockPos pos, net.minecraft.core.Direction direction,
+      BlockPos neighborPos, BlockState neighborState, net.minecraft.util.RandomSource random) {
     var cableProp = CABLE_ADAPTER_PROPS.get(direction);
     if (cableProp != null) {
       state = state.setValue(cableProp, cableConnectsFrom(neighborState, direction));
@@ -158,7 +158,7 @@ public class BlockSolarGenerator extends BlockElectricMachine implements IHasMen
     if (cableProp != null || panelProp != null) {
       return state;
     }
-    return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+    return super.updateShape(state, level, ticks, pos, direction, neighborPos, neighborState, random);
   }
 
   private static boolean cableConnectsFrom(BlockState neighborState, net.minecraft.core.Direction direction) {

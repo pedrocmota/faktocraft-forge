@@ -1,5 +1,9 @@
 package com.faktocraft.common.block.impl.forester;
 
+import com.faktocraft.common.util.PlayerMessages;
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.block.impl.quarry.BlockLandmark;
 import com.faktocraft.common.block.impl.quarry.IGantryHost;
@@ -16,12 +20,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class BlockForester extends FaktocraftEntityBlock
     implements IStateFacing, IStateActive, IHasMenu, IGantryHost {
@@ -58,7 +60,7 @@ public class BlockForester extends FaktocraftEntityBlock
     }
     Player player = context.getPlayer();
     if (player != null && !level.isClientSide()) {
-      player.displayClientMessage(Component.translatable(problem).withStyle(ChatFormatting.RED), true);
+      PlayerMessages.display(player, Component.translatable(problem).withStyle(ChatFormatting.RED), true);
     }
     return null;
   }
@@ -70,10 +72,10 @@ public class BlockForester extends FaktocraftEntityBlock
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-      TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip.faktocraft.forester").withStyle(ChatFormatting.GRAY));
-    tooltip.add(Component.translatable("tooltip.faktocraft.forester_area").withStyle(ChatFormatting.DARK_GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("tooltip.faktocraft.forester").withStyle(ChatFormatting.GRAY));
+    tooltip.accept(Component.translatable("tooltip.faktocraft.forester_area").withStyle(ChatFormatting.DARK_GRAY));
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 }

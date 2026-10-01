@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:plastic_block"
+        }
+      ],
+      "name": "plastic_block",
+      "rolls": 1
+    }
+  ]
+}

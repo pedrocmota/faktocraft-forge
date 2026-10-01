@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "a": "#c:gems/amethyst",
+    "c": "faktocraft:electronic_circuit",
+    "i": "#c:plates/iron",
+    "p": "faktocraft:carbon_plate"
+  },
+  "pattern": [
+    "aia",
+    "ici",
+    "pip"
+  ],
+  "result": {
+    "id": "faktocraft:memory_card"
+  }
+}

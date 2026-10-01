@@ -1,10 +1,11 @@
 package com.faktocraft.common.scan;
 
+import com.faktocraft.common.util.LegacySavedData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -15,13 +16,14 @@ public class ScanChannels extends SavedData {
   public static final int CODE_DIGITS = 6;
   public static final int MAX_CODE = 999_999;
 
-  private static final String DATA_NAME = "faktocraft_scan_channels";
+  private static final SavedDataType<ScanChannels> TYPE = LegacySavedData.type("scan_channels",
+      ScanChannels::new, ScanChannels::load, data -> data.save(new CompoundTag()));
 
   private final Map<Integer, ScanChannel> channels = new HashMap<>();
 
   public static ScanChannels get(ServerLevel level) {
     ServerLevel host = level.getServer().overworld();
-    return host.getDataStorage().computeIfAbsent(ScanChannels::load, ScanChannels::new, DATA_NAME);
+    return LegacySavedData.get(host, TYPE, ScanChannels::load);
   }
 
   public static boolean isValidCode(int code) {
@@ -42,18 +44,18 @@ public class ScanChannels extends SavedData {
 
   private static ScanChannels load(CompoundTag tag) {
     ScanChannels data = new ScanChannels();
-    ListTag list = tag.getList("channels", Tag.TAG_COMPOUND);
+    ListTag list = tag.getListOrEmpty("channels");
     for (int i = 0; i < list.size(); i++) {
-      CompoundTag entry = list.getCompound(i);
-      int code = entry.getInt("code");
+      CompoundTag entry = list.getCompoundOrEmpty(i);
+      int code = entry.getIntOr("code", 0);
       if (isValidCode(code)) {
-        data.channels.put(code, new ScanChannel(entry.getCompound("scans").copy(), data::setDirty));
+        data.channels.put(code, new ScanChannel(ScanChannel.sanitizeAll(entry.getCompoundOrEmpty("scans").copy()),
+            data::setDirty));
       }
     }
     return data;
   }
 
-  @Override
   public CompoundTag save(CompoundTag tag) {
     ListTag list = new ListTag();
     channels.forEach((code, channel) -> {

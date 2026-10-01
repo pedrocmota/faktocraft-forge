@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.quarry;
 
+import net.minecraft.world.phys.Vec3;
 import com.faktocraft.common.block.impl.pipe.PipeExtractor;
 import com.faktocraft.common.item.base.ElectricItem;
 import com.faktocraft.common.item.impl.CapacitorItem;
@@ -187,6 +188,6 @@ public class MenuQuarry extends AbstractContainerMenu {
   @Override
   public boolean stillValid(Player player) {
     return quarry != null && !quarry.isRemoved()
-        && player.distanceToSqr(quarry.getBlockPos().getCenter()) <= 64.0;
+        && player.distanceToSqr(Vec3.atCenterOf(quarry.getBlockPos())) <= 64.0;
   }
 }

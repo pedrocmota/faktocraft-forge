@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#faktocraft:has_oil_lake",
+  "features": "faktocraft:giant_oil_pocket_hot_placed",
+  "step": "lakes"
+}

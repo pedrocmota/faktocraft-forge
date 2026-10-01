@@ -1,5 +1,6 @@
 package com.faktocraft.common.registries.machines;
 
+import com.faktocraft.common.util.LegacyNbtBlockEntity;
 import com.faktocraft.common.block.BlockMachine;
 import com.faktocraft.common.block.impl.machines.compressor.BlockCompressor;
 import com.faktocraft.common.block.impl.machines.compressor.BlockEntityCompressor;
@@ -29,7 +30,6 @@ import com.faktocraft.common.registries.RegistrationHandler;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public final class M2Registry {
@@ -83,7 +83,7 @@ public final class M2Registry {
   public static final MenuType<MenuSawmill> SAWMILL_MENU = MenuTypeHelper.register("sawmill", MenuSawmill::new);
   public static final MenuType<MenuRecycler> RECYCLER_MENU = MenuTypeHelper.register("recycler", MenuRecycler::new);
 
-  private static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(String name,
+  private static <T extends LegacyNbtBlockEntity> BlockEntityType<T> registerBlockEntity(String name,
       BlockEntityType.BlockEntitySupplier<T> factory, Block... blocks) {
     return RegistrationHandler.blockEntity(name, factory, blocks);
   }

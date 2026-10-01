@@ -1,5 +1,6 @@
 package com.faktocraft.common.registries.machines;
 
+import com.faktocraft.common.util.LegacyNbtBlockEntity;
 import com.faktocraft.common.block.BlockMachine;
 import com.faktocraft.common.block.impl.battery_box.BlockBatteryBox;
 import com.faktocraft.common.block.impl.battery_box.BlockEntityBatteryBox;
@@ -36,7 +37,6 @@ import com.faktocraft.common.tier.TransformerTier;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class M1Registry {
@@ -168,7 +168,7 @@ public class M1Registry {
   public static final MenuType<MenuChargePad> CHARGE_PAD_MENU = MenuTypeHelper.register("charge_pad",
       MenuChargePad::new);
 
-  private static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(String name,
+  private static <T extends LegacyNbtBlockEntity> BlockEntityType<T> registerBlockEntity(String name,
       BlockEntityType.BlockEntitySupplier<T> factory, Block... blocks) {
     return RegistrationHandler.blockEntity(name, factory, blocks);
   }

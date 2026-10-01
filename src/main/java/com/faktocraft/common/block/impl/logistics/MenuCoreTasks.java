@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -37,6 +38,6 @@ public class MenuCoreTasks extends AbstractContainerMenu {
   @Override
   public boolean stillValid(Player player) {
     return core != null && !core.isRemoved()
-        && player.distanceToSqr(corePos.getCenter()) <= 64.0;
+        && player.distanceToSqr(Vec3.atCenterOf(corePos)) <= 64.0;
   }
 }

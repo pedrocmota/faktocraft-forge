@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:memory_card",
+    "faktocraft:electronic_circuit",
+    "#c:dusts/redstone"
+  ],
+  "result": {
+    "id": "faktocraft:monitor_card"
+  }
+}

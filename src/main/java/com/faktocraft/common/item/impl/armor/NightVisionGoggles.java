@@ -5,12 +5,12 @@ import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.enums.ModArmorMaterials;
 import com.faktocraft.common.interfaces.item.IArmorProperties;
 import com.faktocraft.common.item.base.ElectricArmorItem;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.equipment.ArmorType;
 
 public class NightVisionGoggles extends ElectricArmorItem implements IArmorProperties {
 
   public NightVisionGoggles(Properties properties) {
-    super(ModArmorMaterials.NIGHTVISION, ArmorItem.Type.HELMET, properties, 0, 100000,
+    super(ModArmorMaterials.NIGHTVISION, ArmorType.HELMET, properties, 0, 100000,
         EnergyType.RECEIVE, EnergyTier.MEDIUM);
   }
 

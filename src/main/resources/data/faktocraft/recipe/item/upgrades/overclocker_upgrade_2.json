@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "a": "faktocraft:copper_cable_insulated",
+    "c": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "items": "faktocraft:large_coolant_cell",
+      "components": {
+        "faktocraft:fluid": {
+          "fluid": "faktocraft:coolant",
+          "amount": 6000
+        }
+      }
+    },
+    "e": "faktocraft:electronic_circuit",
+    "p": "faktocraft:plastic"
+  },
+  "pattern": [
+    "ccc",
+    "aea",
+    "ppp"
+  ],
+  "result": {
+    "id": "faktocraft:overclocker_upgrade",
+    "count": 9
+  }
+}

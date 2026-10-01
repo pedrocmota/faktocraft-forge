@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": "faktocraft:tin_cable_insulated",
+    "g": "minecraft:glass",
+    "p": "#c:plates/tin",
+    "u": "faktocraft:tin_cable"
+  },
+  "pattern": [
+    "pcp",
+    "gug",
+    "ggg"
+  ],
+  "result": {
+    "id": "faktocraft:luminator",
+    "count": 8
+  }
+}

@@ -1,6 +1,6 @@
 {
- "parent": "minecraft:item/generated",
- "textures": {
-  "layer0": "faktocraft:item/remote_requester"
- }
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "faktocraft:item/remote_requester"
+  }
 }

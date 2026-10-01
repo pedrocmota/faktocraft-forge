@@ -2,7 +2,7 @@ package com.faktocraft.common.world.feature.tree;
 
 import com.faktocraft.common.util.BlockStateHelper;
 import com.google.common.collect.ImmutableList;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.HashSet;
 import java.util.List;
@@ -10,17 +10,17 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.LevelSimulatedReader;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
+import net.minecraft.world.level.levelgen.feature.TreeFeature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.StraightTrunkPlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
 
 public class RubberTrunkPlacer extends StraightTrunkPlacer {
 
-  public static final Codec<RubberTrunkPlacer> CODEC = RecordCodecBuilder
-      .create(i -> trunkPlacerParts(i).apply(i, RubberTrunkPlacer::new));
+  public static final MapCodec<RubberTrunkPlacer> CODEC = RecordCodecBuilder
+      .mapCodec(i -> trunkPlacerParts(i).apply(i, RubberTrunkPlacer::new));
 
   public RubberTrunkPlacer(int baseHeight, int heightRandA, int heightRandB) {
     super(baseHeight, heightRandA, heightRandB);
@@ -32,10 +32,10 @@ public class RubberTrunkPlacer extends StraightTrunkPlacer {
   }
 
   @Override
-  public List<FoliagePlacer.FoliageAttachment> placeTrunk(LevelSimulatedReader level,
+  public List<FoliagePlacer.FoliageAttachment> placeTrunk(WorldGenLevel level,
       BiConsumer<BlockPos, BlockState> blockSetter, RandomSource random, int height, BlockPos pos,
-      TreeConfiguration config) {
-    setDirtAt(level, blockSetter, random, pos.below(), config);
+      TreeFeature config) {
+    placeBelowTrunkBlock(level, blockSetter, random, pos.below(), config);
 
     int exposed = Math.max(1, height - 3);
     Set<Integer> resinSpots = new HashSet<>();

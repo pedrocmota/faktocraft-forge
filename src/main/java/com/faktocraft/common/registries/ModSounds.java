@@ -1,6 +1,6 @@
 package com.faktocraft.common.registries;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 
 public class ModSounds {
@@ -51,7 +51,7 @@ public class ModSounds {
   public static final SoundEvent REACTOR_ALARM = register("block.reactor_alarm");
 
   private static SoundEvent register(String name) {
-    ResourceLocation id = RegistrationHandler.id(name);
+    Identifier id = RegistrationHandler.id(name);
     return RegistrationHandler.sound(name, SoundEvent.createVariableRangeEvent(id));
   }
 

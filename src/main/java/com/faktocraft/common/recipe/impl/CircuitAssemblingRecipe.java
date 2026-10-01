@@ -5,14 +5,13 @@ import com.faktocraft.common.item.crafting.CountedIngredient;
 import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.recipe.RecipeJsonHelper;
 import com.faktocraft.common.registries.ModRecipeType;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -24,19 +23,48 @@ import java.util.List;
 import java.util.Map;
 
 public class CircuitAssemblingRecipe implements IRecipeMultiInput {
+  public static final MapCodec<CircuitAssemblingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+      CountedIngredient.CODEC.listOf(1, 3).fieldOf("ingredients").forGetter(recipe -> recipe.ingredients),
+      RecipeJsonHelper.RESULT.fieldOf("result").forGetter(recipe -> recipe.result),
+      Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(recipe -> recipe.experience),
+      Codec.INT.optionalFieldOf("duration", 200).forGetter(recipe -> recipe.duration),
+      Codec.INT.optionalFieldOf("power_cost", 10).forGetter(recipe -> recipe.powerCost))
+      .apply(i, CircuitAssemblingRecipe::new));
 
-  public static final RecipeSerializer<CircuitAssemblingRecipe> SERIALIZER = new Serializer();
+  public static final StreamCodec<RegistryFriendlyByteBuf, CircuitAssemblingRecipe> STREAM_CODEC = StreamCodec.of(
+      (buf, recipe) -> {
+        buf.writeVarInt(recipe.ingredients.size());
+        for (CountedIngredient ingredient : recipe.ingredients) {
+          ingredient.toNetwork(buf);
+        }
+        ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.result);
+        buf.writeFloat(recipe.experience);
+        buf.writeVarInt(recipe.duration);
+        buf.writeVarInt(recipe.powerCost);
+      }, buf -> {
+        int size = buf.readVarInt();
+        List<CountedIngredient> ingredients = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+          ingredients.add(CountedIngredient.fromNetwork(buf));
+        }
+        ItemStackTemplate result = ItemStackTemplate.STREAM_CODEC.decode(buf);
+        float experience = buf.readFloat();
+        int duration = buf.readVarInt();
+        int powerCost = buf.readVarInt();
+        return new CircuitAssemblingRecipe(ingredients, result, experience, duration, powerCost);
+      });
 
-  private final ResourceLocation id;
+  public static final RecipeSerializer<CircuitAssemblingRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC,
+      STREAM_CODEC);
+
   private final List<CountedIngredient> ingredients;
-  private final ItemStack result;
+  private final ItemStackTemplate result;
   private final float experience;
   private final int duration;
   private final int powerCost;
 
-  public CircuitAssemblingRecipe(ResourceLocation id, List<CountedIngredient> ingredients, ItemStack result,
-      float experience, int duration, int powerCost) {
-    this.id = id;
+  public CircuitAssemblingRecipe(List<CountedIngredient> ingredients, ItemStackTemplate result, float experience,
+      int duration, int powerCost) {
     this.ingredients = List.copyOf(ingredients);
     this.result = result;
     this.experience = experience;
@@ -110,13 +138,13 @@ public class CircuitAssemblingRecipe implements IRecipeMultiInput {
   }
 
   @Override
-  public ItemStack assemble(MachineRecipeInput input, RegistryAccess registryAccess) {
-    return result.copy();
+  public ItemStack assemble(MachineRecipeInput input) {
+    return result.create();
   }
 
   @Override
   public ItemStack getResultItem() {
-    return result.copy();
+    return result.create();
   }
 
   @Override
@@ -135,11 +163,6 @@ public class CircuitAssemblingRecipe implements IRecipeMultiInput {
   }
 
   @Override
-  public ResourceLocation getId() {
-    return id;
-  }
-
-  @Override
   public RecipeSerializer<CircuitAssemblingRecipe> getSerializer() {
     return SERIALIZER;
   }
@@ -147,51 +170,5 @@ public class CircuitAssemblingRecipe implements IRecipeMultiInput {
   @Override
   public RecipeType<CircuitAssemblingRecipe> getType() {
     return ModRecipeType.CIRCUIT_ASSEMBLING;
-  }
-
-  public static class Serializer implements RecipeSerializer<CircuitAssemblingRecipe> {
-
-    @Override
-    public CircuitAssemblingRecipe fromJson(ResourceLocation id, JsonObject json) {
-      JsonArray array = RecipeJsonHelper.array(json, "ingredients");
-      if (array.isEmpty() || array.size() > 3) {
-        throw new JsonSyntaxException("'ingredients' must have between 1 and 3 entries, got " + array.size());
-      }
-      List<CountedIngredient> ingredients = new ArrayList<>(array.size());
-      for (int i = 0; i < array.size(); i++) {
-        ingredients.add(CountedIngredient.fromJson(array.get(i)));
-      }
-      ItemStack result = RecipeJsonHelper.result(json.get("result"));
-      float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
-      int duration = GsonHelper.getAsInt(json, "duration", 200);
-      int powerCost = GsonHelper.getAsInt(json, "power_cost", 10);
-      return new CircuitAssemblingRecipe(id, ingredients, result, experience, duration, powerCost);
-    }
-
-    @Override
-    public CircuitAssemblingRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-      int size = buf.readVarInt();
-      List<CountedIngredient> ingredients = new ArrayList<>(size);
-      for (int i = 0; i < size; i++) {
-        ingredients.add(CountedIngredient.fromNetwork(buf));
-      }
-      ItemStack result = buf.readItem();
-      float experience = buf.readFloat();
-      int duration = buf.readVarInt();
-      int powerCost = buf.readVarInt();
-      return new CircuitAssemblingRecipe(id, ingredients, result, experience, duration, powerCost);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buf, CircuitAssemblingRecipe recipe) {
-      buf.writeVarInt(recipe.ingredients.size());
-      for (CountedIngredient ingredient : recipe.ingredients) {
-        ingredient.toNetwork(buf);
-      }
-      buf.writeItem(recipe.result);
-      buf.writeFloat(recipe.experience);
-      buf.writeVarInt(recipe.duration);
-      buf.writeVarInt(recipe.powerCost);
-    }
   }
 }

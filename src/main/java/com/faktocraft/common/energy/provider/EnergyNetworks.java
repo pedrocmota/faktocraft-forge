@@ -7,7 +7,6 @@ import com.faktocraft.common.util.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -398,7 +397,7 @@ public class EnergyNetworks {
       return;
     }
     BlockPos delta = neighborPos.subtract(pos);
-    Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
+    Direction direction = Direction.getApproximateNearest(delta.getX(), delta.getY(), delta.getZ());
     if (direction == null) {
       return;
     }
@@ -437,10 +436,10 @@ public class EnergyNetworks {
 
   public void deserializeNBT(CompoundTag tag) {
     networks.clear();
-    for (String key : tag.getAllKeys()) {
-      if (tag.contains(key, Tag.TAG_COMPOUND)) {
+    for (String key : tag.keySet()) {
+      if (tag.contains(key)) {
         EnergyNetwork network = new EnergyNetwork();
-        network.deserializeNBT(tag.getCompound(key));
+        network.deserializeNBT(tag.getCompoundOrEmpty(key));
         networks.add(network);
         pendingRepair.add(network);
       }

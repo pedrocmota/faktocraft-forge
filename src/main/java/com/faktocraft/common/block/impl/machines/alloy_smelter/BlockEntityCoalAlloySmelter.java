@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.machines.alloy_smelter;
 
+import com.faktocraft.common.util.FuelUtil;
 import com.faktocraft.common.entity.block.BlockEntityProgress;
 import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.enums.GuiSlotType;
@@ -10,9 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeHooks;
 import java.util.ArrayList;
 
 public class BlockEntityCoalAlloySmelter extends AbstractBlockEntityAlloySmelter {
@@ -71,12 +70,12 @@ public class BlockEntityCoalAlloySmelter extends AbstractBlockEntityAlloySmelter
 
   private boolean ignite() {
     ItemStack fuelStack = getItemStackHandler().getStackInSlot(FUEL_SLOT);
-    int burnTime = ForgeHooks.getBurnTime(fuelStack, RecipeType.SMELTING);
+    int burnTime = FuelUtil.burnTime(level, fuelStack, this);
     if (burnTime <= 0) {
       return false;
     }
     fuel.setBoth(burnTime);
-    ItemStack remainder = fuelStack.getCraftingRemainingItem();
+    ItemStack remainder = com.faktocraft.common.util.ItemStackUtil.craftingRemainder(fuelStack);
     StackHandlerHelper.shrinkInputStack(getItemStackHandler(), FUEL_SLOT, 1);
     if (!remainder.isEmpty()) {
       if (getItemStackHandler().getStackInSlot(FUEL_SLOT).isEmpty()) {
@@ -92,7 +91,7 @@ public class BlockEntityCoalAlloySmelter extends AbstractBlockEntityAlloySmelter
   @Override
   public boolean isItemValidForSlot(int slot, ItemStack stack) {
     if (slot == FUEL_SLOT) {
-      return ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0;
+      return FuelUtil.burnTime(level, stack, this) > 0;
     }
     return super.isItemValidForSlot(slot, stack);
   }
@@ -109,7 +108,7 @@ public class BlockEntityCoalAlloySmelter extends AbstractBlockEntityAlloySmelter
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("fuel")) {
-      fuel.load(tag.getCompound("fuel"));
+      fuel.load(tag.getCompoundOrEmpty("fuel"));
     }
   }
 }

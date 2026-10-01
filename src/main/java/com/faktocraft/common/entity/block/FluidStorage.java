@@ -1,10 +1,11 @@
 package com.faktocraft.common.entity.block;
 
+import com.faktocraft.common.util.FluidStackCompat;
 import com.faktocraft.common.interfaces.entity.IProgress;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 
@@ -68,7 +69,7 @@ public class FluidStorage implements IFluidHandler, IProgress {
     if (fillFluid.isEmpty() || amountMb <= 0 || !validator.test(fillFluid)) {
       return 0;
     }
-    if (!fluid.isEmpty() && !fluid.isFluidEqual(fillFluid)) {
+    if (!fluid.isEmpty() && !FluidStackCompat.isFluidEqual(fluid, fillFluid)) {
       return 0;
     }
 
@@ -76,7 +77,7 @@ public class FluidStorage implements IFluidHandler, IProgress {
     int filled = Math.min(space, amountMb);
     if (filled > 0 && !simulate) {
       if (fluid.isEmpty()) {
-        fluid = new FluidStack(fillFluid, filled);
+        fluid = fillFluid.copyWithAmount(filled);
       } else {
         fluid.grow(filled);
       }
@@ -99,7 +100,7 @@ public class FluidStorage implements IFluidHandler, IProgress {
 
   public void setFluid(FluidStack stack, int amountMb) {
     int clamped = Math.max(0, Math.min(amountMb, capacityMb));
-    this.fluid = (clamped > 0 && !stack.isEmpty()) ? new FluidStack(stack, clamped) : FluidStack.EMPTY;
+    this.fluid = (clamped > 0 && !stack.isEmpty()) ? stack.copyWithAmount(clamped) : FluidStack.EMPTY;
     onChanged();
   }
 
@@ -139,7 +140,7 @@ public class FluidStorage implements IFluidHandler, IProgress {
   @NotNull
   @Override
   public FluidStack drain(FluidStack resource, FluidAction action) {
-    if (resource.isEmpty() || fluid.isEmpty() || !fluid.isFluidEqual(resource)) {
+    if (resource.isEmpty() || fluid.isEmpty() || !FluidStackCompat.isFluidEqual(fluid, resource)) {
       return FluidStack.EMPTY;
     }
     return drain(resource.getAmount(), action);
@@ -151,7 +152,7 @@ public class FluidStorage implements IFluidHandler, IProgress {
     if (fluid.isEmpty()) {
       return FluidStack.EMPTY;
     }
-    FluidStack drainedFluid = new FluidStack(fluid, Math.min(fluid.getAmount(), maxDrain));
+    FluidStack drainedFluid = fluid.copyWithAmount(Math.min(fluid.getAmount(), maxDrain));
     int taken = takeFluid(maxDrain, action.simulate());
     if (taken <= 0) {
       return FluidStack.EMPTY;
@@ -171,23 +172,25 @@ public class FluidStorage implements IFluidHandler, IProgress {
   }
 
   public void save(CompoundTag tag) {
-    CompoundTag variantTag = new CompoundTag();
-    if (!fluid.isEmpty()) {
-      fluid.writeToNBT(variantTag);
-    }
-    tag.put("variant", variantTag);
+    tag.put("variant", com.faktocraft.common.util.NbtBridge.saveFluid(fluid));
     tag.putInt("amount", fluid.getAmount());
   }
 
   public void load(CompoundTag tag) {
     FluidStack loaded = tag.contains("variant")
-        ? FluidStack.loadFluidStackFromNBT(tag.getCompound("variant"))
+        ? com.faktocraft.common.util.NbtBridge.loadFluid(tag.getCompoundOrEmpty("variant"))
         : FluidStack.EMPTY;
-    int amountMb = tag.contains("amount") ? tag.getInt("amount") : 0;
+    int amountMb = tag.contains("amount") ? tag.getIntOr("amount", 0) : 0;
     if (loaded.isEmpty() || amountMb <= 0) {
       this.fluid = FluidStack.EMPTY;
     } else {
-      this.fluid = new FluidStack(loaded, amountMb);
+      this.fluid = loaded.copyWithAmount(amountMb);
     }
+  }
+
+  @Override
+  public void setFluidInTank(int tank, @NotNull FluidStack stack) {
+    this.fluid = stack.isEmpty() ? FluidStack.EMPTY : stack.copy();
+    changeListener.run();
   }
 }

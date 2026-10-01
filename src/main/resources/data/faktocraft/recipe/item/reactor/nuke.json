@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "l": "#c:plates/lead",
+    "p": "faktocraft:plutonium",
+    "c": "faktocraft:advanced_circuit"
+  },
+  "pattern": [
+    "lll",
+    "ppp",
+    "lcl"
+  ],
+  "result": {
+    "id": "faktocraft:nuke"
+  }
+}

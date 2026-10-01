@@ -18,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,8 @@ public class RecipePipeTransferHandler implements IUniversalRecipeTransferHandle
   @Override
   public IRecipeTransferError transferRecipe(MenuRecipePipe menu, Object recipe, IRecipeSlotsView recipeSlots,
       Player player, boolean maxTransfer, boolean doTransfer) {
-    if (recipe instanceof CraftingRecipe) {
+    if (recipe instanceof CraftingRecipe
+        || (recipe instanceof RecipeHolder<?> holder && holder.value() instanceof CraftingRecipe)) {
       return helper.createUserErrorWithTooltip(
           Component.translatable("logistics." + Faktocraft.MODID + ".craft.transfer_crafting"));
     }

@@ -1,11 +1,49 @@
 package com.faktocraft.common.item.base;
 
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.item.equipment.Equippable;
 
-public class BaseArmor extends ArmorItem {
+public class BaseArmor extends Item {
+  @FunctionalInterface
+  protected interface ArmorComponents {
+    Properties apply(Properties properties, ArmorMaterial material, ArmorType armorType);
+  }
 
-  public BaseArmor(ArmorMaterial material, ArmorItem.Type armorType, Properties properties) {
-    super(material, armorType, properties);
+  private final ArmorMaterial material;
+  private final ArmorType armorType;
+
+  public BaseArmor(ArmorMaterial material, ArmorType armorType, Properties properties) {
+    this(material, armorType, properties, Properties::humanoidArmor);
+  }
+
+  protected BaseArmor(ArmorMaterial material, ArmorType armorType, Properties properties, ArmorComponents components) {
+    super(components.apply(properties, material, armorType));
+    this.material = material;
+    this.armorType = armorType;
+  }
+
+  protected static Properties equippable(Properties properties, ArmorMaterial material, ArmorType armorType) {
+    return properties.enchantable(material.enchantmentValue())
+        .component(DataComponents.EQUIPPABLE, Equippable.builder(armorType.getSlot())
+            .setEquipSound(material.equipSound())
+            .setAsset(material.assetId())
+            .build())
+        .repairable(material.repairIngredient());
+  }
+
+  public ArmorMaterial getMaterial() {
+    return material;
+  }
+
+  public ArmorType getType() {
+    return armorType;
+  }
+
+  public EquipmentSlot getEquipmentSlot() {
+    return armorType.getSlot();
   }
 }

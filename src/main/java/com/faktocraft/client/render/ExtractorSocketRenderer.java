@@ -3,16 +3,27 @@ package com.faktocraft.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
+import org.jetbrains.annotations.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class ExtractorSocketRenderer {
-
-  public static final ResourceLocation SOCKET_MODEL = new ResourceLocation(com.faktocraft.Faktocraft.MODID,
+  public static final Identifier SOCKET_MODEL = Identifier.fromNamespaceAndPath(com.faktocraft.Faktocraft.MODID,
       "block/pipe/extractor_cable_socket");
+  public static final StandaloneModelKey<BlockStateModelPart> SOCKET_KEY = new StandaloneModelKey<>(
+      () -> SOCKET_MODEL.toString());
+
+  public static final class Data {
+    final List<Direction> sides = new ArrayList<>(6);
+    @Nullable
+    BlockStateModelPart socket;
+  }
 
   private ExtractorSocketRenderer() {
   }
@@ -23,36 +34,44 @@ public final class ExtractorSocketRenderer {
         .getBlock() instanceof com.faktocraft.common.block.impl.cable.BlockCable;
   }
 
-  public static void render(BlockEntity pipe, PoseStack poseStack, MultiBufferSource buffer,
-      int packedOverlay) {
+  public static void extract(BlockEntity pipe, Data data) {
+    data.sides.clear();
+    data.socket = null;
     var level = pipe.getLevel();
     if (level == null) {
       return;
     }
     var pos = pipe.getBlockPos();
-    var state = pipe.getBlockState();
-    var model = Minecraft.getInstance().getModelManager().getModel(SOCKET_MODEL);
     for (Direction direction : Direction.values()) {
-      if (!cableAt(level, pos, direction)) {
-        continue;
+      if (cableAt(level, pos, direction)) {
+        data.sides.add(direction);
       }
+    }
+    if (!data.sides.isEmpty()) {
+      data.socket = Minecraft.getInstance().getModelManager().getStandaloneModel(SOCKET_KEY);
+    }
+  }
+
+  public static void submit(@Nullable Data data, PoseStack poseStack, SubmitNodeCollector collector,
+      int packedLight, int packedOverlay) {
+    if (data == null || data.socket == null) {
+      return;
+    }
+    for (Direction direction : data.sides) {
       poseStack.pushPose();
       poseStack.translate(0.5, 0.5, 0.5);
 
       switch (direction) {
-        case EAST -> poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
-        case SOUTH -> poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-        case WEST -> poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
-        case UP -> poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-        case DOWN -> poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+        case EAST -> poseStack.rotateDegrees(Axis.YP, -90.0F);
+        case SOUTH -> poseStack.rotateDegrees(Axis.YP, 180.0F);
+        case WEST -> poseStack.rotateDegrees(Axis.YP, 90.0F);
+        case UP -> poseStack.rotateDegrees(Axis.XP, 90.0F);
+        case DOWN -> poseStack.rotateDegrees(Axis.XP, -90.0F);
         default -> {
         }
       }
       poseStack.translate(-0.5, -0.5, -0.5);
-      Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(
-          level, model, state, pos, poseStack, buffer.getBuffer(RenderType.cutout()),
-          false, level.random, state.getSeed(pos), packedOverlay,
-          net.minecraftforge.client.model.data.ModelData.EMPTY, RenderType.cutout());
+      RenderStates.submitPart(collector, poseStack, data.socket, packedLight, packedOverlay);
       poseStack.popPose();
     }
   }

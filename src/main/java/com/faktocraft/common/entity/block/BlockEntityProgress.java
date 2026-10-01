@@ -82,7 +82,7 @@ public class BlockEntityProgress implements IProgress {
   }
 
   public void load(CompoundTag tag) {
-    this.progress = tag.contains("progress") ? tag.getFloat("progress") : -1;
-    this.progressMax = tag.contains("progressMax") ? tag.getFloat("progressMax") : -1;
+    this.progress = tag.contains("progress") ? tag.getFloatOr("progress", 0.0F) : -1;
+    this.progressMax = tag.contains("progressMax") ? tag.getFloatOr("progressMax", 0.0F) : -1;
   }
 }

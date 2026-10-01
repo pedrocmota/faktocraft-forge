@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:blasting",
+  "cookingtime": 100,
+  "experience": 0.7,
+  "ingredient": "faktocraft:deepslate_silver_ore",
+  "result": "faktocraft:silver_ingot"
+}

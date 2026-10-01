@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "faktocraft:item/hazmat_helmet",
+    "tints": [
+      {
+        "type": "minecraft:dye",
+        "default": 15254586
+      }
+    ]
+  }
+}

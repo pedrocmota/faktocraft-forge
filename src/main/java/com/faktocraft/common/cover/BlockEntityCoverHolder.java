@@ -1,5 +1,6 @@
 package com.faktocraft.common.cover;
 
+import com.faktocraft.common.util.LegacyNbtBlockEntity;
 import com.faktocraft.common.registries.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -7,12 +8,11 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEntityCoverHolder extends BlockEntity implements ICoverHost {
+public class BlockEntityCoverHolder extends LegacyNbtBlockEntity implements ICoverHost {
 
   @Nullable
   private BlockState cover;
@@ -67,8 +67,8 @@ public class BlockEntityCoverHolder extends BlockEntity implements ICoverHost {
   }
 
   @Override
-  public void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket packet) {
-    super.onDataPacket(connection, packet);
+  public void onDataPacket(Connection connection, net.minecraft.world.level.storage.ValueInput input) {
+    super.onDataPacket(connection, input);
     CoverSupport.refreshClientModel(this);
   }
 

@@ -11,6 +11,7 @@ import com.faktocraft.common.network.packet.PacketExperience;
 import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.recipe.impl.AlloySmeltingRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
+import com.faktocraft.common.util.RecipeUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -61,11 +62,10 @@ public abstract class AbstractBlockEntityAlloySmelter extends FaktocraftBlockEnt
   }
 
   protected Optional<AlloySmeltingRecipe> getRecipe(ItemStack... input) {
-    if (!(level instanceof ServerLevel serverLevel)) {
+    if (!(level instanceof ServerLevel)) {
       return Optional.empty();
     }
-    return serverLevel.getRecipeManager().getRecipeFor(ModRecipeType.ALLOY_SMELTING, MachineRecipeInput.of(input),
-        level);
+    return RecipeUtil.findRecipe(level, ModRecipeType.ALLOY_SMELTING, MachineRecipeInput.of(input));
   }
 
   private boolean isValidInput(final ItemStack... stack) {
@@ -84,7 +84,7 @@ public abstract class AbstractBlockEntityAlloySmelter extends FaktocraftBlockEnt
   }
 
   private static boolean stackChanged(ItemStack cached, ItemStack current) {
-    return !ItemStack.isSameItemSameTags(cached, current) || cached.getCount() != current.getCount();
+    return !ItemStack.isSameItemSameComponents(cached, current) || cached.getCount() != current.getCount();
   }
 
   protected boolean refreshWork() {
@@ -106,8 +106,7 @@ public abstract class AbstractBlockEntityAlloySmelter extends FaktocraftBlockEnt
         progress.setBoth(-1);
       }
       if (recipe != null && level != null) {
-        resultStack = recipe.assemble(MachineRecipeInput.of(inputStack0, inputStack1, inputStack2),
-            level.registryAccess());
+        resultStack = recipe.assemble(MachineRecipeInput.of(inputStack0, inputStack1, inputStack2));
         energyCostPerTick = recipe.getPowerCost();
         duration = recipe.getDuration();
       }
@@ -196,9 +195,9 @@ public abstract class AbstractBlockEntityAlloySmelter extends FaktocraftBlockEnt
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    this.activeState = tag.getBoolean("active");
+    this.activeState = tag.getBooleanOr("active", false);
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
   }
 

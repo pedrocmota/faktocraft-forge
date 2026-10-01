@@ -16,7 +16,7 @@ public class BlockIronScaffolding extends ScaffoldingBlock {
         .mapColor(MapColor.METAL)
         .strength(3F, 5F)
         .sound(SoundType.METAL)
-        .noCollission()
+        .noCollision()
         .dynamicShape()
         .isValidSpawn((state, level, pos, type) -> false)
         .isRedstoneConductor((state, level, pos) -> false);

@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:function",
+  "function": "faktocraft:nuclearreactorgametest.reactorcasingbreakdropscasingandcontents",
+  "environment": "minecraft:default",
+  "structure": "faktocraft:gametest_platform",
+  "max_ticks": 60,
+  "sky_access": true
+}

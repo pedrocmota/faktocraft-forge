@@ -93,8 +93,7 @@ public class WrenchHelper {
       if (level.isClientSide()) {
         final boolean current = holder.isValveRedstoneOnly();
         final net.minecraft.core.BlockPos target = pos.immutable();
-        net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(net.minecraftforge.api.distmarker.Dist.CLIENT,
-            () -> () -> com.faktocraft.client.RedstoneControlScreen.open(target, current));
+        com.faktocraft.common.util.ClientProxy.get().openRedstoneControlScreen(target, current);
       }
       return true;
     }
@@ -145,7 +144,7 @@ public class WrenchHelper {
           level.playSound(null, pos, ModSounds.ELECTRIC_WRENCH, SoundSource.BLOCKS, 1F, pitch);
         } else {
           level.playSound(null, pos, ModSounds.WRENCH, SoundSource.BLOCKS, 1F, pitch);
-          held.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+          held.hurtAndBreak(1, player, hand);
         }
         return true;
       }

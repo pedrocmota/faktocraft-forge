@@ -92,7 +92,7 @@
         "1. **Find a deposit.** Surface lakes in deserts, savannas and badlands are the free ones; the big money is underground. Scan with the [Geological Prospector](#/prospector) or a [Geological Scanner](#/geological-scanner); see [Oil pockets](#/oil-pockets).",
         "2. **Pump it.** Put a **Fluid Pump** over the deposit with a bit of Low-tier power. It reaches 384 blocks straight down and drains the whole connected body of oil. Details in [Tank and pump](#/tank-and-pump).",
         "3. **Store it.** Buffer the oil in stacked **Tanks** next to the pump, or pipe it home with fluid pipes ([Fluids](#/fluids)).",
-        "4. **Make acid.** A **Fluid Enricher** turns 1 Sulfur Dust + 250 mB of water into 250 mB of Sulfuric Acid: enough for 12 distillery operations.",
+        "4. **Make acid.** Crush vanilla **Sulfur** (from the sulfur caves) in a Crusher to get **Sulfur Dust**, then a **Fluid Enricher** turns 1 Sulfur Dust + 250 mB of water into 250 mB of Sulfuric Acid: enough for 12 distillery operations.",
         "5. **Refine.** The **Fuel Distillery** takes 100 mB of oil, 20 mB of acid and 40 mB of water and gives 80 mB of Fuel in 5 seconds, plus the occasional Sulfur Dust. See [Oil refining](#/distillery).",
         "6. **Burn or craft.** Fuel goes to the **Combustion Generator** (40 IE/t), to the **Fueling Station** for [jetpacks](#/jetpack), or to the **Combustion Alloy Smelter**. Oil that skips the distillery goes to the **Polymerizer** for plastic and rubber. See [Generators](#/generators)."
       ],
@@ -100,7 +100,7 @@
         "1. **Ache um depósito.** Lagos de superfície em desertos, savanas e badlands são os de graça; o dinheiro grande está no subsolo. Sonde com o [Prospector geológico](#/prospector) ou um [Scanner geológico](#/geological-scanner); veja [Bolsões de petróleo](#/oil-pockets).",
         "2. **Bombeie.** Coloque uma **Bomba de fluidos** sobre o depósito com um pouco de energia de tensão Baixa. Ela alcança 384 blocos para baixo e drena todo o corpo de petróleo conectado. Detalhes em [Tanque e bomba](#/tank-and-pump).",
         "3. **Guarde.** Acumule o petróleo em **Tanques** empilhados ao lado da bomba, ou leve para casa por tubos de fluido ([Fluidos](#/fluids)).",
-        "4. **Faça ácido.** Uma **Enriquecedora de fluídos** transforma 1 Pó de enxofre + 250 mB de água em 250 mB de Ácido sulfúrico: o bastante para 12 operações da destiladora.",
+        "4. **Faça ácido.** Triture **Enxofre** vanilla (das cavernas de enxofre) numa Trituradora para obter **Pó de enxofre**; depois uma **Enriquecedora de fluídos** transforma 1 Pó de enxofre + 250 mB de água em 250 mB de Ácido sulfúrico: o bastante para 12 operações da destiladora.",
         "5. **Refine.** A **Destiladora de combustível** pega 100 mB de petróleo, 20 mB de ácido e 40 mB de água e devolve 80 mB de Combustível em 5 segundos, mais um Pó de enxofre de vez em quando. Veja [Refino de petróleo](#/distillery).",
         "6. **Queime ou fabrique.** O combustível vai para o **Gerador à combustão** (40 IE/t), para a **Estação de abastecimento** encher [jetpacks](#/jetpack), ou para o **Forno de fundição a combustão**. O petróleo que pula a destiladora vai para o **Polimerizador** virar plástico e borracha. Veja [Geradores](#/generators)."
       ]

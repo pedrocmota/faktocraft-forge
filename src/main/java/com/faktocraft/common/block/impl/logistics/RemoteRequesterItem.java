@@ -1,17 +1,20 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.util.NbtBridge;
+import com.faktocraft.common.util.PlayerMessages;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.Faktocraft;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -19,9 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class RemoteRequesterItem extends Item {
 
@@ -31,18 +32,18 @@ public class RemoteRequesterItem extends Item {
 
   @Nullable
   private static BlockPos boundPos(ItemStack stack) {
-    CompoundTag tag = stack.getTag();
-    return tag != null && tag.contains("tablePos") ? BlockPos.of(tag.getLong("tablePos")) : null;
+    CompoundTag tag = NbtBridge.customData(stack);
+    return tag != null && tag.contains("tablePos") ? BlockPos.of(tag.getLongOr("tablePos", 0L)) : null;
   }
 
   @Nullable
   private static ResourceKey<Level> boundDim(ItemStack stack) {
-    CompoundTag tag = stack.getTag();
+    CompoundTag tag = NbtBridge.customData(stack);
     if (tag == null || !tag.contains("tableDim")) {
       return null;
     }
     return ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION,
-        new ResourceLocation(tag.getString("tableDim")));
+        Identifier.parse(tag.getStringOr("tableDim", "")));
   }
 
   @Override
@@ -53,55 +54,58 @@ public class RemoteRequesterItem extends Item {
     }
     if (!level.isClientSide()) {
       ItemStack stack = context.getItemInHand();
-      stack.getOrCreateTag().putLong("tablePos", context.getClickedPos().asLong());
-      stack.getOrCreateTag().putString("tableDim", level.dimension().location().toString());
+      NbtBridge.updateCustomData(stack, tag -> {
+        tag.putLong("tablePos", context.getClickedPos().asLong());
+        tag.putString("tableDim", level.dimension().identifier().toString());
+      });
       if (context.getPlayer() != null) {
-        context.getPlayer().displayClientMessage(
+        PlayerMessages.display(context.getPlayer(),
             Component.translatable("logistics." + Faktocraft.MODID + ".remote.bound"), true);
       }
     }
-    return InteractionResult.sidedSuccess(level.isClientSide());
+    return InteractionResult.SUCCESS;
   }
 
   @Override
-  public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+  public InteractionResult use(Level level, Player player, InteractionHand hand) {
     ItemStack stack = player.getItemInHand(hand);
     if (level.isClientSide() || !(player instanceof ServerPlayer serverPlayer)) {
-      return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+      return InteractionResult.SUCCESS;
     }
     BlockPos pos = boundPos(stack);
     ResourceKey<Level> dim = boundDim(stack);
     if (pos == null || dim == null) {
-      serverPlayer.displayClientMessage(
+      PlayerMessages.display(serverPlayer,
           Component.translatable("logistics." + Faktocraft.MODID + ".remote.unbound"), true);
-      return InteractionResultHolder.fail(stack);
+      return InteractionResult.FAIL;
     }
-    ServerLevel targetLevel = serverPlayer.server.getLevel(dim);
+    ServerLevel targetLevel = serverPlayer.level().getServer().getLevel(dim);
     if (targetLevel == null || !targetLevel.isLoaded(pos)
         || !(targetLevel.getBlockEntity(pos) instanceof BlockEntityRequestTable)) {
-      serverPlayer.displayClientMessage(
+      PlayerMessages.display(serverPlayer,
           Component.translatable("logistics." + Faktocraft.MODID + ".remote.unreachable"), true);
-      return InteractionResultHolder.fail(stack);
+      return InteractionResult.FAIL;
     }
-    NetworkHooks.openScreen(serverPlayer,
-        new SimpleMenuProvider(
-            (windowId, inventory, p) -> new MenuRequestTable(windowId, targetLevel, pos, inventory, p, true),
-            Component.translatable("block." + Faktocraft.MODID + ".request_table")),
+    serverPlayer.openMenu(new SimpleMenuProvider(
+        (windowId, inventory, p) -> new MenuRequestTable(windowId, targetLevel, pos, inventory, p, true),
+        Component.translatable("block." + Faktocraft.MODID + ".request_table")),
         buf -> {
           buf.writeBlockPos(pos);
           buf.writeBoolean(true);
         });
-    return InteractionResultHolder.consume(stack);
+    return InteractionResult.CONSUME;
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    super.appendHoverText(stack, level, tooltip, flag);
-    tooltip.add(Component.translatable("logistics." + Faktocraft.MODID + ".remote.desc")
+  @SuppressWarnings("deprecation")
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    super.appendHoverText(stack, level, display, tooltip, flag);
+    tooltip.accept(Component.translatable("logistics." + Faktocraft.MODID + ".remote.desc")
         .withStyle(ChatFormatting.GRAY));
     BlockPos pos = boundPos(stack);
     if (pos != null) {
-      tooltip.add(Component.translatable("logistics." + Faktocraft.MODID + ".remote.bound_to",
+      tooltip.accept(Component.translatable("logistics." + Faktocraft.MODID + ".remote.bound_to",
           pos.getX() + ", " + pos.getY() + ", " + pos.getZ()).withStyle(ChatFormatting.DARK_GRAY));
     }
   }

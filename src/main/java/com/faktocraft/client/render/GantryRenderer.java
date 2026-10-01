@@ -1,31 +1,34 @@
 package com.faktocraft.client.render;
 
+import com.faktocraft.common.util.SpriteUtil;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.quarry.BlockEntityGantry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import java.util.function.IntUnaryOperator;
 
-public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityRenderer<T> {
-
-  private static final ResourceLocation GANTRY_SPRITE = new ResourceLocation(Faktocraft.MODID,
+public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityRenderer<T, GantryRenderer.State> {
+  private static final Identifier GANTRY_SPRITE = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "block/misc/quarry_gantry");
-  private static final ResourceLocation CARRIAGE_SPRITE = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier CARRIAGE_SPRITE = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "block/misc/quarry_carriage");
-  private static final ResourceLocation WHEEL_SPRITE = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier WHEEL_SPRITE = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "block/misc/quarry_wheel");
   private static final float CATCH_UP_BOOST = 0.5F;
   private static final float RESYNC_DISTANCE = 1.0F;
@@ -52,9 +55,44 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
   private static final float TREAD_V0 = 7.0F;
   private static final float TREAD_V1 = 8.0F;
 
+  public static class State extends BlockEntityRenderState {
+    boolean valid;
+    @Nullable
+    TextureAtlasSprite gantry;
+    @Nullable
+    TextureAtlasSprite carriage;
+    @Nullable
+    TextureAtlasSprite wheel;
+    float headY;
+    float gantryY;
+    float innerX0;
+    float innerX1;
+    float innerZ0;
+    float innerZ1;
+    float clampedX;
+    float clampedZ;
+    float travelX;
+    float travelZ;
+    int light;
+    int gantryLight;
+    int lightWest;
+    int lightEast;
+    int lightNorth;
+    int lightSouth;
+    int[] columnLight = new int[0];
+    int columnBase;
+  }
+
   @Override
-  public void render(T quarry, float partialTick, PoseStack poseStack, MultiBufferSource buffer,
-      int packedLight, int packedOverlay) {
+  public State createRenderState() {
+    return new State();
+  }
+
+  @Override
+  public void extractRenderState(T quarry, State state, float partialTick, Vec3 cameraPos,
+      ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    BlockEntityRenderer.super.extractRenderState(quarry, state, partialTick, cameraPos, breakProgress);
+    state.valid = false;
     Level level = quarry.getLevel();
     if (level == null || !quarry.hasArea() || quarry.stage() < BlockEntityGantry.STAGE_WORK) {
       return;
@@ -80,20 +118,20 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
     }
     quarry.clientHeadLastTime = now;
 
-    var atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
-    TextureAtlasSprite gantry = atlas.apply(GANTRY_SPRITE);
-    TextureAtlasSprite carriage = atlas.apply(CARRIAGE_SPRITE);
-    TextureAtlasSprite wheel = atlas.apply(WHEEL_SPRITE);
+    TextureAtlasSprite gantry = FluidSprites.block(GANTRY_SPRITE);
+    TextureAtlasSprite carriage = FluidSprites.block(CARRIAGE_SPRITE);
+    TextureAtlasSprite wheel = FluidSprites.block(WHEEL_SPRITE);
     if (gantry == null || carriage == null || wheel == null) {
       return;
     }
-    VertexConsumer vc = buffer.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS));
-    PoseStack.Pose pose = poseStack.last();
+    state.gantry = gantry;
+    state.carriage = carriage;
+    state.wheel = wheel;
 
     BlockPos origin = quarry.getBlockPos();
-    float headX = quarry.clientHeadX - origin.getX();
-    float headY = quarry.clientHeadY - origin.getY();
-    float headZ = quarry.clientHeadZ - origin.getZ();
+    float headX = (float) (quarry.clientHeadX - origin.getX());
+    float headY = (float) (quarry.clientHeadY - origin.getY());
+    float headZ = (float) (quarry.clientHeadZ - origin.getZ());
     float gantryY = quarry.clientRailY;
     float innerX0 = quarry.areaMinX() + 1 - origin.getX();
     float innerX1 = quarry.areaMaxX() - origin.getX();
@@ -101,20 +139,82 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
     float innerZ1 = quarry.areaMaxZ() - origin.getZ();
 
     BlockPos headPos = BlockPos.containing(quarry.clientHeadX, quarry.clientHeadY + 0.5, quarry.clientHeadZ);
-    int light = LevelRenderer.getLightColor(level,
-        headPos.getY() >= level.getMaxBuildHeight() ? headPos.below() : headPos);
-    int gantryLight = LevelRenderer.getLightColor(level,
+    state.light = LightCoordsUtil.getLightCoords(level,
+        headPos.getY() >= level.getMaxY() + 1 ? headPos.below() : headPos);
+    state.gantryLight = LightCoordsUtil.getLightCoords(level,
         new BlockPos(headPos.getX(), origin.getY() + Mth.floor(gantryY), headPos.getZ()));
 
     float clampedX = Mth.clamp(headX, innerX0 + BEAM_HALF, innerX1 - BEAM_HALF);
     float clampedZ = Mth.clamp(headZ, innerZ0 + BEAM_HALF, innerZ1 - BEAM_HALF);
-
-    float railY0 = gantryY + 5.5F / 16.0F;
-    float railY1 = gantryY + 10.5F / 16.0F;
     float westEnd = innerX0 - 0.5F;
     float eastEnd = innerX1 + 0.5F;
     float northEnd = innerZ0 - 0.5F;
     float southEnd = innerZ1 + 0.5F;
+    float ringY = gantryY + 0.5F;
+
+    state.headY = headY;
+    state.gantryY = gantryY;
+    state.innerX0 = innerX0;
+    state.innerX1 = innerX1;
+    state.innerZ0 = innerZ0;
+    state.innerZ1 = innerZ1;
+    state.clampedX = clampedX;
+    state.clampedZ = clampedZ;
+    state.travelZ = origin.getZ() + clampedZ;
+    state.travelX = origin.getX() + clampedX;
+    state.lightWest = lightAt(level, origin, westEnd, ringY, clampedZ);
+    state.lightEast = lightAt(level, origin, eastEnd, ringY, clampedZ);
+    state.lightNorth = lightAt(level, origin, clampedX, ringY, northEnd);
+    state.lightSouth = lightAt(level, origin, clampedX, ringY, southEnd);
+
+    float railY0 = gantryY + 5.5F / 16.0F;
+    float railY1 = gantryY + 10.5F / 16.0F;
+    int columnMin = Mth.floor(Math.min(headY - 0.15F, railY0)) - 1;
+    int columnMax = Mth.floor(Math.max(headY - 0.15F, railY1)) + 1;
+    int stringX = Mth.floor(origin.getX() + clampedX);
+    int stringZ = Mth.floor(origin.getZ() + clampedZ);
+    int count = columnMax - columnMin + 1;
+    if (state.columnLight.length < count) {
+      state.columnLight = new int[count];
+    }
+    state.columnBase = columnMin;
+    for (int i = 0; i < count; i++) {
+      state.columnLight[i] = LightCoordsUtil.getLightCoords(level,
+          new BlockPos(stringX, Mth.clamp(origin.getY() + columnMin + i, level.getMinY(),
+              level.getMaxY() + 1 - 1), stringZ));
+    }
+    state.valid = true;
+  }
+
+  @Override
+  public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    if (!state.valid) {
+      return;
+    }
+    collector.submitCustomGeometry(poseStack, RenderTypes.entityCutout(SpriteUtil.blockAtlas()),
+        (pose, vc) -> draw(state, pose, vc));
+  }
+
+  private static void draw(State state, PoseStack.Pose pose, VertexConsumer vc) {
+    TextureAtlasSprite gantry = state.gantry;
+    TextureAtlasSprite carriage = state.carriage;
+    TextureAtlasSprite wheel = state.wheel;
+    if (gantry == null || carriage == null || wheel == null) {
+      return;
+    }
+    float headY = state.headY;
+    float gantryY = state.gantryY;
+    float clampedX = state.clampedX;
+    float clampedZ = state.clampedZ;
+    int light = state.light;
+    int gantryLight = state.gantryLight;
+
+    float railY0 = gantryY + 5.5F / 16.0F;
+    float railY1 = gantryY + 10.5F / 16.0F;
+    float westEnd = state.innerX0 - 0.5F;
+    float eastEnd = state.innerX1 + 0.5F;
+    float northEnd = state.innerZ0 - 0.5F;
+    float southEnd = state.innerZ1 + 0.5F;
     float ringY = gantryY + 0.5F;
 
     beam(pose, vc, gantry, WHITE, gantryLight, AXIS_X,
@@ -126,31 +226,23 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
         clampedX - 0.3125F, gantryY + 3 / 16.0F, clampedZ - 0.3125F,
         clampedX + 0.3125F, gantryY + 13 / 16.0F, clampedZ + 0.3125F);
 
-    float travelZ = origin.getZ() + clampedZ;
-    float travelX = origin.getX() + clampedX;
-    bogie(pose, vc, carriage, wheel, lightAt(level, origin, westEnd, ringY, clampedZ),
-        Direction.Axis.Z, westEnd, ringY, clampedZ, travelZ);
-    bogie(pose, vc, carriage, wheel, lightAt(level, origin, eastEnd, ringY, clampedZ),
-        Direction.Axis.Z, eastEnd, ringY, clampedZ, travelZ);
-    bogie(pose, vc, carriage, wheel, lightAt(level, origin, clampedX, ringY, northEnd),
-        Direction.Axis.X, clampedX, ringY, northEnd, travelX);
-    bogie(pose, vc, carriage, wheel, lightAt(level, origin, clampedX, ringY, southEnd),
-        Direction.Axis.X, clampedX, ringY, southEnd, travelX);
+    bogie(pose, vc, carriage, wheel, state.lightWest, Direction.Axis.Z, westEnd, ringY, clampedZ, state.travelZ);
+    bogie(pose, vc, carriage, wheel, state.lightEast, Direction.Axis.Z, eastEnd, ringY, clampedZ, state.travelZ);
+    bogie(pose, vc, carriage, wheel, state.lightNorth, Direction.Axis.X, clampedX, ringY, northEnd, state.travelX);
+    bogie(pose, vc, carriage, wheel, state.lightSouth, Direction.Axis.X, clampedX, ringY, southEnd, state.travelX);
 
-    int stringX = Mth.floor(origin.getX() + clampedX);
-    int stringZ = Mth.floor(origin.getZ() + clampedZ);
-    IntUnaryOperator columnLight = yRel -> LevelRenderer.getLightColor(level,
-        new BlockPos(stringX, Mth.clamp(origin.getY() + yRel, level.getMinBuildHeight(),
-            level.getMaxBuildHeight() - 1), stringZ));
+    int[] columnLight = state.columnLight;
+    int columnBase = state.columnBase;
+    IntUnaryOperator column = yRel -> columnLight[Mth.clamp(yRel - columnBase, 0, columnLight.length - 1)];
     if (headY < railY0) {
-      beam(pose, vc, gantry, WHITE, columnLight, AXIS_Y,
+      beam(pose, vc, gantry, WHITE, column, AXIS_Y,
           headY - 0.15F, railY0, clampedX - BEAM_HALF, clampedX + BEAM_HALF,
           clampedZ - BEAM_HALF, clampedZ + BEAM_HALF, STRIP_CABLE, STRIP_CABLE);
       movingBox(pose, vc, carriage, HEAD_TINT, light,
           clampedX - 0.22F, headY - 0.3F, clampedZ - 0.22F,
           clampedX + 0.22F, headY, clampedZ + 0.22F);
     } else if (headY > railY1 + 0.5F) {
-      beam(pose, vc, gantry, WHITE, columnLight, AXIS_Y,
+      beam(pose, vc, gantry, WHITE, column, AXIS_Y,
           railY1, headY - 0.15F, clampedX - BEAM_HALF, clampedX + BEAM_HALF,
           clampedZ - BEAM_HALF, clampedZ + BEAM_HALF, STRIP_SIDE, STRIP_SIDE);
       movingBox(pose, vc, carriage, HEAD_TINT, light,
@@ -161,8 +253,8 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
 
   private static int lightAt(Level level, BlockPos origin, float x, float y, float z) {
     BlockPos pos = BlockPos.containing(origin.getX() + x, origin.getY() + y, origin.getZ() + z);
-    return LevelRenderer.getLightColor(level,
-        pos.getY() >= level.getMaxBuildHeight() ? pos.below() : pos);
+    return LightCoordsUtil.getLightCoords(level,
+        pos.getY() >= level.getMaxY() + 1 ? pos.below() : pos);
   }
 
   private static void bogie(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite plate,
@@ -203,14 +295,14 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
       for (int k = 0; k < 4; k++) {
         int i = side > 0 ? k : 3 - k;
         wheelVertex(pose, vc, along, cx, cy, cz, ca[i], cy4[i], side * WHEEL_THICK,
-            sprite.getU(cu[i]), sprite.getV(cv[i]), light, 0.0F, 0.0F, side);
+            SpriteUtil.getU(sprite, cu[i]), SpriteUtil.getV(sprite, cv[i]), light, 0.0F, 0.0F, side);
       }
     }
 
-    float u0 = sprite.getU(0.0F);
-    float u1 = sprite.getU(WHEEL_TEX);
-    float v0 = sprite.getV(TREAD_V0);
-    float v1 = sprite.getV(TREAD_V1);
+    float u0 = SpriteUtil.getU(sprite, 0.0F);
+    float u1 = SpriteUtil.getU(sprite, WHEEL_TEX);
+    float v0 = SpriteUtil.getV(sprite, TREAD_V0);
+    float v1 = SpriteUtil.getV(sprite, TREAD_V1);
     for (int k = 0; k < 4; k++) {
       int n = (k + 1) & 3;
       float na = (ca[k] + ca[n]) * 0.5F;
@@ -244,17 +336,17 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
   private static void beam(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite sprite, int color,
       IntUnaryOperator lightFn, int axis, float a0, float a1, float b0, float b1,
       float c0, float c1, float[] stripB, float[] stripC) {
-    float vb0 = sprite.getV(stripC[0]);
-    float vb1 = sprite.getV(stripC[1]);
-    float vc0 = sprite.getV(stripB[0]);
-    float vc1 = sprite.getV(stripB[1]);
+    float vb0 = SpriteUtil.getV(sprite, stripC[0]);
+    float vb1 = SpriteUtil.getV(sprite, stripC[1]);
+    float vc0 = SpriteUtil.getV(sprite, stripB[0]);
+    float vc1 = SpriteUtil.getV(sprite, stripB[1]);
 
     float s = a0;
     while (s < a1) {
       float n = (float) Math.floor(s);
       float e = Math.min(a1, n + 1 > s ? n + 1 : s + 1);
-      float u0 = sprite.getU((s - n) * 16.0F);
-      float u1 = sprite.getU((e - n) * 16.0F);
+      float u0 = SpriteUtil.getU(sprite, (s - n) * 16.0F);
+      float u1 = SpriteUtil.getU(sprite, (e - n) * 16.0F);
       int light = lightFn.applyAsInt((int) n);
 
       vert(pose, vc, axis, s, b0, c0, u0, vc0, color, light, 0, -1, 0);
@@ -280,8 +372,8 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
       s = e;
     }
 
-    float ub0 = sprite.getU(0.0F);
-    float ub1 = sprite.getU((b1 - b0) * 16.0F);
+    float ub0 = SpriteUtil.getU(sprite, 0.0F);
+    float ub1 = SpriteUtil.getU(sprite, (b1 - b0) * 16.0F);
     int lightA0 = lightFn.applyAsInt(Mth.floor(a0));
     int lightA1 = lightFn.applyAsInt(Mth.floor(a1 - 1.0E-4F));
     vert(pose, vc, axis, a0, b0, c0, ub0, vc0, color, lightA0, -1, 0, 0);
@@ -337,14 +429,14 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
     float sx = (16.0F - (x1 - x0) * 16.0F) / 2.0F;
     float sy = (16.0F - (y1 - y0) * 16.0F) / 2.0F;
     float sz = (16.0F - (z1 - z0) * 16.0F) / 2.0F;
-    float ux0 = sprite.getU(sx);
-    float ux1 = sprite.getU(sx + (x1 - x0) * 16.0F);
-    float uz0 = sprite.getU(sz);
-    float uz1 = sprite.getU(sz + (z1 - z0) * 16.0F);
-    float vz0 = sprite.getV(sz);
-    float vz1 = sprite.getV(sz + (z1 - z0) * 16.0F);
-    float vyTop = sprite.getV(sy);
-    float vyBottom = sprite.getV(sy + (y1 - y0) * 16.0F);
+    float ux0 = SpriteUtil.getU(sprite, sx);
+    float ux1 = SpriteUtil.getU(sprite, sx + (x1 - x0) * 16.0F);
+    float uz0 = SpriteUtil.getU(sprite, sz);
+    float uz1 = SpriteUtil.getU(sprite, sz + (z1 - z0) * 16.0F);
+    float vz0 = SpriteUtil.getV(sprite, sz);
+    float vz1 = SpriteUtil.getV(sprite, sz + (z1 - z0) * 16.0F);
+    float vyTop = SpriteUtil.getV(sprite, sy);
+    float vyBottom = SpriteUtil.getV(sprite, sy + (y1 - y0) * 16.0F);
 
     CuboidRenderer.vertex(pose, vc, x0, y0, z0, ux0, vz0, color, light, 0, -1, 0);
     CuboidRenderer.vertex(pose, vc, x1, y0, z0, ux1, vz0, color, light, 0, -1, 0);
@@ -378,26 +470,26 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
   }
 
   private static boolean farFromSynced(BlockEntityGantry quarry) {
-    float dx = quarry.headX - quarry.clientHeadX;
-    float dy = quarry.headY - quarry.clientHeadY;
-    float dz = quarry.headZ - quarry.clientHeadZ;
-    return dx * dx + dy * dy + dz * dz > RESYNC_DISTANCE * RESYNC_DISTANCE;
+    double dx = quarry.headX - quarry.clientHeadX;
+    double dy = quarry.headY - quarry.clientHeadY;
+    double dz = quarry.headZ - quarry.clientHeadZ;
+    return dx * dx + dy * dy + dz * dz > (double) RESYNC_DISTANCE * RESYNC_DISTANCE;
   }
 
   private static void followGoal(BlockEntityGantry quarry, float elapsed) {
-    float[] goal = new float[3];
+    double[] goal = new double[3];
     if (!quarry.headGoal(goal)) {
       return;
     }
-    float dx = goal[0] - quarry.clientHeadX;
-    float dy = goal[1] - quarry.clientHeadY;
-    float dz = goal[2] - quarry.clientHeadZ;
-    float distance = Mth.sqrt(dx * dx + dy * dy + dz * dz);
-    float sx = quarry.headX - quarry.clientHeadX;
-    float sy = quarry.headY - quarry.clientHeadY;
-    float sz = quarry.headZ - quarry.clientHeadZ;
-    float behind = Mth.sqrt(sx * sx + sy * sy + sz * sz);
-    float step = quarry.armSpeed() * elapsed * (1.0F + CATCH_UP_BOOST * Math.min(1.0F, behind));
+    double dx = goal[0] - quarry.clientHeadX;
+    double dy = goal[1] - quarry.clientHeadY;
+    double dz = goal[2] - quarry.clientHeadZ;
+    double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    double sx = quarry.headX - quarry.clientHeadX;
+    double sy = quarry.headY - quarry.clientHeadY;
+    double sz = quarry.headZ - quarry.clientHeadZ;
+    double behind = Math.sqrt(sx * sx + sy * sy + sz * sz);
+    double step = quarry.armSpeed() * elapsed * (1.0 + CATCH_UP_BOOST * Math.min(1.0, behind));
     if (distance <= step) {
       quarry.clientHeadX = goal[0];
       quarry.clientHeadY = goal[1];
@@ -410,7 +502,7 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
   }
 
   @Override
-  public boolean shouldRenderOffScreen(T quarry) {
+  public boolean shouldRenderOffScreen() {
     return true;
   }
 
@@ -418,5 +510,10 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
   public boolean shouldRender(T quarry, Vec3 cameraPos) {
     double d = getViewDistance() * 4;
     return quarry.getRenderBoundingBox().distanceToSqr(cameraPos) < d * d;
+  }
+
+  @Override
+  public AABB getRenderBoundingBox(T quarry) {
+    return quarry.getRenderBoundingBox();
   }
 }

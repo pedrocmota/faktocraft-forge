@@ -85,24 +85,24 @@ public final class WailaData {
   }
 
   public static int maxEnergy(CompoundTag data) {
-    return data.contains(TAG_MAX_ENERGY) ? data.getInt(TAG_MAX_ENERGY) : -1;
+    return data.contains(TAG_MAX_ENERGY) ? data.getIntOr(TAG_MAX_ENERGY, 0) : -1;
   }
 
   public static float ratio(CompoundTag data) {
     int max = maxEnergy(data);
-    return max <= 0 ? 0.0F : Math.min(1.0F, (float) data.getInt(TAG_ENERGY) / max);
+    return max <= 0 ? 0.0F : Math.min(1.0F, (float) data.getIntOr(TAG_ENERGY, 0) / max);
   }
 
   public static Component barText(CompoundTag data) {
-    return Component.literal(TextComponentUtil.getFormattedEnergyUnit(data.getInt(TAG_ENERGY))
+    return Component.literal(TextComponentUtil.getFormattedEnergyUnit(data.getIntOr(TAG_ENERGY, 0))
         + " / " + TextComponentUtil.getFormattedEnergyUnit(maxEnergy(data)) + " IE");
   }
 
   @Nullable
   public static Component tierLine(CompoundTag data) {
     int[] levels = data.contains(TAG_TIERS)
-        ? data.getIntArray(TAG_TIERS)
-        : new int[] { data.contains(TAG_TIER) ? data.getInt(TAG_TIER) : 1 };
+        ? data.getIntArray(TAG_TIERS).orElse(new int[0])
+        : new int[] { data.contains(TAG_TIER) ? data.getIntOr(TAG_TIER, 0) : 1 };
     if (levels.length == 0) {
       return null;
     }
@@ -134,15 +134,15 @@ public final class WailaData {
     if (tier != null) {
       lines.add(tier);
     }
-    if (data.getBoolean(TAG_REDSTONE_OFF)) {
+    if (data.getBooleanOr(TAG_REDSTONE_OFF, false)) {
       lines.add(Component.translatable(key("redstone_off")).withStyle(ChatFormatting.GOLD));
-    } else if (data.getInt(TAG_ENERGY) <= 0) {
-      if (data.getBoolean(TAG_GENERATOR)) {
+    } else if (data.getIntOr(TAG_ENERGY, 0) <= 0) {
+      if (data.getBooleanOr(TAG_GENERATOR, false)) {
         lines.add(Component.translatable(key("buffer_empty")).withStyle(ChatFormatting.GRAY));
       } else {
         lines.add(Component.translatable(key("no_energy")).withStyle(ChatFormatting.RED));
       }
-    } else if (data.getBoolean(TAG_UNDERVOLTAGE)) {
+    } else if (data.getBooleanOr(TAG_UNDERVOLTAGE, false)) {
       lines.add(Component.translatable(key("undervoltage")).withStyle(ChatFormatting.YELLOW));
     }
     return lines;
@@ -150,11 +150,11 @@ public final class WailaData {
 
   public static List<Component> cableLines(CompoundTag data) {
     List<Component> lines = new ArrayList<>();
-    int cableTierLvl = data.contains(TAG_CABLE_TIER) ? data.getInt(TAG_CABLE_TIER) : -1;
+    int cableTierLvl = data.contains(TAG_CABLE_TIER) ? data.getIntOr(TAG_CABLE_TIER, 0) : -1;
     if (cableTierLvl < 0) {
       return lines;
     }
-    int flowingLvl = data.contains(TAG_FLOWING) ? data.getInt(TAG_FLOWING) : -1;
+    int flowingLvl = data.contains(TAG_FLOWING) ? data.getIntOr(TAG_FLOWING, 0) : -1;
     Component flowingComponent;
     if (flowingLvl >= 0) {
       EnergyTier flowing = EnergyTier.getTierFromLvl(flowingLvl);

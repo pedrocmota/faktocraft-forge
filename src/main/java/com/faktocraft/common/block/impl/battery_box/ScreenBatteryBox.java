@@ -9,9 +9,9 @@ import com.faktocraft.common.screen.widgets.GuiText;
 import com.faktocraft.common.tier.BatteryBoxTier;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.util.TextComponentUtil;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenBatteryBox extends BetterScreen<MenuBatteryBox> {
@@ -39,13 +39,13 @@ public class ScreenBatteryBox extends BetterScreen<MenuBatteryBox> {
   }
 
   @Override
-  protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-    super.renderLabels(graphics, mouseX, mouseY);
+  protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    super.extractLabels(graphics, mouseX, mouseY);
     GuiUtil.drawString(graphics, EnumLang.ARMOUR.getTranslationComponent().getString(), 8, 72, 4210752, false);
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/battery_box.png");
+  public Identifier getGuiLocation() {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, "textures/gui/container/battery_box.png");
   }
 }

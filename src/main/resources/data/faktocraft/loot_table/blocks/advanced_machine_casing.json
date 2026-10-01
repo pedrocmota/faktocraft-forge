@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:advanced_machine_casing"
+        }
+      ],
+      "name": "advanced_machine_casing",
+      "rolls": 1
+    }
+  ]
+}

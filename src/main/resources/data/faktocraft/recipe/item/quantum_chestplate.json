@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_armour",
+  "key": {
+    "i": "faktocraft:iridium_plate",
+    "n": "faktocraft:nano_chestplate"
+  },
+  "pattern": [
+    "i i",
+    "ini",
+    "iii"
+  ],
+  "result": {
+    "id": "faktocraft:quantum_chestplate"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "faktocraft:mining_drill",
+    "faktocraft:diamond_drill",
+    "faktocraft:iridium_drill",
+    "faktocraft:multi_tool",
+    "faktocraft:electric_hoe",
+    "faktocraft:chainsaw",
+    "faktocraft:diamond_chainsaw",
+    "faktocraft:iridium_chainsaw"
+  ]
+}

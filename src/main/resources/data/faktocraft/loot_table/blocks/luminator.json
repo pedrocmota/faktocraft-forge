@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:luminator"
+        }
+      ],
+      "name": "luminator",
+      "rolls": 1
+    }
+  ]
+}

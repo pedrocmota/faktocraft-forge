@@ -1,5 +1,11 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.faktocraft.common.block.impl.machines.geo_scanner.BlockEntityGeoScanner;
 import com.faktocraft.common.item.impl.tools.Prospector;
 import com.faktocraft.common.network.ModNetworking;
@@ -7,10 +13,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
-import java.util.function.Supplier;
 
-public record PacketScanCode(boolean block, BlockPos pos, int code) {
+public record PacketScanCode(boolean block, BlockPos pos, int code) implements CustomPacketPayload {
+
+  public static final Type<PacketScanCode> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_scan_code"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketScanCode> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketScanCode::decode);
+
+  @Override
+  public Type<PacketScanCode> type() {
+    return TYPE;
+  }
 
   public static PacketScanCode forBlock(BlockPos pos, int code) {
     return new PacketScanCode(true, pos, code);
@@ -30,9 +44,9 @@ public record PacketScanCode(boolean block, BlockPos pos, int code) {
     return new PacketScanCode(buf.readBoolean(), buf.readBlockPos(), buf.readVarInt());
   }
 
-  public static void handle(PacketScanCode msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> {
-      ServerPlayer player = ctx.get().getSender();
+  public static void handle(PacketScanCode msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> {
+      ServerPlayer player = ctx.getSender();
       if (player == null) {
         return;
       }
@@ -49,6 +63,6 @@ public record PacketScanCode(boolean block, BlockPos pos, int code) {
         Prospector.setCode(stack, msg.code);
       }
     });
-    ctx.get().setPacketHandled(true);
+    ctx.setPacketHandled(true);
   }
 }

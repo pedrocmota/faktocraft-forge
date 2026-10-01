@@ -31,10 +31,9 @@ public class BlockPump extends FaktocraftEntityBlock implements IStateActive, IH
   }
 
   @Override
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.is(newState.getBlock()) && !level.isClientSide()) {
-      BlockEntityPump.clearTubeColumn(level, pos);
-    }
-    super.onRemove(state, level, pos, newState, isMoving);
+  protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level,
+      BlockPos pos, boolean movedByPiston) {
+    BlockEntityPump.clearTubeColumn(level, pos);
+    super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
   }
 }

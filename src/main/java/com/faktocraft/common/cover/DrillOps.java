@@ -1,25 +1,23 @@
 package com.faktocraft.common.cover;
 
+import net.minecraft.core.registries.Registries;
 import com.faktocraft.common.block.VoxelBlock;
 import com.faktocraft.common.registries.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.TierSortingRegistry;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 public final class DrillOps {
-
-  public static final TagKey<Block> UNDRILLABLE = TagKey.create(ForgeRegistries.Keys.BLOCKS,
-      new ResourceLocation("faktocraft", "undrillable"));
+  public static final TagKey<Block> UNDRILLABLE = TagKey.create(Registries.BLOCK,
+      Identifier.fromNamespaceAndPath("faktocraft", "undrillable"));
 
   private DrillOps() {
   }
@@ -61,7 +59,7 @@ public final class DrillOps {
     if (player != null && player.isCreative()) {
       return true;
     }
-    return !state.requiresCorrectToolForDrops() || TierSortingRegistry.isCorrectTierForDrops(Tiers.IRON, state);
+    return !state.requiresCorrectToolForDrops() || !state.is(BlockTags.INCORRECT_FOR_IRON_TOOL);
   }
 
   @Nullable

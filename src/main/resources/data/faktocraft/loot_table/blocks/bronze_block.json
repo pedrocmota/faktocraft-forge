@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:bronze_block"
+        }
+      ],
+      "name": "bronze_block",
+      "rolls": 1
+    }
+  ]
+}

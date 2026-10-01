@@ -4,20 +4,20 @@ import com.faktocraft.common.item.crafting.CountedIngredient;
 import com.faktocraft.common.recipe.BasicChanceRecipe;
 import com.faktocraft.common.recipe.ChanceResult;
 import com.faktocraft.common.registries.ModRecipeType;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public class UraniumCentrifugingRecipe extends BasicChanceRecipe {
 
-  public static final RecipeSerializer<UraniumCentrifugingRecipe> SERIALIZER = new BasicChanceRecipe.Serializer<>(
+  public static final RecipeSerializer<UraniumCentrifugingRecipe> SERIALIZER = BasicChanceRecipe.serializer(
       UraniumCentrifugingRecipe::new);
 
-  public UraniumCentrifugingRecipe(ResourceLocation id, CountedIngredient ingredient, ItemStack result,
+  public UraniumCentrifugingRecipe(CountedIngredient ingredient, @Nullable ItemStackTemplate result,
       Optional<ChanceResult> bonusResult, float experience, int duration, int powerCost) {
-    super(id, ingredient, result, bonusResult, experience, duration, powerCost);
+    super(ingredient, result, bonusResult, experience, duration, powerCost);
   }
 
   @Override

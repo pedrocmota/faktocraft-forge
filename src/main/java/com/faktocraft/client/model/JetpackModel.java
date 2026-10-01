@@ -11,13 +11,13 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EquipmentSlot;
 
-public class JetpackModel extends HumanoidModel<LivingEntity> {
-
+public class JetpackModel extends HumanoidModel<HumanoidRenderState> {
   public static final ModelLayerLocation LAYER = new ModelLayerLocation(
-      new ResourceLocation(Faktocraft.MODID, "jetpack"), "main");
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "jetpack"), "main");
 
   private static JetpackModel instance;
 
@@ -30,6 +30,12 @@ public class JetpackModel extends HumanoidModel<LivingEntity> {
       instance = new JetpackModel(Minecraft.getInstance().getEntityModels().bakeLayer(LAYER));
     }
     return instance;
+  }
+
+  @Override
+  public void setupAnim(HumanoidRenderState state) {
+    super.setupAnim(state);
+    ArmorVisibility.apply(this, EquipmentSlot.CHEST);
   }
 
   public static LayerDefinition createLayer() {

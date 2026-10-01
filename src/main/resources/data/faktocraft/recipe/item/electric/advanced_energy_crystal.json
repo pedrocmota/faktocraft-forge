@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "d": "faktocraft:energium_dust",
+    "a": "faktocraft:advanced_circuit",
+    "e": "faktocraft:energy_crystal"
+  },
+  "pattern": [
+    "dad",
+    "ded",
+    "dad"
+  ],
+  "result": {
+    "id": "faktocraft:advanced_energy_crystal"
+  }
+}

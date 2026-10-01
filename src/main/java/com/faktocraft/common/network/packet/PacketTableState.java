@@ -1,16 +1,31 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.util.BufUtil;
+import com.faktocraft.common.network.ClientPacketDispatch;
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
-public record PacketTableState(BlockPos blockPos, List<Entry> entries, List<TaskLine> tasks, List<String> errors) {
+public record PacketTableState(BlockPos blockPos, List<Entry> entries, List<TaskLine> tasks, List<String> errors)
+    implements CustomPacketPayload {
+
+  public static final Type<PacketTableState> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_table_state"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketTableState> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketTableState::decode);
+
+  @Override
+  public Type<PacketTableState> type() {
+    return TYPE;
+  }
 
   public record Entry(ItemStack stack, int count, boolean craftableOnly, ItemStack missing) {
 
@@ -32,15 +47,15 @@ public record PacketTableState(BlockPos blockPos, List<Entry> entries, List<Task
     buf.writeBlockPos(msg.blockPos);
     buf.writeVarInt(msg.entries.size());
     for (Entry entry : msg.entries) {
-      buf.writeItem(entry.stack());
+      BufUtil.writeItem(buf, entry.stack());
       buf.writeVarInt(entry.count());
       buf.writeBoolean(entry.craftableOnly());
-      buf.writeItem(entry.missing());
+      BufUtil.writeItem(buf, entry.missing());
     }
     buf.writeVarInt(msg.tasks.size());
     for (TaskLine task : msg.tasks) {
       buf.writeVarLong(task.id());
-      buf.writeItem(task.stack());
+      BufUtil.writeItem(buf, task.stack());
       buf.writeVarInt(task.count());
       buf.writeUtf(task.stateKey(), 64);
       buf.writeUtf(task.detail(), 64);
@@ -51,10 +66,10 @@ public record PacketTableState(BlockPos blockPos, List<Entry> entries, List<Task
       buf.writeVarInt(task.subs().size());
       for (SubLine sub : task.subs()) {
         buf.writeUtf(sub.kind(), 16);
-        buf.writeItem(sub.stack());
+        BufUtil.writeItem(buf, sub.stack());
         buf.writeVarInt(sub.count());
         buf.writeUtf(sub.stateKey(), 64);
-        buf.writeItem(sub.leftoverStack());
+        BufUtil.writeItem(buf, sub.leftoverStack());
         buf.writeVarInt(sub.leftoverCount());
         buf.writeUtf(sub.where(), 16);
         buf.writeUtf(sub.whereDetail(), 128);
@@ -74,13 +89,13 @@ public record PacketTableState(BlockPos blockPos, List<Entry> entries, List<Task
     int entryCount = buf.readVarInt();
     List<Entry> entries = new ArrayList<>(entryCount);
     for (int i = 0; i < entryCount; i++) {
-      entries.add(new Entry(buf.readItem(), buf.readVarInt(), buf.readBoolean(), buf.readItem()));
+      entries.add(new Entry(BufUtil.readItem(buf), buf.readVarInt(), buf.readBoolean(), BufUtil.readItem(buf)));
     }
     int taskCount = buf.readVarInt();
     List<TaskLine> tasks = new ArrayList<>(taskCount);
     for (int i = 0; i < taskCount; i++) {
       long id = buf.readVarLong();
-      ItemStack stack = buf.readItem();
+      ItemStack stack = BufUtil.readItem(buf);
       int count = buf.readVarInt();
       String stateKey = buf.readUtf(64);
       String detail = buf.readUtf(64);
@@ -91,8 +106,8 @@ public record PacketTableState(BlockPos blockPos, List<Entry> entries, List<Task
       int subCount = buf.readVarInt();
       List<SubLine> subs = new ArrayList<>(subCount);
       for (int s = 0; s < subCount; s++) {
-        subs.add(new SubLine(buf.readUtf(16), buf.readItem(), buf.readVarInt(), buf.readUtf(64),
-            buf.readItem(), buf.readVarInt(), buf.readUtf(16), buf.readUtf(128), buf.readVarInt(),
+        subs.add(new SubLine(buf.readUtf(16), BufUtil.readItem(buf), buf.readVarInt(), buf.readUtf(64),
+            BufUtil.readItem(buf), buf.readVarInt(), buf.readUtf(16), buf.readUtf(128), buf.readVarInt(),
             buf.readVarInt(), buf.readVarInt()));
       }
       tasks.add(new TaskLine(id, stack, count, stateKey, detail, system, originPos, originLabel, delivered,
@@ -106,9 +121,8 @@ public record PacketTableState(BlockPos blockPos, List<Entry> entries, List<Task
     return new PacketTableState(pos, entries, tasks, errors);
   }
 
-  public static void handle(PacketTableState msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-        () -> () -> com.faktocraft.client.ClientPacketHandlers.handleTableState(msg)));
-    ctx.get().setPacketHandled(true);
+  public static void handle(PacketTableState msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> ClientPacketDispatch.dispatch(msg));
+    ctx.setPacketHandled(true);
   }
 }

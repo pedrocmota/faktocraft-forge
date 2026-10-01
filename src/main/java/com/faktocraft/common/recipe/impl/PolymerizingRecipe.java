@@ -3,35 +3,61 @@ package com.faktocraft.common.recipe.impl;
 import com.faktocraft.common.interfaces.receipe.IBaseRecipe;
 import com.faktocraft.common.item.crafting.CountedIngredient;
 import com.faktocraft.common.recipe.FluidIngredientData;
+import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.recipe.RecipeJsonHelper;
 import com.faktocraft.common.registries.ModRecipeType;
-import com.google.gson.JsonObject;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
-public class PolymerizingRecipe implements IBaseRecipe<Container> {
+public class PolymerizingRecipe implements IBaseRecipe<MachineRecipeInput> {
+  public static final MapCodec<PolymerizingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+      CountedIngredient.CODEC.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
+      FluidIngredientData.CODEC.fieldOf("fluid_ingredient").forGetter(recipe -> recipe.fluidInput),
+      RecipeJsonHelper.RESULT.fieldOf("result").forGetter(recipe -> recipe.result),
+      Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(recipe -> recipe.experience),
+      Codec.INT.optionalFieldOf("duration", 300).forGetter(recipe -> recipe.duration),
+      Codec.INT.optionalFieldOf("power_cost", 24).forGetter(recipe -> recipe.powerCost))
+      .apply(i, PolymerizingRecipe::new));
 
-  public static final RecipeSerializer<PolymerizingRecipe> SERIALIZER = new Serializer();
+  public static final StreamCodec<RegistryFriendlyByteBuf, PolymerizingRecipe> STREAM_CODEC = StreamCodec.of(
+      (buf, recipe) -> {
+        recipe.ingredient.toNetwork(buf);
+        recipe.fluidInput.toNetwork(buf);
+        ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.result);
+        buf.writeFloat(recipe.experience);
+        buf.writeVarInt(recipe.duration);
+        buf.writeVarInt(recipe.powerCost);
+      }, buf -> {
+        CountedIngredient ingredient = CountedIngredient.fromNetwork(buf);
+        FluidIngredientData fluidInput = FluidIngredientData.fromNetwork(buf);
+        ItemStackTemplate result = ItemStackTemplate.STREAM_CODEC.decode(buf);
+        float experience = buf.readFloat();
+        int duration = buf.readVarInt();
+        int powerCost = buf.readVarInt();
+        return new PolymerizingRecipe(ingredient, fluidInput, result, experience, duration, powerCost);
+      });
 
-  private final ResourceLocation id;
+  public static final RecipeSerializer<PolymerizingRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC,
+      STREAM_CODEC);
+
   private final CountedIngredient ingredient;
   private final FluidIngredientData fluidInput;
-  private final ItemStack result;
+  private final ItemStackTemplate result;
   private final float experience;
   private final int duration;
   private final int powerCost;
 
-  public PolymerizingRecipe(ResourceLocation id, CountedIngredient ingredient, FluidIngredientData fluidInput,
-      ItemStack result, float experience, int duration, int powerCost) {
-    this.id = id;
+  public PolymerizingRecipe(CountedIngredient ingredient, FluidIngredientData fluidInput, ItemStackTemplate result,
+      float experience, int duration, int powerCost) {
     this.ingredient = ingredient;
     this.fluidInput = fluidInput;
     this.result = result;
@@ -41,17 +67,17 @@ public class PolymerizingRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public boolean matches(Container container, Level level) {
-    return ingredient.testType(container.getItem(0));
+  public boolean matches(MachineRecipeInput input, Level level) {
+    return ingredient.testType(input.getItem(0));
   }
 
   @Override
-  public ItemStack assemble(Container container, RegistryAccess registryAccess) {
-    return result.copy();
+  public ItemStack assemble(MachineRecipeInput input) {
+    return result.create();
   }
 
   public ItemStack getResult() {
-    return result.copy();
+    return result.create();
   }
 
   public FluidIngredientData getFluidInput() {
@@ -82,11 +108,6 @@ public class PolymerizingRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public ResourceLocation getId() {
-    return id;
-  }
-
-  @Override
   public RecipeSerializer<PolymerizingRecipe> getSerializer() {
     return SERIALIZER;
   }
@@ -94,41 +115,5 @@ public class PolymerizingRecipe implements IBaseRecipe<Container> {
   @Override
   public RecipeType<PolymerizingRecipe> getType() {
     return ModRecipeType.POLYMERIZING;
-  }
-
-  public static class Serializer implements RecipeSerializer<PolymerizingRecipe> {
-
-    @Override
-    public PolymerizingRecipe fromJson(ResourceLocation id, JsonObject json) {
-      CountedIngredient ingredient = CountedIngredient.fromJson(json.get("ingredient"));
-      FluidIngredientData fluidInput = FluidIngredientData.fromJson(GsonHelper.getAsJsonObject(json,
-          "fluid_ingredient"));
-      ItemStack result = RecipeJsonHelper.result(json.get("result"));
-      float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
-      int duration = GsonHelper.getAsInt(json, "duration", 300);
-      int powerCost = GsonHelper.getAsInt(json, "power_cost", 24);
-      return new PolymerizingRecipe(id, ingredient, fluidInput, result, experience, duration, powerCost);
-    }
-
-    @Override
-    public PolymerizingRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-      CountedIngredient ingredient = CountedIngredient.fromNetwork(buf);
-      FluidIngredientData fluidInput = FluidIngredientData.fromNetwork(buf);
-      ItemStack result = buf.readItem();
-      float experience = buf.readFloat();
-      int duration = buf.readVarInt();
-      int powerCost = buf.readVarInt();
-      return new PolymerizingRecipe(id, ingredient, fluidInput, result, experience, duration, powerCost);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buf, PolymerizingRecipe recipe) {
-      recipe.ingredient.toNetwork(buf);
-      recipe.fluidInput.toNetwork(buf);
-      buf.writeItem(recipe.result);
-      buf.writeFloat(recipe.experience);
-      buf.writeVarInt(recipe.duration);
-      buf.writeVarInt(recipe.powerCost);
-    }
   }
 }

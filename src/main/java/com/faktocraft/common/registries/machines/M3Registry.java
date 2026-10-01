@@ -1,5 +1,6 @@
 package com.faktocraft.common.registries.machines;
 
+import com.faktocraft.common.util.LegacyNbtBlockEntity;
 import com.faktocraft.common.block.BlockMachine;
 import com.faktocraft.common.block.impl.machines.alloy_smelter.BlockAlloySmelter;
 import com.faktocraft.common.block.impl.machines.alloy_smelter.BlockCoalAlloySmelter;
@@ -47,7 +48,6 @@ import com.faktocraft.common.registries.RegistrationHandler;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class M3Registry {
@@ -152,7 +152,7 @@ public class M3Registry {
   public static final MenuType<MenuPolymerizer> POLYMERIZER_MENU = MenuTypeHelper.register("polymerizer",
       (windowId, inv, pos) -> new MenuPolymerizer(windowId, inv.player.level(), pos, inv, inv.player));
 
-  private static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(String name,
+  private static <T extends LegacyNbtBlockEntity> BlockEntityType<T> registerBlockEntity(String name,
       BlockEntityType.BlockEntitySupplier<T> factory, Block... blocks) {
     return RegistrationHandler.blockEntity(name, factory, blocks);
   }

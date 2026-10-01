@@ -10,18 +10,17 @@ import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import java.util.List;
 import static com.faktocraft.common.util.Constants.JEI;
@@ -29,8 +28,8 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class UraniumCentrifugingCategory extends AbstractRecipeCategory<UraniumCentrifugingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "uranium_centrifuging");
-  public static final RecipeType<UraniumCentrifugingRecipe> TYPE = new RecipeType<>(UID,
+  public static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "uranium_centrifuging");
+  public static final IRecipeType<UraniumCentrifugingRecipe> TYPE = IRecipeType.create(UID,
       UraniumCentrifugingRecipe.class);
 
   private final LoadingCache<Integer, IDrawableAnimated> progress;
@@ -42,7 +41,7 @@ public class UraniumCentrifugingCategory extends AbstractRecipeCategory<UraniumC
         "uranium_centrifuging",
         guiHelper,
         guiHelper.createDrawable(JEI, 0, 0, 114, 54),
-        guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M3Registry.URANIUM_CENTRIFUGE)));
+        guiHelper.createDrawableItemStack(new ItemStack(M3Registry.URANIUM_CENTRIFUGE)));
     this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
         (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 25, 34, 24, 16).buildAnimated(duration,
             IDrawableAnimated.StartDirection.LEFT, false)));
@@ -53,7 +52,7 @@ public class UraniumCentrifugingCategory extends AbstractRecipeCategory<UraniumC
   public void setRecipe(IRecipeLayoutBuilder builder, UraniumCentrifugingRecipe recipe, IFocusGroup focuses) {
     builder.addSlot(RecipeIngredientRole.INPUT, 9, 19)
         .addItemStacks(stacks(recipe.getIngredient(), recipe.getIngredientCount()));
-    builder.addSlot(RecipeIngredientRole.OUTPUT, halfX + 8, 6).addItemStack(recipe.getResultItem());
+    builder.addSlot(RecipeIngredientRole.OUTPUT, halfX + 8, 6).add(recipe.getResultItem());
 
     List<ChanceResult> bonuses = recipe.getBonusResult().getResults();
     if (!bonuses.isEmpty()) {
@@ -61,7 +60,7 @@ public class UraniumCentrifugingCategory extends AbstractRecipeCategory<UraniumC
           .addItemStacks(bonuses.stream().map(ChanceResult::stack).toList())
           .addRichTooltipCallback((view, tooltip) -> view.getDisplayedItemStack().ifPresent(shown -> {
             for (ChanceResult chanceResult : bonuses) {
-              if (ItemStack.isSameItemSameTags(shown, chanceResult.result())) {
+              if (ItemStack.isSameItemSameComponents(shown, chanceResult.stack())) {
                 tooltip.add(Component.translatable(EnumLang.CHANCE.getTranslationKey(),
                     Component.literal((Math.round(chanceResult.chance() * 100.0) / 100.0) + "%")
                         .withStyle(ChatFormatting.YELLOW))
@@ -74,7 +73,7 @@ public class UraniumCentrifugingCategory extends AbstractRecipeCategory<UraniumC
   }
 
   @Override
-  public void draw(UraniumCentrifugingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics,
+  public void draw(UraniumCentrifugingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor graphics,
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 

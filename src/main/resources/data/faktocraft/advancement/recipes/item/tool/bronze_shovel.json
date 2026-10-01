@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_ingredient_0": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:ingots/bronze"
+          }
+        ]
+      }
+    },
+    "has_ingredient_1": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:rods/wooden"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipes": "faktocraft:item/tool/bronze_shovel"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ingredient_0",
+      "has_ingredient_1",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "faktocraft:item/tool/bronze_shovel"
+    ]
+  }
+}

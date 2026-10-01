@@ -30,7 +30,6 @@ public class BlockLogisticsController extends BlockElectricMachine implements IH
     return new BlockEntityLogisticsController(pos, state);
   }
 
-  @SuppressWarnings("deprecation")
   @Override
   public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
     super.onPlace(state, level, pos, oldState, isMoving);

@@ -2,7 +2,7 @@
   "credit": "Faktocraft",
   "textures": {
     "gate": "faktocraft:item/valve_gate_tex",
-    "dark": "minecraft:block/anvil",
+    "dark": "faktocraft:item/valve/anvil",
     "particle": "faktocraft:item/valve_gate_tex"
   },
   "elements": [

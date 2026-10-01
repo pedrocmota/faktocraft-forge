@@ -5,7 +5,7 @@ import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.widgets.GuiElement;
 import com.faktocraft.common.util.GuiUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class GuiReplicatorMode extends GuiElement {
@@ -18,7 +18,7 @@ public class GuiReplicatorMode extends GuiElement {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     String string;
     if (entity.getMode().getId() > 0) {
       string = Component.translatable(entity.getMode().getLangKey(), entity.progress.getPercentProgressString())

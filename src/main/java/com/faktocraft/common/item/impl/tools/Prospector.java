@@ -1,5 +1,8 @@
 package com.faktocraft.common.item.impl.tools;
 
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
@@ -10,13 +13,14 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
+import com.faktocraft.common.util.NbtBridge;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class Prospector extends ElectricItem {
 
@@ -43,41 +47,40 @@ public class Prospector extends ElectricItem {
   }
 
   public static int getCode(ItemStack stack) {
-    if (stack.hasTag() && stack.getTag().contains(TAG_CODE)) {
-      return ScanChannels.sanitize(stack.getTag().getInt(TAG_CODE));
+    CompoundTag tag = NbtBridge.customData(stack);
+    if (tag != null && tag.contains(TAG_CODE)) {
+      return ScanChannels.sanitize(tag.getIntOr(TAG_CODE, 0));
     }
     return ScanChannels.DEFAULT_CODE;
   }
 
   public static void setCode(ItemStack stack, int code) {
-    stack.getOrCreateTag().putInt(TAG_CODE, ScanChannels.sanitize(code));
+    NbtBridge.updateCustomData(stack, tag -> tag.putInt(TAG_CODE, ScanChannels.sanitize(code)));
   }
 
   @Nullable
   public static CompoundTag getJob(ItemStack stack) {
-    return stack.hasTag() && stack.getTag().contains(TAG_JOB) ? stack.getTag().getCompound(TAG_JOB) : null;
+    CompoundTag tag = NbtBridge.customData(stack);
+    return tag != null && tag.contains(TAG_JOB) ? tag.getCompoundOrEmpty(TAG_JOB) : null;
   }
 
   @Override
-  public void inventoryTick(ItemStack stack, Level level, net.minecraft.world.entity.Entity owner, int slotId,
-      boolean isSelected) {
-    super.inventoryTick(stack, level, owner, slotId, isSelected);
-    if (level.isClientSide() || !(level instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
-      return;
-    }
+  public void inventoryTick(ItemStack stack, net.minecraft.server.level.ServerLevel serverLevel,
+      net.minecraft.world.entity.Entity owner, @Nullable EquipmentSlot slot) {
+    super.inventoryTick(stack, serverLevel, owner, slot);
     importLegacyScans(serverLevel, stack);
     CompoundTag job = getJob(stack);
     if (job == null) {
       return;
     }
-    int remaining = job.getInt("remaining") - 1;
+    int remaining = job.getIntOr("remaining", 0) - 1;
     if (remaining > 0) {
       job.putInt("remaining", remaining);
-      stack.getTag().put(TAG_JOB, job);
+      NbtBridge.updateCustomData(stack, tag -> tag.put(TAG_JOB, job));
       return;
     }
     finishScan(serverLevel, stack, job);
-    stack.getTag().remove(TAG_JOB);
+    NbtBridge.updateCustomData(stack, tag -> tag.remove(TAG_JOB));
     if (owner != null) {
       serverLevel.playSound(null, owner.blockPosition(), net.minecraft.sounds.SoundEvents.BEACON_POWER_SELECT,
           net.minecraft.sounds.SoundSource.PLAYERS, 0.6F, 1.7F);
@@ -85,14 +88,15 @@ public class Prospector extends ElectricItem {
   }
 
   private static void importLegacyScans(net.minecraft.server.level.ServerLevel level, ItemStack stack) {
-    if (!stack.hasTag() || !stack.getTag().contains(TAG_SCANS)) {
+    CompoundTag tag = NbtBridge.customData(stack);
+    if (tag == null || !tag.contains(TAG_SCANS)) {
       return;
     }
-    CompoundTag legacy = stack.getTag().getCompound(TAG_SCANS);
+    CompoundTag legacy = tag.getCompoundOrEmpty(TAG_SCANS);
     if (!legacy.isEmpty()) {
       ScanChannels.get(level).channel(getCode(stack)).importKeyed(legacy);
     }
-    stack.getTag().remove(TAG_SCANS);
+    NbtBridge.updateCustomData(stack, data -> data.remove(TAG_SCANS));
   }
 
   public static CompoundTag computeScanEntries(net.minecraft.server.level.ServerLevel level, int chunkX, int chunkZ) {
@@ -103,14 +107,14 @@ public class Prospector extends ElectricItem {
     int baseZ = chunk.getPos().getMinBlockZ();
     for (int x = 0; x < 16; x++) {
       for (int z = 0; z < 16; z++) {
-        for (int y = level.getMinBuildHeight(); y < level.getMaxBuildHeight(); y++) {
+        for (int y = level.getMinY(); y < level.getMaxY() + 1; y++) {
           cursor.set(baseX + x, y, baseZ + z);
           var state = chunk.getBlockState(cursor);
           if (state.isAir()) {
             continue;
           }
-          if (state.is(net.minecraftforge.common.Tags.Blocks.ORES)) {
-            found.merge(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(state.getBlock()).toString(),
+          if (state.is(net.neoforged.neoforge.common.Tags.Blocks.ORES)) {
+            found.merge(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString(),
                 1, Integer::sum);
           } else if (state.is(com.faktocraft.common.fluid.ModFluids.OIL.block())) {
             found.merge(y >= 30 ? "faktocraft:oil_lake" : "faktocraft:oil_underground", 1, Integer::sum);
@@ -135,9 +139,9 @@ public class Prospector extends ElectricItem {
   }
 
   private static void finishScan(net.minecraft.server.level.ServerLevel level, ItemStack stack, CompoundTag job) {
-    int chunkX = job.getInt("cx");
-    int chunkZ = job.getInt("cz");
-    if (!level.dimension().location().toString().equals(job.getString("dim"))) {
+    int chunkX = job.getIntOr("cx", 0);
+    int chunkZ = job.getIntOr("cz", 0);
+    if (!level.dimension().identifier().toString().equals(job.getStringOr("dim", ""))) {
       return;
     }
     CompoundTag scan = new CompoundTag();
@@ -148,22 +152,22 @@ public class Prospector extends ElectricItem {
   }
 
   @Override
-  public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+  public InteractionResult use(Level level, Player player, InteractionHand hand) {
     if (level.isClientSide()) {
-      net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(net.minecraftforge.api.distmarker.Dist.CLIENT,
-          () -> com.faktocraft.client.ProspectorClient::openScreen);
+      com.faktocraft.common.util.ClientProxy.get().openProspectorScreen();
     }
-    return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
+    return InteractionResult.SUCCESS;
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".prospector")
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("tooltip." + Faktocraft.MODID + ".prospector")
         .withStyle(ChatFormatting.GRAY));
-    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".prospector_accuracy")
+    tooltip.accept(Component.translatable("tooltip." + Faktocraft.MODID + ".prospector_accuracy")
         .withStyle(ChatFormatting.DARK_GRAY));
-    tooltip.add(Component.translatable("tooltip." + Faktocraft.MODID + ".scan_code",
+    tooltip.accept(Component.translatable("tooltip." + Faktocraft.MODID + ".scan_code",
         ScanChannels.codeText(getCode(stack))).withStyle(ChatFormatting.LIGHT_PURPLE));
-    super.appendHoverText(stack, level, tooltip, flag);
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 }

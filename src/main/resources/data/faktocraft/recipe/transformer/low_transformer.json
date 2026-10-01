@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "b": "#c:plates/bronze",
+    "c": "faktocraft:copper_cable_insulated",
+    "o": "faktocraft:coil",
+    "p": "#minecraft:planks"
+  },
+  "pattern": [
+    "pcp",
+    "bob",
+    "pcp"
+  ],
+  "result": {
+    "id": "faktocraft:low_transformer"
+  }
+}

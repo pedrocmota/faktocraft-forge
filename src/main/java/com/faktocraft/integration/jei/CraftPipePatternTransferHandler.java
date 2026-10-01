@@ -10,20 +10,22 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.transfer.IRecipeTransferContext;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
+import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CraftPipePatternTransferHandler implements IRecipeTransferHandler<MenuCraftPipe, CraftingRecipe> {
-
+public class CraftPipePatternTransferHandler
+    implements IRecipeTransferHandler<MenuCraftPipe, RecipeHolder<CraftingRecipe>> {
   @Override
   public Class<? extends MenuCraftPipe> getContainerClass() {
     return MenuCraftPipe.class;
@@ -35,14 +37,26 @@ public class CraftPipePatternTransferHandler implements IRecipeTransferHandler<M
   }
 
   @Override
-  public RecipeType<CraftingRecipe> getRecipeType() {
+  public IRecipeType<RecipeHolder<CraftingRecipe>> getRecipeType() {
     return RecipeTypes.CRAFTING;
   }
 
   @Nullable
   @Override
-  public IRecipeTransferError transferRecipe(MenuCraftPipe menu, CraftingRecipe recipe,
+  public IRecipeTransferError transferRecipe(
+      IRecipeTransferContext<RecipeHolder<CraftingRecipe>, MenuCraftPipe> context, boolean doTransfer) {
+    return transfer(context.getContainer(), context.getRecipeSlots(), doTransfer);
+  }
+
+  @Nullable
+  @Override
+  public IRecipeTransferError transferRecipe(MenuCraftPipe menu, RecipeHolder<CraftingRecipe> recipe,
       IRecipeSlotsView recipeSlots, Player player, boolean maxTransfer, boolean doTransfer) {
+    return transfer(menu, recipeSlots, doTransfer);
+  }
+
+  @Nullable
+  private IRecipeTransferError transfer(MenuCraftPipe menu, IRecipeSlotsView recipeSlots, boolean doTransfer) {
     if (!doTransfer) {
       return null;
     }

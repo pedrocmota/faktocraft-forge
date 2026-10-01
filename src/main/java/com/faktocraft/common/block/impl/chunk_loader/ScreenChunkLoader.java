@@ -6,10 +6,10 @@ import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.button.GuiButton;
 import com.faktocraft.common.util.GuiUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
@@ -41,13 +41,13 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/chunk_loader.png");
+  public Identifier getGuiLocation() {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, "textures/gui/container/chunk_loader.png");
   }
 
   @Override
-  protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-    super.renderLabels(graphics, mouseX, mouseY);
+  protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    super.extractLabels(graphics, mouseX, mouseY);
     MenuChunkLoader menu = getMenu();
 
     drawChunkGrid(graphics, menu.getChunkCount());
@@ -85,7 +85,7 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
         8, 60, 62, COLOR_TEXT);
   }
 
-  private void drawChunkGrid(GuiGraphics graphics, int count) {
+  private void drawChunkGrid(GuiGraphicsExtractor graphics, int count) {
     graphics.fill(GRID_LEFT - 1, GRID_TOP - 1, GRID_LEFT + 3 * CELL, GRID_TOP + 3 * CELL, 0xFF373737);
     for (int gx = 0; gx < 3; gx++) {
       for (int gy = 0; gy < 3; gy++) {
@@ -123,7 +123,7 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
       super.renderBg(graphics, minecraft, mouseX, mouseY);
       boolean on = getMenu().isEnabled();
       graphics.fill(getLeftOffset() + 6, getTopOffset() + 6, getLeftOffset() + 14, getTopOffset() + 14,
@@ -131,11 +131,11 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
     }
 
     @Override
-    public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+    public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
       if (isMouseOver(mouseX, mouseY)) {
         String key = getMenu().isEnabled() ? "gui.faktocraft.chunk_loader.turn_off"
             : "gui.faktocraft.chunk_loader.turn_on";
-        graphics.renderTooltip(GuiUtil.getFont(), Component.translatable(key), mouseX, mouseY);
+        graphics.setTooltipForNextFrame(GuiUtil.getFont(), Component.translatable(key), mouseX, mouseY);
       }
       super.renderWidgetToolTip(screen, graphics, mouseX, mouseY);
     }
@@ -163,7 +163,7 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
       super.renderBg(graphics, minecraft, mouseX, mouseY);
       int x = getLeftOffset() + 3;
       int y = getTopOffset() + 3;
@@ -172,11 +172,11 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
     }
 
     @Override
-    public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+    public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
       if (isMouseOver(mouseX, mouseY)) {
         boolean showing = getBlockEntity() instanceof BlockEntityChunkLoader loader
             && com.faktocraft.client.render.ChunkBorderOverlay.isShowing(loader.getBlockPos());
-        graphics.renderTooltip(GuiUtil.getFont(), Component.translatable(showing
+        graphics.setTooltipForNextFrame(GuiUtil.getFont(), Component.translatable(showing
             ? "gui.faktocraft.chunk_loader.hide_border"
             : "gui.faktocraft.chunk_loader.show_border"), mouseX, mouseY);
       }
@@ -208,16 +208,16 @@ public class ScreenChunkLoader extends BetterScreen<MenuChunkLoader> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
       super.renderBg(graphics, minecraft, mouseX, mouseY);
       blit(graphics, getLeftOffset(), getTopOffset(), icon.getOffsetLeft(), icon.getOffsetTop(),
           icon.getWidth(), icon.getHeight());
     }
 
     @Override
-    public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+    public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
       if (isMouseOver(mouseX, mouseY)) {
-        graphics.renderTooltip(GuiUtil.getFont(), Component.translatable(tooltipKey), mouseX, mouseY);
+        graphics.setTooltipForNextFrame(GuiUtil.getFont(), Component.translatable(tooltipKey), mouseX, mouseY);
       }
       super.renderWidgetToolTip(screen, graphics, mouseX, mouseY);
     }

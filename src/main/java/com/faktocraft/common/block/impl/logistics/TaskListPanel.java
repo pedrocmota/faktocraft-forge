@@ -1,10 +1,11 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.Faktocraft;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -137,7 +138,7 @@ public class TaskListPanel {
     search = new EditBox(font, left + 16, top + TASKBAR_Y + 3, searchRight - 20, 10, Component.empty());
     search.setBordered(false);
     search.setMaxLength(48);
-    search.setTextColor(0xFFFFFF);
+    search.setTextColor(0xFFFFFFFF);
     search.setValue(query);
     search.setHint(Component.translatable(key("task_search_hint")).withStyle(ChatFormatting.DARK_GRAY));
     search.setResponder(text -> {
@@ -356,7 +357,7 @@ public class TaskListPanel {
     return 0;
   }
 
-  public void render(GuiGraphics graphics, int left, int top, int mouseX, int mouseY) {
+  public void render(GuiGraphicsExtractor graphics, int left, int top, int mouseX, int mouseY) {
 
     graphics.fill(left + WRAP_X, top + WRAP_Y, left + WRAP_RIGHT, top + WRAP_BOTTOM, 0xFF8B8B8B);
     graphics.fill(left + WRAP_X, top + WRAP_Y, left + WRAP_RIGHT, top + WRAP_Y + 1, 0xFF373737);
@@ -377,8 +378,8 @@ public class TaskListPanel {
     scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
 
     if (rowsCache.isEmpty()) {
-      graphics.drawString(font, Component.translatable(key("no_tasks")),
-          left + CARD_X + 2, top + CARDS_TOP + 4, 0x555555, false);
+      graphics.text(font, Component.translatable(key("no_tasks")),
+          left + CARD_X + 2, top + CARDS_TOP + 4, GuiUtil.opaque(0x555555), false);
     }
     int totalHeight = 0;
     for (RowText text : measureCache) {
@@ -407,7 +408,7 @@ public class TaskListPanel {
     }
   }
 
-  private void renderRow(GuiGraphics graphics, TaskRow row, RowText text, int left, int y0, int mouseX,
+  private void renderRow(GuiGraphicsExtractor graphics, TaskRow row, RowText text, int left, int y0, int mouseX,
       int mouseY) {
     boolean isSub = row.sub() != null;
     CardType type = isSub ? typeOf(row.sub().stateKey()) : row.card().type();
@@ -422,7 +423,7 @@ public class TaskListPanel {
 
     ItemStack icon = isSub ? row.sub().stack() : row.card().icon();
     if (!icon.isEmpty()) {
-      graphics.renderItem(icon, left + text.iconX(), y0 + (text.height() - 16) / 2);
+      graphics.item(icon, left + text.iconX(), y0 + (text.height() - 16) / 2);
     }
     if (!isSub) {
       if (row.card().hasCross()) {
@@ -437,16 +438,16 @@ public class TaskListPanel {
     int lineCount = text.lines1().size() + text.lines2().size();
     int textY = y0 + (text.height() - lineCount * CARD_LINE_H) / 2 + 1;
     for (FormattedCharSequence line : text.lines1()) {
-      graphics.drawString(font, line, left + text.textX(), textY, 0x2E2E2E, false);
+      graphics.text(font, line, left + text.textX(), textY, GuiUtil.opaque(0x2E2E2E), false);
       textY += CARD_LINE_H;
     }
     for (FormattedCharSequence line : text.lines2()) {
-      graphics.drawString(font, line, left + text.textX(), textY, 0x4A4A4A, false);
+      graphics.text(font, line, left + text.textX(), textY, GuiUtil.opaque(0x4A4A4A), false);
       textY += CARD_LINE_H;
     }
   }
 
-  private void drawChevron(GuiGraphics graphics, int x, int y, boolean open, int color) {
+  private void drawChevron(GuiGraphicsExtractor graphics, int x, int y, boolean open, int color) {
     if (open) {
       for (int row = 0; row < 4; row++) {
         graphics.fill(x + row, y + row, x + 7 - row, y + row + 1, color);
@@ -458,7 +459,7 @@ public class TaskListPanel {
     }
   }
 
-  private void drawDeleteCross(GuiGraphics graphics, int x, int y, boolean hovered) {
+  private void drawDeleteCross(GuiGraphicsExtractor graphics, int x, int y, boolean hovered) {
     int color = hovered ? 0xFFC03030 : 0xFF6A6A6A;
     for (int i = 0; i < 6; i++) {
       graphics.fill(x + i, y + i, x + i + 1, y + i + 1, color);
@@ -492,13 +493,13 @@ public class TaskListPanel {
     return null;
   }
 
-  public void renderTooltip(GuiGraphics graphics, int left, int top, int mouseX, int mouseY) {
+  public void renderTooltip(GuiGraphicsExtractor graphics, int left, int top, int mouseX, int mouseY) {
     RowHit hit = rowAt(left, top, mouseX, mouseY);
     if (hit == null || hit.row().sub() != null || !hit.row().card().hasCross()) {
       return;
     }
     if (overDelete(left + CARD_RIGHT, hit.y0(), hit.height(), mouseX, mouseY)) {
-      graphics.renderTooltip(font, Component.translatable(
+      graphics.setTooltipForNextFrame(font, Component.translatable(
           key(hit.row().card().deletable() ? "task_delete" : "task_cancel")), mouseX, mouseY);
     }
   }

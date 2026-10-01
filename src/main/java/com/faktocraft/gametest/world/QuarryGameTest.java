@@ -1,21 +1,17 @@
 package com.faktocraft.gametest.world;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.quarry.BlockEntityQuarry;
 import com.faktocraft.common.block.impl.quarry.QuarryRegistry;
 import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class QuarryGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -32,14 +28,14 @@ public class QuarryGameTest {
   }
 
   private static BlockEntityQuarry quarry(GameTestHelper helper) {
-    if (helper.getBlockEntity(QUARRY) instanceof BlockEntityQuarry be) {
+    if (TestUtil.blockEntity(helper, QUARRY) instanceof BlockEntityQuarry be) {
       return be;
     }
     throw new IllegalStateException("no quarry block entity");
   }
 
   private static void fillEnergy(GameTestHelper helper) {
-    if (helper.getBlockEntity(QUARRY) instanceof FaktocraftBlockEntity be) {
+    if (TestUtil.blockEntity(helper, QUARRY) instanceof FaktocraftBlockEntity be) {
 
       if (be.getBatteryStackHandler().getStackInSlot(0).isEmpty()) {
         be.getBatteryStackHandler().setStackInSlot(0,
@@ -158,7 +154,7 @@ public class QuarryGameTest {
 
     helper.succeedWhen(() -> {
       fillEnergy(helper);
-      if (!(helper.getBlockEntity(quarryPos) instanceof BlockEntityQuarry quarry)) {
+      if (!(TestUtil.blockEntity(helper, quarryPos) instanceof BlockEntityQuarry quarry)) {
         helper.fail("no quarry block entity");
         return;
       }
@@ -180,7 +176,7 @@ public class QuarryGameTest {
 
     helper.succeedWhen(() -> {
       fillEnergy(helper);
-      if (!(helper.getBlockEntity(quarryPos) instanceof BlockEntityQuarry quarry)) {
+      if (!(TestUtil.blockEntity(helper, quarryPos) instanceof BlockEntityQuarry quarry)) {
         helper.fail("no quarry block entity");
         return;
       }

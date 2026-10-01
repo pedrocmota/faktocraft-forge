@@ -10,18 +10,17 @@ import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import java.util.Optional;
 import static com.faktocraft.common.util.Constants.JEI;
@@ -29,8 +28,8 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class ExtractingCategory extends AbstractRecipeCategory<ExtractingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "extracting");
-  public static final RecipeType<ExtractingRecipe> TYPE = new RecipeType<>(UID, ExtractingRecipe.class);
+  public static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "extracting");
+  public static final IRecipeType<ExtractingRecipe> TYPE = IRecipeType.create(UID, ExtractingRecipe.class);
 
   private final LoadingCache<Integer, IDrawableAnimated> progress;
   private final IDrawableAnimated energy;
@@ -41,7 +40,7 @@ public class ExtractingCategory extends AbstractRecipeCategory<ExtractingRecipe>
         "extracting",
         guiHelper,
         guiHelper.createDrawable(JEI, 0, 110, 114, 54),
-        guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M2Registry.EXTRACTOR)));
+        guiHelper.createDrawableItemStack(new ItemStack(M2Registry.EXTRACTOR)));
     this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
         (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 25, 51, 24, 16).buildAnimated(duration,
             IDrawableAnimated.StartDirection.LEFT, false)));
@@ -52,12 +51,12 @@ public class ExtractingCategory extends AbstractRecipeCategory<ExtractingRecipe>
   public void setRecipe(IRecipeLayoutBuilder builder, ExtractingRecipe recipe, IFocusGroup focuses) {
     builder.addSlot(RecipeIngredientRole.INPUT, 9, 19)
         .addItemStacks(stacks(recipe.getIngredient(), recipe.getIngredientCount()));
-    builder.addSlot(RecipeIngredientRole.OUTPUT, halfX + 8, 6).addItemStack(recipe.getResultItem());
+    builder.addSlot(RecipeIngredientRole.OUTPUT, halfX + 8, 6).add(recipe.getResultItem());
 
     Optional<ChanceResult> bonus = recipe.getBonusResult().firstResult();
     if (bonus.isPresent()) {
       ChanceResult chanceResult = bonus.get();
-      builder.addSlot(RecipeIngredientRole.OUTPUT, halfX + 8, 29).addItemStack(chanceResult.stack())
+      builder.addSlot(RecipeIngredientRole.OUTPUT, halfX + 8, 29).add(chanceResult.stack())
           .addRichTooltipCallback((view, tooltip) -> tooltip.add(
               Component.translatable(EnumLang.CHANCE.getTranslationKey(),
                   (Math.round(chanceResult.chance() * 100.0) / 100.0) + "%").withStyle(ChatFormatting.BLUE)));
@@ -65,7 +64,7 @@ public class ExtractingCategory extends AbstractRecipeCategory<ExtractingRecipe>
   }
 
   @Override
-  public void draw(ExtractingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics,
+  public void draw(ExtractingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor graphics,
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 

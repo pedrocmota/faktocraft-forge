@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.pipe;
 
+import net.minecraft.world.phys.Vec3;
 import com.faktocraft.common.registries.PipeRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
@@ -200,6 +201,6 @@ public class MenuExtractorPipe extends AbstractContainerMenu {
   @Override
   public boolean stillValid(Player player) {
     return blockEntity != null && !blockEntity.isRemoved()
-        && player.distanceToSqr(blockEntity.getBlockPos().getCenter()) <= 64.0;
+        && player.distanceToSqr(Vec3.atCenterOf(blockEntity.getBlockPos())) <= 64.0;
   }
 }

@@ -9,14 +9,17 @@ import com.faktocraft.common.interfaces.item.IElectricItem;
 import com.faktocraft.common.item.base.ElectricArmorItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
 public class ItemNanoArmor extends ElectricArmorItem {
 
@@ -24,12 +27,12 @@ public class ItemNanoArmor extends ElectricArmorItem {
   public static final int FIRE_COST = 250;
   public static final int FLUID_COST_PER_TICK = 25;
 
-  public ItemNanoArmor(ArmorItem.Type armorType, Properties properties) {
+  public ItemNanoArmor(ArmorType armorType, Properties properties) {
     super(ModArmorMaterials.NANO, armorType, properties, 0, 1000000, EnergyType.RECEIVE, EnergyTier.HIGH);
   }
 
-  protected ItemNanoArmor(net.minecraft.world.item.ArmorMaterial material, ArmorItem.Type armorType,
-      Properties properties, int maxEnergy, EnergyTier energyTier) {
+  protected ItemNanoArmor(ArmorMaterial material, ArmorType armorType, Properties properties, int maxEnergy,
+      EnergyTier energyTier) {
     super(material, armorType, properties, 0, maxEnergy, EnergyType.RECEIVE, energyTier);
   }
 
@@ -38,17 +41,18 @@ public class ItemNanoArmor extends ElectricArmorItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable(protectionTooltipKey())
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable(protectionTooltipKey())
         .withStyle(ChatFormatting.GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 
   @Override
-  public void inventoryTick(ItemStack stack, Level level, net.minecraft.world.entity.Entity owner, int slotId,
-      boolean isSelected) {
-    super.inventoryTick(stack, level, owner, slotId, isSelected);
-    if (!level.isClientSide() && getType() == ArmorItem.Type.CHESTPLATE
+  public void inventoryTick(ItemStack stack, ServerLevel level, net.minecraft.world.entity.Entity owner,
+      @Nullable EquipmentSlot slot) {
+    super.inventoryTick(stack, level, owner, slot);
+    if (getType() == ArmorType.CHESTPLATE
         && owner instanceof LivingEntity living && living.isOnFire()
         && living.getItemBySlot(EquipmentSlot.CHEST) == stack
         && isFullSuit(living) && hasAnyCharge(living)) {

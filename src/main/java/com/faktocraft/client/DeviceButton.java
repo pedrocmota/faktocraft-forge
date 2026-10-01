@@ -1,6 +1,7 @@
 package com.faktocraft.client;
 
-import net.minecraft.client.gui.GuiGraphics;
+import com.faktocraft.common.util.GuiUtil;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -11,7 +12,7 @@ public class DeviceButton extends Button {
   }
 
   @Override
-  public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+  public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
     int x0 = getX();
     int y0 = getY();
     int x1 = x0 + width;
@@ -25,7 +26,7 @@ public class DeviceButton extends Button {
     graphics.fill(x0, y1 - 1, x1, y1, border);
     graphics.fill(x0, y0, x0 + 1, y1, border);
     graphics.fill(x1 - 1, y0, x1, y1, border);
-    graphics.drawCenteredString(net.minecraft.client.Minecraft.getInstance().font, getMessage(),
-        (x0 + x1) / 2, y0 + (height - 8) / 2, text);
+    graphics.centeredText(net.minecraft.client.Minecraft.getInstance().font, getMessage(),
+        (x0 + x1) / 2, y0 + (height - 8) / 2, GuiUtil.opaque(text));
   }
 }

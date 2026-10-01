@@ -1,6 +1,5 @@
 package com.faktocraft.gametest.logistics;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.logistics.BlockEntityChassis;
 import com.faktocraft.common.block.impl.logistics.BlockEntityLogisticsController;
 import com.faktocraft.common.block.impl.logistics.Endpoint;
@@ -10,7 +9,8 @@ import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.registries.ModItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -18,20 +18,16 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class LogisticsPipesGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
 
   private static void placeChest(GameTestHelper helper, BlockPos rel, ItemStack... stacks) {
     helper.setBlock(rel, Blocks.CHEST.defaultBlockState());
-    if (helper.getBlockEntity(rel) instanceof ChestBlockEntity chest) {
+    if (TestUtil.blockEntity(helper, rel) instanceof ChestBlockEntity chest) {
       for (int i = 0; i < stacks.length; i++) {
         chest.setItem(i, stacks[i]);
       }
@@ -39,7 +35,7 @@ public class LogisticsPipesGameTest {
   }
 
   private static int countIn(GameTestHelper helper, BlockPos rel, net.minecraft.world.item.Item item) {
-    if (!(helper.getBlockEntity(rel) instanceof ChestBlockEntity chest)) {
+    if (!(TestUtil.blockEntity(helper, rel) instanceof ChestBlockEntity chest)) {
       return -1;
     }
     int count = 0;
@@ -53,14 +49,14 @@ public class LogisticsPipesGameTest {
   }
 
   private static void fillCore(GameTestHelper helper, BlockPos rel) {
-    if (helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be) {
+    if (TestUtil.blockEntity(helper, rel) instanceof FaktocraftBlockEntity be) {
       be.getBatteryStackHandler().setStackInSlot(0, new ItemStack(ModItems.BASIC_CAPACITOR));
       be.getEnergyStorage().setEnergy(be.getEnergyStorage().maxEnergy());
     }
   }
 
   private static void putModule(GameTestHelper helper, BlockPos rel, int slot, ItemStack module) {
-    if (helper.getBlockEntity(rel) instanceof BlockEntityChassis chassis) {
+    if (TestUtil.blockEntity(helper, rel) instanceof BlockEntityChassis chassis) {
       chassis.getModules().setStackInSlot(slot, module);
     } else {
       helper.fail("no chassis at " + rel);
@@ -83,7 +79,7 @@ public class LogisticsPipesGameTest {
   @GameTest(template = TEMPLATE, timeoutTicks = 100)
   public static void goldPipeShortensTheTrip(GameTestHelper helper) {
     helper.setBlock(new BlockPos(1, 1, 1), LogisticsRegistry.LOGISTICS_CONTROLLER.defaultBlockState());
-    if (!(helper.getBlockEntity(new BlockPos(1, 1, 1)) instanceof BlockEntityLogisticsController core)) {
+    if (!(TestUtil.blockEntity(helper, new BlockPos(1, 1, 1)) instanceof BlockEntityLogisticsController core)) {
       helper.fail("no core");
       return;
     }

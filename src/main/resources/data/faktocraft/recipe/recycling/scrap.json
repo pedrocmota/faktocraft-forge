@@ -1,0 +1,33 @@
+{
+  "type": "faktocraft:recycling",
+  "chance": 0.15,
+  "excluded": [
+    {
+      "tag": "c:rods/wooden"
+    },
+    {
+      "item": "faktocraft:scrap"
+    },
+    {
+      "tag": "faktocraft:electrics"
+    },
+    {
+      "tag": "c:rods/all_metals"
+    },
+    {
+      "tag": "c:glass_panes"
+    },
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "faktocraft:nuclear_waste"
+    },
+    {
+      "item": "faktocraft:depleted_uranium_dust"
+    }
+  ],
+  "result": {
+    "item": "faktocraft:scrap"
+  }
+}

@@ -1,12 +1,13 @@
 package com.faktocraft.client;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.util.GuiUtil;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class InfoPanelScreen extends Screen {
 
-  private static final ResourceLocation PANEL = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier PANEL = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "textures/gui/container/pipe_motor.png");
 
   protected interface Row {
@@ -43,9 +44,7 @@ public class InfoPanelScreen extends Screen {
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    this.renderBackground(graphics);
-
+  public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
     List<Row> source = new ArrayList<>();
     if (!rows.isEmpty()) {
       source.addAll(rows);
@@ -78,11 +77,11 @@ public class InfoPanelScreen extends Screen {
     int left = this.width / 2 - 88;
     int top = this.height / 2 - panelHeight / 2;
 
-    graphics.blit(PANEL, left, top, 0, 0, 176, 40, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, PANEL, left, top, 0, 0, 176, 40, 256, 256);
     for (int i = 0; i < middles; i++) {
-      graphics.blit(PANEL, left, top + 40 + i * 40, 0, 20, 176, 40, 256, 256);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, PANEL, left, top + 40 + i * 40, 0, 20, 176, 40, 256, 256);
     }
-    graphics.blit(PANEL, left, top + 40 + middles * 40, 0, 161, 176, 5, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, PANEL, left, top + 40 + middles * 40, 0, 161, 176, 5, 256, 256);
 
     float titleScale = Math.min(1.0f, 156.0f / Math.max(1, this.font.width(this.title)));
     GuiUtil.renderScaled(graphics, this.title.getString(),
@@ -93,11 +92,11 @@ public class InfoPanelScreen extends Screen {
     for (DrawOp op : ops) {
       if (op.wrapped() != null) {
         int color = op.row() instanceof TextRow text ? text.color() : 0x404040;
-        graphics.pose().pushPose();
-        graphics.pose().translate(left + 10, y, 0);
-        graphics.pose().scale(0.9f, 0.9f, 1.0f);
-        graphics.drawString(this.font, op.wrapped(), 0, 0, color, false);
-        graphics.pose().popPose();
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(left + 10, y);
+        graphics.pose().scale(0.9f, 0.9f);
+        graphics.text(this.font, op.wrapped(), 0, 0, GuiUtil.opaque(color), false);
+        graphics.pose().popMatrix();
         y += 12;
       } else if (op.row() instanceof SeparatorRow) {
         graphics.fill(left + 10, y + 2, left + 166, y + 3, 0xFF8B8B8B);
@@ -122,16 +121,16 @@ public class InfoPanelScreen extends Screen {
         float valueScale = 0.75f;
         float valueWidth = this.font.width(bar.value()) * valueScale;
         float valueHeight = this.font.lineHeight * valueScale;
-        graphics.pose().pushPose();
-        graphics.pose().translate(bx + bw / 2.0f - valueWidth / 2.0f, y + (bh - valueHeight) / 2.0f + 0.5f, 0);
-        graphics.pose().scale(valueScale, valueScale, 1.0f);
-        graphics.drawString(this.font, bar.value(), 0, 0, 0xFFFFFF, false);
-        graphics.pose().popPose();
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(bx + bw / 2.0f - valueWidth / 2.0f, y + (bh - valueHeight) / 2.0f + 0.5f);
+        graphics.pose().scale(valueScale, valueScale);
+        graphics.text(this.font, bar.value(), 0, 0, GuiUtil.opaque(0xFFFFFF), false);
+        graphics.pose().popMatrix();
         y += 13;
       }
     }
 
-    super.render(graphics, mouseX, mouseY, partialTick);
+    super.extractRenderState(graphics, mouseX, mouseY, partialTick);
   }
 
   private static int brighten(int color) {
@@ -139,6 +138,11 @@ public class InfoPanelScreen extends Screen {
     int g = Math.min(255, ((color >> 8) & 0xFF) + 70);
     int b = Math.min(255, (color & 0xFF) + 70);
     return (r << 16) | (g << 8) | b;
+  }
+
+  @Override
+  public boolean isInGameUi() {
+    return true;
   }
 
   @Override

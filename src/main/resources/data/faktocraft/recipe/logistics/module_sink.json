@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:electronic_circuit",
+    "#c:dusts/redstone",
+    "#c:chests/wooden"
+  ],
+  "result": {
+    "id": "faktocraft:module_sink",
+    "count": 1
+  }
+}

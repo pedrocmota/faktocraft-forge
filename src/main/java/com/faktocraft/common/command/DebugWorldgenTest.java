@@ -1,17 +1,17 @@
 package com.faktocraft.common.command;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.faktocraft.Faktocraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunkSection;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
-@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
+@EventBusSubscriber(modid = Faktocraft.MODID)
 public final class DebugWorldgenTest {
 
   private DebugWorldgenTest() {
@@ -23,11 +23,10 @@ public final class DebugWorldgenTest {
       return;
     }
     ServerLevel level = event.getServer().overworld();
-    var blockTags = net.minecraftforge.registries.ForgeRegistries.BLOCKS.tags();
-    TagKey<net.minecraft.world.level.block.Block> iridium = blockTags
-        .createTagKey(new ResourceLocation("forge", "ores/iridium"));
-    TagKey<net.minecraft.world.level.block.Block> tin = blockTags
-        .createTagKey(new ResourceLocation("forge", "ores/tin"));
+    TagKey<net.minecraft.world.level.block.Block> iridium = TagKey.create(
+        net.minecraft.core.registries.Registries.BLOCK, Identifier.fromNamespaceAndPath("c", "ores/iridium"));
+    TagKey<net.minecraft.world.level.block.Block> tin = TagKey.create(
+        net.minecraft.core.registries.Registries.BLOCK, Identifier.fromNamespaceAndPath("c", "ores/tin"));
 
     int radius = 10;
     int iridiumCount = 0;

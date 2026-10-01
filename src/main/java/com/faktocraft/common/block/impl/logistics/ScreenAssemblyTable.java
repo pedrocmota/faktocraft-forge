@@ -10,12 +10,12 @@ import com.faktocraft.common.screen.slot.GuiSlotElement;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.util.ItemStackHandler;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -137,7 +137,7 @@ public class ScreenAssemblyTable extends BetterScreen<MenuAssemblyTable> {
         Component.translatable(key(step < 0 ? "assembly.prev_recipe" : "assembly.next_recipe")),
         b -> page(step), supplier -> supplier.get()) {
       @Override
-      protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+      protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         drawTriangle(graphics, getX() + 3, getY() + 2, step, 0x50000000);
         drawTriangle(graphics, getX() + 2, getY() + 1, step,
             isHoveredOrFocused() ? 0xFF8A8A8A : 0xFF5E5E5E);
@@ -147,7 +147,7 @@ public class ScreenAssemblyTable extends BetterScreen<MenuAssemblyTable> {
     return button;
   }
 
-  private static void drawTriangle(GuiGraphics graphics, int x, int y, int dir, int color) {
+  private static void drawTriangle(GuiGraphicsExtractor graphics, int x, int y, int dir, int color) {
     for (int i = 0; i < 5; i++) {
       int col = dir > 0 ? i : 4 - i;
       graphics.fill(x + col, y + i, x + col + 1, y + 9 - i, color);
@@ -190,18 +190,18 @@ public class ScreenAssemblyTable extends BetterScreen<MenuAssemblyTable> {
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/assembly_table.png");
+  public Identifier getGuiLocation() {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, "textures/gui/container/assembly_table.png");
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    super.render(graphics, mouseX, mouseY, partialTick);
+  public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    super.extractRenderState(graphics, mouseX, mouseY, partialTick);
     renderMachineTooltip(graphics, mouseX, mouseY);
     renderPagerTooltip(graphics, mouseX, mouseY);
   }
 
-  private void renderPagerTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+  private void renderPagerTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (!showsRecipe() || pageCount() <= 1
         || !wasCrafting || viewIndex() == this.menu.displayRecipe()) {
       return;
@@ -212,12 +212,12 @@ public class ScreenAssemblyTable extends BetterScreen<MenuAssemblyTable> {
     if (mouseX < x0 || mouseX >= x1 || mouseY < y0 || mouseY >= y0 + PAGER_BTN_H) {
       return;
     }
-    graphics.renderTooltip(this.font,
+    graphics.setTooltipForNextFrame(this.font,
         Component.translatable(key("assembly.crafting_at"), this.menu.displayRecipe() + 1, pageCount()),
         mouseX, mouseY);
   }
 
-  private void renderPattern(GuiGraphics graphics) {
+  private void renderPattern(GuiGraphicsExtractor graphics) {
     if (this.minecraft == null || this.minecraft.level == null) {
       return;
     }
@@ -243,21 +243,21 @@ public class ScreenAssemblyTable extends BetterScreen<MenuAssemblyTable> {
           graphics.fill(x, y, x + 16, y + 16, FLEXIBLE_TINT);
           stack = new ItemStack(options.get(GuiUtil.cyclingIndex(options.size())));
         }
-        graphics.renderItem(stack, x, y);
+        graphics.item(stack, x, y);
       }
     }
     CraftingRecipe recipe = pipe.patternRecipe(index);
     if (recipe == null) {
       return;
     }
-    ItemStack result = recipe.getResultItem(this.minecraft.level.registryAccess());
+    ItemStack result = pipe.patternResult(index);
     if (!result.isEmpty()) {
-      graphics.renderItem(result, MenuAssemblyTable.RESULT_X, MenuAssemblyTable.RESULT_Y);
-      graphics.renderItemDecorations(this.font, result, MenuAssemblyTable.RESULT_X, MenuAssemblyTable.RESULT_Y);
+      graphics.item(result, MenuAssemblyTable.RESULT_X, MenuAssemblyTable.RESULT_Y);
+      graphics.itemDecorations(this.font, result, MenuAssemblyTable.RESULT_X, MenuAssemblyTable.RESULT_Y);
     }
   }
 
-  private void renderMachineTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+  private void renderMachineTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (!showsRecipe() || this.minecraft == null || this.minecraft.level == null) {
       return;
     }
@@ -270,18 +270,18 @@ public class ScreenAssemblyTable extends BetterScreen<MenuAssemblyTable> {
     CraftingRecipe recipe = pipe != null ? pipe.patternRecipe(viewIndex()) : null;
     List<Component> tooltip = new ArrayList<>();
     if (recipe != null) {
-      tooltip.add(recipe.getResultItem(this.minecraft.level.registryAccess()).getHoverName());
+      tooltip.add(pipe.patternResult(viewIndex()).getHoverName());
     }
     tooltip.add(Component.translatable(key("assembly.usage"), table().tickUsage())
         .withStyle(ChatFormatting.GRAY));
     tooltip.add(Component.translatable(key("assembly.duration"), table().craftDuration())
         .withStyle(ChatFormatting.GRAY));
-    graphics.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
+    graphics.setComponentTooltipForNextFrame(this.font, tooltip, mouseX, mouseY);
   }
 
   @Override
-  protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-    super.renderLabels(graphics, mouseX, mouseY);
+  protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    super.extractLabels(graphics, mouseX, mouseY);
     if (showsRecipe()) {
       renderPattern(graphics);
       if (pageCount() > 1) {
@@ -297,25 +297,25 @@ public class ScreenAssemblyTable extends BetterScreen<MenuAssemblyTable> {
         MenuAssemblyTable.OUTPUT_Y - 10, LABEL_SCALE, 0x404040, false);
   }
 
-  private void renderPager(GuiGraphics graphics) {
+  private void renderPager(GuiGraphicsExtractor graphics) {
     String text = (viewIndex() + 1) + "/" + pageCount();
     boolean elsewhere = wasCrafting && viewIndex() != this.menu.displayRecipe();
     int cx = (PAGER_PREV_X + PAGER_BTN_W + PAGER_NEXT_X) / 2;
     int x = cx - this.font.width(text) / 2;
-    graphics.drawString(this.font, text, x, PAGER_Y + 2, elsewhere ? 0x9C4A00 : 0x404040, false);
+    graphics.text(this.font, text, x, PAGER_Y + 2, GuiUtil.opaque(elsewhere ? 0x9C4A00 : 0x404040), false);
     if (elsewhere) {
 
       graphics.fill(x - 6, PAGER_Y + 5, x - 3, PAGER_Y + 8, 0xFFFF7F27);
     }
   }
 
-  private void renderNoPipeWarning(GuiGraphics graphics) {
+  private void renderNoPipeWarning(GuiGraphicsExtractor graphics) {
     int width = 140;
     List<FormattedCharSequence> lines = this.font.split(
         Component.translatable(key("assembly.no_pipe")).withStyle(ChatFormatting.DARK_RED), width);
     int y = MenuAssemblyTable.RECIPE_AREA_Y + (MenuAssemblyTable.RECIPE_AREA_H - lines.size() * 10) / 2;
     for (FormattedCharSequence line : lines) {
-      graphics.drawString(this.font, line, 8 + (width - this.font.width(line)) / 2, y, 0x404040, false);
+      graphics.text(this.font, line, 8 + (width - this.font.width(line)) / 2, y, GuiUtil.opaque(0x404040), false);
       y += 10;
     }
   }

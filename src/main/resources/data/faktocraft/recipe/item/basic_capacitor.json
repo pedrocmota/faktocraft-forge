@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "t": "#c:plates/tin",
+    "r": "#c:rubber",
+    "l": "#c:dusts/lithium",
+    "d": "#c:dusts/redstone"
+  },
+  "pattern": [
+    "trt",
+    "ldl",
+    "trt"
+  ],
+  "result": {
+    "id": "faktocraft:basic_capacitor"
+  }
+}

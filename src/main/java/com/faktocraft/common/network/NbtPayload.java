@@ -41,7 +41,7 @@ public final class NbtPayload {
     }
     byte[] bytes = buf.readByteArray();
     try (DataInputStream in = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(bytes)))) {
-      return NbtIo.read(in, new NbtAccounter(MAX_DECODED_BYTES));
+      return NbtIo.read(in, NbtAccounter.create(MAX_DECODED_BYTES));
     } catch (IOException | RuntimeException e) {
       return null;
     }

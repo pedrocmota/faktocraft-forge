@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "p": "#faktocraft:rubber_logs_like"
+  },
+  "pattern": [
+    "p  "
+  ],
+  "result": {
+    "id": "faktocraft:rubber_planks",
+    "count": 4
+  }
+}

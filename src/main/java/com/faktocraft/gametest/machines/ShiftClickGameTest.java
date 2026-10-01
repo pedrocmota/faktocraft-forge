@@ -1,20 +1,18 @@
 package com.faktocraft.gametest.machines;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.recycler.MenuRecycler;
 import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.registries.machines.M2Registry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-@net.minecraftforge.gametest.GameTestHolder(Faktocraft.MODID)
-@net.minecraftforge.gametest.PrefixGameTestTemplate(false)
 public class ShiftClickGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -42,11 +40,11 @@ public class ShiftClickGameTest {
   public static void shiftClickPrefersTheSideBays(GameTestHelper helper) {
     BlockPos rel = new BlockPos(1, 1, 1);
     helper.setBlock(rel, M2Registry.RECYCLER.defaultBlockState());
-    if (!(helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity machine)) {
+    if (!(TestUtil.blockEntity(helper, rel) instanceof FaktocraftBlockEntity machine)) {
       helper.fail("no recycler block entity");
       return;
     }
-    Player player = helper.makeMockPlayer();
+    Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
     player.getInventory().setItem(9, new ItemStack(ModItems.CRUDE_CAPACITOR, 3));
     player.getInventory().setItem(10, new ItemStack(ModItems.OVERCLOCKER_UPGRADE));
     MenuRecycler menu = new MenuRecycler(1, helper.getLevel(),
@@ -87,12 +85,12 @@ public class ShiftClickGameTest {
     BlockPos rel = new BlockPos(1, 1, 1);
     helper.setBlock(rel,
         com.faktocraft.common.block.impl.logistics.LogisticsRegistry.ASSEMBLY_TABLE.defaultBlockState());
-    if (!(helper
-        .getBlockEntity(rel) instanceof com.faktocraft.common.block.impl.logistics.BlockEntityAssemblyTable table)) {
+    if (!(TestUtil.blockEntity(helper,
+        rel) instanceof com.faktocraft.common.block.impl.logistics.BlockEntityAssemblyTable table)) {
       helper.fail("no assembly table");
       return;
     }
-    Player player = helper.makeMockPlayer();
+    Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
     player.getInventory().setItem(9, new ItemStack(ModItems.CRUDE_CAPACITOR, 3));
     var menu = new com.faktocraft.common.block.impl.logistics.MenuAssemblyTable(1, helper.getLevel(),
         helper.absolutePos(rel), player.getInventory(), player);

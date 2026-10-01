@@ -11,7 +11,8 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +33,6 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class FluidCell extends FluidItem {
-
   private static final int SOURCE_BLOCK_MB = 1000;
 
   public FluidCell(Properties properties) {
@@ -49,7 +49,7 @@ public class FluidCell extends FluidItem {
   }
 
   @Override
-  public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+  public InteractionResult use(Level level, Player player, InteractionHand hand) {
     ItemStack stack = player.getItemInHand(hand);
     Fluid contained = getFluid(stack);
 
@@ -59,16 +59,16 @@ public class FluidCell extends FluidItem {
     return placeFluid(level, player, stack, contained);
   }
 
-  private InteractionResultHolder<ItemStack> pickupFluid(Level level, Player player, ItemStack stack) {
+  private InteractionResult pickupFluid(Level level, Player player, ItemStack stack) {
     BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
     if (hit.getType() != HitResult.Type.BLOCK) {
-      return InteractionResultHolder.pass(stack);
+      return InteractionResult.PASS;
     }
 
     BlockPos pos = hit.getBlockPos();
     if (!level.mayInteract(player, pos)
         || !player.mayUseItemAt(pos.relative(hit.getDirection()), hit.getDirection(), stack)) {
-      return InteractionResultHolder.fail(stack);
+      return InteractionResult.FAIL;
     }
 
     FluidState fluidState = level.getFluidState(pos);
@@ -81,12 +81,11 @@ public class FluidCell extends FluidItem {
           level.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
         }
       } else if (blockState.getBlock() instanceof net.minecraft.world.level.block.BucketPickup pickup) {
-
-        if (pickup.pickupBlock(level, pos, blockState).isEmpty()) {
-          return InteractionResultHolder.fail(stack);
+        if (pickup.pickupBlock(player, level, pos, blockState).isEmpty()) {
+          return InteractionResult.FAIL;
         }
       } else {
-        return InteractionResultHolder.fail(stack);
+        return InteractionResult.FAIL;
       }
 
       player.awardStat(Stats.ITEM_USED.get(this));
@@ -96,27 +95,27 @@ public class FluidCell extends FluidItem {
       setFluid(filled, fluid, SOURCE_BLOCK_MB);
 
       ItemStack result = ItemUtils.createFilledResult(stack, player, filled);
-      return InteractionResultHolder.sidedSuccess(result, level.isClientSide());
+      return InteractionResult.SUCCESS.heldItemTransformedTo(result);
     }
 
-    return InteractionResultHolder.fail(stack);
+    return InteractionResult.FAIL;
   }
 
-  private InteractionResultHolder<ItemStack> placeFluid(Level level, Player player, ItemStack stack, Fluid fluid) {
+  private InteractionResult placeFluid(Level level, Player player, ItemStack stack, Fluid fluid) {
     int amount = getFluidAmount(stack);
     if (amount < SOURCE_BLOCK_MB) {
-      return InteractionResultHolder.fail(stack);
+      return InteractionResult.FAIL;
     }
 
     BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
     if (hit.getType() != HitResult.Type.BLOCK) {
-      return InteractionResultHolder.pass(stack);
+      return InteractionResult.PASS;
     }
 
     BlockPos pos = hit.getBlockPos();
     if (!level.mayInteract(player, pos)
         || !player.mayUseItemAt(pos.relative(hit.getDirection()), hit.getDirection(), stack)) {
-      return InteractionResultHolder.fail(stack);
+      return InteractionResult.FAIL;
     }
 
     if (emptyFluid(player, level, pos, fluid, hit)) {
@@ -128,10 +127,10 @@ public class FluidCell extends FluidItem {
       ItemStack result = player.getAbilities().instabuild ? stack
           : ItemUtils.createFilledResult(stack, player, emptied);
 
-      return InteractionResultHolder.sidedSuccess(result, level.isClientSide());
+      return InteractionResult.SUCCESS.heldItemTransformedTo(result);
     }
 
-    return InteractionResultHolder.fail(stack);
+    return InteractionResult.FAIL;
   }
 
   @SuppressWarnings("deprecation")
@@ -146,7 +145,7 @@ public class FluidCell extends FluidItem {
     boolean mayReplace = blockState.canBeReplaced(fluid);
     boolean shiftKeyDown = user != null && user.isShiftKeyDown();
     boolean placeLiquid = mayReplace || block instanceof LiquidBlockContainer container
-        && container.canPlaceLiquid(level, pos, blockState, fluid);
+        && container.canPlaceLiquid(user, level, pos, blockState, fluid);
     boolean canPlaceFluidInsideBlock = blockState.isAir() || placeLiquid && (!shiftKeyDown || hitResult == null);
 
     if (!canPlaceFluidInsideBlock) {
@@ -154,9 +153,10 @@ public class FluidCell extends FluidItem {
           && emptyFluid(user, level, hitResult.getBlockPos().relative(hitResult.getDirection()), fluid, null);
     }
 
-    if ((level.dimensionType().ultraWarm() && fluid.defaultFluidState().is(FluidTags.WATER))
+    if ((level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos)
+        && fluid.defaultFluidState().is(FluidTags.WATER))
         || fluid.getFluidType().isVaporizedOnPlacement(level, pos,
-            new net.minecraftforge.fluids.FluidStack(fluid, SOURCE_BLOCK_MB))) {
+            new net.neoforged.neoforge.fluids.FluidStack(fluid, SOURCE_BLOCK_MB))) {
       RandomSource random = level.getRandom();
       level.playSound(user, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F,
           2.6F + (random.nextFloat() - random.nextFloat()) * 0.8F);

@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "faktocraft:working",
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "faktocraft:item/tool/electric/diamond_drill_working"
+    },
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "faktocraft:item/diamond_drill"
+    }
+  }
+}

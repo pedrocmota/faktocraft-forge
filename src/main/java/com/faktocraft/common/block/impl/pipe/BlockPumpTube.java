@@ -16,7 +16,7 @@ public class BlockPumpTube extends Block {
 
   public BlockPumpTube(Properties properties) {
     super(properties.strength(-1.0F, 3600000.0F).noLootTable().noOcclusion()
-        .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK));
+        .pushReaction(net.minecraft.world.level.material.PushReaction.IMMOVEABLE));
   }
 
   @Override
@@ -36,8 +36,8 @@ public class BlockPumpTube extends Block {
 
   @Override
   public boolean onDestroyedByPlayer(BlockState state, net.minecraft.world.level.Level level, BlockPos pos,
-      net.minecraft.world.entity.player.Player player, boolean willHarvest,
-      net.minecraft.world.level.material.FluidState fluid) {
+      net.minecraft.world.entity.player.Player player, net.minecraft.world.item.ItemStack toolStack,
+      boolean willHarvest, net.minecraft.world.level.material.FluidState fluid) {
     return false;
   }
 

@@ -1,30 +1,33 @@
 package com.faktocraft.common.recipe;
 
-import com.google.gson.JsonObject;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.GsonHelper;
+import com.mojang.serialization.Codec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 
-public record ChanceResult(ItemStack result, float chance) {
+public record ChanceResult(ItemStackTemplate result, float chance) {
+  public static final Codec<ChanceResult> CODEC = RecipeJsonHelper.CHANCE_RESULT;
 
-  public static ChanceResult fromJson(JsonObject json) {
-    ItemStack result = RecipeJsonHelper.result(json);
-    float chance = GsonHelper.getAsFloat(json, "chance", 100.0F);
-    return new ChanceResult(result, chance);
+  public static final StreamCodec<RegistryFriendlyByteBuf, ChanceResult> STREAM_CODEC = StreamCodec.composite(
+      ItemStackTemplate.STREAM_CODEC, ChanceResult::result,
+      ByteBufCodecs.FLOAT, ChanceResult::chance,
+      ChanceResult::new);
+
+  public ChanceResult(ItemStack result, float chance) {
+    this(ItemStackTemplate.fromNonEmptyStack(result), chance);
   }
 
-  public static ChanceResult fromNetwork(FriendlyByteBuf buf) {
-    ItemStack result = buf.readItem();
-    float chance = buf.readFloat();
-    return new ChanceResult(result, chance);
+  public static ChanceResult fromNetwork(RegistryFriendlyByteBuf buf) {
+    return STREAM_CODEC.decode(buf);
   }
 
-  public void toNetwork(FriendlyByteBuf buf) {
-    buf.writeItem(result);
-    buf.writeFloat(chance);
+  public void toNetwork(RegistryFriendlyByteBuf buf) {
+    STREAM_CODEC.encode(buf, this);
   }
 
   public ItemStack stack() {
-    return result.copy();
+    return result.create();
   }
 }

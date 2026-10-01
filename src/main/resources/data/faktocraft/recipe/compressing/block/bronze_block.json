@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.3,
+  "ingredient": {
+    "count": 9,
+    "tag": "c:ingots/bronze"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "faktocraft:bronze_block"
+  },
+  "type": "faktocraft:compressing"
+}

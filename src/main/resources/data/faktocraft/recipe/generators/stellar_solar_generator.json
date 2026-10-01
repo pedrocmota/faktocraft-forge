@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "i": "#c:plates/iridium",
+    "C": "faktocraft:iridium_crystal",
+    "L": "faktocraft:lapotron_crystal",
+    "Q": "faktocraft:quantum_solar_generator",
+    "c": "faktocraft:advanced_capacitor",
+    "G": "#c:storage_blocks/gold"
+  },
+  "pattern": [
+    "iCi",
+    "LQL",
+    "cGc"
+  ],
+  "result": {
+    "id": "faktocraft:stellar_solar_generator",
+    "count": 1
+  }
+}

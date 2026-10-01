@@ -73,7 +73,7 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
   }
 
   public ChunkPos centerChunk() {
-    return new ChunkPos(getBlockPos());
+    return ChunkPos.containing(getBlockPos());
   }
 
   public int getCode() {
@@ -115,7 +115,7 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
       return new CompoundTag();
     }
     ChunkPos center = centerChunk();
-    return channel.collect(level, center.x, center.z, RADIUS);
+    return channel.collect(level, center.x(), center.z(), RADIUS);
   }
 
   public boolean isRunning() {
@@ -161,7 +161,7 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
 
   public void setManualTarget(int cx, int cz) {
     ChunkPos center = centerChunk();
-    if (!inRange(cx - center.x, cz - center.z)
+    if (!inRange(cx - center.x(), cz - center.z())
         || hasScan(cx, cz)
         || (jobActive && jobCx == cx && jobCz == cz)) {
       return;
@@ -187,7 +187,7 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
     int count = 0;
     for (int dx = -RADIUS; dx <= RADIUS; dx++) {
       for (int dz = -RADIUS; dz <= RADIUS; dz++) {
-        if (inRange(dx, dz) && channel.has(level, center.x + dx, center.z + dz)) {
+        if (inRange(dx, dz) && channel.has(level, center.x() + dx, center.z() + dz)) {
           count++;
         }
       }
@@ -275,7 +275,7 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
   private void notifyRareFinds(ServerLevel serverLevel, CompoundTag entries) {
     boolean iridium = false;
     boolean giantOil = false;
-    for (String id : entries.getAllKeys()) {
+    for (String id : entries.keySet()) {
       iridium |= id.contains("iridium");
       giantOil |= id.equals("faktocraft:oil_giant");
     }
@@ -310,8 +310,8 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
           if (Math.max(Math.abs(dx), Math.abs(dz)) != r || !inRange(dx, dz)) {
             continue;
           }
-          int cx = center.x + dx;
-          int cz = center.z + dz;
+          int cx = center.x() + dx;
+          int cz = center.z() + dz;
           if (!channel.has(level, cx, cz)) {
             return new int[] { cx, cz };
           }
@@ -341,16 +341,17 @@ public class BlockEntityGeoScanner extends FaktocraftBlockEntity implements IEne
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    code = tag.contains("code") ? ScanChannels.sanitize(tag.getInt("code")) : ScanChannels.DEFAULT_CODE;
-    legacyScans = tag.contains("scans") && !tag.getCompound("scans").isEmpty() ? tag.getCompound("scans").copy()
+    code = tag.contains("code") ? ScanChannels.sanitize(tag.getIntOr("code", 0)) : ScanChannels.DEFAULT_CODE;
+    legacyScans = tag.contains("scans") && !tag.getCompoundOrEmpty("scans").isEmpty()
+        ? tag.getCompoundOrEmpty("scans").copy()
         : null;
-    running = tag.getBoolean("running");
-    jobActive = tag.getBoolean("jobActive");
-    jobCx = tag.getInt("jobCx");
-    jobCz = tag.getInt("jobCz");
-    jobRemaining = tag.getInt("jobRemaining");
-    manualPending = tag.getBoolean("manualPending");
-    manualCx = tag.getInt("manualCx");
-    manualCz = tag.getInt("manualCz");
+    running = tag.getBooleanOr("running", false);
+    jobActive = tag.getBooleanOr("jobActive", false);
+    jobCx = tag.getIntOr("jobCx", 0);
+    jobCz = tag.getIntOr("jobCz", 0);
+    jobRemaining = tag.getIntOr("jobRemaining", 0);
+    manualPending = tag.getBooleanOr("manualPending", false);
+    manualCx = tag.getIntOr("manualCx", 0);
+    manualCz = tag.getIntOr("manualCz", 0);
   }
 }

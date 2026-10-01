@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.6,
+  "ingredient": {
+    "count": 9,
+    "tag": "c:gems/emerald"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "minecraft:emerald_block"
+  },
+  "type": "faktocraft:compressing"
+}

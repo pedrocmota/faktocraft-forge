@@ -25,7 +25,6 @@ import static com.faktocraft.gametest.logistics.LogisticsChainGameTest.putModule
 import static com.faktocraft.gametest.logistics.LogisticsChainGameTest.repeat;
 import static com.faktocraft.gametest.logistics.LogisticsChainGameTest.request;
 import static com.faktocraft.gametest.logistics.LogisticsChainGameTest.simpleRecipe;
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.logistics.BlockEntityAssemblyTable;
 import com.faktocraft.common.block.impl.logistics.BlockEntityChassis;
 import com.faktocraft.common.block.impl.logistics.BlockEntityCraftPipe;
@@ -39,7 +38,8 @@ import com.faktocraft.common.block.impl.logistics.TaskLedger;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.registries.machines.M2Registry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -50,13 +50,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.minecraft.world.phys.Vec3;
 import java.util.List;
 import java.util.function.Predicate;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class LogisticsCoverageGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -95,7 +92,8 @@ public class LogisticsCoverageGameTest {
   }
 
   private static int groundCount(GameTestHelper helper, Item item) {
-    AABB box = new AABB(helper.absolutePos(new BlockPos(0, 0, 0)), helper.absolutePos(new BlockPos(12, 4, 12)));
+    AABB box = new AABB(Vec3.atLowerCornerOf(helper.absolutePos(new BlockPos(0, 0, 0))),
+        Vec3.atLowerCornerOf(helper.absolutePos(new BlockPos(12, 4, 12))));
     int count = 0;
     for (ItemEntity entity : helper.getLevel().getEntitiesOfClass(ItemEntity.class, box)) {
       if (entity.getItem().is(item)) {
@@ -117,7 +115,7 @@ public class LogisticsCoverageGameTest {
   }
 
   private static void fillTable(GameTestHelper helper, ItemStack filler) {
-    if (helper.getBlockEntity(TABLE) instanceof BlockEntityRequestTable table) {
+    if (TestUtil.blockEntity(helper, TABLE) instanceof BlockEntityRequestTable table) {
       for (int i = 0; i < table.getItemStackHandler().getSlots(); i++) {
         table.getItemStackHandler().setStackInSlot(i, filler.copy());
       }
@@ -159,7 +157,7 @@ public class LogisticsCoverageGameTest {
   @GameTest(template = TEMPLATE, timeoutTicks = 600)
   public void providerMinReserveIsKept(GameTestHelper helper) {
     buildBus(helper, new ItemStack(Items.COBBLESTONE, 8));
-    if (helper.getBlockEntity(PROVIDER) instanceof BlockEntityChassis chassis) {
+    if (TestUtil.blockEntity(helper, PROVIDER) instanceof BlockEntityChassis chassis) {
       ModuleSettings.setMinReserve(chassis.getModules().getStackInSlot(0), 4);
     }
     request(helper, new ItemStack(Items.COBBLESTONE), 8);
@@ -179,7 +177,7 @@ public class LogisticsCoverageGameTest {
   @GameTest(template = TEMPLATE, timeoutTicks = 600)
   public void providerExcludeFlagHidesItems(GameTestHelper helper) {
     buildBus(helper, new ItemStack(Items.COBBLESTONE, 8), new ItemStack(Items.OAK_PLANKS, 8));
-    if (helper.getBlockEntity(PROVIDER) instanceof BlockEntityChassis chassis) {
+    if (TestUtil.blockEntity(helper, PROVIDER) instanceof BlockEntityChassis chassis) {
       ItemStack module = chassis.getModules().getStackInSlot(0);
       ModuleSettings.setLine(module, 0, itemLine(Items.COBBLESTONE));
       ModuleSettings.setFlag(module, ModuleSettings.FLAG_EXCLUDE, true);
@@ -273,7 +271,7 @@ public class LogisticsCoverageGameTest {
     sideStation(helper, 8, allSink());
     sideStation(helper, 7, new ItemStack(LogisticsRegistry.MODULE_EXTRACTOR), new ItemStack(Items.COBBLESTONE, 64));
     sideStation(helper, 5, new ItemStack(LogisticsRegistry.MODULE_EXTRACTOR), new ItemStack(Items.OAK_LOG, 64));
-    if (helper.getBlockEntity(chassisAt(7)) instanceof BlockEntityChassis chassis) {
+    if (TestUtil.blockEntity(helper, chassisAt(7)) instanceof BlockEntityChassis chassis) {
       chassis.getUpgrades().setStackInSlot(0, new ItemStack(LogisticsRegistry.THROUGHPUT_UPGRADE));
     }
     helper.runAfterDelay(50, () -> {
@@ -357,7 +355,7 @@ public class LogisticsCoverageGameTest {
     helper.runAfterDelay(SETUP_DELAY + 40, () -> {
       long conflicts = 0;
       for (BlockPos pos : List.of(CORE, new BlockPos(8, 2, 1))) {
-        if (helper.getBlockEntity(pos) instanceof BlockEntityLogisticsController core) {
+        if (TestUtil.blockEntity(helper, pos) instanceof BlockEntityLogisticsController core) {
           conflicts += core.getLedger().userHistory().stream()
               .filter(record -> "error.conflict".equals(record.stateKey())).count();
         }
@@ -481,7 +479,7 @@ public class LogisticsCoverageGameTest {
     helper.setBlock(second, LogisticsRegistry.REQUEST_TABLE.defaultBlockState());
     request(helper, new ItemStack(Items.OAK_PLANKS), 4);
     helper.runAfterDelay(SETUP_DELAY, () -> {
-      if (helper.getBlockEntity(second) instanceof BlockEntityRequestTable table) {
+      if (TestUtil.blockEntity(helper, second) instanceof BlockEntityRequestTable table) {
         table.setGhostTarget(new ItemStack(Items.OAK_PLANKS));
         table.request(null, 4);
       } else {
@@ -490,7 +488,7 @@ public class LogisticsCoverageGameTest {
     });
     helper.succeedWhen(() -> {
       int first = countInTable(helper, stack -> stack.is(Items.OAK_PLANKS));
-      int other = helper.getBlockEntity(second) instanceof BlockEntityRequestTable table
+      int other = TestUtil.blockEntity(helper, second) instanceof BlockEntityRequestTable table
           ? inHandler(table.getItemStackHandler(), stack -> stack.is(Items.OAK_PLANKS))
           : -1;
       if (first != 4 || other != 4) {
@@ -509,7 +507,7 @@ public class LogisticsCoverageGameTest {
     buildBus(helper, new ItemStack(Items.OAK_LOG, 64));
     pattern(helper, 0, new ItemStack(Items.OAK_LOG));
     ItemStack planks = new ItemStack(Items.OAK_PLANKS);
-    if (helper.getBlockEntity(pipeAt(0)) instanceof BlockEntityCraftPipe pipe) {
+    if (TestUtil.blockEntity(helper, pipeAt(0)) instanceof BlockEntityCraftPipe pipe) {
       int recipe = pipe.addRecipe();
       pipe.setPatternSlot(recipe, 0, planks);
       pipe.setPatternSlot(recipe, 3, planks);
@@ -564,7 +562,7 @@ public class LogisticsCoverageGameTest {
     int recipe = simpleRecipe(bound, new ItemStack(Items.RAW_COPPER, 3), new ItemStack(ModItems.COPPER_DUST, 4));
     bound.bind(recipe, 0, 0, "minecraft:chest", 27);
     helper.setBlock(pipeAt(1), LogisticsRegistry.RECIPE_PIPE.defaultBlockState());
-    if (helper.getBlockEntity(pipeAt(1)) instanceof BlockEntityRecipePipe lonely) {
+    if (TestUtil.blockEntity(helper, pipeAt(1)) instanceof BlockEntityRecipePipe lonely) {
       simpleRecipe(lonely, new ItemStack(Items.CLAY), new ItemStack(Items.CLAY_BALL, 2));
     }
     request(helper, new ItemStack(ModItems.COPPER_DUST), 4);
@@ -590,7 +588,7 @@ public class LogisticsCoverageGameTest {
   public void furnaceKeepsPreexistingOutput(GameTestHelper helper) {
     buildBus(helper, new ItemStack(Items.RAW_IRON, 8), new ItemStack(Items.COAL, 8));
     furnaceStation(helper, 0, new ItemStack(Items.RAW_IRON), new ItemStack(Items.IRON_INGOT));
-    if (helper.getBlockEntity(machineAt(0)) instanceof AbstractFurnaceBlockEntity furnace) {
+    if (TestUtil.blockEntity(helper, machineAt(0)) instanceof AbstractFurnaceBlockEntity furnace) {
       furnace.setItem(2, new ItemStack(Items.IRON_INGOT, 5));
     }
     request(helper, new ItemStack(Items.IRON_INGOT), 4);
@@ -603,7 +601,7 @@ public class LogisticsCoverageGameTest {
         helper.fail("request not completed; " + ledgerState(helper));
         return;
       }
-      if (!(helper.getBlockEntity(machineAt(0)) instanceof AbstractFurnaceBlockEntity furnace)
+      if (!(TestUtil.blockEntity(helper, machineAt(0)) instanceof AbstractFurnaceBlockEntity furnace)
           || furnace.getItem(2).getCount() != 5) {
         helper.fail("the 5 ingots that were already in the furnace were touched");
       }
@@ -615,7 +613,7 @@ public class LogisticsCoverageGameTest {
     buildBus(helper, new ItemStack(Items.RAW_IRON, 8));
     helper.setBlock(pipeAt(0), LogisticsRegistry.RECIPE_PIPE.defaultBlockState());
     helper.setBlock(machineAt(0), Blocks.FURNACE.defaultBlockState());
-    if (helper.getBlockEntity(pipeAt(0)) instanceof BlockEntityRecipePipe pipe) {
+    if (TestUtil.blockEntity(helper, pipeAt(0)) instanceof BlockEntityRecipePipe pipe) {
       simpleRecipe(pipe, new ItemStack(Items.RAW_IRON), new ItemStack(Items.IRON_INGOT));
       pipe.setTimeoutTicks(200);
     }
@@ -629,7 +627,7 @@ public class LogisticsCoverageGameTest {
         helper.fail("raw iron was not returned to stock; " + ledgerState(helper));
         return;
       }
-      if (!(helper.getBlockEntity(machineAt(0)) instanceof AbstractFurnaceBlockEntity furnace)
+      if (!(TestUtil.blockEntity(helper, machineAt(0)) instanceof AbstractFurnaceBlockEntity furnace)
           || !furnace.getItem(0).isEmpty()) {
         helper.fail("raw iron left in the cold furnace");
       }
@@ -720,7 +718,7 @@ public class LogisticsCoverageGameTest {
       int logs = countInChest(helper, STOCK, stack -> stack.is(Items.OAK_LOG)) + groundCount(helper, Items.OAK_LOG);
       int planks = countInChest(helper, STOCK, stack -> stack.is(Items.OAK_PLANKS))
           + countInTable(helper, stack -> stack.is(Items.OAK_PLANKS)) + groundCount(helper, Items.OAK_PLANKS);
-      if (helper.getBlockEntity(machineAt(0)) instanceof BlockEntityAssemblyTable table) {
+      if (TestUtil.blockEntity(helper, machineAt(0)) instanceof BlockEntityAssemblyTable table) {
         logs += inHandler(table.getIngredients(), stack -> stack.is(Items.OAK_LOG));
         planks += inHandler(table.getOutput(), stack -> stack.is(Items.OAK_PLANKS));
       }
@@ -867,7 +865,7 @@ public class LogisticsCoverageGameTest {
         helper.fail("expected planks moved and dirt kept, found planks=" + planks + " dirtLeft=" + dirtLeft);
         return;
       }
-      if (!(helper.getBlockEntity(northChestOf(7)) instanceof ChestBlockEntity)) {
+      if (!(TestUtil.blockEntity(helper, northChestOf(7)) instanceof ChestBlockEntity)) {
         helper.fail("source chest vanished");
         return;
       }

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "C": "faktocraft:basic_machine_casing",
+    "c": "#c:cobblestones",
+    "f": "minecraft:flint",
+    "x": "faktocraft:electronic_circuit"
+  },
+  "pattern": [
+    "fff",
+    "cCc",
+    " x "
+  ],
+  "result": {
+    "id": "faktocraft:crusher"
+  }
+}

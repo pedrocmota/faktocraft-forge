@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:function",
+  "function": "faktocraft:radiationgametest.radiationexposurerecovers",
+  "environment": "faktocraft:radiation_recover",
+  "structure": "faktocraft:gametest_platform",
+  "max_ticks": 40,
+  "sky_access": true
+}

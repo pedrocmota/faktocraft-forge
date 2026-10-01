@@ -1,12 +1,13 @@
 package com.faktocraft.common.screen.button;
 
+import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.container.FaktocraftMenu;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import java.util.List;
@@ -32,7 +33,7 @@ public class GuiPriorityButton extends GuiButton {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     super.renderBg(graphics, minecraft, mouseX, mouseY);
 
     boolean corner = com.faktocraft.common.util.Constants.LEFT_LAYOUT_EXPERIMENT;
@@ -40,11 +41,11 @@ public class GuiPriorityButton extends GuiButton {
     String label = mode == 0 ? "A" : String.valueOf(mode);
     int textLeft = getLeftOffset() + (corner ? 10 : 11) - minecraft.font.width(label) / 2;
     int textTop = getTopOffset() + (corner ? 7 : 8);
-    graphics.drawString(minecraft.font, label, textLeft, textTop, mode == 0 ? 0xB0E0B0 : 0xFFD966);
+    graphics.text(minecraft.font, label, textLeft, textTop, GuiUtil.opaque(mode == 0 ? 0xB0E0B0 : 0xFFD966));
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY)) {
       int mode = mode();
       Component value = mode == 0
@@ -52,7 +53,7 @@ public class GuiPriorityButton extends GuiButton {
               menu.getGeneratorPriorityDefault()).withStyle(ChatFormatting.GREEN)
           : Component.translatable("gui." + Faktocraft.MODID + ".generator_priority.manual", mode)
               .withStyle(ChatFormatting.GOLD);
-      graphics.renderComponentTooltip(Minecraft.getInstance().font, List.of(
+      graphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, List.of(
           Component.translatable("gui." + Faktocraft.MODID + ".generator_priority"),
           value), mouseX, mouseY);
     }

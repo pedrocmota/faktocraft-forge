@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:efficiency_upgrade",
+    "faktocraft:efficiency_upgrade",
+    "faktocraft:advanced_circuit",
+    "faktocraft:advanced_circuit",
+    "faktocraft:purified_lead"
+  ],
+  "result": {
+    "id": "faktocraft:advanced_efficiency_upgrade"
+  }
+}

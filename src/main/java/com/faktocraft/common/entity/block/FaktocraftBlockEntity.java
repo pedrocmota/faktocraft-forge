@@ -1,5 +1,6 @@
 package com.faktocraft.common.entity.block;
 
+import com.faktocraft.common.util.transfer.CapabilityBlockEntity;
 import com.faktocraft.common.energy.impl.BasicEnergyStorage;
 import com.faktocraft.common.entity.slot.FaktocraftSlot;
 import com.faktocraft.common.entity.slot.SlotUpgrade;
@@ -16,13 +17,14 @@ import com.faktocraft.common.interfaces.entity.ITileSound;
 import com.faktocraft.common.interfaces.item.IUpgradeItem;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.ItemStackHandler;
+import com.faktocraft.common.util.RecipeUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
@@ -31,15 +33,14 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.IItemHandler;
+import com.faktocraft.common.util.transfer.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FaktocraftBlockEntity extends BlockEntity {
+public class FaktocraftBlockEntity extends CapabilityBlockEntity {
 
   protected boolean isActivate;
   protected boolean hasCooldown;
@@ -84,7 +85,7 @@ public class FaktocraftBlockEntity extends BlockEntity {
   protected SoundEvent soundEvent;
 
   private final Map<Integer, ItemStack> cachedInput = new HashMap<>();
-  protected final Map<ResourceLocation, Integer> recipesUsed = new HashMap<>();
+  protected final Map<Identifier, Integer> recipesUsed = new HashMap<>();
 
   private LazyOptional<IItemHandler> itemHandlerCap = LazyOptional.empty();
 
@@ -428,6 +429,40 @@ public class FaktocraftBlockEntity extends BlockEntity {
       }
 
       @Override
+      public int maxReceive() {
+        int loss = energyReceiveLossPercent();
+        if (loss <= 0) {
+          return super.maxReceive();
+        }
+        long gross = (long) (maxEnergy() - energyStored()) * 100 / (100 - loss);
+        return (int) Math.max(0, Math.min(maxReceiveTick(), gross));
+      }
+
+      @Override
+      public int receiveEnergy(@Nullable Direction side, int amount, boolean simulate) {
+        if (energyReceiveLossPercent() <= 0) {
+          return super.receiveEnergy(side, amount, simulate);
+        }
+        if (!canReceiveEnergy(side) && side != null) {
+          return 0;
+        }
+        int accepted = Math.max(0, Math.min(amount, maxReceive()));
+        int free = maxEnergy() - energyStored();
+        int stored = energyAfterReceiveLoss(accepted, true);
+        while (stored > free && accepted > 0) {
+          accepted -= stored - free;
+          stored = energyAfterReceiveLoss(accepted, true);
+        }
+        if (accepted <= 0) {
+          return 0;
+        }
+        if (!simulate) {
+          setEnergy(energyStored() + energyAfterReceiveLoss(accepted, false));
+        }
+        return accepted;
+      }
+
+      @Override
       public void updated() {
         setChanged();
         shouldUpdateState = true;
@@ -461,6 +496,14 @@ public class FaktocraftBlockEntity extends BlockEntity {
 
   public int customEnergyExtractTick() {
     return -1;
+  }
+
+  public int energyReceiveLossPercent() {
+    return 0;
+  }
+
+  public int energyAfterReceiveLoss(int accepted, boolean simulate) {
+    return accepted;
   }
 
   public float getSpeedFactor() {
@@ -744,9 +787,10 @@ public class FaktocraftBlockEntity extends BlockEntity {
     }
     if (tickCounter == 0) {
       if (canPlaySound() && !isRemoved()) {
-        com.faktocraft.client.SoundHandler.startTileSound(soundEvent, getSoundCategoryVolume(), getBlockPos());
+        com.faktocraft.common.util.ClientProxy.get().startTileSound(soundEvent, getSoundCategoryVolume(),
+            getBlockPos());
       } else {
-        com.faktocraft.client.SoundHandler.stopTileSound(getBlockPos());
+        com.faktocraft.common.util.ClientProxy.get().stopTileSound(getBlockPos());
       }
     }
     tickCounter++;
@@ -841,7 +885,7 @@ public class FaktocraftBlockEntity extends BlockEntity {
 
   public void addRecipeUsed(@Nullable Recipe<?> recipe) {
     if (recipe != null) {
-      recipesUsed.merge(recipe.getId(), 1, Integer::sum);
+      RecipeUtil.idOf(level, recipe).ifPresent(id -> recipesUsed.merge(id, 1, Integer::sum));
     }
   }
 
@@ -851,9 +895,9 @@ public class FaktocraftBlockEntity extends BlockEntity {
     }
     float total = 0;
     if (level instanceof ServerLevel serverLevel) {
-      for (Map.Entry<ResourceLocation, Integer> entry : recipesUsed.entrySet()) {
-        total += serverLevel.getRecipeManager().byKey(entry.getKey())
-            .map(recipe -> getExperience(recipe) * entry.getValue())
+      for (Map.Entry<Identifier, Integer> entry : recipesUsed.entrySet()) {
+        total += RecipeUtil.byKey(serverLevel, entry.getKey())
+            .map(holder -> getExperience(holder.value()) * entry.getValue())
             .orElse(0F);
       }
     }
@@ -927,7 +971,9 @@ public class FaktocraftBlockEntity extends BlockEntity {
     }
   }
 
+  @Override
   public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+    super.preRemoveSideEffects(pos, state);
     if (level != null) {
       onBreak(level.isClientSide());
     }
@@ -948,7 +994,7 @@ public class FaktocraftBlockEntity extends BlockEntity {
     super.setRemoved();
     itemHandlerCap.invalidate();
     if (level != null && level.isClientSide()) {
-      com.faktocraft.client.SoundHandler.stopTileSound(getBlockPos());
+      com.faktocraft.common.util.ClientProxy.get().stopTileSound(getBlockPos());
     }
   }
 
@@ -1015,7 +1061,7 @@ public class FaktocraftBlockEntity extends BlockEntity {
     }
     if (hasExp) {
       CompoundTag expOutput = new CompoundTag();
-      for (Map.Entry<ResourceLocation, Integer> entry : recipesUsed.entrySet()) {
+      for (Map.Entry<Identifier, Integer> entry : recipesUsed.entrySet()) {
         expOutput.putInt(entry.getKey().toString(), entry.getValue());
       }
       tag.put("recipesUsed", expOutput);
@@ -1026,37 +1072,37 @@ public class FaktocraftBlockEntity extends BlockEntity {
   public void load(CompoundTag tag) {
     super.load(tag);
     if (isActivate) {
-      activeState = tag.getBoolean("activeState");
+      activeState = tag.getBooleanOr("activeState", false);
     }
     if (hasInventory && tag.contains("inventory")) {
-      itemStackHandler.load(tag.getCompound("inventory"));
+      itemStackHandler.load(tag.getCompoundOrEmpty("inventory"));
     }
     if (hasBattery && tag.contains("battery")) {
-      batteryStackHandler.load(tag.getCompound("battery"));
+      batteryStackHandler.load(tag.getCompoundOrEmpty("battery"));
       if (hasBatteryDock()) {
         onBatteryDockChanged();
       }
     }
     if (hasUpgrades() && upgradeStackHandler != null && tag.contains("upgrade")) {
-      upgradeStackHandler.load(tag.getCompound("upgrade"));
+      upgradeStackHandler.load(tag.getCompoundOrEmpty("upgrade"));
     }
     if (hasEnergy) {
-      energyStorage.setEnergy(tag.contains("energy") ? tag.getInt("energy") : 0);
-      dischargeMode = tag.getBoolean("dischargeMode");
-      undervoltageTicks = tag.getBoolean("undervoltage") ? UNDERVOLTAGE_HOLD_TICKS : 0;
-      pendingDockEnergy = Math.max(0, tag.getInt("pendingEnergy"));
+      energyStorage.setEnergy(tag.contains("energy") ? tag.getIntOr("energy", 0) : 0);
+      dischargeMode = tag.getBooleanOr("dischargeMode", false);
+      undervoltageTicks = tag.getBooleanOr("undervoltage", false) ? UNDERVOLTAGE_HOLD_TICKS : 0;
+      pendingDockEnergy = Math.max(0, tag.getIntOr("pendingEnergy", 0));
       applyPendingDockEnergy();
     }
-    redstoneOnly = tag.getBoolean("redstoneOnly");
-    generatorPriorityMode = net.minecraft.util.Mth.clamp(tag.getInt("generatorPriority"), 0, 5);
+    redstoneOnly = tag.getBooleanOr("redstoneOnly", false);
+    generatorPriorityMode = net.minecraft.util.Mth.clamp(tag.getIntOr("generatorPriority", 0), 0, 5);
     if (hasCooldown) {
-      cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
+      cooldown = tag.contains("cooldown") ? tag.getIntOr("cooldown", 0) : 0;
     }
     if (hasExp && tag.contains("recipesUsed")) {
       recipesUsed.clear();
-      CompoundTag expTag = tag.getCompound("recipesUsed");
-      for (String key : expTag.getAllKeys()) {
-        recipesUsed.put(new ResourceLocation(key), expTag.getInt(key));
+      CompoundTag expTag = tag.getCompoundOrEmpty("recipesUsed");
+      for (String key : expTag.keySet()) {
+        recipesUsed.put(Identifier.parse(key), expTag.getIntOr(key, 0));
       }
     }
   }

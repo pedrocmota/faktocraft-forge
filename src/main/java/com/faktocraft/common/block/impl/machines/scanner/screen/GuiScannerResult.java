@@ -7,7 +7,7 @@ import com.faktocraft.common.screen.widgets.GuiElement;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.util.TextComponentUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class GuiScannerResult extends GuiElement {
@@ -20,7 +20,7 @@ public class GuiScannerResult extends GuiElement {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     GuiUtil.renderScaled(graphics,
         Component.translatable("gui." + Faktocraft.MODID + ".scanner.replication_cost").getString(),
         getLeftOffset() + 3,

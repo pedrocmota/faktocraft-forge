@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "faktocraft:reinforced_stone_door",
+        "state": {
+          "half": "lower"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:reinforced_stone_door"
+        }
+      ],
+      "name": "reinforced_stone_door",
+      "rolls": 1
+    }
+  ]
+}

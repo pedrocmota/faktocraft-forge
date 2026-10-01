@@ -1,5 +1,7 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import net.minecraft.world.phys.Vec3;
+import com.faktocraft.common.util.PlayerMessages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,7 +12,6 @@ import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public class MenuModule extends AbstractContainerMenu {
@@ -130,10 +131,9 @@ public class MenuModule extends AbstractContainerMenu {
       return true;
     }
     BlockPos pos = chassis.getBlockPos();
-    NetworkHooks.openScreen(serverPlayer,
-        new net.minecraft.world.SimpleMenuProvider(
-            (windowId, inventory, p) -> new MenuChassis(windowId, p.level(), pos, inventory, p),
-            Component.translatable(chassis.getBlockState().getBlock().getDescriptionId())),
+    serverPlayer.openMenu(new net.minecraft.world.SimpleMenuProvider(
+        (windowId, inventory, p) -> new MenuChassis(windowId, p.level(), pos, inventory, p),
+        Component.translatable(chassis.getBlockState().getBlock().getDescriptionId())),
         buf -> buf.writeBlockPos(pos));
     return true;
   }
@@ -240,8 +240,8 @@ public class MenuModule extends AbstractContainerMenu {
         ModuleType type = ModuleItem.typeOf(module);
         if (type != null) {
           ConfigClipboard.put(player, "module:" + type.id(),
-              module.getTag() != null ? module.getTag().copy() : new net.minecraft.nbt.CompoundTag());
-          player.displayClientMessage(Component.translatable("chat.faktocraft.config_copied"), true);
+              com.faktocraft.common.util.NbtBridge.customDataOrEmpty(module));
+          PlayerMessages.display(player, Component.translatable("chat.faktocraft.config_copied"), true);
         }
       }
       case ACTION_PASTE_CONFIG -> {
@@ -250,11 +250,11 @@ public class MenuModule extends AbstractContainerMenu {
             ? ConfigClipboard.get(player, "module:" + type.id())
             : null;
         if (payload == null) {
-          player.displayClientMessage(Component.translatable("chat.faktocraft.config_paste_empty"), true);
+          PlayerMessages.display(player, Component.translatable("chat.faktocraft.config_paste_empty"), true);
           return true;
         }
-        module.setTag(payload.isEmpty() ? null : payload.copy());
-        player.displayClientMessage(Component.translatable("chat.faktocraft.config_pasted"), true);
+        com.faktocraft.common.util.NbtBridge.setCustomData(module, payload.isEmpty() ? null : payload.copy());
+        PlayerMessages.display(player, Component.translatable("chat.faktocraft.config_pasted"), true);
       }
       default -> {
         return false;
@@ -276,6 +276,6 @@ public class MenuModule extends AbstractContainerMenu {
   public boolean stillValid(Player player) {
     return chassis != null && !chassis.isRemoved()
         && chassis.getModules().getStackInSlot(moduleSlot).getItem() instanceof ModuleItem
-        && player.distanceToSqr(chassis.getBlockPos().getCenter()) <= 64.0;
+        && player.distanceToSqr(Vec3.atCenterOf(chassis.getBlockPos())) <= 64.0;
   }
 }

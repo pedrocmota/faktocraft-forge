@@ -5,31 +5,28 @@ import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.item.base.SwordElectricItem;
 import com.faktocraft.common.registries.ModComponents;
-import com.google.common.collect.Multimap;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class ItemNanosaber extends SwordElectricItem {
 
   private static final float ACTIVE_DAMAGE = 19.0F;
 
   public ItemNanosaber(Properties properties) {
-    super(Tiers.DIAMOND, 1, -3.0F, properties, 0, 160000, EnergyType.RECEIVE, EnergyTier.HIGH);
+    super(ToolMaterial.DIAMOND, 1, -3.0F, properties, 0, 160000, EnergyType.RECEIVE, EnergyTier.HIGH);
   }
 
   @Override
-  public void inventoryTick(ItemStack stack, Level level, Entity owner, int slotId, boolean isSelected) {
-    if (level.isClientSide()) {
-      return;
-    }
+  public void inventoryTick(ItemStack stack, ServerLevel level, Entity owner, @Nullable EquipmentSlot slot) {
     if (level.getGameTime() % 20 == 0) {
       IEnergy energy = getEnergy(stack);
       if (isActive(stack)) {
@@ -45,7 +42,7 @@ public class ItemNanosaber extends SwordElectricItem {
   }
 
   @Override
-  public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+  public InteractionResult use(Level level, Player player, InteractionHand hand) {
     if (hand == InteractionHand.MAIN_HAND) {
       ItemStack stack = player.getItemInHand(hand);
       if (getEnergy(stack).energyStored() > 0) {
@@ -55,7 +52,7 @@ public class ItemNanosaber extends SwordElectricItem {
             nowActive ? com.faktocraft.common.registries.ModSounds.NANO_SABER_IGNITE
                 : com.faktocraft.common.registries.ModSounds.NANO_SABER_RETRACT,
             net.minecraft.sounds.SoundSource.PLAYERS, 0.8F, 1.0F);
-        return InteractionResultHolder.consume(stack);
+        return InteractionResult.CONSUME;
       }
     }
     return super.use(level, player, hand);
@@ -70,10 +67,7 @@ public class ItemNanosaber extends SwordElectricItem {
   }
 
   @Override
-  public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-    if (slot == EquipmentSlot.MAINHAND) {
-      return createSwordAttributes(isActive(stack) ? ACTIVE_DAMAGE : getDamage(), getAttackSpeed());
-    }
-    return super.getAttributeModifiers(slot, stack);
+  public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
+    return createSwordAttributes(isActive(stack) ? ACTIVE_DAMAGE : getDamage(), getAttackSpeed());
   }
 }

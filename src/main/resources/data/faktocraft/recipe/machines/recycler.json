@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "c": "faktocraft:compressor",
+    "d": "minecraft:dirt",
+    "g": "minecraft:glowstone_dust",
+    "p": "#c:plates/iron",
+    "s": "minecraft:sand"
+  },
+  "pattern": [
+    " g ",
+    "dcd",
+    "psp"
+  ],
+  "result": {
+    "id": "faktocraft:recycler"
+  }
+}

@@ -1,14 +1,27 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.network.ClientPacketDispatch;
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
-import java.util.function.Supplier;
 
-public record PacketRecipePipeRecipes(BlockPos blockPos, CompoundTag recipes) {
+public record PacketRecipePipeRecipes(BlockPos blockPos, CompoundTag recipes) implements CustomPacketPayload {
+
+  public static final Type<PacketRecipePipeRecipes> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_recipe_pipe_recipes"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketRecipePipeRecipes> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketRecipePipeRecipes::decode);
+
+  @Override
+  public Type<PacketRecipePipeRecipes> type() {
+    return TYPE;
+  }
 
   public static void encode(PacketRecipePipeRecipes msg, FriendlyByteBuf buf) {
     buf.writeBlockPos(msg.blockPos);
@@ -21,9 +34,8 @@ public record PacketRecipePipeRecipes(BlockPos blockPos, CompoundTag recipes) {
     return new PacketRecipePipeRecipes(pos, tag != null ? tag : new CompoundTag());
   }
 
-  public static void handle(PacketRecipePipeRecipes msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-        () -> () -> com.faktocraft.client.ClientPacketHandlers.handleRecipePipeRecipes(msg)));
-    ctx.get().setPacketHandled(true);
+  public static void handle(PacketRecipePipeRecipes msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> ClientPacketDispatch.dispatch(msg));
+    ctx.setPacketHandled(true);
   }
 }

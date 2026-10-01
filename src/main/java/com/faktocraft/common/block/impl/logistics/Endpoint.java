@@ -6,9 +6,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import com.faktocraft.common.util.transfer.IItemHandler;
+import com.faktocraft.common.util.transfer.ItemHandlerHelper;
+import com.faktocraft.common.util.transfer.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
 public record Endpoint(Type type, BlockPos pos, int slot, @Nullable Direction side, int slotEnd) {
@@ -267,9 +267,10 @@ public record Endpoint(Type type, BlockPos pos, int slot, @Nullable Direction si
   }
 
   public static Endpoint load(CompoundTag tag) {
-    Direction side = tag.contains("d") ? Direction.from3DDataValue(tag.getByte("d")) : null;
-    int slot = tag.getInt("s");
-    return new Endpoint(Type.values()[Math.floorMod(tag.getByte("t"), Type.values().length)],
-        BlockPos.of(tag.getLong("p")), slot, side, tag.contains("e") ? Math.max(slot, tag.getInt("e")) : slot);
+    Direction side = tag.contains("d") ? Direction.from3DDataValue(tag.getByteOr("d", (byte) 0)) : null;
+    int slot = tag.getIntOr("s", 0);
+    return new Endpoint(Type.values()[Math.floorMod(tag.getByteOr("t", (byte) 0), Type.values().length)],
+        BlockPos.of(tag.getLongOr("p", 0L)), slot, side,
+        tag.contains("e") ? Math.max(slot, tag.getIntOr("e", 0)) : slot);
   }
 }

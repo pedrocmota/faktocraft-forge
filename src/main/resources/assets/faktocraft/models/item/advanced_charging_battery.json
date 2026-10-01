@@ -1,29 +1,3 @@
 {
-  "parent": "faktocraft:item/battery/advanced_charging_battery_0",
-  "overrides": [
-    {
-      "predicate": {
-        "faktocraft:charge_ratio": 0.001
-      },
-      "model": "faktocraft:item/battery/advanced_charging_battery_1"
-    },
-    {
-      "predicate": {
-        "faktocraft:charge_ratio": 0.5
-      },
-      "model": "faktocraft:item/battery/advanced_charging_battery_2"
-    },
-    {
-      "predicate": {
-        "faktocraft:charge_ratio": 0.75
-      },
-      "model": "faktocraft:item/battery/advanced_charging_battery_3"
-    },
-    {
-      "predicate": {
-        "faktocraft:charge_ratio": 0.999
-      },
-      "model": "faktocraft:item/battery/advanced_charging_battery_4"
-    }
-  ]
+  "parent": "faktocraft:item/battery/advanced_charging_battery_0"
 }

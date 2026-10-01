@@ -1,5 +1,6 @@
 package com.faktocraft.common.command;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.pipe.BlockEntityFluidPipe;
 import com.faktocraft.common.block.impl.pipe.BlockEntityTank;
@@ -10,13 +11,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
 
-@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
+@EventBusSubscriber(modid = Faktocraft.MODID)
 public final class DebugValveTest {
 
   private DebugValveTest() {
@@ -49,7 +49,7 @@ public final class DebugValveTest {
         level.setBlockAndUpdate(base.offset(1, 0, z), pipe.defaultBlockState());
         level.setBlockAndUpdate(base.offset(2, 0, z), pipe.defaultBlockState());
         level.setBlockAndUpdate(base.offset(3, 0, z), PipeRegistry.TANK.defaultBlockState());
-        level.blockUpdated(base.offset(1, 0, z), pipe);
+        level.updateNeighborsAt(base.offset(1, 0, z), pipe);
         BlockEntityFluidPipe pipeB = pipeAt(level, 1, z);
         if (pipeB != null) {
           pipeB.setValve(PipeValve.of(Direction.UP, true));
@@ -110,8 +110,8 @@ public final class DebugValveTest {
   }
 
   @SubscribeEvent
-  public static void onServerTick(TickEvent.ServerTickEvent event) {
-    if (!armed || event.phase != TickEvent.Phase.END) {
+  public static void onServerTick(ServerTickEvent.Post event) {
+    if (!armed) {
       return;
     }
     ServerLevel level = event.getServer().overworld();

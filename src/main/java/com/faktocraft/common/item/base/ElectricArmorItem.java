@@ -8,42 +8,37 @@ import com.faktocraft.common.enums.EnumLang;
 import com.faktocraft.common.interfaces.item.IElectricItem;
 import com.faktocraft.common.registries.ModComponents;
 import com.faktocraft.common.util.TextComponentUtil;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
-public class ElectricArmorItem extends ArmorItem implements IElectricItem {
-
+public class ElectricArmorItem extends BaseArmor implements IElectricItem {
   protected final int initialEnergy;
   protected final int maxEnergy;
   protected final EnergyType energyType;
   protected final EnergyTier energyTier;
+  private final ItemAttributeModifiers activeModifiers;
 
-  public ElectricArmorItem(ArmorMaterial material, ArmorItem.Type armorType, Properties properties,
+  public ElectricArmorItem(ArmorMaterial material, ArmorType armorType, Properties properties,
       int energyStored, int maxEnergy, EnergyType energyType, EnergyTier energyTier) {
-    super(material, armorType, properties.stacksTo(1));
+    super(material, armorType, properties.stacksTo(1), BaseArmor::equippable);
     this.initialEnergy = energyStored;
     this.maxEnergy = maxEnergy;
     this.energyType = energyType;
     this.energyTier = energyTier;
-  }
-
-  @Override
-  public boolean canBeDepleted() {
-    return false;
+    this.activeModifiers = material.createAttributes(armorType);
   }
 
   @Override
@@ -90,20 +85,22 @@ public class ElectricArmorItem extends ArmorItem implements IElectricItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+  @SuppressWarnings("deprecation")
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
     if (this instanceof com.faktocraft.common.interfaces.item.IArmorProperties armorProperties
         && armorProperties.supportsNightVision()) {
-      tooltip.add(Component.translatable("tooltip." + com.faktocraft.Faktocraft.MODID + ".night_vision_cost",
+      tooltip.accept(Component.translatable("tooltip." + com.faktocraft.Faktocraft.MODID + ".night_vision_cost",
           com.faktocraft.common.util.NightVisionHandler.COST_PER_SECOND).withStyle(ChatFormatting.GRAY));
     }
-    tooltip.add(EnumLang.POWER_TIER.getTranslationComponent(
+    tooltip.accept(EnumLang.POWER_TIER.getTranslationComponent(
         energyTier.getLang().getTranslationComponent().withStyle(energyTier.getColor()))
         .withStyle(ChatFormatting.GRAY)
         .append(Component.literal(" (" + TextComponentUtil.getFormattedLong(energyTier.getBasicTransfer()) + " IE/t)")
             .withStyle(ChatFormatting.DARK_GRAY)));
 
     int energyStored = Mth.clamp(ModComponents.getEnergy(stack, initialEnergy), 0, maxEnergy);
-    tooltip.add(EnumLang.STORED.getTranslationComponent(TextComponentUtil.build(
+    tooltip.accept(EnumLang.STORED.getTranslationComponent(TextComponentUtil.build(
         EnumLang.POWER.getTranslationComponent(TextComponentUtil.getFormattedEnergyUnit(energyStored))
             .withStyle(energyTier.getColor()),
         Component.literal(" / ").withStyle(ChatFormatting.GRAY),
@@ -111,22 +108,20 @@ public class ElectricArmorItem extends ArmorItem implements IElectricItem {
             .withStyle(energyTier.getColor())))
         .withStyle(ChatFormatting.GRAY));
 
-    super.appendHoverText(stack, level, tooltip, flag);
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 
   @Override
-  public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-    if (slot == getType().getSlot() && !ModComponents.getActive(stack, true)) {
-      return ImmutableMultimap.of();
+  public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
+    if (!ModComponents.getActive(stack, true)) {
+      return ItemAttributeModifiers.EMPTY;
     }
-    return super.getAttributeModifiers(slot, stack);
+    return activeModifiers;
   }
 
   @Override
-  public void inventoryTick(ItemStack stack, Level level, Entity owner, int slotId, boolean isSelected) {
-    if (!level.isClientSide()) {
-      tickElectric(stack);
-    }
+  public void inventoryTick(ItemStack stack, ServerLevel level, Entity owner, @Nullable EquipmentSlot slot) {
+    tickElectric(stack);
   }
 
   @Override

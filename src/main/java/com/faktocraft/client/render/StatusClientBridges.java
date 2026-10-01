@@ -1,13 +1,13 @@
 package com.faktocraft.client.render;
 
 import com.faktocraft.common.block.impl.monitor.StatusBridges;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public final class StatusClientBridges {
     return null;
   }
 
-  public static boolean render(Object built, GuiGraphics graphics, int width, int height) {
+  public static boolean render(Object built, GuiGraphicsExtractor graphics, int width, int height) {
     if (!(built instanceof Built entry)) {
       return false;
     }

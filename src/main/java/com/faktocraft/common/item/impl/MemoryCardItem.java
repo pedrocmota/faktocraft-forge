@@ -1,5 +1,8 @@
 package com.faktocraft.common.item.impl;
 
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.common.capabilities.scan_result.ScannerResult;
 import com.faktocraft.common.enums.EnumLang;
 import com.faktocraft.common.item.base.BaseItem;
@@ -9,9 +12,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class MemoryCardItem extends BaseItem {
 
@@ -33,34 +33,36 @@ public class MemoryCardItem extends BaseItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+  @SuppressWarnings("deprecation")
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
     ScannerResult scannerResult = getScannerResult(stack);
 
     if (scannerResult.isEmpty()) {
-      tooltip.add(TextComponentUtil.build(
+      tooltip.accept(TextComponentUtil.build(
           Component.literal("< ").withStyle(ChatFormatting.GRAY),
           EnumLang.REPLICATION_EMPTY.getTranslationComponent(),
           Component.literal(" >").withStyle(ChatFormatting.GRAY)));
     } else {
-      tooltip.add(TextComponentUtil.build(
+      tooltip.accept(TextComponentUtil.build(
           Component.literal("< ").withStyle(ChatFormatting.GRAY),
           Component.literal(scannerResult.getResultStack().getHoverName().getString()),
           Component.literal(" >").withStyle(ChatFormatting.GRAY)));
 
       if (scannerResult.getMatterCost() > 0) {
-        tooltip.add(TextComponentUtil.build(
+        tooltip.accept(TextComponentUtil.build(
             EnumLang.MATTER_COST.getTranslationComponent().withStyle(ChatFormatting.DARK_GRAY),
             Component.literal(" " + scannerResult.getMatterCost() + " mB").withStyle(ChatFormatting.GRAY)));
       }
 
       if (scannerResult.getEnergyCost() > 0) {
-        tooltip.add(TextComponentUtil.build(
+        tooltip.accept(TextComponentUtil.build(
             EnumLang.ENERGY_COST.getTranslationComponent().withStyle(ChatFormatting.DARK_GRAY),
             Component.literal(" " + TextComponentUtil.getFormattedEnergyUnit(scannerResult.getEnergyCost()) + " IE/t")
                 .withStyle(ChatFormatting.GRAY)));
       }
     }
 
-    super.appendHoverText(stack, level, tooltip, flag);
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 }

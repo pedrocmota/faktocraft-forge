@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "i": "#c:plates/iron",
+    "s": "faktocraft:small_power_unit"
+  },
+  "pattern": [
+    "ii ",
+    " i ",
+    " s "
+  ],
+  "result": {
+    "id": "faktocraft:electric_hoe"
+  }
+}

@@ -1,5 +1,11 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.screen.widgets.FilteredEditBox;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketReqTableState;
@@ -7,9 +13,9 @@ import com.faktocraft.common.network.packet.PacketRequestTarget;
 import com.faktocraft.common.network.packet.PacketTableState;
 import com.faktocraft.common.network.packet.PacketTaskHistoryOp;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
@@ -18,11 +24,10 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -30,9 +35,9 @@ import java.util.Locale;
 
 public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable> {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "textures/gui/container/request_table.png");
-  private static final ResourceLocation BACKGROUND_TASKS = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier BACKGROUND_TASKS = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "textures/gui/container/request_table_tasks.png");
 
   private static final int PANEL_X = 176;
@@ -93,9 +98,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
   private TaskListPanel taskPanel;
 
   public ScreenRequestTable(MenuRequestTable menu, Inventory inventory, Component title) {
-    super(menu, inventory, title);
-    this.imageWidth = 340;
-    this.imageHeight = 256;
+    super(menu, inventory, title, 340, 256);
     this.inventoryLabelX = 8;
     this.inventoryLabelY = 161;
   }
@@ -122,7 +125,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
         }, supplier -> supplier.get()) {
 
       @Override
-      protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+      protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         boolean on = ScreenRequestTable.this.menu.isAutoExtract();
         boolean hovered = isHoveredOrFocused();
         drawArrow(graphics, getX() + 1, getY() + 1, 0x50000000);
@@ -147,7 +150,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     search = new EditBox(this.font, left + 180, top + 176, 146, 10, Component.empty());
     search.setBordered(false);
     search.setMaxLength(48);
-    search.setTextColor(0xFFFFFF);
+    search.setTextColor(0xFFFFFFFF);
     search.setValue(query);
     search.setHint(Component.translatable(key("search_hint")).withStyle(ChatFormatting.DARK_GRAY));
     search.setResponder(text -> {
@@ -186,7 +189,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     applyTabVisibility();
   }
 
-  private static void drawArrow(GuiGraphics graphics, int x, int y, int color) {
+  private static void drawArrow(GuiGraphicsExtractor graphics, int x, int y, int color) {
     graphics.fill(x + 4, y, x + 8, y + 6, color);
     for (int row = 0; row < 5; row++) {
       graphics.fill(x + 1 + row, y + 6 + row, x + 11 - row, y + 7 + row, color);
@@ -222,7 +225,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
 
   private String dimensionId() {
     return this.minecraft != null && this.minecraft.level != null
-        ? this.minecraft.level.dimension().location().toString()
+        ? this.minecraft.level.dimension().identifier().toString()
         : "minecraft:overworld";
   }
 
@@ -247,7 +250,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
         && mouseY >= top + TAB_Y && mouseY < top + TAB_Y + TAB_H;
   }
 
-  private void renderTabs(GuiGraphics graphics, int mouseX, int mouseY) {
+  private void renderTabs(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     int top = (this.height - this.imageHeight) / 2;
     for (Tab which : Tab.values()) {
       int x = tabX(which);
@@ -271,19 +274,19 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
       }
       float textWidth = rawWidth * scale;
       float textHeight = 8 * scale;
-      graphics.pose().pushPose();
-      graphics.pose().translate(x + (w - textWidth) / 2.0f, y + 1 + (TAB_H - 1 - textHeight) / 2.0f, 0);
-      graphics.pose().scale(scale, scale, 1.0f);
-      graphics.drawString(this.font, label, 0, 0, selected ? 0xFFFFFF : 0x3A3A3A, selected);
-      graphics.pose().popPose();
+      graphics.pose().pushMatrix();
+      graphics.pose().translate(x + (w - textWidth) / 2.0f, y + 1 + (TAB_H - 1 - textHeight) / 2.0f);
+      graphics.pose().scale(scale, scale);
+      graphics.text(this.font, label, 0, 0, GuiUtil.opaque(selected ? 0xFFFFFF : 0x3A3A3A), selected);
+      graphics.pose().popMatrix();
     }
   }
 
   private int step() {
-    if (hasControlDown()) {
+    if (GuiUtil.hasControlDown()) {
       return 64;
     }
-    return hasShiftDown() ? 16 : 1;
+    return GuiUtil.hasShiftDown() ? 16 : 1;
   }
 
   private void stepQuantity(int direction) {
@@ -395,7 +398,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     messageUntil = Util.getMillis() + MESSAGE_MILLIS;
   }
 
-  private void renderMessage(GuiGraphics graphics) {
+  private void renderMessage(GuiGraphicsExtractor graphics) {
     if (messageLines.isEmpty()) {
       return;
     }
@@ -408,7 +411,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     int y = top + MESSAGE_Y;
     for (net.minecraft.util.FormattedCharSequence line : messageLines) {
       int x = left + MESSAGE_X + (MESSAGE_W - this.font.width(line)) / 2;
-      graphics.drawString(this.font, line, x, y, messageColor, false);
+      graphics.text(this.font, line, x, y, GuiUtil.opaque(messageColor), false);
       y += this.font.lineHeight;
     }
   }
@@ -499,39 +502,36 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+  public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
     int left = (this.width - this.imageWidth) / 2;
     int top = (this.height - this.imageHeight) / 2;
     if (tab == Tab.TASKS) {
       this.hoveredSlot = null;
-      renderBackground(graphics);
-      graphics.blit(BACKGROUND_TASKS, left, top, 0, 0, this.imageWidth, this.imageHeight, 512, 256);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND_TASKS, left, top, 0, 0, this.imageWidth, this.imageHeight,
+          512, 256);
       taskPanel.render(graphics, left, top, mouseX, mouseY);
       for (Renderable renderable : this.renderables) {
-        renderable.render(graphics, mouseX, mouseY, partialTick);
+        renderable.extractRenderState(graphics, mouseX, mouseY, partialTick);
       }
-      graphics.drawString(this.font, this.title, left + 8, top + 6, 0x404040, false);
+      graphics.text(this.font, this.title, left + 8, top + 6, GuiUtil.opaque(0x404040), false);
       renderTabs(graphics, mouseX, mouseY);
       taskPanel.renderTooltip(graphics, left, top, mouseX, mouseY);
-      ItemStack carried = this.menu.getCarried();
-      if (!carried.isEmpty()) {
-        graphics.pose().pushPose();
-        graphics.pose().translate(0, 0, 232);
-        graphics.renderItem(carried, mouseX - 8, mouseY - 8);
-        graphics.renderItemDecorations(this.font, carried, mouseX - 8, mouseY - 8);
-        graphics.pose().popPose();
-      }
+      extractCarriedItem(graphics, mouseX, mouseY);
       return;
     }
-    renderBackground(graphics);
     updateControls();
-    super.render(graphics, mouseX, mouseY, partialTick);
+    super.extractRenderState(graphics, mouseX, mouseY, partialTick);
+    renderBrowserTooltip(graphics, mouseX, mouseY);
+  }
+
+  @Override
+  public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    renderBg(graphics, partialTick, mouseX, mouseY);
+    super.extractContents(graphics, mouseX, mouseY, partialTick);
     renderTabs(graphics, mouseX, mouseY);
     renderBrowser(graphics, mouseX, mouseY);
     renderPagination(graphics, mouseX, mouseY);
     renderMessage(graphics);
-    renderTooltip(graphics, mouseX, mouseY);
-    renderBrowserTooltip(graphics, mouseX, mouseY);
   }
 
   private static final String PAGER_CHARS = "0123456789/";
@@ -542,7 +542,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
       { 1, 1, 2, 4, 4 }
   };
 
-  private void drawTinyText(GuiGraphics graphics, String text, int x, int y, int color) {
+  private void drawTinyText(GuiGraphicsExtractor graphics, String text, int x, int y, int color) {
     for (char character : text.toCharArray()) {
       int index = PAGER_CHARS.indexOf(character);
       if (index >= 0) {
@@ -559,7 +559,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     }
   }
 
-  private void drawPagerButton(GuiGraphics graphics, int x, int y, boolean rightArrow, boolean hovered,
+  private void drawPagerButton(GuiGraphicsExtractor graphics, int x, int y, boolean rightArrow, boolean hovered,
       boolean enabled) {
     graphics.fill(x, y, x + 8, y + 8, hovered && enabled ? 0xFFCFCFCF : 0xFFB4B4B4);
     graphics.fill(x, y, x + 8, y + 1, 0xFFE4E4E4);
@@ -589,7 +589,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     return new int[] { leftButton, rightButton, top + 19, numberX };
   }
 
-  private void renderPagination(GuiGraphics graphics, int mouseX, int mouseY) {
+  private void renderPagination(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     boolean single = maxPage() <= 0;
     int[] layout = pagerLayout();
     drawPagerButton(graphics, layout[0], layout[2], false, isOverPager(mouseX, mouseY, -1), !single);
@@ -604,7 +604,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     return mouseX >= x && mouseX < x + 8 && mouseY >= layout[2] && mouseY < layout[2] + 8;
   }
 
-  private void renderBrowser(GuiGraphics graphics, int mouseX, int mouseY) {
+  private void renderBrowser(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     int left = (this.width - this.imageWidth) / 2;
     int top = (this.height - this.imageHeight) / 2;
     int start = page * PAGE_SIZE;
@@ -618,31 +618,24 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
       if (selected) {
         graphics.fill(x - 1, y - 1, x + 17, y + 17, 0x8033AAFF);
       }
-      graphics.renderItem(entry.stack(), x, y);
-      graphics.pose().pushPose();
-      graphics.pose().translate(0, 0, 200);
+      graphics.item(entry.stack(), x, y);
       if (entry.blocked()) {
 
         graphics.fill(x, y, x + 16, y + 16, 0xB0787878);
       }
       String text = entry.count() > 0 ? compactCount(entry.count()) : "C";
       int color = entry.blocked() ? 0xFF5555 : (entry.craftableOnly() ? 0xFFA000 : 0xFFFFFF);
-      graphics.pose().translate(0, 0, 10);
-      graphics.drawString(this.font, text, x + 17 - this.font.width(text), y + 9, color, true);
-      graphics.pose().popPose();
+      graphics.text(this.font, text, x + 17 - this.font.width(text), y + 9, GuiUtil.opaque(color), true);
     }
     int hovered = cellIndexAt(mouseX, mouseY);
     if (hovered >= 0) {
       int x = left + GRID_X + ((hovered - start) % COLS) * 18;
       int y = top + GRID_Y + ((hovered - start) / COLS) * 18;
-      graphics.pose().pushPose();
-      graphics.pose().translate(0, 0, 250);
       graphics.fill(x, y, x + 16, y + 16, 0x80FFFFFF);
-      graphics.pose().popPose();
     }
   }
 
-  private void renderBrowserTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+  private void renderBrowserTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     int hovered = cellIndexAt(mouseX, mouseY);
     if (hovered < 0 || !this.menu.getCarried().isEmpty() || this.minecraft == null) {
       return;
@@ -659,11 +652,14 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     } else if (entry.craftableOnly()) {
       tooltip.add(Component.translatable(key("craftable")).withStyle(ChatFormatting.GOLD));
     }
-    graphics.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
+    graphics.setComponentTooltipForNextFrame(this.font, tooltip, mouseX, mouseY);
   }
 
   @Override
-  public boolean mouseClicked(double mouseX, double mouseY, int button) {
+  public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int button = GuiUtil.legacyButton(event);
     for (Tab which : Tab.values()) {
       if (isOverTab(mouseX, mouseY, which)) {
         if (tab != which) {
@@ -683,7 +679,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
         return true;
       }
       for (GuiEventListener child : children()) {
-        if (child.mouseClicked(mouseX, mouseY, button)) {
+        if (child.mouseClicked(event, doubleClick)) {
           setFocused(child);
           return true;
         }
@@ -718,11 +714,11 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
       }
       return true;
     }
-    return super.mouseClicked(mouseX, mouseY, button);
+    return super.mouseClicked(event, doubleClick);
   }
 
   @Override
-  public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+  public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double delta) {
     if (tab == Tab.TASKS) {
       taskPanel.mouseScrolled(delta);
       return true;
@@ -739,36 +735,37 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
       stepQuantity(delta > 0 ? 1 : -1);
       return true;
     }
-    return super.mouseScrolled(mouseX, mouseY, delta);
+    return super.mouseScrolled(mouseX, mouseY, scrollX, delta);
   }
 
   @Override
-  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+  public boolean keyPressed(KeyEvent event) {
+    int keyCode = event.key();
     EditBox taskSearch = taskPanel != null ? taskPanel.searchBox() : null;
     EditBox focused = search != null && search.isFocused() && search.isVisible() ? search
         : quantityBox != null && quantityBox.isFocused() && quantityBox.isVisible() ? quantityBox
             : taskSearch != null && taskSearch.isFocused() && taskSearch.isVisible() ? taskSearch : null;
     if (focused != null) {
-      boolean enter = keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER;
-      if (keyCode == GLFW.GLFW_KEY_ESCAPE || (enter && focused == quantityBox)) {
+      boolean enter = keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_NUMPADENTER;
+      if (keyCode == InputConstants.KEY_ESCAPE || (enter && focused == quantityBox)) {
         focused.setFocused(false);
         if (getFocused() == focused) {
           setFocused(null);
         }
         return true;
       }
-      if (focused.keyPressed(keyCode, scanCode, modifiers)) {
+      if (focused.keyPressed(event)) {
         return true;
       }
-      return keyCode != GLFW.GLFW_KEY_TAB;
+      return keyCode != InputConstants.KEY_TAB;
     }
-    return super.keyPressed(keyCode, scanCode, modifiers);
+    return super.keyPressed(event);
   }
 
   @Override
-  protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-    super.renderLabels(graphics, mouseX, mouseY);
-    graphics.drawString(this.font, Component.translatable(key("storage_label")), 8, 93, 0x404040, false);
+  protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    super.extractLabels(graphics, mouseX, mouseY);
+    graphics.text(this.font, Component.translatable(key("storage_label")), 8, 93, GuiUtil.opaque(0x404040), false);
   }
 
   @Override
@@ -779,14 +776,14 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     super.removed();
   }
 
-  @Override
-  protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, float partialTick, int mouseX, int mouseY) {
     int left = (this.width - this.imageWidth) / 2;
     int top = (this.height - this.imageHeight) / 2;
-    graphics.blit(BACKGROUND, left, top, 0, 0, this.imageWidth, this.imageHeight, 512, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, left, top, 0, 0, this.imageWidth, this.imageHeight, 512,
+        256);
   }
 
-  private final class QuantityBox extends EditBox {
+  private final class QuantityBox extends FilteredEditBox {
 
     private final Font boxFont;
 
@@ -804,7 +801,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
       boolean was = isFocused();
       super.setFocused(focused);
       if (focused) {
-        moveCursorToEnd();
+        moveCursorToEnd(false);
         setHighlightPos(getCursorPosition());
       } else if (was) {
         commitQuantity();
@@ -812,13 +809,13 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY) {
-      moveCursorToEnd();
+    public void onClick(MouseButtonEvent event, boolean doubleClick) {
+      moveCursorToEnd(false);
       setHighlightPos(getCursorPosition());
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
       if (!isVisible()) {
         return;
       }
@@ -826,7 +823,7 @@ public class ScreenRequestTable extends AbstractContainerScreen<MenuRequestTable
       int textWidth = boxFont.width(value);
       int x = getX() + (getWidth() - textWidth) / 2;
       int y = getY() + (getHeight() - boxFont.lineHeight) / 2 + 1;
-      graphics.drawString(boxFont, value, x, y, QTY_TEXT_COLOR, false);
+      graphics.text(boxFont, value, x, y, GuiUtil.opaque(QTY_TEXT_COLOR), false);
       if (isFocused() && (Util.getMillis() / 300L) % 2L == 0L) {
         int cursorX = x + boxFont.width(value.substring(0, getCursorPosition()));
         graphics.fill(cursorX, y - 1, cursorX + 1, y + boxFont.lineHeight, 0xFF000000 | QTY_TEXT_COLOR);

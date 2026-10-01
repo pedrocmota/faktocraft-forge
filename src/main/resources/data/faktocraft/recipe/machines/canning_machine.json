@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "b": "faktocraft:basic_machine_casing",
+    "c": "faktocraft:fluid_cell",
+    "e": "faktocraft:electronic_circuit",
+    "p": "#c:plates/tin"
+  },
+  "pattern": [
+    "pcp",
+    "ebe",
+    "pcp"
+  ],
+  "result": {
+    "id": "faktocraft:canning_machine"
+  }
+}

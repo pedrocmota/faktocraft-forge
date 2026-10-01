@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "d": "faktocraft:diamond_drill",
+    "e": "faktocraft:energy_crystal",
+    "i": "#c:plates/iridium"
+  },
+  "pattern": [
+    " i ",
+    "idi",
+    " e "
+  ],
+  "result": {
+    "id": "faktocraft:iridium_drill"
+  }
+}

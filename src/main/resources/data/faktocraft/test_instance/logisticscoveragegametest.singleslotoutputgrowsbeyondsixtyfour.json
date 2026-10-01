@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:function",
+  "function": "faktocraft:logisticscoveragegametest.singleslotoutputgrowsbeyondsixtyfour",
+  "environment": "minecraft:default",
+  "structure": "faktocraft:gametest_platform",
+  "max_ticks": 6000,
+  "sky_access": true
+}

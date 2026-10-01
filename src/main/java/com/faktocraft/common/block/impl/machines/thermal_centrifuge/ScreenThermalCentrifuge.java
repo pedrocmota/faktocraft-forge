@@ -5,7 +5,7 @@ import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.progress.GuiProgressArrow;
 import com.faktocraft.common.screen.text.GuiTextTemperature;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenThermalCentrifuge extends BetterScreen<MenuThermalCentrifuge> {
@@ -27,7 +27,7 @@ public class ScreenThermalCentrifuge extends BetterScreen<MenuThermalCentrifuge>
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/thermal_centrifuge.png");
+  public Identifier getGuiLocation() {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, "textures/gui/container/thermal_centrifuge.png");
   }
 }

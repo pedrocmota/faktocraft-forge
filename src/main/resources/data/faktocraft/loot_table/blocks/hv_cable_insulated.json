@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:hv_cable_insulated"
+        }
+      ],
+      "name": "hv_cable_insulated",
+      "rolls": 1
+    }
+  ]
+}

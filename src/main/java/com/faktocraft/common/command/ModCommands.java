@@ -1,5 +1,6 @@
 package com.faktocraft.common.command;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.fluid.ModFluids;
 import com.faktocraft.common.registries.RegistrationHandler;
@@ -17,14 +18,13 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
+@EventBusSubscriber(modid = Faktocraft.MODID)
 public final class ModCommands {
 
   private ModCommands() {
@@ -34,7 +34,7 @@ public final class ModCommands {
   public static void onRegisterCommands(RegisterCommandsEvent event) {
     var dispatcher = event.getDispatcher();
     dispatcher.register(Commands.literal("faktocraft")
-        .requires(source -> source.hasPermission(2))
+        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
         .then(NetInfoCommand.build())
         .then(Commands.literal("netrepair")
             .executes(c -> {
@@ -68,8 +68,9 @@ public final class ModCommands {
   private static java.util.concurrent.CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggestOres(
       com.mojang.brigadier.context.CommandContext<CommandSourceStack> context,
       com.mojang.brigadier.suggestion.SuggestionsBuilder builder) {
-    var names = net.minecraftforge.registries.ForgeRegistries.BLOCKS.tags().getTagNames()
-        .filter(tag -> tag.location().getNamespace().equals("forge")
+    var names = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getTags()
+        .map(net.minecraft.core.HolderSet.Named::key)
+        .filter(tag -> tag.location().getNamespace().equals("c")
             && tag.location().getPath().startsWith("ores/"))
         .map(tag -> tag.location().getPath().substring("ores/".length()))
         .toList();
@@ -78,13 +79,12 @@ public final class ModCommands {
 
   private static int locateOre(CommandSourceStack source, String oreName, int chunkRadius) {
     var tag = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
-        new net.minecraft.resources.ResourceLocation("forge", "ores/" + oreName));
-    var tags = net.minecraftforge.registries.ForgeRegistries.BLOCKS.tags();
-    if (tags == null || !tags.isKnownTagName(tag)) {
-      source.sendFailure(Component.literal("forge:ores/" + oreName + " ?"));
+        net.minecraft.resources.Identifier.fromNamespaceAndPath("c", "ores/" + oreName));
+    if (net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(tag).isEmpty()) {
+      source.sendFailure(Component.literal("c:ores/" + oreName + " ?"));
       return 0;
     }
-    return locate(source, Component.literal("#forge:ores/" + oreName),
+    return locate(source, Component.literal("#c:ores/" + oreName),
         state -> state.is(tag), chunkRadius);
   }
 
@@ -106,7 +106,7 @@ public final class ModCommands {
   private static int locatePocket(CommandSourceStack source, int chunkRadius) {
     ServerLevel level = source.getLevel();
     var registry = level.registryAccess()
-        .registryOrThrow(net.minecraft.core.registries.Registries.PLACED_FEATURE);
+        .lookupOrThrow(net.minecraft.core.registries.Registries.PLACED_FEATURE);
     var generator = level.getChunkSource().getGenerator();
 
     var steps = net.minecraft.world.level.biome.FeatureSorter.buildFeaturesPerStep(
@@ -124,7 +124,7 @@ public final class ModCommands {
     }
     List<ResolvedLayer> layers = new ArrayList<>();
     for (GiantLayer layer : GIANT_LAYERS) {
-      var placed = registry.get(RegistrationHandler.id(layer.id()));
+      var placed = registry.get(RegistrationHandler.id(layer.id())).map(holder -> holder.value()).orElse(null);
       if (placed == null) {
         source.sendFailure(Component.literal(layer.id() + " ausente do registro"));
         return 0;
@@ -134,8 +134,8 @@ public final class ModCommands {
     }
 
     BlockPos center = BlockPos.containing(source.getPosition());
-    ChunkPos centerChunk = new ChunkPos(center);
-    var sampler = level.getChunkSource().randomState().sampler();
+    ChunkPos centerChunk = ChunkPos.containing(center);
+    var sampler = generator.getBiomeSource().createUncachedResolver(level.getChunkSource().randomState());
     long worldSeed = level.getSeed();
 
     record Predicted(BlockPos pos, boolean richBiome, double distSq) {
@@ -144,9 +144,9 @@ public final class ModCommands {
 
     outer:
     for (int r = 0; r <= chunkRadius; r++) {
-      for (int cx = centerChunk.x - r; cx <= centerChunk.x + r; cx++) {
-        for (int cz = centerChunk.z - r; cz <= centerChunk.z + r; cz++) {
-          if (Math.max(Math.abs(cx - centerChunk.x), Math.abs(cz - centerChunk.z)) != r) {
+      for (int cx = centerChunk.x() - r; cx <= centerChunk.x() + r; cx++) {
+        for (int cz = centerChunk.z() - r; cz <= centerChunk.z() + r; cz++) {
+          if (Math.max(Math.abs(cx - centerChunk.x()), Math.abs(cz - centerChunk.z())) != r) {
             continue;
           }
           for (ResolvedLayer layer : layers) {
@@ -182,8 +182,8 @@ public final class ModCommands {
               label, posText, (int) Math.sqrt(hit.distSq()))
           .withStyle(style -> style
               .withColor(ChatFormatting.AQUA)
-              .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp @s " + posText))
-              .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+              .withClickEvent(new ClickEvent.RunCommand("/tp @s " + posText))
+              .withHoverEvent(new HoverEvent.ShowText(
                   Component.translatable("command." + Faktocraft.MODID + ".locate.teleport"))));
       source.sendSuccess(() -> entry, false);
     }
@@ -193,7 +193,7 @@ public final class ModCommands {
   @org.jetbrains.annotations.Nullable
   private static BlockPos predictAt(ServerLevel level,
       net.minecraft.world.level.chunk.ChunkGenerator generator,
-      net.minecraft.world.level.biome.Climate.Sampler sampler,
+      net.minecraft.world.level.biome.BiomeResolver sampler,
       long worldSeed, int chunkX, int chunkZ, int featureIndex, int stepIndex, int rarity,
       net.minecraft.world.level.levelgen.placement.PlacedFeature placed) {
     var random = new net.minecraft.world.level.levelgen.WorldgenRandom(
@@ -206,10 +206,10 @@ public final class ModCommands {
     int x = (chunkX << 4) + random.nextInt(16);
     int z = (chunkZ << 4) + random.nextInt(16);
     int y = net.minecraft.util.Mth.randomBetweenInclusive(random, GIANT_MIN_Y, GIANT_MAX_Y);
-    var biome = generator.getBiomeSource().getNoiseBiome(
+    var biome = sampler.getNoiseBiome(
         net.minecraft.core.QuartPos.fromBlock(x),
         net.minecraft.core.QuartPos.fromBlock(y),
-        net.minecraft.core.QuartPos.fromBlock(z), sampler);
+        net.minecraft.core.QuartPos.fromBlock(z));
     if (!biome.value().getGenerationSettings().hasFeature(placed)) {
       return null;
     }
@@ -225,14 +225,14 @@ public final class ModCommands {
       int chunkRadius) {
     ServerLevel level = source.getLevel();
     BlockPos center = BlockPos.containing(source.getPosition());
-    ChunkPos centerChunk = new ChunkPos(center);
+    ChunkPos centerChunk = ChunkPos.containing(center);
 
     List<Hit> hits = new ArrayList<>();
     int scannedChunks = 0;
     int totalCount = 0;
 
-    for (int cx = centerChunk.x - chunkRadius; cx <= centerChunk.x + chunkRadius; cx++) {
-      for (int cz = centerChunk.z - chunkRadius; cz <= centerChunk.z + chunkRadius; cz++) {
+    for (int cx = centerChunk.x() - chunkRadius; cx <= centerChunk.x() + chunkRadius; cx++) {
+      for (int cz = centerChunk.z() - chunkRadius; cz <= centerChunk.z() + chunkRadius; cz++) {
         LevelChunk chunk = level.getChunkSource().getChunkNow(cx, cz);
         if (chunk == null) {
           continue;
@@ -294,8 +294,8 @@ public final class ModCommands {
               hit.count(), posText, (int) Math.sqrt(hit.distSq()))
           .withStyle(style -> style
               .withColor(ChatFormatting.AQUA)
-              .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp @s " + posText))
-              .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+              .withClickEvent(new ClickEvent.RunCommand("/tp @s " + posText))
+              .withHoverEvent(new HoverEvent.ShowText(
                   Component.translatable("command." + Faktocraft.MODID + ".locate.teleport"))));
       source.sendSuccess(() -> entry, false);
     }

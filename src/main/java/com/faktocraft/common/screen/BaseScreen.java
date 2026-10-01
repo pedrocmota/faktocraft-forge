@@ -1,16 +1,17 @@
 package com.faktocraft.common.screen;
 
+import com.faktocraft.common.util.GuiUtil;
+import net.minecraft.client.renderer.RenderPipelines;
 import com.faktocraft.common.container.FaktocraftMenu;
 import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class BaseScreen<T extends FaktocraftMenu> extends AbstractContainerScreen<T> implements IGuiWrapper {
-
   private final T container;
 
   public BaseScreen(T container, Inventory inventory, Component component) {
@@ -18,14 +19,12 @@ public class BaseScreen<T extends FaktocraftMenu> extends AbstractContainerScree
   }
 
   public BaseScreen(T container, Inventory inventory, Component component, int imageWidth, int imageHeight) {
-    super(container, inventory, component);
-    this.imageWidth = imageWidth;
-    this.imageHeight = imageHeight;
+    super(container, inventory, component, imageWidth, imageHeight);
     this.container = container;
   }
 
   @Override
-  protected void renderLabels(net.minecraft.client.gui.GuiGraphics graphics, int mouseX, int mouseY) {
+  protected void extractLabels(net.minecraft.client.gui.GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     int maxTitleWidth = this.imageWidth - this.titleLabelX - 8;
     if (getBlockEntity() instanceof com.faktocraft.common.energy.interfaces.IEnergyBlock energyBlock
         && energyBlock.showBarInGui() && energyBlock.showVertical()) {
@@ -33,8 +32,8 @@ public class BaseScreen<T extends FaktocraftMenu> extends AbstractContainerScree
     }
     com.faktocraft.common.util.GuiUtil.renderScaledToFit(graphics, this.title.getString(),
         this.titleLabelX, this.titleLabelY, maxTitleWidth, 4210752);
-    graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
-        4210752, false);
+    graphics.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
+        GuiUtil.opaque(4210752), false);
   }
 
   @Override
@@ -43,7 +42,7 @@ public class BaseScreen<T extends FaktocraftMenu> extends AbstractContainerScree
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
+  public Identifier getGuiLocation() {
     return null;
   }
 
@@ -58,17 +57,16 @@ public class BaseScreen<T extends FaktocraftMenu> extends AbstractContainerScree
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    renderBackground(graphics);
-    super.render(graphics, mouseX, mouseY, partialTick);
-    renderTooltip(graphics, mouseX, mouseY);
+  public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    renderBg(graphics, partialTick, mouseX, mouseY);
+    super.extractContents(graphics, mouseX, mouseY, partialTick);
   }
 
-  @Override
-  protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-    ResourceLocation guiLocation = getGuiLocation();
+  protected void renderBg(GuiGraphicsExtractor graphics, float partialTick, int mouseX, int mouseY) {
+    Identifier guiLocation = getGuiLocation();
     if (guiLocation != null) {
-      graphics.blit(guiLocation, getGuiLeft(), getGuiTop(), 0.0F, 0.0F, this.imageWidth, this.imageHeight, 256, 256);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, guiLocation, getGuiLeft(), getGuiTop(), 0.0F, 0.0F, this.imageWidth,
+          this.imageHeight, 256, 256);
     }
   }
 }

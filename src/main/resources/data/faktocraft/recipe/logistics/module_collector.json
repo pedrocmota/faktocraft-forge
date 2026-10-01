@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:electronic_circuit",
+    "#c:dusts/redstone",
+    "minecraft:hopper",
+    "minecraft:string"
+  ],
+  "result": {
+    "id": "faktocraft:module_collector",
+    "count": 1
+  }
+}

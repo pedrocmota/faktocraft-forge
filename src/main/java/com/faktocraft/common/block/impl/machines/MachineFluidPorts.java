@@ -1,8 +1,8 @@
 package com.faktocraft.common.block.impl.machines;
 
 import com.faktocraft.common.entity.block.FluidStorage;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
@@ -46,7 +46,7 @@ public class MachineFluidPorts implements IFluidHandler {
   private FluidStorage inputFor(FluidStack resource) {
     for (FluidStorage tank : inputs) {
       if (tank.isValid(resource) && !tank.isEmpty()
-          && tank.getFluidStack().isFluidEqual(resource)
+          && com.faktocraft.common.util.FluidStackCompat.isFluidEqual(tank.getFluidStack(), resource)
           && tank.getFluidAmount() < tank.getCapacityMb()) {
         return tank;
       }
@@ -75,7 +75,7 @@ public class MachineFluidPorts implements IFluidHandler {
       return FluidStack.EMPTY;
     }
     for (FluidStorage tank : outputs) {
-      if (!tank.isEmpty() && tank.getFluidStack().isFluidEqual(resource)) {
+      if (!tank.isEmpty() && com.faktocraft.common.util.FluidStackCompat.isFluidEqual(tank.getFluidStack(), resource)) {
         return tank.drain(resource, action);
       }
     }

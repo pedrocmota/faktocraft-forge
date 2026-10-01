@@ -1,16 +1,19 @@
 package com.faktocraft.common.block.impl.machines.distillery;
 
+import com.faktocraft.common.block.FaktocraftBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -18,7 +21,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockDistilleryTower extends Block implements net.minecraft.world.level.block.EntityBlock {
-
   public static final net.minecraft.world.level.block.state.properties.IntegerProperty SEGMENT =
       net.minecraft.world.level.block.state.properties.IntegerProperty
           .create("segment", 1,
@@ -29,7 +31,7 @@ public class BlockDistilleryTower extends Block implements net.minecraft.world.l
 
   public BlockDistilleryTower(Properties properties) {
     super(properties.strength(3.0F, 10.0F).sound(SoundType.METAL).noLootTable().noOcclusion()
-        .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK));
+        .pushReaction(net.minecraft.world.level.material.PushReaction.IMMOVEABLE));
     registerDefaultState(getStateDefinition().any().setValue(SEGMENT, 1));
     com.faktocraft.common.util.wrench.WrenchHelper.registerAction(this);
   }
@@ -73,17 +75,20 @@ public class BlockDistilleryTower extends Block implements net.minecraft.world.l
   }
 
   @Override
-  public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
-      BlockHitResult hit) {
+  protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+      InteractionHand hand, BlockHitResult hit) {
     BlockPos basePos = findBase(level, pos);
     if (basePos != null) {
-      return level.getBlockState(basePos).use(level, player, hand, hit.withPosition(basePos));
+      BlockState base = level.getBlockState(basePos);
+      if (base.getBlock() instanceof FaktocraftBlock block) {
+        return block.use(base, level, basePos, player, hand, hit.withPosition(basePos));
+      }
     }
     return InteractionResult.PASS;
   }
 
   @Override
-  public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+  public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
     BlockPos basePos = findBase(level, pos);
     if (basePos != null && !level.isClientSide()) {
       BlockState baseState = level.getBlockState(basePos);
@@ -91,18 +96,17 @@ public class BlockDistilleryTower extends Block implements net.minecraft.world.l
           && player.getMainHandItem().is(com.faktocraft.common.registries.ModTags.WRENCHES)) {
         com.faktocraft.common.util.wrench.WrenchHelper.dismantleBlock(baseState, level, basePos);
       } else {
-        boolean drop = !player.isCreative() && player.hasCorrectToolForDrops(baseState);
+        boolean drop = !player.isCreative() && player.hasCorrectToolForDrops(baseState, level, basePos);
         level.destroyBlock(basePos, drop, player);
       }
     }
-    super.playerWillDestroy(level, pos, state, player);
+    return super.playerWillDestroy(level, pos, state, player);
   }
 
-  @SuppressWarnings("deprecation")
   @Override
-  public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos fromPos,
-      boolean movedByPiston) {
-    super.neighborChanged(state, level, pos, neighborBlock, fromPos, movedByPiston);
+  public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
+      @Nullable Orientation orientation, boolean movedByPiston) {
+    super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
     if (level.isClientSide()) {
       return;
     }

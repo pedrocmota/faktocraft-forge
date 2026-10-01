@@ -1,6 +1,6 @@
 {
- "parent": "minecraft:item/generated",
- "textures": {
-  "layer0": "faktocraft:item/module_sink"
- }
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "faktocraft:item/module_sink"
+  }
 }

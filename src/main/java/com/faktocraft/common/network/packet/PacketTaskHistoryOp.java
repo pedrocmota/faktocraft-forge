@@ -1,14 +1,29 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.faktocraft.common.block.impl.logistics.BlockEntityLogisticsController;
 import com.faktocraft.common.block.impl.logistics.BlockEntityRequestTable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
-import java.util.function.Supplier;
 
-public record PacketTaskHistoryOp(BlockPos blockPos, String dimension, int mode, long id) {
+public record PacketTaskHistoryOp(BlockPos blockPos, String dimension, int mode, long id)
+    implements CustomPacketPayload {
+
+  public static final Type<PacketTaskHistoryOp> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_task_history_op"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketTaskHistoryOp> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketTaskHistoryOp::decode);
+
+  @Override
+  public Type<PacketTaskHistoryOp> type() {
+    return TYPE;
+  }
 
   public static final int MODE_DELETE = 0;
   public static final int MODE_CLEAR_DONE = 1;
@@ -25,9 +40,9 @@ public record PacketTaskHistoryOp(BlockPos blockPos, String dimension, int mode,
     return new PacketTaskHistoryOp(buf.readBlockPos(), buf.readUtf(128), buf.readVarInt(), buf.readVarLong());
   }
 
-  public static void handle(PacketTaskHistoryOp msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> {
-      ServerPlayer player = ctx.get().getSender();
+  public static void handle(PacketTaskHistoryOp msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> {
+      ServerPlayer player = ctx.getSender();
       if (player == null) {
         return;
       }
@@ -51,7 +66,7 @@ public record PacketTaskHistoryOp(BlockPos blockPos, String dimension, int mode,
         apply(core, msg, msg.blockPos);
       }
     });
-    ctx.get().setPacketHandled(true);
+    ctx.setPacketHandled(true);
   }
 
   private static void apply(BlockEntityLogisticsController core, PacketTaskHistoryOp msg,

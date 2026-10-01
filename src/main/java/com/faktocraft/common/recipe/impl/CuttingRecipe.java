@@ -3,19 +3,18 @@ package com.faktocraft.common.recipe.impl;
 import com.faktocraft.common.item.crafting.CountedIngredient;
 import com.faktocraft.common.recipe.BasicMachineRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 
 public class CuttingRecipe extends BasicMachineRecipe {
 
-  public static final RecipeSerializer<CuttingRecipe> SERIALIZER = new BasicMachineRecipe.Serializer<>(
+  public static final RecipeSerializer<CuttingRecipe> SERIALIZER = BasicMachineRecipe.serializer(
       CuttingRecipe::new);
 
-  public CuttingRecipe(ResourceLocation id, CountedIngredient ingredient, ItemStack result, float experience,
-      int duration, int powerCost) {
-    super(id, ingredient, result, experience, duration, powerCost);
+  public CuttingRecipe(CountedIngredient ingredient, ItemStackTemplate result, float experience, int duration,
+      int powerCost) {
+    super(ingredient, result, experience, duration, powerCost);
   }
 
   @Override

@@ -1,0 +1,26 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "faktocraft:plunging",
+    "entries": [
+      {
+        "threshold": 0.5,
+        "model": {
+          "type": "minecraft:model",
+          "model": "faktocraft:item/plunger_plunging_up"
+        }
+      },
+      {
+        "threshold": 1.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "faktocraft:item/plunger_plunging"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "faktocraft:item/plunger"
+    }
+  }
+}

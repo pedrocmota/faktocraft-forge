@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "a": "faktocraft:advanced_circuit",
+    "c": "faktocraft:advanced_machine_casing",
+    "l": "faktocraft:lapotron_crystal",
+    "m": "faktocraft:mfe"
+  },
+  "pattern": [
+    "lal",
+    "lml",
+    "lcl"
+  ],
+  "result": {
+    "id": "faktocraft:mfsu"
+  }
+}

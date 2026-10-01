@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Containers;
@@ -21,18 +21,17 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.IItemHandler;
+import net.minecraft.core.registries.BuiltInRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements IEnergyBlock {
-
   public static final int INVENTORY_SLOTS = 27;
   public static final int UPGRADE_SLOTS = 4;
   public static final int FRAME_HEIGHT_ABOVE = 4;
@@ -41,9 +40,9 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
   public static final int MIN_FRAME_SPAN = 10;
 
   public static final TagKey<Block> QUARRY_MINEABLE = TagKey.create(Registries.BLOCK,
-      new ResourceLocation("faktocraft", "quarry_mineable"));
+      Identifier.fromNamespaceAndPath("faktocraft", "quarry_mineable"));
   public static final TagKey<Block> QUARRY_BLACKLIST = TagKey.create(Registries.BLOCK,
-      new ResourceLocation("faktocraft", "quarry_blacklist"));
+      Identifier.fromNamespaceAndPath("faktocraft", "quarry_blacklist"));
 
   public static final int STAGE_AREA = 0;
   public static final int STAGE_CLEAR = 1;
@@ -144,13 +143,13 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
   protected int targetY;
   protected int targetZ;
 
-  public float headX;
-  public float headY;
-  public float headZ;
+  public double headX;
+  public double headY;
+  public double headZ;
 
-  public float clientHeadX;
-  public float clientHeadY;
-  public float clientHeadZ;
+  public double clientHeadX;
+  public double clientHeadY;
+  public double clientHeadZ;
   public double clientHeadLastTime = Double.NaN;
   public float clientRailY = Float.NaN;
 
@@ -201,7 +200,7 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
   }
 
   protected int renderBoxBottom() {
-    return level != null ? level.getMinBuildHeight() : worldPosition.getY();
+    return level != null ? level.getMinY() : worldPosition.getY();
   }
 
   protected int renderBoxTop() {
@@ -690,7 +689,7 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
     if (state.hasBlockEntity()) {
       return false;
     }
-    ResourceLocation id = ForgeRegistries.BLOCKS.getKey(state.getBlock());
+    Identifier id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
     return id == null || !Faktocraft.MODID.equals(id.getNamespace());
   }
 
@@ -742,10 +741,10 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
   }
 
   protected boolean headAtTarget() {
-    float dx = headX - (targetX + 0.5F);
-    float dy = headY - (targetY + HEAD_HOVER);
-    float dz = headZ - (targetZ + 0.5F);
-    return dx * dx + dy * dy + dz * dz < 0.05F;
+    double dx = headX - (targetX + 0.5);
+    double dy = headY - (targetY + HEAD_HOVER);
+    double dz = headZ - (targetZ + 0.5);
+    return dx * dx + dy * dy + dz * dz < 0.05;
   }
 
   protected boolean dwellComplete() {
@@ -756,35 +755,35 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
     return true;
   }
 
-  public boolean headGoal(float[] out) {
+  public boolean headGoal(double[] out) {
     if (stage == STAGE_WORK) {
       if (!targetValid) {
         return false;
       }
-      out[0] = targetX + 0.5F;
+      out[0] = targetX + 0.5;
       out[1] = targetY + HEAD_HOVER;
-      out[2] = targetZ + 0.5F;
+      out[2] = targetZ + 0.5;
       return true;
     }
     if (areaSet) {
-      out[0] = (minX + maxX + 1) / 2.0F;
-      out[1] = worldPosition.getY() + frameHeightAbove() - 0.5F;
-      out[2] = (minZ + maxZ + 1) / 2.0F;
+      out[0] = (minX + maxX + 1) / 2.0;
+      out[1] = worldPosition.getY() + frameHeightAbove() - 0.5;
+      out[2] = (minZ + maxZ + 1) / 2.0;
       return true;
     }
     return false;
   }
 
   private void moveHead() {
-    float[] goal = new float[3];
+    double[] goal = new double[3];
     if (!headGoal(goal)) {
       return;
     }
-    float dx = goal[0] - headX;
-    float dy = goal[1] - headY;
-    float dz = goal[2] - headZ;
-    float distance = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
-    float speed = armSpeed();
+    double dx = goal[0] - headX;
+    double dy = goal[1] - headY;
+    double dz = goal[2] - headZ;
+    double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    double speed = armSpeed();
     if (distance <= speed) {
       headX = goal[0];
       headY = goal[1];
@@ -842,7 +841,6 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
     dropExtraContents();
   }
 
-  @Override
   public net.minecraft.world.phys.AABB getRenderBoundingBox() {
     if (!areaSet || level == null) {
       return new net.minecraft.world.phys.AABB(getBlockPos()).inflate(1);
@@ -868,9 +866,9 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
     tag.putInt("targetX", targetX);
     tag.putInt("targetY", targetY);
     tag.putInt("targetZ", targetZ);
-    tag.putFloat("headX", headX);
-    tag.putFloat("headY", headY);
-    tag.putFloat("headZ", headZ);
+    tag.putDouble("headX", headX);
+    tag.putDouble("headY", headY);
+    tag.putDouble("headZ", headZ);
     CompoundTag inventoryTag = new CompoundTag();
     inventory.save(inventoryTag);
     tag.put("inventory", inventoryTag);
@@ -883,31 +881,31 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    activeState = tag.getBoolean("active");
-    runMode = tag.contains("runMode") ? tag.getInt("runMode") : PipeExtractor.RUN_ALWAYS;
-    areaSet = tag.getBoolean("areaSet");
-    minX = tag.getInt("minX");
-    minZ = tag.getInt("minZ");
-    maxX = tag.getInt("maxX");
-    maxZ = tag.getInt("maxZ");
-    stage = tag.getInt("stage");
-    clearIndex = tag.getInt("clearIndex");
-    frameIndex = tag.getInt("frameIndex");
-    progress = tag.getInt("progress");
-    targetValid = tag.getBoolean("targetValid");
-    targetX = tag.getInt("targetX");
-    targetY = tag.getInt("targetY");
-    targetZ = tag.getInt("targetZ");
+    activeState = tag.getBooleanOr("active", false);
+    runMode = tag.contains("runMode") ? tag.getIntOr("runMode", 0) : PipeExtractor.RUN_ALWAYS;
+    areaSet = tag.getBooleanOr("areaSet", false);
+    minX = tag.getIntOr("minX", 0);
+    minZ = tag.getIntOr("minZ", 0);
+    maxX = tag.getIntOr("maxX", 0);
+    maxZ = tag.getIntOr("maxZ", 0);
+    stage = tag.getIntOr("stage", 0);
+    clearIndex = tag.getIntOr("clearIndex", 0);
+    frameIndex = tag.getIntOr("frameIndex", 0);
+    progress = tag.getIntOr("progress", 0);
+    targetValid = tag.getBooleanOr("targetValid", false);
+    targetX = tag.getIntOr("targetX", 0);
+    targetY = tag.getIntOr("targetY", 0);
+    targetZ = tag.getIntOr("targetZ", 0);
     if (tag.contains("headX")) {
-      headX = tag.getFloat("headX");
-      headY = tag.getFloat("headY");
-      headZ = tag.getFloat("headZ");
+      headX = tag.getDoubleOr("headX", 0.0);
+      headY = tag.getDoubleOr("headY", 0.0);
+      headZ = tag.getDoubleOr("headZ", 0.0);
     }
     if (tag.contains("inventory")) {
-      inventory.load(tag.getCompound("inventory"));
+      inventory.load(tag.getCompoundOrEmpty("inventory"));
     }
     if (tag.contains("upgrades")) {
-      upgrades.load(tag.getCompound("upgrades"));
+      upgrades.load(tag.getCompoundOrEmpty("upgrades"));
     }
     loadWork(tag);
   }

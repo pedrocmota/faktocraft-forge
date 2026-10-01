@@ -1,28 +1,30 @@
 package com.faktocraft.client;
 
+import com.faktocraft.client.render.RenderStates;
 import com.faktocraft.common.network.packet.PacketLogisticsGhost;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import com.mojang.math.Axis;
+import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public final class LogisticsGhosts {
-
   private static final float SCALE = 0.35f;
 
   private static final class Ghost {
     final List<BlockPos> path;
     final ItemStack stack;
     final int duration;
+    final ItemStackRenderState renderState = new ItemStackRenderState();
 
     final float[] arrival;
     int age;
@@ -92,31 +94,28 @@ public final class LogisticsGhosts {
     }
   }
 
-  public static void render(RenderLevelStageEvent event) {
-    if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES || GHOSTS.isEmpty()) {
+  public static void submit(SubmitCustomGeometryEvent event) {
+    if (GHOSTS.isEmpty()) {
       return;
     }
     Minecraft minecraft = Minecraft.getInstance();
     if (minecraft.level == null) {
       return;
     }
-    Vec3 camera = event.getCamera().getPosition();
+    Vec3 camera = event.getLevelRenderState().cameraRenderState.pos;
     PoseStack poseStack = event.getPoseStack();
-    MultiBufferSource.BufferSource buffers = minecraft.renderBuffers().bufferSource();
-    float partialTick = event.getPartialTick();
+    float partialTick = event.getLevelRenderState().worldPartialTicks;
 
     for (Ghost ghost : GHOSTS) {
       Vec3 pos = ghost.positionAt(partialTick);
       poseStack.pushPose();
       poseStack.translate(pos.x - camera.x, pos.y - camera.y, pos.z - camera.z);
-      poseStack.mulPose(Axis.YP.rotationDegrees((ghost.age + partialTick) * 6.0f));
+      poseStack.rotateDegrees(Axis.YP, (ghost.age + partialTick) * 6.0f);
       poseStack.scale(SCALE, SCALE, SCALE);
-      int light = LevelRenderer.getLightColor(minecraft.level, BlockPos.containing(pos.x, pos.y, pos.z));
-      minecraft.getItemRenderer().renderStatic(ghost.stack, ItemDisplayContext.FIXED, light,
-          net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, poseStack, buffers,
-          minecraft.level, 0);
+      int light = LightCoordsUtil.getLightCoords(minecraft.level, BlockPos.containing(pos.x, pos.y, pos.z));
+      RenderStates.item(ghost.renderState, ghost.stack, minecraft.level, ItemDisplayContext.FIXED);
+      ghost.renderState.submit(poseStack, event.getSubmitNodeCollector(), light, OverlayTexture.NO_OVERLAY, 0);
       poseStack.popPose();
     }
-    buffers.endBatch();
   }
 }

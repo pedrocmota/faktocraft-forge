@@ -1,5 +1,9 @@
 package com.faktocraft.common.item.impl.tools;
 
+import com.faktocraft.common.util.PlayerMessages;
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.WindSim;
@@ -14,13 +18,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class WindMeter extends ElectricItem {
 
@@ -31,21 +33,22 @@ public class WindMeter extends ElectricItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("wind_meter." + Faktocraft.MODID + ".desc").withStyle(ChatFormatting.GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("wind_meter." + Faktocraft.MODID + ".desc").withStyle(ChatFormatting.GRAY));
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 
   @Override
-  public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+  public InteractionResult use(Level level, Player player, InteractionHand hand) {
     ItemStack stack = player.getItemInHand(hand);
     if (level instanceof ServerLevel serverLevel) {
       int energy = ModComponents.getEnergy(stack, initialEnergy);
       if (energy < ENERGY_PER_READING && !player.isCreative()) {
-        player.displayClientMessage(
+        PlayerMessages.display(player,
             Component.translatable("wind_meter." + Faktocraft.MODID + ".no_energy").withStyle(ChatFormatting.RED),
             true);
-        return InteractionResultHolder.fail(stack);
+        return InteractionResult.FAIL;
       }
       if (!player.isCreative()) {
         ModComponents.setEnergy(stack, energy - ENERGY_PER_READING);
@@ -61,6 +64,6 @@ public class WindMeter extends ElectricItem {
             new PacketWindInfo((int) Math.round(wind * 100.0), y, estimate));
       }
     }
-    return InteractionResultHolder.success(stack);
+    return InteractionResult.SUCCESS;
   }
 }

@@ -3,6 +3,7 @@ package com.faktocraft.common.block.impl.logistics;
 import com.faktocraft.common.block.BlockMachine;
 import com.faktocraft.common.interfaces.block.IHasMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -29,7 +30,6 @@ public class BlockAssemblyTable extends BlockMachine implements IHasMenu {
     return new BlockEntityAssemblyTable(pos, state);
   }
 
-  @SuppressWarnings("deprecation")
   @Override
   public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
     super.onPlace(state, level, pos, oldState, isMoving);
@@ -39,10 +39,9 @@ public class BlockAssemblyTable extends BlockMachine implements IHasMenu {
   }
 
   @Override
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.is(newState.getBlock()) && !level.isClientSide()) {
-      LogisticsCores.markDirtyNear(level, pos);
-    }
-    super.onRemove(state, level, pos, newState, isMoving);
+  protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos,
+      boolean movedByPiston) {
+    LogisticsCores.markDirtyNear(level, pos);
+    super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
   }
 }

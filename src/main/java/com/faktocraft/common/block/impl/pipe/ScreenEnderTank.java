@@ -1,5 +1,10 @@
 package com.faktocraft.common.block.impl.pipe;
 
+import com.faktocraft.common.screen.widgets.FilteredEditBox;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketEnderTankCode;
@@ -7,21 +12,18 @@ import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.util.SpriteUtil;
 import com.faktocraft.common.util.TextComponentUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.fluids.FluidStack;
-import org.lwjgl.glfw.GLFW;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class ScreenEnderTank extends AbstractContainerScreen<MenuEnderTank> {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "textures/gui/container/ender_tank.png");
 
   private static final int GAUGE_X = 8;
@@ -39,14 +41,12 @@ public class ScreenEnderTank extends AbstractContainerScreen<MenuEnderTank> {
   private static final int ERROR_COLOR = 0xA02020;
   private static final int PENDING_TICKS = 20;
 
-  private EditBox codeBox;
+  private FilteredEditBox codeBox;
   private Button applyButton;
   private int pending;
 
   public ScreenEnderTank(MenuEnderTank menu, Inventory inventory, Component title) {
-    super(menu, inventory, title);
-    this.imageWidth = 176;
-    this.imageHeight = 96;
+    super(menu, inventory, title, 176, 96);
   }
 
   private String key(String name) {
@@ -58,7 +58,7 @@ public class ScreenEnderTank extends AbstractContainerScreen<MenuEnderTank> {
     super.init();
     int left = (this.width - this.imageWidth) / 2;
     int top = (this.height - this.imageHeight) / 2;
-    codeBox = new EditBox(this.font, left + FIELD_X, top + FIELD_Y, FIELD_W, FIELD_H, Component.empty());
+    codeBox = new FilteredEditBox(this.font, left + FIELD_X, top + FIELD_Y, FIELD_W, FIELD_H, Component.empty());
     codeBox.setMaxLength(EnderTankChannels.CODE_DIGITS);
     codeBox.setFilter(ScreenEnderTank::digitsOnly);
     codeBox.setHint(Component.translatable(key("hint")).withStyle(ChatFormatting.DARK_GRAY));
@@ -113,38 +113,40 @@ public class ScreenEnderTank extends AbstractContainerScreen<MenuEnderTank> {
   }
 
   @Override
-  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+  public boolean keyPressed(KeyEvent event) {
+    int keyCode = event.key();
     if (codeBox.isFocused()) {
-      if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+      if (keyCode == InputConstants.KEY_ESCAPE) {
         codeBox.setFocused(false);
         setFocused(null);
         return true;
       }
-      if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+      if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_NUMPADENTER) {
         apply();
         return true;
       }
-      if (codeBox.keyPressed(keyCode, scanCode, modifiers)) {
+      if (codeBox.keyPressed(event)) {
         return true;
       }
-      return keyCode != GLFW.GLFW_KEY_TAB;
+      return keyCode != InputConstants.KEY_TAB;
     }
-    return super.keyPressed(keyCode, scanCode, modifiers);
+    return super.keyPressed(event);
   }
 
   @Override
-  public boolean mouseClicked(double mouseX, double mouseY, int button) {
+  public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    double mouseX = event.x();
+    double mouseY = event.y();
     if (codeBox.isFocused() && !codeBox.isMouseOver(mouseX, mouseY)) {
       codeBox.setFocused(false);
       setFocused(null);
     }
-    return super.mouseClicked(mouseX, mouseY, button);
+    return super.mouseClicked(event, doubleClick);
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    renderBackground(graphics);
-    super.render(graphics, mouseX, mouseY, partialTick);
+  public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    super.extractRenderState(graphics, mouseX, mouseY, partialTick);
     renderGaugeTooltip(graphics, mouseX, mouseY);
   }
 
@@ -155,7 +157,7 @@ public class ScreenEnderTank extends AbstractContainerScreen<MenuEnderTank> {
         && mouseY >= top + GAUGE_Y && mouseY < top + GAUGE_Y + GAUGE_H;
   }
 
-  private void renderGaugeTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+  private void renderGaugeTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     BlockEntityEnderTank tank = this.menu.getTank();
     if (tank == null || !overGauge(mouseX, mouseY)) {
       return;
@@ -163,17 +165,23 @@ public class ScreenEnderTank extends AbstractContainerScreen<MenuEnderTank> {
     FluidStack fluid = tank.view.getFluidStack();
     Component text = fluid.isEmpty()
         ? Component.translatable("gui." + Faktocraft.MODID + ".fluid_empty")
-        : Component.translatable("gui." + Faktocraft.MODID + ".fluid", fluid.getDisplayName(),
+        : Component.translatable("gui." + Faktocraft.MODID + ".fluid", fluid.getHoverName(),
             TextComponentUtil.getFormattedLong(fluid.getAmount()),
             TextComponentUtil.getFormattedLong(EnderTankChannels.CAPACITY_MB));
-    graphics.renderTooltip(GuiUtil.getFont(), text, mouseX, mouseY);
+    graphics.setTooltipForNextFrame(GuiUtil.getFont(), text, mouseX, mouseY);
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+  public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    renderBg(graphics, partialTick, mouseX, mouseY);
+    super.extractContents(graphics, mouseX, mouseY, partialTick);
+  }
+
+  protected void renderBg(GuiGraphicsExtractor graphics, float partialTick, int mouseX, int mouseY) {
     int left = (this.width - this.imageWidth) / 2;
     int top = (this.height - this.imageHeight) / 2;
-    graphics.blit(BACKGROUND, left, top, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, left, top, 0, 0, this.imageWidth, this.imageHeight, 256,
+        256);
     int x = left + GAUGE_X;
     int y = top + GAUGE_Y;
     graphics.fill(x - 1, y - 1, x + GAUGE_W + 1, y + GAUGE_H + 1, 0xFF373737);
@@ -187,23 +195,22 @@ public class ScreenEnderTank extends AbstractContainerScreen<MenuEnderTank> {
     if (sprite == null) {
       return;
     }
-    int color = IClientFluidTypeExtensions.of(fluid.getFluid()).getTintColor(fluid);
-    float r = (color >> 16 & 0xFF) / 255.0f;
-    float g = (color >> 8 & 0xFF) / 255.0f;
-    float b = (color & 0xFF) / 255.0f;
+    int color = SpriteUtil.getFluidTint(fluid) | 0xFF000000;
     int height = Math.round(GAUGE_H * Math.min(1.0f, (float) fluid.getAmount() / EnderTankChannels.CAPACITY_MB));
     int bottom = y + GAUGE_H;
     int filledTop = bottom - height;
     for (int tileBottom = bottom; tileBottom > filledTop; tileBottom -= 16) {
       int tileHeight = Math.min(16, tileBottom - filledTop);
-      graphics.blit(x, tileBottom - tileHeight, 0, GAUGE_W, tileHeight, sprite, r, g, b, 1.0f);
+      graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, tileBottom - tileHeight, GAUGE_W, tileHeight,
+          color);
     }
   }
 
   @Override
-  protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-    graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, TEXT_COLOR, false);
-    graphics.drawString(this.font, Component.translatable(key("code")), FIELD_X, FIELD_Y - 11, TEXT_COLOR, false);
+  protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    graphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY, GuiUtil.opaque(TEXT_COLOR), false);
+    graphics.text(this.font, Component.translatable(key("code")), FIELD_X, FIELD_Y - 11, GuiUtil.opaque(TEXT_COLOR),
+        false);
     BlockEntityEnderTank tank = this.menu.getTank();
     if (tank != null && !tank.hasCode()) {
       GuiUtil.renderScaledToFit(graphics, Component.translatable(key("no_code")).getString(), FIELD_X, STATUS_Y,

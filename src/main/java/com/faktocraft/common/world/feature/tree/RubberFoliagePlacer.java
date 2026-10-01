@@ -1,19 +1,19 @@
 package com.faktocraft.common.world.feature.tree;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
-import net.minecraft.world.level.LevelSimulatedReader;
-import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.levelgen.feature.TreeFeature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.BlobFoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 
 public class RubberFoliagePlacer extends BlobFoliagePlacer {
 
-  public static final Codec<RubberFoliagePlacer> CODEC = RecordCodecBuilder
-      .create(i -> blobParts(i).apply(i, RubberFoliagePlacer::new));
+  public static final MapCodec<RubberFoliagePlacer> CODEC = RecordCodecBuilder
+      .mapCodec(i -> blobParts(i).apply(i, RubberFoliagePlacer::new));
 
   public RubberFoliagePlacer(IntProvider radius, IntProvider offset, int height) {
     super(radius, offset, height);
@@ -25,11 +25,11 @@ public class RubberFoliagePlacer extends BlobFoliagePlacer {
   }
 
   @Override
-  protected void createFoliage(LevelSimulatedReader level, FoliagePlacer.FoliageSetter foliageSetter,
-      RandomSource random, TreeConfiguration config, int treeHeight, FoliagePlacer.FoliageAttachment attachment,
+  protected void createFoliage(WorldGenLevel level, FoliagePlacer.FoliageSetter foliageSetter,
+      RandomSource random, TreeFeature config, int treeHeight, FoliagePlacer.FoliageAttachment attachment,
       int foliageHeight, int leafRadius, int offset) {
     for (int yo = offset + 2; yo >= offset - foliageHeight - 1; yo--) {
-      int currentRadius = Math.max(leafRadius + attachment.radiusOffset() - 1 - yo / 2, 0);
+      int currentRadius = Math.max(leafRadius + attachment.radiusOffsetXZ() - 1 - yo / 2, 0);
       if (yo >= 1) {
         currentRadius = 0;
       }

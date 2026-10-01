@@ -42,7 +42,7 @@ public class BlockEntityQuarry extends BlockEntityGantry {
     int depth = maxZ - minZ - 1;
     long perLayer = (long) width * depth;
     int topY = worldPosition.getY() - 1;
-    int bottomY = serverLevel.getMinBuildHeight();
+    int bottomY = serverLevel.getMinY();
     long total = perLayer * (topY - bottomY + 1);
 
     if (!targetValid) {
@@ -107,6 +107,6 @@ public class BlockEntityQuarry extends BlockEntityGantry {
 
   @Override
   protected void loadWork(CompoundTag tag) {
-    mineIndex = tag.getLong("mineIndex");
+    mineIndex = tag.getLongOr("mineIndex", 0L);
   }
 }

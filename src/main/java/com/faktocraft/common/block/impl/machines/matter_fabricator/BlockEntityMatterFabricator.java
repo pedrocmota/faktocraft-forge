@@ -21,11 +21,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -153,18 +153,19 @@ public class BlockEntityMatterFabricator extends FaktocraftBlockEntity
   private void handleAmplifiedSound() {
     if (progressAmplifier.getProgress() > 0) {
       if (canPlaySound() && !isRemoved()) {
-        com.faktocraft.client.ExtraSoundHandler.ensurePlaying(ModSounds.MATTER_FABRICATOR_AMPLIFIED, getBlockPos());
+        com.faktocraft.common.util.ClientProxy.get().ensureExtraSoundPlaying(ModSounds.MATTER_FABRICATOR_AMPLIFIED,
+            getBlockPos());
       } else {
-        com.faktocraft.client.ExtraSoundHandler.stop(getBlockPos());
+        com.faktocraft.common.util.ClientProxy.get().stopExtraSound(getBlockPos());
       }
     } else if (getItemStackHandler().getStackInSlot(AMPLIFIER_SLOT).isEmpty()) {
-      com.faktocraft.client.ExtraSoundHandler.stop(getBlockPos());
+      com.faktocraft.common.util.ClientProxy.get().stopExtraSound(getBlockPos());
     }
   }
 
   @Override
   public void onBreakClient() {
-    com.faktocraft.client.ExtraSoundHandler.stop(getBlockPos());
+    com.faktocraft.common.util.ClientProxy.get().stopExtraSound(getBlockPos());
     super.onBreakClient();
   }
 
@@ -236,13 +237,13 @@ public class BlockEntityMatterFabricator extends FaktocraftBlockEntity
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
     if (tag.contains("progressAmplifier")) {
-      progressAmplifier.load(tag.getCompound("progressAmplifier"));
+      progressAmplifier.load(tag.getCompoundOrEmpty("progressAmplifier"));
     }
     if (tag.contains("fluidMatterStorage")) {
-      fluidMatterStorage.load(tag.getCompound("fluidMatterStorage"));
+      fluidMatterStorage.load(tag.getCompoundOrEmpty("fluidMatterStorage"));
     }
   }
 

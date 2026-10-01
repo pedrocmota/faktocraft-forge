@@ -15,13 +15,16 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DoorBlock;
@@ -31,7 +34,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.CapabilityBridge;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +46,6 @@ import java.util.Map;
 import java.util.Set;
 
 public final class RadiationManager {
-
   public static final int MAX_AMPLIFIER = 3;
   private static final int CACHE_TTL = 100;
   private static final int CACHE_SWEEP = 600;
@@ -67,11 +70,25 @@ public final class RadiationManager {
   private static final Map<ResourceKey<Level>, Long2ObjectOpenHashMap<OreCache>> ORE_CACHE = new HashMap<>();
   private static final Map<ResourceKey<Level>, IntOpenHashSet> SICK = new HashMap<>();
 
+  private static final List<EquipmentSlot> ARMOR = List.of(EquipmentSlot.FEET, EquipmentSlot.LEGS,
+      EquipmentSlot.CHEST, EquipmentSlot.HEAD);
+  private static final List<EquipmentSlot> OFFHAND = List.of(EquipmentSlot.OFFHAND);
+  private static final List<EquipmentSlot> ALL_SLOTS = List.of(EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND,
+      EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD);
+
   private RadiationManager() {
   }
 
   private static ServerConfig config() {
     return ModConfig.server();
+  }
+
+  private static List<ItemStack> equipment(LivingEntity living, List<EquipmentSlot> slots) {
+    List<ItemStack> stacks = new ArrayList<>(slots.size());
+    for (EquipmentSlot slot : slots) {
+      stacks.add(living.getItemBySlot(slot));
+    }
+    return stacks;
   }
 
   public static void clear(ResourceKey<Level> dimension) {
@@ -199,7 +216,8 @@ public final class RadiationManager {
       }
       if (perSecond > 0.0F || dose > safe) {
         int amplifier = perSecond <= 0.0F ? 0 : Math.min(MAX_AMPLIFIER, 1 + (int) (perSecond / 1.5F));
-        living.addEffect(new MobEffectInstance(ModEffects.RADIATION, duration, amplifier, false, true, true));
+        living.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(ModEffects.RADIATION),
+            duration, amplifier, false, true, true));
       }
     }
   }
@@ -214,7 +232,7 @@ public final class RadiationManager {
     float health = living.getHealth();
     float actual = health > 1.0F ? Math.min(whole, health - 1.0F) : Math.min(whole, 1.0F);
     if (actual > 0.0F) {
-      living.hurt(ModDamageTypes.radiation(level), actual);
+      living.hurtServer(level, ModDamageTypes.radiation(level), actual);
     }
   }
 
@@ -307,17 +325,17 @@ public final class RadiationManager {
       minY = Math.min(minY, center.getY() - range);
       maxY = Math.max(maxY, center.getY() + range);
     }
-    int firstSection = level.getSectionIndex(Math.max(level.getMinBuildHeight(), minY));
-    int lastSection = level.getSectionIndex(Math.min(level.getMaxBuildHeight() - 1, maxY));
+    int firstSection = level.getSectionIndex(Math.max(level.getMinY(), minY));
+    int lastSection = level.getSectionIndex(Math.min(level.getMaxY() + 1 - 1, maxY));
     Set<Long> chunks = new HashSet<>();
     Set<Long> seenBlocks = new HashSet<>();
     Set<Integer> seenEntities = new HashSet<>();
     int chunkRadius = (range + 15) >> 4;
     for (BlockPos center : centers) {
-      ChunkPos chunk = new ChunkPos(center);
-      for (int cx = chunk.x - chunkRadius; cx <= chunk.x + chunkRadius; cx++) {
-        for (int cz = chunk.z - chunkRadius; cz <= chunk.z + chunkRadius; cz++) {
-          if (!chunks.add(ChunkPos.asLong(cx, cz))) {
+      ChunkPos chunk = ChunkPos.containing(center);
+      for (int cx = chunk.x() - chunkRadius; cx <= chunk.x() + chunkRadius; cx++) {
+        for (int cz = chunk.z() - chunkRadius; cz <= chunk.z() + chunkRadius; cz++) {
+          if (!chunks.add(ChunkPos.pack(cx, cz))) {
             continue;
           }
           LevelChunk loaded = level.getChunkSource().getChunkNow(cx, cz);
@@ -352,9 +370,9 @@ public final class RadiationManager {
           continue;
         }
         float strength = living instanceof Player player
-            ? Radioactivity.of(player.getInventory().items) + Radioactivity.of(player.getInventory().armor)
-                + Radioactivity.of(player.getInventory().offhand)
-            : Radioactivity.of(living.getAllSlots());
+            ? Radioactivity.of(player.getInventory().getNonEquipmentItems())
+                + Radioactivity.of(equipment(player, ARMOR)) + Radioactivity.of(equipment(player, OFFHAND))
+            : Radioactivity.of(equipment(living, ALL_SLOTS));
         strength *= (float) config().radiation_pocket_factor;
         if (strength > 0.0F) {
           Vec3 at = living.position().add(0.0, living.getBbHeight() * 0.5, 0.0);
@@ -379,7 +397,7 @@ public final class RadiationManager {
         continue;
       }
       int sectionY = chunk.getSectionYFromSectionIndex(index);
-      long key = SectionPos.asLong(chunk.getPos().x, sectionY, chunk.getPos().z);
+      long key = SectionPos.asLong(chunk.getPos().x(), sectionY, chunk.getPos().z());
       OreCache cached = cache.get(key);
       if (cached == null || cached.expires() <= time) {
         cached = new OreCache(time + ORE_CACHE_TTL, scanOres(section, chunk.getPos(), sectionY));
@@ -450,7 +468,7 @@ public final class RadiationManager {
     if (cached != null && cached.expires() > time) {
       return cached.strength();
     }
-    float strength = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER)
+    float strength = CapabilityBridge.lazy(blockEntity, ForgeCapabilities.ITEM_HANDLER, null)
         .map(Radioactivity::of).orElse(0.0F);
     cache.put(key, new Cached(time + CACHE_TTL, strength));
     return strength;

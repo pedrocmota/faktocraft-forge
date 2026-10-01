@@ -1,6 +1,5 @@
 {
   "parent": "minecraft:block/block",
-  "render_type": "minecraft:cutout",
   "textures": {
     "particle": "faktocraft:block/pipe/ender_tank_frame",
     "frame": "faktocraft:block/pipe/ender_tank_frame",

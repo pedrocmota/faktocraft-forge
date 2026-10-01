@@ -8,7 +8,6 @@ import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -16,9 +15,9 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import java.util.Map;
@@ -27,8 +26,8 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class AlloySmeltingCategory extends AbstractRecipeCategory<AlloySmeltingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "alloy_smelting");
-  public static final RecipeType<AlloySmeltingRecipe> TYPE = new RecipeType<>(UID, AlloySmeltingRecipe.class);
+  public static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "alloy_smelting");
+  public static final IRecipeType<AlloySmeltingRecipe> TYPE = IRecipeType.create(UID, AlloySmeltingRecipe.class);
 
   private final LoadingCache<Integer, IDrawableAnimated> progress;
   private final IDrawableAnimated energy;
@@ -40,7 +39,7 @@ public class AlloySmeltingCategory extends AbstractRecipeCategory<AlloySmeltingR
         "alloy_smelting",
         guiHelper,
         guiHelper.createDrawable(JEI_LARGE, 0, 0, 152, 54),
-        guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M3Registry.ALLOY_SMELTER)));
+        guiHelper.createDrawableItemStack(new ItemStack(M3Registry.ALLOY_SMELTER)));
     this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
         (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(duration,
             IDrawableAnimated.StartDirection.LEFT, false)));
@@ -64,11 +63,11 @@ public class AlloySmeltingCategory extends AbstractRecipeCategory<AlloySmeltingR
       slot.addItemStacks(stacks(ingredient, count));
     }
 
-    builder.addSlot(RecipeIngredientRole.OUTPUT, 103, 19).addItemStack(recipe.getResultItem());
+    builder.addSlot(RecipeIngredientRole.OUTPUT, 103, 19).add(recipe.getResultItem());
   }
 
   @Override
-  public void draw(AlloySmeltingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics,
+  public void draw(AlloySmeltingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor graphics,
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 

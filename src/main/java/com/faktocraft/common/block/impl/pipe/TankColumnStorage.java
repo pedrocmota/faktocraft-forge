@@ -1,10 +1,11 @@
 package com.faktocraft.common.block.impl.pipe;
 
+import com.faktocraft.common.util.FluidStackCompat;
 import com.faktocraft.common.entity.block.FluidStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class TankColumnStorage implements IFluidHandler {
     int guard = 0;
     while (guard++ < MAX_COLUMN && level.getBlockEntity(base.below()) instanceof BlockEntityTank below) {
       if (!below.tank.isEmpty()) {
-        if (!known.isEmpty() && !known.isFluidEqual(below.tank.getFluidStack())) {
+        if (!known.isEmpty() && !FluidStackCompat.isFluidEqual(known, below.tank.getFluidStack())) {
           break;
         }
         known = below.tank.getFluidStack();
@@ -59,7 +60,7 @@ public class TankColumnStorage implements IFluidHandler {
     guard = 0;
     while (guard++ < MAX_COLUMN && level.getBlockEntity(pos) instanceof BlockEntityTank tankEntity) {
       if (!tankEntity.tank.isEmpty()) {
-        if (!columnFluid.isEmpty() && !columnFluid.isFluidEqual(tankEntity.tank.getFluidStack())) {
+        if (!columnFluid.isEmpty() && !FluidStackCompat.isFluidEqual(columnFluid, tankEntity.tank.getFluidStack())) {
           break;
         }
         columnFluid = tankEntity.tank.getFluidStack();
@@ -99,7 +100,7 @@ public class TankColumnStorage implements IFluidHandler {
   @Override
   public @NotNull FluidStack getFluidInTank(int tankIndex) {
     FluidStack current = variant();
-    return current.isEmpty() ? FluidStack.EMPTY : new FluidStack(current, totalMb());
+    return current.isEmpty() ? FluidStack.EMPTY : current.copyWithAmount(totalMb());
   }
 
   @Override
@@ -110,7 +111,7 @@ public class TankColumnStorage implements IFluidHandler {
   @Override
   public boolean isFluidValid(int tankIndex, @NotNull FluidStack stack) {
     FluidStack current = variant();
-    return current.isEmpty() || current.isFluidEqual(stack);
+    return current.isEmpty() || FluidStackCompat.isFluidEqual(current, stack);
   }
 
   @Override
@@ -119,7 +120,7 @@ public class TankColumnStorage implements IFluidHandler {
       return 0;
     }
     FluidStack current = variant();
-    if (!current.isEmpty() && !current.isFluidEqual(resource)) {
+    if (!current.isEmpty() && !FluidStackCompat.isFluidEqual(current, resource)) {
       return 0;
     }
     int filled = 0;
@@ -127,7 +128,7 @@ public class TankColumnStorage implements IFluidHandler {
       if (filled >= resource.getAmount()) {
         break;
       }
-      filled += part.fill(new FluidStack(resource, resource.getAmount() - filled), action);
+      filled += part.fill(resource.copyWithAmount(resource.getAmount() - filled), action);
     }
     return filled;
   }
@@ -135,7 +136,7 @@ public class TankColumnStorage implements IFluidHandler {
   @Override
   public @NotNull FluidStack drain(FluidStack resource, FluidAction action) {
     FluidStack current = variant();
-    if (resource.isEmpty() || current.isEmpty() || !current.isFluidEqual(resource)) {
+    if (resource.isEmpty() || current.isEmpty() || !FluidStackCompat.isFluidEqual(current, resource)) {
       return FluidStack.EMPTY;
     }
     return drain(resource.getAmount(), action);

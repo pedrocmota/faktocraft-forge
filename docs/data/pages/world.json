@@ -80,21 +80,6 @@
         },
         {
           "name": {
-            "en": "Sulfur",
-            "pt": "Enxofre"
-          },
-          "icon": {
-            "block": {
-              "all": "block/ore/sulfur"
-            }
-          },
-          "desc": {
-            "en": "Chemistry and combustion recipes.",
-            "pt": "Química e receitas de combustão."
-          }
-        },
-        {
-          "name": {
             "en": "Iridium",
             "pt": "Irídio"
           },

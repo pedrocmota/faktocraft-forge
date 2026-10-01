@@ -1,12 +1,13 @@
 package com.faktocraft.common.block.impl.pipe;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.GuiUtil;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenPump extends AbstractContainerScreen<MenuPump>
@@ -18,11 +19,21 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
+  public int getGuiLeft() {
+    return this.leftPos;
+  }
+
+  @Override
+  public int getGuiTop() {
+    return this.topPos;
+  }
+
+  @Override
+  public Identifier getGuiLocation() {
     return BACKGROUND;
   }
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "textures/gui/container/pipe_machine.png");
 
   private com.faktocraft.common.screen.bar.GuiElectricBarVertical energyBar;
@@ -31,9 +42,7 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
       new net.minecraft.client.gui.components.Button[3];
 
   public ScreenPump(MenuPump menu, Inventory inventory, Component title) {
-    super(menu, inventory, title);
-    this.imageWidth = 176;
-    this.imageHeight = 190;
+    super(menu, inventory, title, 176, 190);
     this.inventoryLabelY = 190 - 94;
   }
 
@@ -73,10 +82,8 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    renderBackground(graphics);
-    super.render(graphics, mouseX, mouseY, partialTick);
-    renderTooltip(graphics, mouseX, mouseY);
+  public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    super.extractRenderState(graphics, mouseX, mouseY, partialTick);
     renderEmptySlotTooltip(graphics, mouseX, mouseY);
     if (energyBar != null) {
       energyBar.renderWidgetToolTip(this, graphics, mouseX, mouseY);
@@ -86,7 +93,7 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
     }
   }
 
-  private void renderEmptySlotTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+  private void renderEmptySlotTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (hoveredSlot == null || hoveredSlot.hasItem() || hoveredSlot.index >= MenuPump.MACHINE_SLOTS) {
       return;
     }
@@ -97,32 +104,40 @@ public class ScreenPump extends AbstractContainerScreen<MenuPump>
             : hoveredSlot.index < 6
                 ? "gui." + Faktocraft.MODID + ".slot.overclock"
                 : "gui." + Faktocraft.MODID + ".slot.dock_battery";
-    graphics.renderTooltip(GuiUtil.getFont(), Component.translatable(key), mouseX, mouseY);
+    graphics.setTooltipForNextFrame(GuiUtil.getFont(), Component.translatable(key), mouseX, mouseY);
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+  public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    renderBg(graphics, partialTick, mouseX, mouseY);
+    super.extractContents(graphics, mouseX, mouseY, partialTick);
+  }
+
+  protected void renderBg(GuiGraphicsExtractor graphics, float partialTick, int mouseX, int mouseY) {
     int left = (this.width - this.imageWidth) / 2;
     int top = (this.height - this.imageHeight) / 2;
-    graphics.blit(BACKGROUND, left, top, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, left, top, 0, 0, this.imageWidth, this.imageHeight, 256,
+        256);
     for (int i = 0; i < 2; i++) {
-      graphics.blit(BACKGROUND, left + 7 + i * 18, top + 21, 7, 107, 18, 18, 256, 256);
-      graphics.blit(Constants.PROCESS, left + 8 + i * 18, top + 22, 110, 0, 16, 16, 256, 256);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, left + 7 + i * 18, top + 21, 7, 107, 18, 18, 256, 256);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, left + 8 + i * 18, top + 22, 110, 0, 16, 16, 256,
+          256);
     }
-    graphics.blit(BACKGROUND, left + 43, top + 21, 7, 107, 18, 18, 256, 256);
-    graphics.blit(Constants.PROCESS, left + 44, top + 22, 84, 46, 16, 16, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, left + 43, top + 21, 7, 107, 18, 18, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, left + 44, top + 22, 84, 46, 16, 16, 256, 256);
     for (int i = 0; i < 3; i++) {
-      graphics.blit(Constants.PROCESS, left + 79 + i * 18, top + 21, 103, 46, 18, 18, 256, 256);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, left + 79 + i * 18, top + 21, 103, 46, 18, 18, 256,
+          256);
     }
-    graphics.blit(BACKGROUND, left + 151, top + 21, 7, 107, 18, 18, 256, 256);
-    graphics.blit(Constants.PROCESS, left + 152, top + 22, 104, 28, 16, 16, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, left + 151, top + 21, 7, 107, 18, 18, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, left + 152, top + 22, 104, 28, 16, 16, 256, 256);
   }
 
   @Override
-  protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+  protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     GuiUtil.renderScaledToFit(graphics, this.title.getString(), this.titleLabelX, this.titleLabelY,
         this.imageWidth - this.titleLabelX - 8, 4210752);
-    graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
-        4210752, false);
+    graphics.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
+        GuiUtil.opaque(4210752), false);
   }
 }

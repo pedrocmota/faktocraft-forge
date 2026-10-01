@@ -1,6 +1,0 @@
-{
-  "type": "forge:add_features",
-  "biomes": "#faktocraft:has_oil_lake",
-  "features": "faktocraft:oil_lake_hot_placed",
-  "step": "lakes"
-}

@@ -1,32 +1,31 @@
 package com.faktocraft.common.item.impl.tools;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import com.faktocraft.Faktocraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ToolboxScreen extends AbstractContainerScreen<ToolboxMenu> {
 
-  private static final ResourceLocation TEXTURE = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "textures/gui/container/toolbox.png");
 
   public ToolboxScreen(ToolboxMenu menu, Inventory playerInventory, Component title) {
-    super(menu, playerInventory, title);
-    this.imageHeight = 140;
+    super(menu, playerInventory, title, 176, 140);
     this.inventoryLabelY = this.imageHeight - 94;
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-    graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+  public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    renderBg(graphics, partialTick, mouseX, mouseY);
+    super.extractContents(graphics, mouseX, mouseY, partialTick);
   }
 
-  @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    renderBackground(graphics);
-    super.render(graphics, mouseX, mouseY, partialTick);
-    renderTooltip(graphics, mouseX, mouseY);
+  protected void renderBg(GuiGraphicsExtractor graphics, float partialTick, int mouseX, int mouseY) {
+    graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
   }
+
 }

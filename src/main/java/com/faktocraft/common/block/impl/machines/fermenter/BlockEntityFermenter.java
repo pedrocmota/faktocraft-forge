@@ -27,11 +27,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -216,20 +216,20 @@ public class BlockEntityFermenter extends FaktocraftBlockEntity implements IEner
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("fluidInputStorage")) {
-      fluidInputStorage.load(tag.getCompound("fluidInputStorage"));
+      fluidInputStorage.load(tag.getCompoundOrEmpty("fluidInputStorage"));
     }
     if (tag.contains("fluidOutputStorage")) {
-      fluidOutputStorage.load(tag.getCompound("fluidOutputStorage"));
+      fluidOutputStorage.load(tag.getCompoundOrEmpty("fluidOutputStorage"));
     }
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
-    this.activeState = tag.getBoolean("active");
+    this.activeState = tag.getBooleanOr("active", false);
     if (tag.contains("heatLevel")) {
-      heatLevel.load(tag.getCompound("heatLevel"));
+      heatLevel.load(tag.getCompoundOrEmpty("heatLevel"));
     }
     if (tag.contains("progressWaste")) {
-      progressWaste.load(tag.getCompound("progressWaste"));
+      progressWaste.load(tag.getCompoundOrEmpty("progressWaste"));
     }
   }
 

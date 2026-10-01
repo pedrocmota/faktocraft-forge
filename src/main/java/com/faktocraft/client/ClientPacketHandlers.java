@@ -46,16 +46,16 @@ public class ClientPacketHandlers {
 
   public static void handleGeoScannerState(com.faktocraft.common.network.packet.PacketGeoScannerState payload) {
     Minecraft minecraft = Minecraft.getInstance();
-    if (minecraft.screen instanceof GeoScannerScreen screen && screen.matches(payload.blockPos())) {
+    if (minecraft.gui.screen() instanceof GeoScannerScreen screen && screen.matches(payload.blockPos())) {
       screen.applyState(payload);
     } else if (payload.openScreen()) {
-      minecraft.setScreen(new GeoScannerScreen(payload));
+      minecraft.gui.setScreen(new GeoScannerScreen(payload));
     }
   }
 
   public static void handleProspectorState(com.faktocraft.common.network.packet.PacketProspectorState payload) {
     ProspectorClientData.apply(payload);
-    if (Minecraft.getInstance().screen instanceof ProspectorScreen screen) {
+    if (Minecraft.getInstance().gui.screen() instanceof ProspectorScreen screen) {
       screen.refresh();
     }
   }
@@ -65,15 +65,15 @@ public class ClientPacketHandlers {
   }
 
   public static void handleIEMeterInfo(PacketIEMeterInfo payload) {
-    Minecraft.getInstance().setScreen(new IEMeterScreen(payload));
+    Minecraft.getInstance().gui.setScreen(new IEMeterScreen(payload));
   }
 
   public static void handleTableMessage(com.faktocraft.common.network.packet.PacketTableMessage payload) {
     if (Minecraft
-        .getInstance().screen instanceof com.faktocraft.common.block.impl.logistics.ScreenRequestTable screen) {
+        .getInstance().gui.screen() instanceof com.faktocraft.common.block.impl.logistics.ScreenRequestTable screen) {
       screen.showMessage(payload.message(), payload.error());
     } else {
-      Minecraft.getInstance().gui.setOverlayMessage(payload.message(), false);
+      Minecraft.getInstance().gui.hud.setOverlayMessage(payload.message(), false);
     }
   }
 
@@ -87,12 +87,14 @@ public class ClientPacketHandlers {
   }
 
   public static void handleTableState(com.faktocraft.common.network.packet.PacketTableState payload) {
-    if (Minecraft.getInstance().screen instanceof com.faktocraft.common.block.impl.logistics.ScreenCoreTasks coreScreen
+    if (Minecraft.getInstance().gui
+        .screen() instanceof com.faktocraft.common.block.impl.logistics.ScreenCoreTasks coreScreen
         && coreScreen.matches(payload.blockPos())) {
       coreScreen.applyState(payload);
       return;
     }
-    if (Minecraft.getInstance().screen instanceof com.faktocraft.common.block.impl.logistics.ScreenRequestTable screen
+    if (Minecraft.getInstance().gui
+        .screen() instanceof com.faktocraft.common.block.impl.logistics.ScreenRequestTable screen
         && screen.matches(payload.blockPos())) {
       screen.applyState(payload);
     }
@@ -121,6 +123,6 @@ public class ClientPacketHandlers {
             (float) payload.estimate() / maxGenerate, 0x4CB20D, payload.estimate() + " IE/t"));
       }
     };
-    Minecraft.getInstance().setScreen(screen);
+    Minecraft.getInstance().gui.setScreen(screen);
   }
 }

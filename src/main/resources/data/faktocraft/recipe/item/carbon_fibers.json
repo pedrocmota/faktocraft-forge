@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": "#c:dusts/coal"
+  },
+  "pattern": [
+    "cc ",
+    "cc "
+  ],
+  "result": {
+    "id": "faktocraft:carbon_fibers"
+  }
+}

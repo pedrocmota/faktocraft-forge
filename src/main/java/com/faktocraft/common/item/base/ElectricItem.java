@@ -1,5 +1,8 @@
 package com.faktocraft.common.item.base;
 
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.common.energy.impl.ItemEnergyWrapper;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.enums.EnergyTier;
@@ -13,9 +16,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class ElectricItem extends BaseItem implements IElectricItem {
 
@@ -87,15 +87,17 @@ public class ElectricItem extends BaseItem implements IElectricItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(EnumLang.POWER_TIER.getTranslationComponent(
+  @SuppressWarnings("deprecation")
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(EnumLang.POWER_TIER.getTranslationComponent(
         energyTier.getLang().getTranslationComponent().withStyle(energyTier.getColor()))
         .withStyle(ChatFormatting.GRAY)
         .append(Component.literal(" (" + TextComponentUtil.getFormattedLong(energyTier.getBasicTransfer()) + " IE/t)")
             .withStyle(ChatFormatting.DARK_GRAY)));
 
     int energyStored = Mth.clamp(ModComponents.getEnergy(stack, initialEnergy), 0, maxEnergy);
-    tooltip.add(EnumLang.STORED.getTranslationComponent(TextComponentUtil.build(
+    tooltip.accept(EnumLang.STORED.getTranslationComponent(TextComponentUtil.build(
         EnumLang.POWER.getTranslationComponent(TextComponentUtil.getFormattedEnergyUnit(energyStored))
             .withStyle(energyTier.getColor()),
         Component.literal(" / ").withStyle(ChatFormatting.GRAY),
@@ -103,7 +105,7 @@ public class ElectricItem extends BaseItem implements IElectricItem {
             .withStyle(energyTier.getColor())))
         .withStyle(ChatFormatting.GRAY));
 
-    super.appendHoverText(stack, level, tooltip, flag);
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 
   @Override

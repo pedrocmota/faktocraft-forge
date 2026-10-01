@@ -23,6 +23,7 @@ import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketExperience;
 import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.registries.ModRecipeType;
+import com.faktocraft.common.util.RecipeUtil;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.EnergyCosts;
@@ -177,10 +178,10 @@ public class BlockEntityMetalFormer extends FaktocraftBlockEntity
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
     this.mode = MetalFormerMode
-        .getModeFromId(tag.contains("mode") ? tag.getInt("mode") : MetalFormerMode.CUTTING.getId());
+        .getModeFromId(tag.contains("mode") ? tag.getIntOr("mode", 0) : MetalFormerMode.CUTTING.getId());
   }
 
   @Override
@@ -200,14 +201,14 @@ public class BlockEntityMetalFormer extends FaktocraftBlockEntity
   }
 
   protected Optional<? extends IRecipeSingleIngredient> getRecipe(ItemStack input) {
-    if (!(level instanceof ServerLevel serverLevel)) {
+    if (!(level instanceof ServerLevel)) {
       return Optional.empty();
     }
     MachineRecipeInput recipeInput = MachineRecipeInput.of(input);
     return switch (mode) {
-      case CUTTING -> serverLevel.getRecipeManager().getRecipeFor(ModRecipeType.CUTTING, recipeInput, level);
-      case ROLLING -> serverLevel.getRecipeManager().getRecipeFor(ModRecipeType.ROLLING, recipeInput, level);
-      case EXTRUDING -> serverLevel.getRecipeManager().getRecipeFor(ModRecipeType.EXTRUDING, recipeInput, level);
+      case CUTTING -> RecipeUtil.findRecipe(level, ModRecipeType.CUTTING, recipeInput);
+      case ROLLING -> RecipeUtil.findRecipe(level, ModRecipeType.ROLLING, recipeInput);
+      case EXTRUDING -> RecipeUtil.findRecipe(level, ModRecipeType.EXTRUDING, recipeInput);
     };
   }
 

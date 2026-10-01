@@ -5,25 +5,21 @@ import com.faktocraft.common.item.impl.tools.HoleDrill;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
+import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
 import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class DrillCrackOverlay {
-
   private record Crack(BlockPos pos, Direction face, int stage) {
   }
 
@@ -59,30 +55,30 @@ public final class DrillCrackOverlay {
     cracks = found;
   }
 
-  public static void render(RenderLevelStageEvent event) {
-    if (cracks.isEmpty() || event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+  public static void submit(SubmitCustomGeometryEvent event) {
+    if (cracks.isEmpty()) {
       return;
     }
     Minecraft minecraft = Minecraft.getInstance();
     if (minecraft.level == null) {
       return;
     }
-    Vec3 camera = event.getCamera().getPosition();
+    Vec3 camera = event.getLevelRenderState().cameraRenderState.pos;
     PoseStack poseStack = event.getPoseStack();
-    MultiBufferSource.BufferSource buffers = minecraft.renderBuffers().bufferSource();
     for (Crack crack : cracks) {
       RenderType type = ModelBakery.DESTROY_TYPES.get(crack.stage());
       poseStack.pushPose();
       poseStack.translate(crack.pos().getX() - camera.x, crack.pos().getY() - camera.y,
           crack.pos().getZ() - camera.z);
-      int light = LevelRenderer.getLightColor(minecraft.level, crack.pos().relative(crack.face()));
-      face(buffers.getBuffer(type), poseStack.last().pose(), poseStack.last().normal(), crack.face(), light);
+      int light = LightCoordsUtil.getLightCoords(minecraft.level, crack.pos().relative(crack.face()));
+      Direction face = crack.face();
+      event.getSubmitNodeCollector().submitCustomGeometry(poseStack, type,
+          (pose, buffer) -> face(buffer, pose, face, light));
       poseStack.popPose();
-      buffers.endBatch(type);
     }
   }
 
-  private static void face(VertexConsumer buffer, Matrix4f pose, Matrix3f normal, Direction face, int light) {
+  private static void face(VertexConsumer buffer, PoseStack.Pose pose, Direction face, int light) {
     Vector3f n = face.step();
     Vector3f tangent = face.getAxis() == Direction.Axis.Y ? new Vector3f(1F, 0F, 0F) : new Vector3f(0F, 1F, 0F);
     Vector3f bitangent = new Vector3f(n).cross(tangent);
@@ -95,12 +91,11 @@ public final class DrillCrackOverlay {
     };
     float[][] uvs = { { 0F, 0F }, { 1F, 0F }, { 1F, 1F }, { 0F, 1F } };
     for (int i = 0; i < corners.length; i++) {
-      buffer.vertex(pose, corners[i].x, corners[i].y, corners[i].z)
-          .color(255, 255, 255, 255)
-          .uv(uvs[i][0], uvs[i][1])
-          .uv2(light)
-          .normal(normal, n.x, n.y, n.z)
-          .endVertex();
+      buffer.addVertex(pose, corners[i].x, corners[i].y, corners[i].z)
+          .setColor(255, 255, 255, 255)
+          .setUv(uvs[i][0], uvs[i][1])
+          .setLight(light)
+          .setNormal(pose, n.x, n.y, n.z);
     }
   }
 

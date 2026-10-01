@@ -1,18 +1,19 @@
 package com.faktocraft.client.render;
 
+import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.block.impl.monitor.BlockEntityStatusMonitor;
 import com.faktocraft.common.block.impl.monitor.BlockStatusMonitor;
 import com.faktocraft.common.block.impl.monitor.StatusLine;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.fml.ModList;
 import java.util.List;
 
 public final class StatusMonitorContent {
@@ -36,15 +37,15 @@ public final class StatusMonitorContent {
   private StatusMonitorContent() {
   }
 
-  public static void draw(GuiGraphics graphics, BlockEntityStatusMonitor monitor) {
+  public static void draw(GuiGraphicsExtractor graphics, BlockEntityStatusMonitor monitor) {
     drawFrame(graphics, monitor.joinedLeft(), monitor.joinedRight());
-    graphics.pose().pushPose();
-    graphics.pose().translate(PADDING, PADDING, 0.0F);
+    graphics.pose().pushMatrix();
+    graphics.pose().translate(PADDING, PADDING);
     drawContent(graphics, monitor);
-    graphics.pose().popPose();
+    graphics.pose().popMatrix();
   }
 
-  private static void drawFrame(GuiGraphics graphics, boolean joinedLeft, boolean joinedRight) {
+  private static void drawFrame(GuiGraphicsExtractor graphics, boolean joinedLeft, boolean joinedRight) {
     graphics.fill(0, 0, PANEL_W, 1, FRAME_COLOR);
     graphics.fill(0, PANEL_H - 1, PANEL_W, PANEL_H, FRAME_COLOR);
     if (!joinedLeft) {
@@ -55,7 +56,7 @@ public final class StatusMonitorContent {
     }
   }
 
-  private static void drawContent(GuiGraphics graphics, BlockEntityStatusMonitor monitor) {
+  private static void drawContent(GuiGraphicsExtractor graphics, BlockEntityStatusMonitor monitor) {
     Font font = Minecraft.getInstance().font;
     int width = CONTENT_W;
     int height = CONTENT_H;
@@ -67,9 +68,9 @@ public final class StatusMonitorContent {
     }
     Object bridge = monitor.bridge();
     if (bridge != null && status == BlockEntityStatusMonitor.STATUS_OK) {
-      graphics.pose().pushPose();
+      graphics.pose().pushMatrix();
       boolean drawn = StatusClientBridges.render(bridge, graphics, width, height);
-      graphics.pose().popPose();
+      graphics.pose().popMatrix();
       if (drawn) {
         return;
       }
@@ -79,7 +80,7 @@ public final class StatusMonitorContent {
     if (!target.isAir()) {
       ItemStack icon = new ItemStack(target.getBlock());
       if (!icon.isEmpty()) {
-        graphics.renderItem(icon, 0, 0);
+        graphics.item(icon, 0, 0);
       }
       int textX = icon.isEmpty() ? 0 : ICON_SIZE + 4;
       text(graphics, font, target.getBlock().getName().copy().withStyle(ChatFormatting.WHITE), textX, 0,
@@ -111,7 +112,7 @@ public final class StatusMonitorContent {
         drawBar(graphics, font, bar, y, width);
         y += BAR_H + 2;
       } else if (line instanceof StatusLine.Item item) {
-        graphics.renderItem(item.stack(), 0, y);
+        graphics.item(item.stack(), 0, y);
         text(graphics, font, item.label(), ICON_SIZE + 4, y + 4, TEXT_COLOR, width - ICON_SIZE - 4);
         y += ICON_SIZE;
       }
@@ -119,12 +120,12 @@ public final class StatusMonitorContent {
   }
 
   private static String modName(BlockState state) {
-    String namespace = ForgeRegistries.BLOCKS.getKey(state.getBlock()).getNamespace();
+    String namespace = BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace();
     return ModList.get().getModContainerById(namespace)
         .map(container -> container.getModInfo().getDisplayName()).orElse(namespace);
   }
 
-  private static void drawBar(GuiGraphics graphics, Font font, StatusLine.Bar bar, int y, int width) {
+  private static void drawBar(GuiGraphicsExtractor graphics, Font font, StatusLine.Bar bar, int y, int width) {
     graphics.fill(0, y, width, y + BAR_H, TRACK_COLOR);
     int filled = Math.round(width * Math.max(0.0F, Math.min(1.0F, bar.ratio())));
     if (filled > 0) {
@@ -133,13 +134,13 @@ public final class StatusMonitorContent {
     FormattedCharSequence label = bar.label().getVisualOrderText();
     int textWidth = font.width(label);
     int x = Math.max(0, (width - textWidth) / 2);
-    graphics.drawString(font, label, x, y + 1, 0xFFFFFFFF, true);
+    graphics.text(font, label, x, y + 1, 0xFFFFFFFF, true);
   }
 
-  private static void text(GuiGraphics graphics, Font font, Component component, int x, int y, int color,
+  private static void text(GuiGraphicsExtractor graphics, Font font, Component component, int x, int y, int color,
       int maxWidth) {
     FormattedCharSequence sequence = font.split(component, maxWidth).stream().findFirst()
         .orElse(component.getVisualOrderText());
-    graphics.drawString(font, sequence, x, y, color, false);
+    graphics.text(font, sequence, x, y, GuiUtil.opaque(color), false);
   }
 }

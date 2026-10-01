@@ -4,20 +4,23 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockHandleGuard extends Block {
 
-  public static final DirectionProperty FACING = DirectionProperty.create("facing");
+  public static final EnumProperty<Direction> FACING = EnumProperty.create("facing", Direction.class);
 
   private static final VoxelShape[] SHAPES = new VoxelShape[6];
   static {
@@ -31,7 +34,7 @@ public class BlockHandleGuard extends Block {
 
   public BlockHandleGuard(Properties properties) {
     super(properties.strength(-1.0F, 3600000.0F).noLootTable().noOcclusion()
-        .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK));
+        .pushReaction(net.minecraft.world.level.material.PushReaction.IMMOVEABLE));
     registerDefaultState(defaultBlockState().setValue(FACING, Direction.DOWN));
   }
 
@@ -57,13 +60,12 @@ public class BlockHandleGuard extends Block {
 
   @Override
   public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player,
-      boolean willHarvest, FluidState fluid) {
+      ItemStack toolStack, boolean willHarvest, FluidState fluid) {
     return false;
   }
 
   private static final int VALIDATE_INTERVAL_TICKS = 100;
 
-  @SuppressWarnings("deprecation")
   @Override
   public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
     super.onPlace(state, level, pos, oldState, isMoving);
@@ -82,11 +84,10 @@ public class BlockHandleGuard extends Block {
     level.scheduleTick(pos, this, VALIDATE_INTERVAL_TICKS);
   }
 
-  @SuppressWarnings("deprecation")
   @Override
-  public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos fromPos,
-      boolean movedByPiston) {
-    super.neighborChanged(state, level, pos, neighborBlock, fromPos, movedByPiston);
+  public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
+      @Nullable Orientation orientation, boolean movedByPiston) {
+    super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
     if (!level.isClientSide() && !ownerValid(level, pos, state)) {
       level.removeBlock(pos, false);
     }

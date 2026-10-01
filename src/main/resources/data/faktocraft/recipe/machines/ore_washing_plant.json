@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "b": "faktocraft:basic_machine_casing",
+    "c": "minecraft:bucket",
+    "e": "faktocraft:electronic_circuit",
+    "m": "faktocraft:electric_motor",
+    "p": "#c:plates/iron"
+  },
+  "pattern": [
+    "ppp",
+    "cbc",
+    "mem"
+  ],
+  "result": {
+    "id": "faktocraft:ore_washing_plant"
+  }
+}

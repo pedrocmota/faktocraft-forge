@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "b": "faktocraft:basic_machine_casing",
+    "c": "faktocraft:electronic_circuit",
+    "h": "faktocraft:coil",
+    "t": "#c:plates/iron"
+  },
+  "pattern": [
+    " c ",
+    "tbt",
+    "hhh"
+  ],
+  "result": {
+    "id": "faktocraft:metal_former"
+  }
+}

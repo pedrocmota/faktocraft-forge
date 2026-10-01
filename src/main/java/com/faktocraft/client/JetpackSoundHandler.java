@@ -34,7 +34,7 @@ public final class JetpackSoundHandler {
   private static boolean isThrusting(Player player) {
     ItemStack chest = player.getItemBySlot(EquipmentSlot.CHEST);
     return chest.getItem() instanceof JetpackItem
-        && player.getPersistentData().getBoolean(JetpackItem.TAG_THRUST)
+        && player.getPersistentData().getBooleanOr(JetpackItem.TAG_THRUST, false)
         && !player.getAbilities().flying
         && JetpackItem.drainFuel(chest, 1, true);
   }

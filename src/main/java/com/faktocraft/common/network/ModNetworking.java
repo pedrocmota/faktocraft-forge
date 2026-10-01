@@ -1,253 +1,172 @@
 package com.faktocraft.common.network;
 
 import com.faktocraft.Faktocraft;
-import com.faktocraft.common.network.packet.PacketExperience;
-import com.faktocraft.common.network.packet.PacketExtruderRecipe;
-import com.faktocraft.common.network.packet.PacketIEMeterInfo;
-import com.faktocraft.common.network.packet.PacketMetalFormerChangeMode;
-import com.faktocraft.common.network.packet.PacketNightVision;
-import com.faktocraft.common.network.packet.PacketParticle;
-import com.faktocraft.common.network.packet.PacketReplicatorAction;
-import com.faktocraft.common.network.packet.PacketScannerCleanScan;
-import com.faktocraft.common.network.packet.PacketScannerSaveScan;
-import com.faktocraft.common.network.packet.PacketTeleportFx;
-import com.faktocraft.common.network.packet.PacketTransformerMode;
-import com.faktocraft.common.network.packet.PacketWindInfo;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
-import java.util.Optional;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import java.util.function.BiConsumer;
 
 public class ModNetworking {
+  public static final String VERSION = "1";
 
-  public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-      new ResourceLocation(Faktocraft.MODID, "main"), () -> "1", "1"::equals, "1"::equals);
-
-  public static void init() {
-    int id = 0;
-    CHANNEL.registerMessage(id++, PacketExperience.class,
-        PacketExperience::encode, PacketExperience::decode, PacketExperience::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, PacketExtruderRecipe.class,
-        PacketExtruderRecipe::encode, PacketExtruderRecipe::decode, PacketExtruderRecipe::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, PacketTransformerMode.class,
-        PacketTransformerMode::encode, PacketTransformerMode::decode, PacketTransformerMode::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, PacketScannerCleanScan.class,
-        PacketScannerCleanScan::encode, PacketScannerCleanScan::decode, PacketScannerCleanScan::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, PacketScannerSaveScan.class,
-        PacketScannerSaveScan::encode, PacketScannerSaveScan::decode, PacketScannerSaveScan::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, PacketReplicatorAction.class,
-        PacketReplicatorAction::encode, PacketReplicatorAction::decode, PacketReplicatorAction::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, PacketMetalFormerChangeMode.class,
-        PacketMetalFormerChangeMode::encode, PacketMetalFormerChangeMode::decode, PacketMetalFormerChangeMode::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketToggleDischarge.class,
-        com.faktocraft.common.network.packet.PacketToggleDischarge::encode,
-        com.faktocraft.common.network.packet.PacketToggleDischarge::decode,
-        com.faktocraft.common.network.packet.PacketToggleDischarge::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, PacketNightVision.class,
-        PacketNightVision::encode, PacketNightVision::decode, PacketNightVision::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketRedstoneControl.class,
-        com.faktocraft.common.network.packet.PacketRedstoneControl::encode,
-        com.faktocraft.common.network.packet.PacketRedstoneControl::decode,
-        com.faktocraft.common.network.packet.PacketRedstoneControl::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketPlungerDrain.class,
-        com.faktocraft.common.network.packet.PacketPlungerDrain::encode,
-        com.faktocraft.common.network.packet.PacketPlungerDrain::decode,
-        com.faktocraft.common.network.packet.PacketPlungerDrain::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketCellFill.class,
-        com.faktocraft.common.network.packet.PacketCellFill::encode,
-        com.faktocraft.common.network.packet.PacketCellFill::decode,
-        com.faktocraft.common.network.packet.PacketCellFill::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketCellDrain.class,
-        com.faktocraft.common.network.packet.PacketCellDrain::encode,
-        com.faktocraft.common.network.packet.PacketCellDrain::decode,
-        com.faktocraft.common.network.packet.PacketCellDrain::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-
-    CHANNEL.registerMessage(id++, PacketParticle.class,
-        PacketParticle::encode, PacketParticle::decode, PacketParticle::handle,
-        Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(id++, PacketTeleportFx.class,
-        PacketTeleportFx::encode, PacketTeleportFx::decode, PacketTeleportFx::handle,
-        Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketTeleportCharge.class,
-        com.faktocraft.common.network.packet.PacketTeleportCharge::encode,
-        com.faktocraft.common.network.packet.PacketTeleportCharge::decode,
-        com.faktocraft.common.network.packet.PacketTeleportCharge::handle,
-        Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(id++, PacketIEMeterInfo.class,
-        PacketIEMeterInfo::encode, PacketIEMeterInfo::decode, PacketIEMeterInfo::handle,
-        Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(id++, PacketWindInfo.class,
-        PacketWindInfo::encode, PacketWindInfo::decode, PacketWindInfo::handle,
-        Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketProspectorScan.class,
-        com.faktocraft.common.network.packet.PacketProspectorScan::encode,
-        com.faktocraft.common.network.packet.PacketProspectorScan::decode,
-        com.faktocraft.common.network.packet.PacketProspectorScan::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketJetpackInput.class,
-        com.faktocraft.common.network.packet.PacketJetpackInput::encode,
-        com.faktocraft.common.network.packet.PacketJetpackInput::decode,
-        com.faktocraft.common.network.packet.PacketJetpackInput::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketJetpackMode.class,
-        com.faktocraft.common.network.packet.PacketJetpackMode::encode,
-        com.faktocraft.common.network.packet.PacketJetpackMode::decode,
-        com.faktocraft.common.network.packet.PacketJetpackMode::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketAnchorBuffer.class,
-        com.faktocraft.common.network.packet.PacketAnchorBuffer::encode,
-        com.faktocraft.common.network.packet.PacketAnchorBuffer::decode,
-        com.faktocraft.common.network.packet.PacketAnchorBuffer::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketAnchorScreen.class,
-        com.faktocraft.common.network.packet.PacketAnchorScreen::encode,
-        com.faktocraft.common.network.packet.PacketAnchorScreen::decode,
-        com.faktocraft.common.network.packet.PacketAnchorScreen::handle,
-        Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketGeoScannerState.class,
-        com.faktocraft.common.network.packet.PacketGeoScannerState::encode,
-        com.faktocraft.common.network.packet.PacketGeoScannerState::decode,
-        com.faktocraft.common.network.packet.PacketGeoScannerState::handle,
-        Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketGeoScannerPoll.class,
-        com.faktocraft.common.network.packet.PacketGeoScannerPoll::encode,
-        com.faktocraft.common.network.packet.PacketGeoScannerPoll::decode,
-        com.faktocraft.common.network.packet.PacketGeoScannerPoll::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketGeoScannerControl.class,
-        com.faktocraft.common.network.packet.PacketGeoScannerControl::encode,
-        com.faktocraft.common.network.packet.PacketGeoScannerControl::decode,
-        com.faktocraft.common.network.packet.PacketGeoScannerControl::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketGeoScannerManual.class,
-        com.faktocraft.common.network.packet.PacketGeoScannerManual::encode,
-        com.faktocraft.common.network.packet.PacketGeoScannerManual::decode,
-        com.faktocraft.common.network.packet.PacketGeoScannerManual::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketScanCode.class,
-        com.faktocraft.common.network.packet.PacketScanCode::encode,
-        com.faktocraft.common.network.packet.PacketScanCode::decode,
-        com.faktocraft.common.network.packet.PacketScanCode::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketProspectorPoll.class,
-        com.faktocraft.common.network.packet.PacketProspectorPoll::encode,
-        com.faktocraft.common.network.packet.PacketProspectorPoll::decode,
-        com.faktocraft.common.network.packet.PacketProspectorPoll::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketProspectorState.class,
-        com.faktocraft.common.network.packet.PacketProspectorState::encode,
-        com.faktocraft.common.network.packet.PacketProspectorState::decode,
-        com.faktocraft.common.network.packet.PacketProspectorState::handle,
-        Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketLogisticsGhost.class,
-        com.faktocraft.common.network.packet.PacketLogisticsGhost::encode,
-        com.faktocraft.common.network.packet.PacketLogisticsGhost::decode,
-        com.faktocraft.common.network.packet.PacketLogisticsGhost::handle,
-        Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketReqTableState.class,
-        com.faktocraft.common.network.packet.PacketReqTableState::encode,
-        com.faktocraft.common.network.packet.PacketReqTableState::decode,
-        com.faktocraft.common.network.packet.PacketReqTableState::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketTableState.class,
-        com.faktocraft.common.network.packet.PacketTableState::encode,
-        com.faktocraft.common.network.packet.PacketTableState::decode,
-        com.faktocraft.common.network.packet.PacketTableState::handle,
-        Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketModuleTree.class,
-        com.faktocraft.common.network.packet.PacketModuleTree::encode,
-        com.faktocraft.common.network.packet.PacketModuleTree::decode,
-        com.faktocraft.common.network.packet.PacketModuleTree::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketModuleTreeCount.class,
-        com.faktocraft.common.network.packet.PacketModuleTreeCount::encode,
-        com.faktocraft.common.network.packet.PacketModuleTreeCount::decode,
-        com.faktocraft.common.network.packet.PacketModuleTreeCount::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketRequestTarget.class,
-        com.faktocraft.common.network.packet.PacketRequestTarget::encode,
-        com.faktocraft.common.network.packet.PacketRequestTarget::decode,
-        com.faktocraft.common.network.packet.PacketRequestTarget::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketTableMessage.class,
-        com.faktocraft.common.network.packet.PacketTableMessage::encode,
-        com.faktocraft.common.network.packet.PacketTableMessage::decode,
-        com.faktocraft.common.network.packet.PacketTableMessage::handle,
-        Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketEnderTankCode.class,
-        com.faktocraft.common.network.packet.PacketEnderTankCode::encode,
-        com.faktocraft.common.network.packet.PacketEnderTankCode::decode,
-        com.faktocraft.common.network.packet.PacketEnderTankCode::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketRecipePipeRecipes.class,
-        com.faktocraft.common.network.packet.PacketRecipePipeRecipes::encode,
-        com.faktocraft.common.network.packet.PacketRecipePipeRecipes::decode,
-        com.faktocraft.common.network.packet.PacketRecipePipeRecipes::handle,
-        Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketTaskHistoryOp.class,
-        com.faktocraft.common.network.packet.PacketTaskHistoryOp::encode,
-        com.faktocraft.common.network.packet.PacketTaskHistoryOp::decode,
-        com.faktocraft.common.network.packet.PacketTaskHistoryOp::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketCraftPattern.class,
-        com.faktocraft.common.network.packet.PacketCraftPattern::encode,
-        com.faktocraft.common.network.packet.PacketCraftPattern::decode,
-        com.faktocraft.common.network.packet.PacketCraftPattern::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketRecipePipeBind.class,
-        com.faktocraft.common.network.packet.PacketRecipePipeBind::encode,
-        com.faktocraft.common.network.packet.PacketRecipePipeBind::decode,
-        com.faktocraft.common.network.packet.PacketRecipePipeBind::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketRecipePipeFill.class,
-        com.faktocraft.common.network.packet.PacketRecipePipeFill::encode,
-        com.faktocraft.common.network.packet.PacketRecipePipeFill::decode,
-        com.faktocraft.common.network.packet.PacketRecipePipeFill::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketMenuAction.class,
-        com.faktocraft.common.network.packet.PacketMenuAction::encode,
-        com.faktocraft.common.network.packet.PacketMenuAction::decode,
-        com.faktocraft.common.network.packet.PacketMenuAction::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketOpenCoreView.class,
-        com.faktocraft.common.network.packet.PacketOpenCoreView::encode,
-        com.faktocraft.common.network.packet.PacketOpenCoreView::decode,
-        com.faktocraft.common.network.packet.PacketOpenCoreView::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(id++, com.faktocraft.common.network.packet.PacketCoreTasksReq.class,
-        com.faktocraft.common.network.packet.PacketCoreTasksReq::encode,
-        com.faktocraft.common.network.packet.PacketCoreTasksReq::decode,
-        com.faktocraft.common.network.packet.PacketCoreTasksReq::handle,
-        Optional.of(NetworkDirection.PLAY_TO_SERVER));
+  public static void register(RegisterPayloadHandlersEvent event) {
+    PayloadRegistrar registrar = event.registrar(VERSION);
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketExperience.TYPE,
+        com.faktocraft.common.network.packet.PacketExperience.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketExperience.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketExtruderRecipe.TYPE,
+        com.faktocraft.common.network.packet.PacketExtruderRecipe.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketExtruderRecipe.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketTransformerMode.TYPE,
+        com.faktocraft.common.network.packet.PacketTransformerMode.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketTransformerMode.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketScannerCleanScan.TYPE,
+        com.faktocraft.common.network.packet.PacketScannerCleanScan.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketScannerCleanScan.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketScannerSaveScan.TYPE,
+        com.faktocraft.common.network.packet.PacketScannerSaveScan.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketScannerSaveScan.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketReplicatorAction.TYPE,
+        com.faktocraft.common.network.packet.PacketReplicatorAction.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketReplicatorAction.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketMetalFormerChangeMode.TYPE,
+        com.faktocraft.common.network.packet.PacketMetalFormerChangeMode.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketMetalFormerChangeMode.handle(msg,
+            new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketToggleDischarge.TYPE,
+        com.faktocraft.common.network.packet.PacketToggleDischarge.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketToggleDischarge.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketNightVision.TYPE,
+        com.faktocraft.common.network.packet.PacketNightVision.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketNightVision.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketRedstoneControl.TYPE,
+        com.faktocraft.common.network.packet.PacketRedstoneControl.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketRedstoneControl.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketPlungerDrain.TYPE,
+        com.faktocraft.common.network.packet.PacketPlungerDrain.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketPlungerDrain.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketCellFill.TYPE,
+        com.faktocraft.common.network.packet.PacketCellFill.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketCellFill.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketCellDrain.TYPE,
+        com.faktocraft.common.network.packet.PacketCellDrain.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketCellDrain.handle(msg, new PacketContext(ctx)));
+    registrar.playToClient(com.faktocraft.common.network.packet.PacketParticle.TYPE,
+        com.faktocraft.common.network.packet.PacketParticle.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketParticle.handle(msg, new PacketContext(ctx)));
+    registrar.playToClient(com.faktocraft.common.network.packet.PacketTeleportFx.TYPE,
+        com.faktocraft.common.network.packet.PacketTeleportFx.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketTeleportFx.handle(msg, new PacketContext(ctx)));
+    registrar.playToClient(com.faktocraft.common.network.packet.PacketTeleportCharge.TYPE,
+        com.faktocraft.common.network.packet.PacketTeleportCharge.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketTeleportCharge.handle(msg, new PacketContext(ctx)));
+    registrar.playToClient(com.faktocraft.common.network.packet.PacketIEMeterInfo.TYPE,
+        com.faktocraft.common.network.packet.PacketIEMeterInfo.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketIEMeterInfo.handle(msg, new PacketContext(ctx)));
+    registrar.playToClient(com.faktocraft.common.network.packet.PacketWindInfo.TYPE,
+        com.faktocraft.common.network.packet.PacketWindInfo.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketWindInfo.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketProspectorScan.TYPE,
+        com.faktocraft.common.network.packet.PacketProspectorScan.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketProspectorScan.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketJetpackInput.TYPE,
+        com.faktocraft.common.network.packet.PacketJetpackInput.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketJetpackInput.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketJetpackMode.TYPE,
+        com.faktocraft.common.network.packet.PacketJetpackMode.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketJetpackMode.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketAnchorBuffer.TYPE,
+        com.faktocraft.common.network.packet.PacketAnchorBuffer.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketAnchorBuffer.handle(msg, new PacketContext(ctx)));
+    registrar.playToClient(com.faktocraft.common.network.packet.PacketAnchorScreen.TYPE,
+        com.faktocraft.common.network.packet.PacketAnchorScreen.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketAnchorScreen.handle(msg, new PacketContext(ctx)));
+    registrar.playToClient(com.faktocraft.common.network.packet.PacketGeoScannerState.TYPE,
+        com.faktocraft.common.network.packet.PacketGeoScannerState.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketGeoScannerState.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketGeoScannerPoll.TYPE,
+        com.faktocraft.common.network.packet.PacketGeoScannerPoll.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketGeoScannerPoll.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketGeoScannerControl.TYPE,
+        com.faktocraft.common.network.packet.PacketGeoScannerControl.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketGeoScannerControl.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketGeoScannerManual.TYPE,
+        com.faktocraft.common.network.packet.PacketGeoScannerManual.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketGeoScannerManual.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketScanCode.TYPE,
+        com.faktocraft.common.network.packet.PacketScanCode.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketScanCode.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketProspectorPoll.TYPE,
+        com.faktocraft.common.network.packet.PacketProspectorPoll.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketProspectorPoll.handle(msg, new PacketContext(ctx)));
+    registrar.playToClient(com.faktocraft.common.network.packet.PacketProspectorState.TYPE,
+        com.faktocraft.common.network.packet.PacketProspectorState.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketProspectorState.handle(msg, new PacketContext(ctx)));
+    registrar.playToClient(com.faktocraft.common.network.packet.PacketLogisticsGhost.TYPE,
+        com.faktocraft.common.network.packet.PacketLogisticsGhost.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketLogisticsGhost.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketReqTableState.TYPE,
+        com.faktocraft.common.network.packet.PacketReqTableState.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketReqTableState.handle(msg, new PacketContext(ctx)));
+    registrar.playToClient(com.faktocraft.common.network.packet.PacketTableState.TYPE,
+        com.faktocraft.common.network.packet.PacketTableState.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketTableState.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketModuleTree.TYPE,
+        com.faktocraft.common.network.packet.PacketModuleTree.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketModuleTree.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketModuleTreeCount.TYPE,
+        com.faktocraft.common.network.packet.PacketModuleTreeCount.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketModuleTreeCount.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketRequestTarget.TYPE,
+        com.faktocraft.common.network.packet.PacketRequestTarget.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketRequestTarget.handle(msg, new PacketContext(ctx)));
+    registrar.playToClient(com.faktocraft.common.network.packet.PacketTableMessage.TYPE,
+        com.faktocraft.common.network.packet.PacketTableMessage.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketTableMessage.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketEnderTankCode.TYPE,
+        com.faktocraft.common.network.packet.PacketEnderTankCode.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketEnderTankCode.handle(msg, new PacketContext(ctx)));
+    registrar.playToClient(com.faktocraft.common.network.packet.PacketRecipePipeRecipes.TYPE,
+        com.faktocraft.common.network.packet.PacketRecipePipeRecipes.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketRecipePipeRecipes.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketTaskHistoryOp.TYPE,
+        com.faktocraft.common.network.packet.PacketTaskHistoryOp.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketTaskHistoryOp.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketCraftPattern.TYPE,
+        com.faktocraft.common.network.packet.PacketCraftPattern.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketCraftPattern.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketRecipePipeBind.TYPE,
+        com.faktocraft.common.network.packet.PacketRecipePipeBind.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketRecipePipeBind.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketRecipePipeFill.TYPE,
+        com.faktocraft.common.network.packet.PacketRecipePipeFill.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketRecipePipeFill.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketMenuAction.TYPE,
+        com.faktocraft.common.network.packet.PacketMenuAction.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketMenuAction.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketOpenCoreView.TYPE,
+        com.faktocraft.common.network.packet.PacketOpenCoreView.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketOpenCoreView.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketCoreTasksReq.TYPE,
+        com.faktocraft.common.network.packet.PacketCoreTasksReq.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketCoreTasksReq.handle(msg, new PacketContext(ctx)));
+    registrar.playToServer(com.faktocraft.common.network.packet.PacketVeinMining.TYPE,
+        com.faktocraft.common.network.packet.PacketVeinMining.STREAM_CODEC,
+        (msg, ctx) -> com.faktocraft.common.network.packet.PacketVeinMining.handle(msg, new PacketContext(ctx)));
   }
 
-  public static void sendToServer(Object msg) {
-    CHANNEL.sendToServer(msg);
+  public static void sendToServer(CustomPacketPayload msg) {
+    ClientPacketDistributor.sendToServer(msg);
   }
 
-  public static void sendToPlayer(ServerPlayer player, Object msg) {
-    CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), msg);
+  public static void sendToPlayer(ServerPlayer player, CustomPacketPayload msg) {
+    PacketDistributor.sendToPlayer(player, msg);
   }
 
   public static void withBlockEntity(ServerPlayer player, BlockPos pos,

@@ -2,116 +2,51 @@ package com.faktocraft.common.enums;
 
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.registries.ModTags;
-import net.minecraft.sounds.SoundEvent;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.item.equipment.EquipmentAsset;
+import net.minecraft.world.item.equipment.EquipmentAssets;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
-public enum ModArmorMaterials implements ArmorMaterial {
+public final class ModArmorMaterials {
+  public static final ArmorMaterial BRONZE = new ArmorMaterial(15, defense(2, 5, 6, 2), 9,
+      SoundEvents.ARMOR_EQUIP_IRON, 0.0F, 0.0F, ModTags.commonItemTag("ingots/bronze"), asset("bronze"));
 
-  BRONZE("bronze", 15, defense(2, 5, 6, 2), 9,
-      SoundEvents.ARMOR_EQUIP_IRON, 0.0F, 0.0F,
-      () -> Ingredient.of(ModTags.commonItemTag("ingots/bronze"))),
+  public static final ArmorMaterial HAZMAT = new ArmorMaterial(5, defense(1, 2, 3, 1), 15,
+      SoundEvents.ARMOR_EQUIP_LEATHER, 0.0F, 0.0F, ModTags.itemTag("repairs_nothing"), asset("hazmat"));
 
-  HAZMAT("hazmat", 5, defense(1, 2, 3, 1), 15,
-      SoundEvents.ARMOR_EQUIP_LEATHER, 0.0F, 0.0F,
-      () -> Ingredient.of(com.faktocraft.common.registries.ModItems.RUBBER)),
+  public static final ArmorMaterial JETPACK = new ArmorMaterial(25, defense(0, 0, 3, 0), 9,
+      SoundEvents.ARMOR_EQUIP_IRON, 0.0F, 0.0F, ModTags.itemTag("repairs_nothing"), asset("jetpack"));
 
-  JETPACK("jetpack", 25, defense(0, 0, 3, 0), 9,
-      SoundEvents.ARMOR_EQUIP_IRON, 0.0F, 0.0F,
-      () -> Ingredient.of(ModTags.itemTag("repairs_nothing"))),
+  public static final ArmorMaterial ADVANCED_JETPACK = new ArmorMaterial(25, defense(0, 0, 3, 0), 9,
+      SoundEvents.ARMOR_EQUIP_IRON, 0.0F, 0.0F, ModTags.itemTag("repairs_nothing"), asset("advanced_jetpack"));
 
-  NIGHTVISION("nightvision", 15, defense(3, 0, 0, 0), 9,
-      SoundEvents.ARMOR_EQUIP_IRON, 2.0F, 0.0F,
-      () -> Ingredient.of(ModTags.itemTag("repairs_nothing"))),
+  public static final ArmorMaterial NIGHTVISION = new ArmorMaterial(15, defense(3, 0, 0, 0), 9,
+      SoundEvents.ARMOR_EQUIP_IRON, 2.0F, 0.0F, ModTags.itemTag("repairs_nothing"), asset("nightvision"));
 
-  NANO("nano", 33, defense(3, 6, 8, 3), 10,
-      SoundEvents.ARMOR_EQUIP_DIAMOND, 2.0F, 0.0F,
-      () -> Ingredient.of(ModTags.itemTag("repairs_nothing"))),
+  public static final ArmorMaterial NANO = new ArmorMaterial(33, defense(3, 6, 8, 3), 10,
+      SoundEvents.ARMOR_EQUIP_DIAMOND, 2.0F, 0.0F, ModTags.itemTag("repairs_nothing"), asset("nano"));
 
-  QUANTUM("quantum", 44, defense(4, 7, 9, 4), 12,
-      SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0F, 0.1F,
-      () -> Ingredient.of(ModTags.itemTag("repairs_nothing")));
+  public static final ArmorMaterial QUANTUM = new ArmorMaterial(44, defense(4, 7, 9, 4), 12,
+      SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0F, 0.1F, ModTags.itemTag("repairs_nothing"), asset("quantum"));
 
-  private static final Map<ArmorItem.Type, Integer> HEALTH_FOR_TYPE = Map.of(
-      ArmorItem.Type.BOOTS, 13,
-      ArmorItem.Type.LEGGINGS, 15,
-      ArmorItem.Type.CHESTPLATE, 16,
-      ArmorItem.Type.HELMET, 11);
-
-  private final String name;
-  private final int durabilityMultiplier;
-  private final Map<ArmorItem.Type, Integer> protectionForType;
-  private final int enchantmentValue;
-  private final SoundEvent equipSound;
-  private final float toughness;
-  private final float knockbackResistance;
-  private final Lazy<Ingredient> repairIngredient;
-
-  ModArmorMaterials(String name, int durabilityMultiplier, Map<ArmorItem.Type, Integer> protectionForType,
-      int enchantmentValue, SoundEvent equipSound, float toughness, float knockbackResistance,
-      Supplier<Ingredient> repairIngredient) {
-    this.name = name;
-    this.durabilityMultiplier = durabilityMultiplier;
-    this.protectionForType = protectionForType;
-    this.enchantmentValue = enchantmentValue;
-    this.equipSound = equipSound;
-    this.toughness = toughness;
-    this.knockbackResistance = knockbackResistance;
-    this.repairIngredient = Lazy.of(repairIngredient);
+  private ModArmorMaterials() {
   }
 
-  private static Map<ArmorItem.Type, Integer> defense(int boots, int legs, int chest, int helmet) {
-    Map<ArmorItem.Type, Integer> map = new EnumMap<>(ArmorItem.Type.class);
-    map.put(ArmorItem.Type.BOOTS, boots);
-    map.put(ArmorItem.Type.LEGGINGS, legs);
-    map.put(ArmorItem.Type.CHESTPLATE, chest);
-    map.put(ArmorItem.Type.HELMET, helmet);
+  private static ResourceKey<EquipmentAsset> asset(String name) {
+    return ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(Faktocraft.MODID, name));
+  }
+
+  private static Map<ArmorType, Integer> defense(int boots, int legs, int chest, int helmet) {
+    Map<ArmorType, Integer> map = new EnumMap<>(ArmorType.class);
+    map.put(ArmorType.BOOTS, boots);
+    map.put(ArmorType.LEGGINGS, legs);
+    map.put(ArmorType.CHESTPLATE, chest);
+    map.put(ArmorType.HELMET, helmet);
     return map;
-  }
-
-  @Override
-  public int getDurabilityForType(ArmorItem.Type type) {
-    return HEALTH_FOR_TYPE.get(type) * durabilityMultiplier;
-  }
-
-  @Override
-  public int getDefenseForType(ArmorItem.Type type) {
-    return protectionForType.get(type);
-  }
-
-  @Override
-  public int getEnchantmentValue() {
-    return enchantmentValue;
-  }
-
-  @Override
-  public SoundEvent getEquipSound() {
-    return equipSound;
-  }
-
-  @Override
-  public Ingredient getRepairIngredient() {
-    return repairIngredient.get();
-  }
-
-  @Override
-  public String getName() {
-    return Faktocraft.MODID + ":" + name;
-  }
-
-  @Override
-  public float getToughness() {
-    return toughness;
-  }
-
-  @Override
-  public float getKnockbackResistance() {
-    return knockbackResistance;
   }
 }

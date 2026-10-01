@@ -3,7 +3,7 @@ package com.faktocraft.common.screen.active;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.util.Constants;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import java.util.function.BooleanSupplier;
 
 public class GuiSolarActive extends GuiActive {
@@ -17,7 +17,7 @@ public class GuiSolarActive extends GuiActive {
   }
 
   @Override
-  public ResourceLocation getResourceLocation() {
+  public Identifier getResourceLocation() {
     return Constants.PROCESS;
   }
 }

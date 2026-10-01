@@ -54,7 +54,8 @@ public final class StatusSources {
     if (!data.contains(TAG_STATE)) {
       return Blocks.AIR.defaultBlockState();
     }
-    return NbtUtils.readBlockState(level.holderLookup(Registries.BLOCK), data.getCompound(TAG_STATE));
+    return NbtUtils.readBlockState(level.holderLookup(Registries.BLOCK),
+        com.faktocraft.common.util.NbtBridge.blockStateTag(data.getCompoundOrEmpty(TAG_STATE)));
   }
 
   public static List<StatusLine> lines(BlockState state, CompoundTag data) {

@@ -1,6 +1,10 @@
 package com.faktocraft.common.block.impl.pipe;
 
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.common.block.FaktocraftBlock;
+import com.faktocraft.common.util.FluidInteractionHelper;
 import com.faktocraft.common.interfaces.block.IHasMenu;
 import com.faktocraft.common.interfaces.block.IStateFacing;
 import net.minecraft.ChatFormatting;
@@ -24,11 +28,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class BlockEnderTank extends FaktocraftBlock implements EntityBlock, IHasMenu, IStateFacing {
 
@@ -48,12 +50,12 @@ public class BlockEnderTank extends FaktocraftBlock implements EntityBlock, IHas
       BlockHitResult hitResult) {
     if (level.getBlockEntity(pos) instanceof BlockEntityEnderTank tank && tank.hasCode()) {
       ItemStack stack = player.getItemInHand(hand);
-      if (!stack.isEmpty() && FluidUtil.getFluidHandler(stack).isPresent()) {
-        IFluidHandler handler = tank.getCapability(ForgeCapabilities.FLUID_HANDLER).orElse(null);
+      if (!stack.isEmpty() && FluidInteractionHelper.getFluidHandler(stack) != null) {
+        IFluidHandler handler = tank.getCapability(ForgeCapabilities.FLUID_HANDLER, null).orElse(null);
         if (handler != null) {
-          FluidUtil.interactWithFluidHandler(player, hand, handler);
+          FluidInteractionHelper.interactWithFluidHandler(player, hand, handler);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide());
+        return InteractionResult.SUCCESS;
       }
     }
     return super.use(state, level, pos, player, hand, hitResult);
@@ -86,14 +88,14 @@ public class BlockEnderTank extends FaktocraftBlock implements EntityBlock, IHas
   }
 
   @Override
-  public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+  public boolean propagatesSkylightDown(BlockState state) {
     return true;
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-      TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip.faktocraft.ender_tank").withStyle(ChatFormatting.GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("tooltip.faktocraft.ender_tank").withStyle(ChatFormatting.GRAY));
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 }

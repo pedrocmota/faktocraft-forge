@@ -1,5 +1,6 @@
 package com.faktocraft.common.subscribers;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.interfaces.item.IElectricItem;
@@ -8,19 +9,20 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
-@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
+@EventBusSubscriber(modid = Faktocraft.MODID)
 public class ModEvents {
 
   @SubscribeEvent
-  public static void onLevelTick(TickEvent.LevelTickEvent event) {
-    if (event.phase != TickEvent.Phase.END || !(event.level instanceof ServerLevel level)) {
+  public static void onLevelTick(LevelTickEvent.Post event) {
+    if (!(event.getLevel() instanceof ServerLevel level)) {
       return;
     }
     com.faktocraft.common.radiation.RadiationManager.tick(level);
@@ -34,7 +36,12 @@ public class ModEvents {
   }
 
   @SubscribeEvent
-  public static void onItemTooltip(net.minecraftforge.event.entity.player.ItemTooltipEvent event) {
+  public static void onServerStarted(ServerStartedEvent event) {
+    com.faktocraft.common.block.impl.chunk_loader.ChunkLoaderManager.reloadTickets(event.getServer());
+  }
+
+  @SubscribeEvent
+  public static void onItemTooltip(net.neoforged.neoforge.event.entity.player.ItemTooltipEvent event) {
     if (com.faktocraft.common.radiation.Radioactivity.isRadioactive(event.getItemStack())) {
       event.getToolTip().add(net.minecraft.network.chat.Component
           .translatable("tooltip." + Faktocraft.MODID + ".radioactive")
@@ -43,7 +50,7 @@ public class ModEvents {
   }
 
   @SubscribeEvent
-  public static void onLevelUnload(net.minecraftforge.event.level.LevelEvent.Unload event) {
+  public static void onLevelUnload(net.neoforged.neoforge.event.level.LevelEvent.Unload event) {
     if (event.getLevel() instanceof net.minecraft.world.level.Level level && level.isClientSide()) {
       com.faktocraft.common.energy.provider.EnergyCore.removeClientCore(level);
     } else if (event.getLevel() instanceof ServerLevel serverLevel) {
@@ -61,7 +68,7 @@ public class ModEvents {
   }
 
   @SubscribeEvent
-  public static void onLivingHurt(LivingHurtEvent event) {
+  public static void onLivingHurt(LivingDamageEvent.Pre event) {
     if (!(event.getEntity() instanceof Player player) || player.level().isClientSide()) {
       return;
     }
@@ -69,7 +76,7 @@ public class ModEvents {
       if (!stack.isEmpty() && stack.getItem() instanceof IElectricItem electricItem) {
         IEnergy energy = electricItem.getEnergy(stack);
         if (energy != null) {
-          energy.consumeEnergy((int) event.getAmount() * 500, false);
+          energy.consumeEnergy((int) event.getNewDamage() * 500, false);
           electricItem.tickElectric(stack);
         }
       }
@@ -87,7 +94,7 @@ public class ModEvents {
   }
 
   @SubscribeEvent
-  public static void onLivingAttack(net.minecraftforge.event.entity.living.LivingAttackEvent event) {
+  public static void onLivingAttack(LivingIncomingDamageEvent event) {
     if (event.getEntity().level().isClientSide()
         || !event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_FIRE)) {
       return;
@@ -104,6 +111,25 @@ public class ModEvents {
         com.faktocraft.common.item.impl.nano.ItemNanoArmor.FIRE_COST)) {
       event.setCanceled(true);
       living.clearFire();
+    }
+  }
+
+  @SubscribeEvent
+  public static void onBlockBreak(net.neoforged.neoforge.event.level.block.BreakBlockEvent event) {
+    com.faktocraft.common.item.impl.tools.VeinMining.onBreak(event);
+  }
+
+  @SubscribeEvent
+  public static void onPlayerLoggedOut(
+      net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent event) {
+    com.faktocraft.common.item.impl.tools.VeinMining.forget(event.getEntity());
+  }
+
+  @SubscribeEvent
+  public static void onContainerOpen(net.neoforged.neoforge.event.entity.player.PlayerContainerEvent.Open event) {
+    if (event.getEntity() instanceof ServerPlayer player
+        && event.getContainer() instanceof com.faktocraft.common.block.impl.logistics.MenuRequestTable menu) {
+      com.faktocraft.common.network.packet.PacketReqTableState.sendTo(player, menu);
     }
   }
 }

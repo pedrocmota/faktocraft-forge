@@ -1,6 +1,5 @@
 package com.faktocraft.gametest.logistics;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.logistics.BlockEntityChassis;
 import com.faktocraft.common.block.impl.logistics.BlockEntityCraftPipe;
 import com.faktocraft.common.block.impl.logistics.BlockEntityRecipePipe;
@@ -11,14 +10,13 @@ import com.faktocraft.common.block.impl.logistics.MenuPipeRecipes;
 import com.faktocraft.common.block.impl.logistics.MenuRecipePipe;
 import com.faktocraft.common.block.impl.logistics.ModuleSettings;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-@net.minecraftforge.gametest.GameTestHolder(Faktocraft.MODID)
-@net.minecraftforge.gametest.PrefixGameTestTemplate(false)
 public class ConfigClipboardGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -27,7 +25,7 @@ public class ConfigClipboardGameTest {
   public static void moduleConfigCopiesBetweenModules(GameTestHelper helper) {
     BlockPos rel = new BlockPos(1, 1, 1);
     helper.setBlock(rel, LogisticsRegistry.CHASSIS_1.defaultBlockState());
-    if (!(helper.getBlockEntity(rel) instanceof BlockEntityChassis chassis)) {
+    if (!(TestUtil.blockEntity(helper, rel) instanceof BlockEntityChassis chassis)) {
       helper.fail("no chassis");
       return;
     }
@@ -37,7 +35,7 @@ public class ConfigClipboardGameTest {
     chassis.getModules().setStackInSlot(0, source);
     chassis.getModules().setStackInSlot(1, new ItemStack(LogisticsRegistry.MODULE_PROVIDER));
 
-    Player player = helper.makeMockPlayer();
+    Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
     BlockPos abs = helper.absolutePos(rel);
     new MenuModule(1, helper.getLevel(), abs, 0, player.getInventory(), player)
         .clickMenuButton(player, MenuModule.encode(MenuModule.ACTION_COPY_CONFIG, 0));
@@ -69,15 +67,15 @@ public class ConfigClipboardGameTest {
     BlockPos relB = new BlockPos(3, 1, 1);
     helper.setBlock(relA, LogisticsRegistry.CRAFT_PIPE.defaultBlockState());
     helper.setBlock(relB, LogisticsRegistry.CRAFT_PIPE.defaultBlockState());
-    if (!(helper.getBlockEntity(relA) instanceof BlockEntityCraftPipe pipeA)
-        || !(helper.getBlockEntity(relB) instanceof BlockEntityCraftPipe pipeB)) {
+    if (!(TestUtil.blockEntity(helper, relA) instanceof BlockEntityCraftPipe pipeA)
+        || !(TestUtil.blockEntity(helper, relB) instanceof BlockEntityCraftPipe pipeB)) {
       helper.fail("no craft pipes");
       return;
     }
     pipeA.setPatternSlot(pipeA.addRecipe(), 0, new ItemStack(Items.OAK_LOG));
     pipeA.setPatternSlot(pipeA.addRecipe(), 4, new ItemStack(Items.IRON_INGOT));
 
-    Player player = helper.makeMockPlayer();
+    Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
     new MenuCraftPipe(1, helper.getLevel(), helper.absolutePos(relA), player.getInventory(), player)
         .clickMenuButton(player, MenuPipeRecipes.encode(MenuPipeRecipes.ACTION_COPY_CONFIG, 0));
     new MenuCraftPipe(2, helper.getLevel(), helper.absolutePos(relB), player.getInventory(), player)
@@ -100,8 +98,8 @@ public class ConfigClipboardGameTest {
     BlockPos relB = new BlockPos(3, 1, 1);
     helper.setBlock(relA, LogisticsRegistry.CRAFT_PIPE.defaultBlockState());
     helper.setBlock(relB, LogisticsRegistry.CRAFT_PIPE.defaultBlockState());
-    if (!(helper.getBlockEntity(relA) instanceof BlockEntityCraftPipe pipeA)
-        || !(helper.getBlockEntity(relB) instanceof BlockEntityCraftPipe pipeB)) {
+    if (!(TestUtil.blockEntity(helper, relA) instanceof BlockEntityCraftPipe pipeA)
+        || !(TestUtil.blockEntity(helper, relB) instanceof BlockEntityCraftPipe pipeB)) {
       helper.fail("no craft pipes");
       return;
     }
@@ -109,7 +107,7 @@ public class ConfigClipboardGameTest {
     pipeA.setPatternSlot(pipeA.addRecipe(), 4, new ItemStack(Items.IRON_INGOT));
     pipeB.setPatternSlot(pipeB.addRecipe(), 0, new ItemStack(Items.STICK));
 
-    Player player = helper.makeMockPlayer();
+    Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
     MenuCraftPipe menuA = new MenuCraftPipe(1, helper.getLevel(), helper.absolutePos(relA),
         player.getInventory(), player);
     MenuCraftPipe menuB = new MenuCraftPipe(2, helper.getLevel(), helper.absolutePos(relB),
@@ -141,8 +139,8 @@ public class ConfigClipboardGameTest {
     BlockPos relB = new BlockPos(3, 1, 1);
     helper.setBlock(relA, LogisticsRegistry.RECIPE_PIPE.defaultBlockState());
     helper.setBlock(relB, LogisticsRegistry.RECIPE_PIPE.defaultBlockState());
-    if (!(helper.getBlockEntity(relA) instanceof BlockEntityRecipePipe pipeA)
-        || !(helper.getBlockEntity(relB) instanceof BlockEntityRecipePipe pipeB)) {
+    if (!(TestUtil.blockEntity(helper, relA) instanceof BlockEntityRecipePipe pipeA)
+        || !(TestUtil.blockEntity(helper, relB) instanceof BlockEntityRecipePipe pipeB)) {
       helper.fail("no recipe pipes");
       return;
     }
@@ -152,7 +150,7 @@ public class ConfigClipboardGameTest {
     pipeA.setIo(second, 0, new ItemStack(Items.SAND));
     pipeA.setIo(second, BlockEntityRecipePipe.outputId(0), new ItemStack(Items.GLASS));
 
-    Player player = helper.makeMockPlayer();
+    Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
     new MenuRecipePipe(1, helper.getLevel(), helper.absolutePos(relA), player.getInventory(), player)
         .clickMenuButton(player, MenuPipeRecipes.encode(MenuPipeRecipes.ACTION_COPY_ENTRY, second));
     new MenuRecipePipe(2, helper.getLevel(), helper.absolutePos(relB), player.getInventory(), player)

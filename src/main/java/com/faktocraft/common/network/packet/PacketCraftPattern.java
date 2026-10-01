@@ -1,22 +1,37 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.util.BufUtil;
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.faktocraft.common.block.impl.logistics.BlockEntityCraftPipe;
 import com.faktocraft.common.block.impl.logistics.MenuCraftPipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
-public record PacketCraftPattern(BlockPos blockPos, List<ItemStack> stacks) {
+public record PacketCraftPattern(BlockPos blockPos, List<ItemStack> stacks) implements CustomPacketPayload {
+
+  public static final Type<PacketCraftPattern> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_craft_pattern"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketCraftPattern> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketCraftPattern::decode);
+
+  @Override
+  public Type<PacketCraftPattern> type() {
+    return TYPE;
+  }
 
   public static void encode(PacketCraftPattern msg, FriendlyByteBuf buf) {
     buf.writeBlockPos(msg.blockPos);
     for (int i = 0; i < BlockEntityCraftPipe.PATTERN_SIZE; i++) {
-      buf.writeItem(i < msg.stacks.size() ? msg.stacks.get(i) : ItemStack.EMPTY);
+      BufUtil.writeItem(buf, i < msg.stacks.size() ? msg.stacks.get(i) : ItemStack.EMPTY);
     }
   }
 
@@ -24,14 +39,14 @@ public record PacketCraftPattern(BlockPos blockPos, List<ItemStack> stacks) {
     BlockPos pos = buf.readBlockPos();
     List<ItemStack> stacks = new ArrayList<>(BlockEntityCraftPipe.PATTERN_SIZE);
     for (int i = 0; i < BlockEntityCraftPipe.PATTERN_SIZE; i++) {
-      stacks.add(buf.readItem());
+      stacks.add(BufUtil.readItem(buf));
     }
     return new PacketCraftPattern(pos, stacks);
   }
 
-  public static void handle(PacketCraftPattern msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> {
-      ServerPlayer player = ctx.get().getSender();
+  public static void handle(PacketCraftPattern msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> {
+      ServerPlayer player = ctx.getSender();
       if (player == null || !(player.containerMenu instanceof MenuCraftPipe menu)
           || !menu.getPipePos().equals(msg.blockPos)) {
         return;
@@ -53,6 +68,6 @@ public record PacketCraftPattern(BlockPos blockPos, List<ItemStack> stacks) {
       }
       menu.broadcastChanges();
     });
-    ctx.get().setPacketHandled(true);
+    ctx.setPacketHandled(true);
   }
 }

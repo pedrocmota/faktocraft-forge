@@ -4,40 +4,47 @@ import com.faktocraft.common.item.base.BaseItem;
 import com.faktocraft.common.recipe.impl.ScrapBoxRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.component.CookingFuel;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.gameevent.GameEvent;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.storage.loot.providers.number.floats.ResolvableFloat;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ResolvableInt;
+import java.util.List;
 
 public class ScrapBox extends BaseItem {
+  private static final int BURN_TIME_TICKS = 1800;
 
   public ScrapBox(Properties properties) {
-    super(properties);
-  }
-
-  @Override
-  public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
-    return 1800;
+    super(properties.component(DataComponents.COOKING_FUEL,
+        new CookingFuel(new ResolvableInt.Constant(BURN_TIME_TICKS), new ResolvableFloat.Constant(1.0F))));
   }
 
   public static ItemStack openScrap(Level level) {
-    return ScrapBoxRecipe.rollDrop(
-        level.getRecipeManager().getAllRecipesFor(ModRecipeType.SCRAP_BOX), level.getRandom());
+    if (!(level instanceof ServerLevel serverLevel)) {
+      return ItemStack.EMPTY;
+    }
+    List<ScrapBoxRecipe> recipes = serverLevel.recipeAccess().recipeMap().byType(ModRecipeType.SCRAP_BOX).stream()
+        .map(RecipeHolder::value)
+        .toList();
+    return ScrapBoxRecipe.rollDrop(recipes, level.getRandom());
   }
 
   @Override
-  public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+  public InteractionResult use(Level level, Player player, InteractionHand hand) {
     if (!level.isClientSide()) {
       ItemStack drop = openScrap(level);
       if (!drop.isEmpty()) {
@@ -46,13 +53,13 @@ public class ScrapBox extends BaseItem {
       }
       player.getItemInHand(hand).shrink(1);
     }
-    return InteractionResultHolder.success(player.getItemInHand(hand));
+    return InteractionResult.SUCCESS;
   }
 
   private static final DispenseItemBehavior SCRAP_BOX_DISPENSE_BEHAVIOR = (BlockSource source, ItemStack stack) -> {
-    Direction face = source.getBlockState().getValue(DispenserBlock.FACING);
-    Level level = source.getLevel();
-    BlockPos pos = source.getPos().relative(face);
+    Direction face = source.state().getValue(DispenserBlock.FACING);
+    ServerLevel level = source.level();
+    BlockPos pos = source.pos().relative(face);
 
     ItemStack dropStack = openScrap(level);
     if (!dropStack.isEmpty()) {
@@ -62,7 +69,7 @@ public class ScrapBox extends BaseItem {
     level.playSound(null, pos, SoundEvents.DISPENSER_DISPENSE, SoundSource.BLOCKS, 1.0F, 1.0F);
 
     stack.shrink(1);
-    source.getLevel().gameEvent(null, GameEvent.ENTITY_PLACE, source.getPos());
+    level.gameEvent(null, GameEvent.ENTITY_PLACE, source.pos());
     return stack;
   };
 

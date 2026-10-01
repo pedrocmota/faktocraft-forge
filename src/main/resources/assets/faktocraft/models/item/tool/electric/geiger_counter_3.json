@@ -1,15 +1,7 @@
 {
-  "loader": "forge:separate_transforms",
-  "gui_light": "front",
-  "base": {
-    "parent": "faktocraft:item/tool/electric/geiger_counter_base",
-    "textures": {
-      "screen": "faktocraft:item/tool/electric/geiger/screen_3"
-    }
+  "parent": "faktocraft:item/tool/electric/geiger_counter_base",
+  "textures": {
+    "screen": "faktocraft:item/tool/electric/geiger/screen_3"
   },
-  "perspectives": {
-    "gui": {
-      "parent": "faktocraft:item/tool/electric/geiger_counter_icon"
-    }
-  }
+  "gui_light": "front"
 }

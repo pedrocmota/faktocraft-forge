@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_tool",
+  "key": {
+    "S": "#c:rods/wooden",
+    "i": "#c:ingots/iron"
+  },
+  "pattern": [
+    " ii",
+    "SSi",
+    " ii"
+  ],
+  "result": {
+    "id": "faktocraft:hammer"
+  }
+}

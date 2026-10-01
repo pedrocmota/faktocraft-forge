@@ -1,5 +1,10 @@
 package com.faktocraft.common.item.impl.tools;
 
+import com.faktocraft.common.util.NbtBridge;
+import com.faktocraft.common.util.PlayerMessages;
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.VoxelBlock;
 import com.faktocraft.common.block.impl.pipe.BlockEntityFluidPipe;
@@ -19,15 +24,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.fluids.FluidStack;
 import java.util.ArrayDeque;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class Plunger extends ToolItem {
@@ -42,9 +45,11 @@ public class Plunger extends ToolItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("plunger." + Faktocraft.MODID + ".desc").withStyle(ChatFormatting.GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+  @SuppressWarnings("deprecation")
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("plunger." + Faktocraft.MODID + ".desc").withStyle(ChatFormatting.GRAY));
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 
   @Override
@@ -60,38 +65,38 @@ public class Plunger extends ToolItem {
     if (player == null) {
       return InteractionResult.PASS;
     }
-    context.getItemInHand().getOrCreateTag().putLong(TAG_TARGET, pos.asLong());
+    NbtBridge.updateCustomData(context.getItemInHand(), tag -> tag.putLong(TAG_TARGET, pos.asLong()));
     player.startUsingItem(context.getHand());
     return InteractionResult.CONSUME;
   }
 
   @Override
-  public int getUseDuration(ItemStack stack) {
+  public int getUseDuration(ItemStack stack, LivingEntity entity) {
     return USE_DURATION_TICKS;
   }
 
   @Override
-  public UseAnim getUseAnimation(ItemStack stack) {
-    return UseAnim.NONE;
+  public ItemUseAnimation getUseAnimation(ItemStack stack) {
+    return ItemUseAnimation.NONE;
   }
 
   @Override
   public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingTicks) {
-    int elapsed = getUseDuration(stack) - remainingTicks;
+    int elapsed = getUseDuration(stack, entity) - remainingTicks;
     if (!level.isClientSide() && elapsed % 8 == 0) {
       level.playSound(null, entity.blockPosition(), ModSounds.PLUNGER, SoundSource.PLAYERS,
-          0.5F, 0.85F + 0.3F * (elapsed / (float) getUseDuration(stack)));
+          0.5F, 0.85F + 0.3F * (elapsed / (float) getUseDuration(stack, entity)));
     }
   }
 
   @Override
   public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-    CompoundTag tag = stack.getTag();
+    CompoundTag tag = NbtBridge.customData(stack);
     if (tag == null || !tag.contains(TAG_TARGET)) {
       return stack;
     }
-    BlockPos pos = BlockPos.of(tag.getLong(TAG_TARGET));
-    tag.remove(TAG_TARGET);
+    BlockPos pos = BlockPos.of(tag.getLongOr(TAG_TARGET, 0L));
+    NbtBridge.updateCustomData(stack, data -> data.remove(TAG_TARGET));
     if (level.isClientSide() || !(entity instanceof Player player)) {
       return stack;
     }
@@ -103,10 +108,11 @@ public class Plunger extends ToolItem {
   }
 
   @Override
-  public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int remainingTicks) {
-    if (stack.hasTag()) {
-      stack.getTag().remove(TAG_TARGET);
+  public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int remainingTicks) {
+    if (NbtBridge.hasCustomData(stack)) {
+      NbtBridge.updateCustomData(stack, tag -> tag.remove(TAG_TARGET));
     }
+    return false;
   }
 
   @Override
@@ -164,10 +170,10 @@ public class Plunger extends ToolItem {
       return;
     }
 
-    player.displayClientMessage(message, true);
+    PlayerMessages.display(player, message, true);
     if (clearedMb > 0) {
       level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 1.0f);
-      stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+      stack.hurtAndBreak(1, player, hand);
     }
   }
 }

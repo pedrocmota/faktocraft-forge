@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "e": "faktocraft:energium_dust",
+    "g": "minecraft:glass",
+    "s": {
+      "neoforge:ingredient_type": "neoforge:compound",
+      "children": [
+        "faktocraft:purified_silver",
+        "#c:dusts/lithium"
+      ]
+    }
+  },
+  "pattern": [
+    "ggg",
+    "ese",
+    "ggg"
+  ],
+  "result": {
+    "id": "faktocraft:glass_fibre_cable"
+  }
+}

@@ -1,15 +1,15 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.faktocraft.Faktocraft;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
-@Mod.EventBusSubscriber(modid = Faktocraft.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = Faktocraft.MODID)
 public final class LogisticsEngine {
 
   private static volatile ExecutorService executor;

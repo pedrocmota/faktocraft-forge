@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "p": "#c:plates/iron",
+    "f": "faktocraft:fluid_cell",
+    "b": "faktocraft:basic_machine_casing",
+    "e": "faktocraft:electronic_circuit"
+  },
+  "pattern": [
+    "pfp",
+    "ebe",
+    "p p"
+  ],
+  "result": {
+    "id": "faktocraft:fueling_station"
+  }
+}

@@ -6,7 +6,7 @@ import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -33,21 +33,21 @@ public class GuiRedstoneButton extends GuiButton {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     super.renderBg(graphics, minecraft, mouseX, mouseY);
 
     boolean corner = com.faktocraft.common.util.Constants.LEFT_LAYOUT_EXPERIMENT;
     int iconLeft = getLeftOffset() + (corner ? 3 : 4);
     int iconTop = getTopOffset() + (corner ? 2 : 3);
     boolean on = menu.isRedstoneOnly();
-    graphics.renderFakeItem(on ? ICON_ON : ICON_OFF, iconLeft, iconTop);
+    graphics.fakeItem(on ? ICON_ON : ICON_OFF, iconLeft, iconTop);
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY)) {
       boolean on = menu.isRedstoneOnly();
-      graphics.renderComponentTooltip(Minecraft.getInstance().font, List.of(
+      graphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, List.of(
           Component.translatable("gui." + Faktocraft.MODID + ".redstone_control"),
           Component.translatable("gui." + Faktocraft.MODID
               + (on ? ".redstone_control.redstone" : ".redstone_control.always"))

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_pipes",
+  "key": {
+    "c": "faktocraft:electronic_circuit",
+    "h": "#c:chests/wooden",
+    "p": "faktocraft:stone_pipe"
+  },
+  "pattern": [
+    "c",
+    "h",
+    "p"
+  ],
+  "result": {
+    "id": "faktocraft:chassis_pipe_1",
+    "count": 1
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:iron_furnace"
+        }
+      ],
+      "name": "iron_furnace",
+      "rolls": 1
+    }
+  ]
+}

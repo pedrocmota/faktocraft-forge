@@ -1,15 +1,17 @@
 package com.faktocraft.client;
 
+import com.faktocraft.common.util.GuiUtil;
+import net.minecraft.client.input.KeyEvent;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.faktocraft.Faktocraft;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.lwjgl.glfw.GLFW;
+import net.minecraft.core.registries.BuiltInRegistries;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,10 +51,10 @@ public class ScanDetailScreen extends Screen {
 
   public static List<Component> buildReportLines(CompoundTag scan) {
     List<Component> lines = new ArrayList<>();
-    CompoundTag entries = scan.getCompound("entries");
+    CompoundTag entries = scan.getCompoundOrEmpty("entries");
     Map<String, Integer> grouped = new HashMap<>();
-    for (String original : entries.getAllKeys()) {
-      grouped.merge(normalizeId(original), entries.getInt(original), Integer::sum);
+    for (String original : entries.keySet()) {
+      grouped.merge(normalizeId(original), entries.getIntOr(original, 0), Integer::sum);
     }
     Map<Integer, List<String>> byCount = new TreeMap<>((a, b) -> b - a);
     for (Map.Entry<String, Integer> entry : grouped.entrySet()) {
@@ -68,10 +70,10 @@ public class ScanDetailScreen extends Screen {
   }
 
   public static String normalizeId(String original) {
-    ResourceLocation id = new ResourceLocation(original);
+    Identifier id = Identifier.parse(original);
     if (id.getPath().startsWith("deepslate_")) {
       String normalized = id.getNamespace() + ":" + id.getPath().substring("deepslate_".length());
-      if (ForgeRegistries.BLOCKS.containsKey(new ResourceLocation(normalized))) {
+      if (BuiltInRegistries.BLOCK.containsKey(Identifier.parse(normalized))) {
         return normalized;
       }
     }
@@ -83,19 +85,19 @@ public class ScanDetailScreen extends Screen {
     if (oilKey != null) {
       return Component.translatable("gui." + Faktocraft.MODID + ".prospector." + oilKey);
     }
-    var block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(id));
+    var block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(id));
     return block != null ? block.getName() : Component.literal(id);
   }
 
   public static ChatFormatting colorFor(String id) {
-    if (OIL_LABELS.containsKey(id) || new ResourceLocation(id).getPath().contains("iridium")) {
+    if (OIL_LABELS.containsKey(id) || Identifier.parse(id).getPath().contains("iridium")) {
       return ChatFormatting.GOLD;
     }
     return isRareOre(id) ? ChatFormatting.AQUA : ChatFormatting.WHITE;
   }
 
   private static boolean isRareOre(String id) {
-    String path = new ResourceLocation(id).getPath();
+    String path = Identifier.parse(id).getPath();
     return RARE_ORES.stream().anyMatch(path::contains);
   }
 
@@ -105,7 +107,7 @@ public class ScanDetailScreen extends Screen {
     panelTop = (height - PANEL_H) / 2;
     addRenderableWidget(new DeviceButton(panelLeft + 12, panelTop + PANEL_H - 30, PANEL_W - 24, 20,
         Component.translatable("gui." + Faktocraft.MODID + ".prospector.back"),
-        button -> minecraft.setScreen(parent)));
+        button -> minecraft.gui.setScreen(parent)));
   }
 
   private int visibleLines() {
@@ -113,17 +115,15 @@ public class ScanDetailScreen extends Screen {
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    renderBackground(graphics);
-
+  public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
     ScanMapScreen.drawDeviceFrame(graphics, panelLeft, panelTop, PANEL_W, PANEL_H);
-    graphics.drawCenteredString(font, title, panelLeft + PANEL_W / 2, panelTop + 11, 0xFFE8C43A);
+    graphics.centeredText(font, title, panelLeft + PANEL_W / 2, panelTop + 11, 0xFFE8C43A);
 
     int maxScroll = Math.max(0, lines.size() - visibleLines());
     scroll = Mth.clamp(scroll, 0, maxScroll);
     int y = panelTop + 26;
     for (int i = scroll; i < Math.min(lines.size(), scroll + visibleLines()); i++) {
-      graphics.drawString(font, lines.get(i), panelLeft + 14, y, 0xFFFFFF);
+      graphics.text(font, lines.get(i), panelLeft + 14, y, GuiUtil.opaque(0xFFFFFF));
       y += LINE_H;
     }
     if (maxScroll > 0) {
@@ -135,11 +135,11 @@ public class ScanDetailScreen extends Screen {
       graphics.fill(panelLeft + PANEL_W - 8, thumbY, panelLeft + PANEL_W - 5, thumbY + thumbH, 0xFF8A8A96);
     }
 
-    super.render(graphics, mouseX, mouseY, partialTick);
+    super.extractRenderState(graphics, mouseX, mouseY, partialTick);
   }
 
   @Override
-  public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+  public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double delta) {
     scroll -= (int) Math.signum(delta);
     return true;
   }
@@ -150,12 +150,18 @@ public class ScanDetailScreen extends Screen {
   }
 
   @Override
-  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-    if (keyCode == GLFW.GLFW_KEY_ESCAPE && minecraft != null) {
-      minecraft.setScreen(parent);
+  public boolean keyPressed(KeyEvent event) {
+    int keyCode = event.key();
+    if (keyCode == InputConstants.KEY_ESCAPE && minecraft != null) {
+      minecraft.gui.setScreen(parent);
       return true;
     }
-    return super.keyPressed(keyCode, scanCode, modifiers);
+    return super.keyPressed(event);
+  }
+
+  @Override
+  public boolean isInGameUi() {
+    return true;
   }
 
   @Override

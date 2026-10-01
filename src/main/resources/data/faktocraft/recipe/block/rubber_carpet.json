@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "S": "#c:rubber"
+  },
+  "pattern": [
+    "SSS",
+    "SSS"
+  ],
+  "result": {
+    "id": "faktocraft:rubber_carpet",
+    "count": 3
+  }
+}

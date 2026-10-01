@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:cutter",
+    "#c:plates/tin"
+  ],
+  "result": {
+    "id": "faktocraft:tin_cable",
+    "count": 3
+  }
+}

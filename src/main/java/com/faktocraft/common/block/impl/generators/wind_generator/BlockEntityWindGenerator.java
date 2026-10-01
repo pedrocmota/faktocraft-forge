@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 public class BlockEntityWindGenerator extends FaktocraftBlockEntity implements IEnergyBlock, ITileSound {
-
   public static final int ROTOR_SLOT = 0;
   public static final int MIN_GENERATOR_DISTANCE = 18;
   private static final double CROWD_FACTOR_PER_NEIGHBOR = 0.35;
@@ -155,9 +154,9 @@ public class BlockEntityWindGenerator extends FaktocraftBlockEntity implements I
       double push = (axial >= 0 ? 1 : -1) * 0.35;
       entity.setDeltaMovement(entity.getDeltaMovement()
           .add(alongZ ? 0 : push, 0, alongZ ? push : 0));
-      entity.hurtMarked = true;
+      entity.needsSync = true;
       if (spinning && entity instanceof net.minecraft.world.entity.LivingEntity living) {
-        living.hurt(com.faktocraft.common.registries.ModDamageTypes.rotor(serverLevel), 4.0F);
+        living.hurtServer(serverLevel, com.faktocraft.common.registries.ModDamageTypes.rotor(serverLevel), 4.0F);
       }
     }
   }
@@ -253,15 +252,14 @@ public class BlockEntityWindGenerator extends FaktocraftBlockEntity implements I
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    activeState = tag.getBoolean("active");
-    amount = tag.contains("amount") ? tag.getInt("amount") : 0;
-    lastAmount = tag.contains("lastAmount") ? tag.getInt("lastAmount") : 0;
-    windPercent = tag.contains("windPercent") ? tag.getInt("windPercent") : 0;
-    crowdCount = tag.contains("crowdCount") ? tag.getInt("crowdCount") : 0;
-    rotorBlocked = tag.getBoolean("rotorBlocked");
+    activeState = tag.getBooleanOr("active", false);
+    amount = tag.contains("amount") ? tag.getIntOr("amount", 0) : 0;
+    lastAmount = tag.contains("lastAmount") ? tag.getIntOr("lastAmount", 0) : 0;
+    windPercent = tag.contains("windPercent") ? tag.getIntOr("windPercent", 0) : 0;
+    crowdCount = tag.contains("crowdCount") ? tag.getIntOr("crowdCount", 0) : 0;
+    rotorBlocked = tag.getBooleanOr("rotorBlocked", false);
   }
 
-  @Override
   public AABB getRenderBoundingBox() {
     return new AABB(getBlockPos()).inflate(4.5);
   }

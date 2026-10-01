@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:empty_fuel_rod",
+    "faktocraft:enriched_uranium_dust",
+    "faktocraft:enriched_uranium_dust",
+    "faktocraft:enriched_uranium_dust"
+  ],
+  "result": {
+    "id": "faktocraft:fuel_rod"
+  }
+}

@@ -1,0 +1,329 @@
+{
+  "source": "forge-1.20.1",
+  "data_version": 3465,
+  "dimension": "minecraft:overworld",
+  "base": [
+    2000,
+    -60,
+    2000
+  ],
+  "chunks": [
+    [
+      124,
+      124
+    ],
+    [
+      124,
+      125
+    ],
+    [
+      124,
+      126
+    ],
+    [
+      125,
+      124
+    ],
+    [
+      125,
+      125
+    ],
+    [
+      125,
+      126
+    ],
+    [
+      126,
+      124
+    ],
+    [
+      126,
+      125
+    ],
+    [
+      126,
+      126
+    ],
+    [
+      127,
+      127
+    ]
+  ],
+  "entries": {
+    "furnace_idle": {
+      "pos": [
+        2000,
+        -60,
+        2000
+      ],
+      "kind": "machine",
+      "input_item": "minecraft:raw_iron",
+      "input_count": 64,
+      "output_item": "minecraft:diamond_pickaxe",
+      "output_damage": 100,
+      "output_efficiency": 3,
+      "output_name": "Picareta do Pedro",
+      "energy": 0,
+      "max_energy": 0
+    },
+    "furnace_energy": {
+      "pos": [
+        2003,
+        -60,
+        2000
+      ],
+      "kind": "machine",
+      "energy": 5000,
+      "max_energy": 10000
+    },
+    "mfe": {
+      "pos": [
+        2000,
+        -60,
+        2003
+      ],
+      "kind": "machine",
+      "energy": 4000000,
+      "max_energy": 4000000
+    },
+    "cable": {
+      "pos": [
+        2002,
+        -60,
+        2003
+      ],
+      "kind": "cable",
+      "has_network": true
+    },
+    "chest": {
+      "pos": [
+        2000,
+        -60,
+        2006
+      ],
+      "kind": "vanilla_container",
+      "battery_energy": 12345,
+      "cell_fluid": "faktocraft:oil",
+      "cell_mb": 1000,
+      "coolant_fluid": "faktocraft:coolant",
+      "coolant_mb": 1000,
+      "hazmat_color": 65280,
+      "toolbox_item": "faktocraft:wrench",
+      "sulfur_dust_count": 32,
+      "sulfur_ore_item": "faktocraft:sulfur_ore",
+      "sulfur_ore_item_after_port": "minecraft:stone",
+      "sulfur_ore_count": 5,
+      "deepslate_sulfur_ore_item": "faktocraft:deepslate_sulfur_ore",
+      "deepslate_sulfur_ore_item_after_port": "minecraft:deepslate",
+      "deepslate_sulfur_ore_count": 3,
+      "monitor_card_target": [
+        2003,
+        -60,
+        2000
+      ]
+    },
+    "request_table": {
+      "pos": [
+        2003,
+        -60,
+        2006
+      ],
+      "kind": "mod_container",
+      "battery_energy": 12345,
+      "cell_fluid": "faktocraft:oil",
+      "cell_mb": 1000,
+      "coolant_fluid": "faktocraft:coolant",
+      "coolant_mb": 1000,
+      "hazmat_color": 65280,
+      "toolbox_item": "faktocraft:wrench",
+      "sulfur_dust_count": 32,
+      "sulfur_ore_item": "faktocraft:sulfur_ore",
+      "sulfur_ore_item_after_port": "minecraft:stone",
+      "sulfur_ore_count": 5,
+      "deepslate_sulfur_ore_item": "faktocraft:deepslate_sulfur_ore",
+      "deepslate_sulfur_ore_item_after_port": "minecraft:deepslate",
+      "deepslate_sulfur_ore_count": 3,
+      "monitor_card_target": [
+        2003,
+        -60,
+        2000
+      ]
+    },
+    "tank": {
+      "pos": [
+        2006,
+        -60,
+        2006
+      ],
+      "kind": "tank",
+      "fluid": "faktocraft:oil",
+      "mb": 12000
+    },
+    "fluid_pipe": {
+      "pos": [
+        2008,
+        -60,
+        2006
+      ],
+      "kind": "fluid_pipe",
+      "fluid": "minecraft:water",
+      "mb": 100
+    },
+    "ender_tank": {
+      "pos": [
+        2010,
+        -60,
+        2006
+      ],
+      "kind": "ender_tank",
+      "code": 424242,
+      "fluid": "minecraft:lava",
+      "mb": 3000
+    },
+    "geo_scanner": {
+      "pos": [
+        2000,
+        -60,
+        2009
+      ],
+      "kind": "geo_scanner",
+      "code": 131313,
+      "chunk_x": 125,
+      "chunk_z": 125,
+      "iron_ore": 7,
+      "sulfur_ore": 12,
+      "deepslate_sulfur_ore": 4,
+      "energy": 0,
+      "max_energy": 100000
+    },
+    "chassis": {
+      "pos": [
+        2003,
+        -60,
+        2009
+      ],
+      "kind": "chassis",
+      "module": "faktocraft:module_sink",
+      "filter_item": "faktocraft:sulfur_dust",
+      "tree_node": "i:faktocraft:sulfur_dust",
+      "tree_count": 16
+    },
+    "recipe_pipe": {
+      "pos": [
+        2006,
+        -60,
+        2009
+      ],
+      "kind": "recipe_pipe",
+      "tag_0": "forge:dusts/sulfur",
+      "tag_0_after_port": "c:dusts/sulfur",
+      "tag_1": "forge:ingots/iron",
+      "tag_1_after_port": "c:ingots/iron",
+      "bind_block": "minecraft:furnace",
+      "bind_slot": 0
+    },
+    "covered_cable": {
+      "pos": [
+        2009,
+        -60,
+        2009
+      ],
+      "kind": "cover",
+      "block": "faktocraft:copper_cable",
+      "cover": "faktocraft:sulfur_ore",
+      "cover_after_port": "minecraft:stone",
+      "holes": 12
+    },
+    "drilled_ore": {
+      "pos": [
+        2011,
+        -60,
+        2009
+      ],
+      "kind": "cover",
+      "block": "faktocraft:drilled_block",
+      "cover": "faktocraft:sulfur_ore",
+      "cover_after_port": "minecraft:stone",
+      "holes": 48
+    },
+    "ore_sulfur": {
+      "pos": [
+        2000,
+        -60,
+        2012
+      ],
+      "kind": "block",
+      "block": "faktocraft:sulfur_ore",
+      "block_after_port": "minecraft:stone"
+    },
+    "ore_deepslate_sulfur": {
+      "pos": [
+        2002,
+        -60,
+        2012
+      ],
+      "kind": "block",
+      "block": "faktocraft:deepslate_sulfur_ore",
+      "block_after_port": "minecraft:deepslate"
+    },
+    "ore_iron_control": {
+      "pos": [
+        2004,
+        -60,
+        2012
+      ],
+      "kind": "block",
+      "block": "minecraft:iron_ore",
+      "block_after_port": "minecraft:iron_ore"
+    },
+    "teleport_anchor": {
+      "pos": [
+        2006,
+        -60,
+        2012
+      ],
+      "kind": "teleport_anchor",
+      "destination": [
+        2026,
+        -60,
+        2012
+      ],
+      "energy": 40000,
+      "max_energy": 50000
+    },
+    "monitor": {
+      "pos": [
+        2006,
+        -60,
+        2002
+      ],
+      "kind": "monitor",
+      "target": [
+        2003,
+        -60,
+        2000
+      ]
+    },
+    "radiation_aftermath": {
+      "pos": [
+        2000,
+        -60,
+        2015
+      ],
+      "kind": "saved_data",
+      "strength": 5.0
+    },
+    "chunk_loader": {
+      "pos": [
+        2040,
+        -60,
+        2040
+      ],
+      "kind": "chunk_loader",
+      "chunks": 1,
+      "energy": 99192,
+      "max_energy": 100000,
+      "manager_active": true
+    }
+  }
+}

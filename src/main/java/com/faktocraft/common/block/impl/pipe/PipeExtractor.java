@@ -205,14 +205,14 @@ public class PipeExtractor {
 
   public void load(CompoundTag tag) {
     if (tag.contains("extractorEnergy")) {
-      energy.deserializeNBT(tag.getCompound("extractorEnergy"));
+      energy.deserializeNBT(tag.getCompoundOrEmpty("extractorEnergy"));
     }
-    runMode = tag.contains("runMode") ? tag.getInt("runMode") : RUN_ALWAYS;
+    runMode = tag.contains("runMode") ? tag.getIntOr("runMode", 0) : RUN_ALWAYS;
     if (tag.contains("upgrades")) {
-      upgrades.load(tag.getCompound("upgrades"));
+      upgrades.load(tag.getCompoundOrEmpty("upgrades"));
     }
     if (tag.contains("dock")) {
-      dock.load(tag.getCompound("dock"));
+      dock.load(tag.getCompoundOrEmpty("dock"));
     }
 
     applyDock();

@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.pipe;
 
+import com.faktocraft.common.util.transfer.CapabilityBlockEntity;
 import com.faktocraft.common.block.ISupportHost;
 import com.faktocraft.common.block.VoxelBlock;
 import com.faktocraft.common.entity.block.FluidStorage;
@@ -9,16 +10,15 @@ import com.faktocraft.common.util.TransferUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEntityFluidPipe extends BlockEntity
+public class BlockEntityFluidPipe extends CapabilityBlockEntity
     implements IValveHolder, ISupportHost, com.faktocraft.common.cover.ICoverHost {
 
   @org.jetbrains.annotations.Nullable
@@ -44,16 +44,16 @@ public class BlockEntityFluidPipe extends BlockEntity
   }
 
   @Override
-  public net.minecraftforge.client.model.data.ModelData getModelData() {
+  public net.neoforged.neoforge.model.data.ModelData getModelData() {
     return com.faktocraft.common.cover.CoverSupport.modelData(cover, coverHoles);
   }
 
   @Override
   public void onDataPacket(net.minecraft.network.Connection connection,
-      net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket packet) {
+      net.minecraft.world.level.storage.ValueInput input) {
     BlockState previousCover = cover;
     int previousHoles = coverHoles;
-    super.onDataPacket(connection, packet);
+    super.onDataPacket(connection, input);
     if (cover != previousCover || coverHoles != previousHoles) {
       com.faktocraft.common.cover.CoverSupport.refreshClientModel(this);
     }
@@ -92,7 +92,7 @@ public class BlockEntityFluidPipe extends BlockEntity
     }
 
     @Override
-    public @NotNull net.minecraftforge.fluids.FluidStack getFluidInTank(int index) {
+    public @NotNull net.neoforged.neoforge.fluids.FluidStack getFluidInTank(int index) {
       return tank.getFluidInTank(index);
     }
 
@@ -102,24 +102,24 @@ public class BlockEntityFluidPipe extends BlockEntity
     }
 
     @Override
-    public boolean isFluidValid(int index, @NotNull net.minecraftforge.fluids.FluidStack stack) {
+    public boolean isFluidValid(int index, @NotNull net.neoforged.neoforge.fluids.FluidStack stack) {
       return tank.isFluidValid(index, stack);
     }
 
     @Override
-    public int fill(net.minecraftforge.fluids.FluidStack resource, FluidAction action) {
+    public int fill(net.neoforged.neoforge.fluids.FluidStack resource, FluidAction action) {
       return valveClosed() ? 0 : tank.fill(resource, action);
     }
 
     @Override
-    public @NotNull net.minecraftforge.fluids.FluidStack drain(net.minecraftforge.fluids.FluidStack resource,
+    public @NotNull net.neoforged.neoforge.fluids.FluidStack drain(net.neoforged.neoforge.fluids.FluidStack resource,
         FluidAction action) {
-      return valveClosed() ? net.minecraftforge.fluids.FluidStack.EMPTY : tank.drain(resource, action);
+      return valveClosed() ? net.neoforged.neoforge.fluids.FluidStack.EMPTY : tank.drain(resource, action);
     }
 
     @Override
-    public @NotNull net.minecraftforge.fluids.FluidStack drain(int maxDrain, FluidAction action) {
-      return valveClosed() ? net.minecraftforge.fluids.FluidStack.EMPTY : tank.drain(maxDrain, action);
+    public @NotNull net.neoforged.neoforge.fluids.FluidStack drain(int maxDrain, FluidAction action) {
+      return valveClosed() ? net.neoforged.neoforge.fluids.FluidStack.EMPTY : tank.drain(maxDrain, action);
     }
   };
 
@@ -255,8 +255,10 @@ public class BlockEntityFluidPipe extends BlockEntity
         if (neighborPipe.valveClosed()) {
           continue;
         }
-        if (neighborPipe.tank.isEmpty() || (neighborPipe.tank.getFluidStack().isFluidEqual(tank.getFluidStack())
-            && neighborPipe.tank.getFluidAmount() < tank.getFluidAmount())) {
+        if (neighborPipe.tank.isEmpty()
+            || (com.faktocraft.common.util.FluidStackCompat.isFluidEqual(neighborPipe.tank.getFluidStack(),
+                tank.getFluidStack())
+                && neighborPipe.tank.getFluidAmount() < tank.getFluidAmount())) {
           int difference = tank.getFluidAmount() - neighborPipe.tank.getFluidAmount();
           int move = Math.min(budget, Math.max(1, difference / 2));
           int accepted = neighborPipe.tank.fillFluid(tank.getFluidStack(),
@@ -332,12 +334,12 @@ public class BlockEntityFluidPipe extends BlockEntity
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    valve = PipeValve.byName(tag.getString("valve"));
-    valveRedstoneOnly = tag.getBoolean("valveRedstoneOnly");
-    int fillSide = tag.contains("valveFill") ? tag.getInt("valveFill") : -1;
+    valve = PipeValve.byName(tag.getStringOr("valve", ""));
+    valveRedstoneOnly = tag.getBooleanOr("valveRedstoneOnly", false);
+    int fillSide = tag.contains("valveFill") ? tag.getIntOr("valveFill", 0) : -1;
     lastFillSide = fillSide >= 0 ? Direction.from3DDataValue(fillSide) : null;
     if (tag.contains("tank")) {
-      tank.load(tag.getCompound("tank"));
+      tank.load(tag.getCompoundOrEmpty("tank"));
     }
     settledMb = tank.getFluidAmount();
     cover = com.faktocraft.common.cover.CoverSupport.load(tag);

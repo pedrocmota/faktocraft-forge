@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "s": "faktocraft:small_power_unit",
+    "t": "faktocraft:treetap"
+  },
+  "pattern": [
+    "ts "
+  ],
+  "result": {
+    "id": "faktocraft:electric_treetap"
+  }
+}

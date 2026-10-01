@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": "faktocraft:coil",
+    "i": "#c:ingots/iron",
+    "t": "#c:plates/tin"
+  },
+  "pattern": [
+    " t ",
+    "cic",
+    " t "
+  ],
+  "result": {
+    "id": "faktocraft:electric_motor"
+  }
+}

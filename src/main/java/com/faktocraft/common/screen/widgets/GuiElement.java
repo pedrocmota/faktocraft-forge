@@ -1,17 +1,17 @@
 package com.faktocraft.common.screen.widgets;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.util.Constants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public abstract class GuiElement extends AbstractWidget {
-
   protected static final int TEXTURE_SIZE = 256;
 
   private final IGuiWrapper wrapper;
@@ -34,26 +34,37 @@ public abstract class GuiElement extends AbstractWidget {
   }
 
   @Override
-  protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+  protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
     renderBg(graphics, Minecraft.getInstance(), mouseX, mouseY);
   }
 
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
   }
 
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
   }
 
-  public ResourceLocation getResourceLocation() {
+  public Identifier getResourceLocation() {
     return Constants.COMMON;
   }
 
-  protected void blit(GuiGraphics graphics, ResourceLocation texture, int x, int y, int u, int v, int width,
+  protected void blit(GuiGraphicsExtractor graphics, Identifier texture, int x, int y, int u, int v, int width,
       int height) {
-    graphics.blit(texture, x, y, (float) u, (float) v, width, height, TEXTURE_SIZE, TEXTURE_SIZE);
+    if (width < 0) {
+      x += width;
+      u += width;
+      width = -width;
+    }
+    if (height < 0) {
+      y += height;
+      v += height;
+      height = -height;
+    }
+    graphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, (float) u, (float) v, width, height, TEXTURE_SIZE,
+        TEXTURE_SIZE);
   }
 
-  protected void blit(GuiGraphics graphics, int x, int y, int u, int v, int width, int height) {
+  protected void blit(GuiGraphicsExtractor graphics, int x, int y, int u, int v, int width, int height) {
     blit(graphics, getResourceLocation(), x, y, u, v, width, height);
   }
 

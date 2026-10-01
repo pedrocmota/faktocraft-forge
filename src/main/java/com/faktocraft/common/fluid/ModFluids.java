@@ -1,10 +1,12 @@
 package com.faktocraft.common.fluid;
 
+import net.minecraft.server.level.ServerLevel;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.registries.ModBlocks;
 import com.faktocraft.common.registries.RegistrationHandler;
+import com.faktocraft.mixin.LivingEntityInvoker;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -18,16 +20,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import org.jetbrains.annotations.Nullable;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class ModFluids {
+  public static final java.util.List<FluidSet> ALL = new java.util.ArrayList<>();
 
   public static final FluidSet COOLANT = createSet("coolant", "flowing_coolant", "liquid_coolant", 0, 0xA100FFFF,
       false, false, delayedContact("coolant",
@@ -40,14 +41,18 @@ public class ModFluids {
       false, false, null, MapColor.COLOR_GREEN);
   public static final FluidSet MATTER = createSet("matter", "flowing_matter", "liquid_matter", 6, 0xA1800e7c,
       false, false, (level, living) -> {
-        living.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 300));
+        living.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 300));
         living.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 200));
       }, 5, 1000, 1000, MapColor.COLOR_PURPLE, null, 0x120214, 2.0F);
   public static final FluidSet SULFURIC_ACID = createSet("sulfuric_acid", "flowing_sulfuric_acid",
       "liquid_sulfuric_acid", 0, 0x50FFFAE0,
       false, true,
       delayedContact("acid",
-          (level, living) -> living.hurt(com.faktocraft.common.registries.ModDamageTypes.acid(level), 6.0F)),
+          (level, living) -> {
+            if (level instanceof ServerLevel serverLevel) {
+              living.hurtServer(serverLevel, com.faktocraft.common.registries.ModDamageTypes.acid(level), 6.0F);
+            }
+          }),
       MapColor.SAND);
   public static final FluidSet OIL = createSet("oil", "flowing_oil", "liquid_oil", 0, 0xFA3A3A3A,
       false, false, delayedToxicity("oil"),
@@ -65,8 +70,8 @@ public class ModFluids {
     return (level, living) -> {
       var data = living.getPersistentData();
       long now = level.getGameTime();
-      long last = data.getLong(lastKey);
-      long start = data.getLong(startKey);
+      long last = data.getLongOr(lastKey, 0L);
+      long start = data.getLongOr(startKey, 0L);
       if (now - last > 5 || start == 0) {
         start = now;
       }
@@ -81,14 +86,19 @@ public class ModFluids {
   private static BiConsumer<Level, LivingEntity> delayedToxicity(String key) {
     return delayedContact(key, (level, living) -> {
       living.addEffect(new MobEffectInstance(MobEffects.POISON, 100));
-      living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 1));
+      living.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 1));
     });
   }
 
-  public record FluidSet(FlowingFluid still, FlowingFluid flowing, Block block, FluidType fluidType) {
+  public record ClientData(Identifier stillTexture, Identifier flowingTexture, Identifier overlayTexture, int tint,
+      float fogRed, float fogGreen, float fogBlue, float fogEnd) {
   }
 
-  private static final ResourceLocation UNDERWATER_OVERLAY = new ResourceLocation("textures/misc/underwater.png");
+  public record FluidSet(FlowingFluid still, FlowingFluid flowing, Block block, FluidType fluidType,
+      ClientData clientData) {
+  }
+
+  public static final Identifier UNDERWATER_OVERLAY = Identifier.parse("textures/misc/underwater.png");
 
   private static FluidSet createSet(String stillName, String flowingName, String blockName, int lightLevel, int tint,
       boolean vaporizesOnPlacement, boolean corrosive, @Nullable BiConsumer<Level, LivingEntity> contactEffect,
@@ -105,9 +115,18 @@ public class ModFluids {
     FlowingFluid[] holder = new FlowingFluid[2];
     Block[] blockHolder = new Block[1];
 
-    ResourceLocation stillTexture = new ResourceLocation(Faktocraft.MODID, "block/fluid/" + stillName + "_still");
-    ResourceLocation flowingTexture = new ResourceLocation(Faktocraft.MODID, "block/fluid/" + stillName + "_flow");
-    ResourceLocation overlayTexture = new ResourceLocation(Faktocraft.MODID, "block/fluid/" + stillName + "_overlay");
+    Identifier stillTexture = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "block/fluid/" + stillName + "_still");
+    Identifier flowingTexture = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "block/fluid/" + stillName + "_flow");
+    Identifier overlayTexture = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
+        "block/fluid/" + stillName + "_overlay");
+    int fogSource = fogColorOverride != null ? fogColorOverride : tint;
+    float fogR = ((fogSource >> 16) & 0xFF) / 255.0F;
+    float fogG = ((fogSource >> 8) & 0xFF) / 255.0F;
+    float fogB = (fogSource & 0xFF) / 255.0F;
+    float opacity = ((tint >>> 24) & 0xFF) / 255.0F;
+    float fogEnd = fogEndOverride != null ? fogEndOverride : net.minecraft.util.Mth.lerp(opacity, 16.0F, 3.0F);
+    ClientData clientData = new ClientData(stillTexture, flowingTexture, overlayTexture, tint, fogR, fogG, fogB,
+        fogEnd);
     FluidType fluidType = new FluidType(FluidType.Properties.create().viscosity(viscosity).density(density)) {
       @Override
       public boolean isVaporizedOnPlacement(Level level, BlockPos pos, FluidStack stack) {
@@ -115,59 +134,24 @@ public class ModFluids {
       }
 
       @Override
-      public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-        int fogSource = fogColorOverride != null ? fogColorOverride : tint;
-        float fogR = ((fogSource >> 16) & 0xFF) / 255.0F;
-        float fogG = ((fogSource >> 8) & 0xFF) / 255.0F;
-        float fogB = (fogSource & 0xFF) / 255.0F;
-        float opacity = ((tint >>> 24) & 0xFF) / 255.0F;
-        float fogEnd = fogEndOverride != null ? fogEndOverride : net.minecraft.util.Mth.lerp(opacity, 16.0F, 3.0F);
-        com.faktocraft.client.render.FluidFogVolume.register(this, fogR, fogG, fogB, fogEnd);
-        consumer.accept(new IClientFluidTypeExtensions() {
-          @Override
-          public ResourceLocation getStillTexture() {
-            return stillTexture;
-          }
+      public boolean equals(Object other) {
+        return this == other;
+      }
 
-          @Override
-          public ResourceLocation getFlowingTexture() {
-            return flowingTexture;
-          }
+      @Override
+      public int hashCode() {
+        return System.identityHashCode(this);
+      }
 
-          @Override
-          public ResourceLocation getOverlayTexture() {
-            return overlayTexture;
-          }
-
-          @Override
-          public int getTintColor() {
-            return tint;
-          }
-
-          @Override
-          public ResourceLocation getRenderOverlayTexture(net.minecraft.client.Minecraft mc) {
-            return UNDERWATER_OVERLAY;
-          }
-
-          @Override
-          public org.joml.Vector3f modifyFogColor(net.minecraft.client.Camera camera, float partialTick,
-              net.minecraft.client.multiplayer.ClientLevel level, int renderDistance, float darkenWorldAmount,
-              org.joml.Vector3f fluidFogColor) {
-            return new org.joml.Vector3f(fogR, fogG, fogB);
-          }
-
-          @Override
-          public void modifyFogRender(net.minecraft.client.Camera camera,
-              net.minecraft.client.renderer.FogRenderer.FogMode mode, float renderDistance, float partialTick,
-              float nearDistance, float farDistance, com.mojang.blaze3d.shaders.FogShape shape) {
-            com.mojang.blaze3d.systems.RenderSystem.setShaderFogStart(0.0F);
-            com.mojang.blaze3d.systems.RenderSystem.setShaderFogEnd(fogEnd);
-          }
-        });
+      @Override
+      public boolean move(LivingEntity entity, Vec3 movementVector, double gravity) {
+        boolean falling = entity.getDeltaMovement().y <= 0.0;
+        ((LivingEntityInvoker) entity).faktocraftTravelInWater(movementVector, gravity, falling, entity.getY());
+        return true;
       }
     };
 
-    ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(
+    BaseFlowingFluid.Properties properties = new BaseFlowingFluid.Properties(
         () -> fluidType, () -> holder[0], () -> holder[1])
             .slopeFindDistance(2)
             .levelDecreasePerBlock(2)
@@ -182,21 +166,22 @@ public class ModFluids {
 
     RegistrationHandler.fluid(stillName, still);
     RegistrationHandler.fluid(flowingName, flowing);
-    RegistrationHandler.enqueue(ForgeRegistries.Keys.FLUID_TYPES, stillName, fluidType);
+    RegistrationHandler.enqueue(net.neoforged.neoforge.registries.NeoForgeRegistries.Keys.FLUID_TYPES, stillName,
+        fluidType);
 
     BlockBehaviour.Properties props = BlockBehaviour.Properties.of()
         .mapColor(mapColor)
         .replaceable()
-        .noCollission()
+        .noCollision()
         .strength(100.0F)
-        .pushReaction(PushReaction.DESTROY)
+        .pushReaction(PushReaction.POPPED)
         .noLootTable()
         .liquid()
         .sound(SoundType.EMPTY);
     if (lightLevel > 0) {
       props = props.lightLevel(state -> lightLevel);
     }
-    Block block = ModBlocks.register(blockName, p -> new LiquidBlock(() -> (FlowingFluid) holder[0], p) {
+    Block block = ModBlocks.register(blockName, p -> new LiquidBlock((FlowingFluid) holder[0], p) {
       @Override
       public void animateTick(BlockState state, Level level, BlockPos pos,
           net.minecraft.util.RandomSource random) {
@@ -208,13 +193,14 @@ public class ModFluids {
       }
 
       @Override
-      public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+      protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
+          net.minecraft.world.entity.InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         if (level.isClientSide()) {
           return;
         }
         if (corrosive && entity instanceof net.minecraft.world.entity.item.ItemEntity itemEntity) {
           var stack = itemEntity.getItem();
-          if (stack.getItem().isEdible()
+          if (stack.has(net.minecraft.core.component.DataComponents.FOOD)
               || stack.is(com.faktocraft.common.registries.ModTags.ACID_SOLUBLE)) {
             level.playSound(null, pos, net.minecraft.sounds.SoundEvents.LAVA_EXTINGUISH,
                 net.minecraft.sounds.SoundSource.BLOCKS, 0.4F, 1.4F);
@@ -238,7 +224,9 @@ public class ModFluids {
     }, props);
     blockHolder[0] = block;
 
-    return new FluidSet(still, flowing, block, fluidType);
+    FluidSet set = new FluidSet(still, flowing, block, fluidType, clientData);
+    ALL.add(set);
+    return set;
   }
 
   public static void register() {

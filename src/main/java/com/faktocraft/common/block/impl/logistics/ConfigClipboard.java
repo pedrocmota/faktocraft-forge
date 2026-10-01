@@ -20,10 +20,10 @@ public final class ConfigClipboard {
 
   @Nullable
   public static CompoundTag get(Player player, String kind) {
-    CompoundTag root = player.getPersistentData().getCompound(ROOT);
-    if (!root.getString("kind").equals(kind)) {
+    CompoundTag root = player.getPersistentData().getCompoundOrEmpty(ROOT);
+    if (!root.getStringOr("kind", "").equals(kind)) {
       return null;
     }
-    return root.getCompound("payload");
+    return root.getCompoundOrEmpty("payload");
   }
 }

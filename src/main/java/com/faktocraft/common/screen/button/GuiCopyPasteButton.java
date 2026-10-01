@@ -1,6 +1,6 @@
 package com.faktocraft.common.screen.button;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
@@ -15,7 +15,7 @@ public class GuiCopyPasteButton extends Button {
     setTooltip(Tooltip.create(tooltip));
   }
 
-  private static void outline(GuiGraphics graphics, int x0, int y0, int x1, int y1, int color) {
+  private static void outline(GuiGraphicsExtractor graphics, int x0, int y0, int x1, int y1, int color) {
     graphics.fill(x0, y0, x1, y0 + 1, color);
     graphics.fill(x0, y1 - 1, x1, y1, color);
     graphics.fill(x0, y0, x0 + 1, y1, color);
@@ -23,11 +23,11 @@ public class GuiCopyPasteButton extends Button {
   }
 
   @Override
-  protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+  protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
     drawIcon(graphics, getX(), getY(), paste, isHoveredOrFocused());
   }
 
-  public static void drawIcon(GuiGraphics graphics, int x, int y, boolean paste, boolean highlighted) {
+  public static void drawIcon(GuiGraphicsExtractor graphics, int x, int y, boolean paste, boolean highlighted) {
     int line = highlighted ? 0xFF101010 : 0xFF4A4A4A;
     int fill = highlighted ? 0x50FFFFFF : 0x30FFFFFF;
     if (paste) {

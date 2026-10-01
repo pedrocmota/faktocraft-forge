@@ -1,8 +1,7 @@
 {
-	"parent": "faktocraft:block/base/cable/cable",
-	"textures": {
-		"wall": "faktocraft:block/cable/glass_fibre_cable",
-		"particle": "#wall"
-	},
-	"render_type": "cutout"
+  "parent": "faktocraft:block/base/cable/cable",
+  "textures": {
+    "wall": "faktocraft:block/cable/glass_fibre_cable",
+    "particle": "#wall"
+  }
 }

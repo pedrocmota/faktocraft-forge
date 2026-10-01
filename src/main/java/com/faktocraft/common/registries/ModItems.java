@@ -35,10 +35,12 @@ import com.faktocraft.common.item.impl.treetap.Treetap;
 import com.faktocraft.common.item.impl.upgrade.OverclockerUpgrade;
 import com.faktocraft.common.item.impl.wrench.ElectricWrench;
 import com.faktocraft.common.item.impl.wrench.Wrench;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.block.Block;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +48,6 @@ import java.util.List;
 import java.util.function.Function;
 
 public final class ModItems {
-
   private static final List<Item> ALL_ITEMS = new ArrayList<>();
 
   public static final Item TIN_ORE = fromBlock(ModBlocks.TIN_ORE);
@@ -57,8 +58,6 @@ public final class ModItems {
   public static final Item DEEPSLATE_URANIUM_ORE = fromBlock(ModBlocks.DEEPSLATE_URANIUM_ORE);
   public static final Item SILVER_ORE = fromBlock(ModBlocks.SILVER_ORE);
   public static final Item DEEPSLATE_SILVER_ORE = fromBlock(ModBlocks.DEEPSLATE_SILVER_ORE);
-  public static final Item SULFUR_ORE = fromBlock(ModBlocks.SULFUR_ORE);
-  public static final Item DEEPSLATE_SULFUR_ORE = fromBlock(ModBlocks.DEEPSLATE_SULFUR_ORE);
   public static final Item LITHIUM_ORE = fromBlock(ModBlocks.LITHIUM_ORE);
   public static final Item DEEPSLATE_LITHIUM_ORE = fromBlock(ModBlocks.DEEPSLATE_LITHIUM_ORE);
   public static final Item IRIDIUM_ORE = fromBlock(ModBlocks.IRIDIUM_ORE);
@@ -226,13 +225,13 @@ public final class ModItems {
 
   public static final Item NIGHTVISION_GOGGLES = register("nightvision_goggles", NightVisionGoggles::new);
   public static final Item HAZMAT_HELMET = register("hazmat_helmet",
-      p -> new com.faktocraft.common.item.impl.armor.HazmatArmorItem(ArmorItem.Type.HELMET, p));
+      p -> new com.faktocraft.common.item.impl.armor.HazmatArmorItem(ArmorType.HELMET, p));
   public static final Item HAZMAT_CHESTPLATE = register("hazmat_chestplate",
-      p -> new com.faktocraft.common.item.impl.armor.HazmatArmorItem(ArmorItem.Type.CHESTPLATE, p));
+      p -> new com.faktocraft.common.item.impl.armor.HazmatArmorItem(ArmorType.CHESTPLATE, p));
   public static final Item HAZMAT_LEGGINGS = register("hazmat_leggings",
-      p -> new com.faktocraft.common.item.impl.armor.HazmatArmorItem(ArmorItem.Type.LEGGINGS, p));
+      p -> new com.faktocraft.common.item.impl.armor.HazmatArmorItem(ArmorType.LEGGINGS, p));
   public static final Item HAZMAT_BOOTS = register("hazmat_boots",
-      p -> new com.faktocraft.common.item.impl.armor.HazmatArmorItem(ArmorItem.Type.BOOTS, p));
+      p -> new com.faktocraft.common.item.impl.armor.HazmatArmorItem(ArmorType.BOOTS, p));
 
   public static final Item JETPACK = register("jetpack",
       p -> new com.faktocraft.common.item.impl.armor.JetpackItem(p));
@@ -240,13 +239,13 @@ public final class ModItems {
       p -> new com.faktocraft.common.item.impl.armor.AdvancedJetpackItem(p));
 
   public static final Item BRONZE_HELMET = register("bronze_helmet",
-      p -> new BaseArmor(ModArmorMaterials.BRONZE, ArmorItem.Type.HELMET, p));
+      p -> new BaseArmor(ModArmorMaterials.BRONZE, ArmorType.HELMET, p));
   public static final Item BRONZE_CHESTPLATE = register("bronze_chestplate",
-      p -> new BaseArmor(ModArmorMaterials.BRONZE, ArmorItem.Type.CHESTPLATE, p));
+      p -> new BaseArmor(ModArmorMaterials.BRONZE, ArmorType.CHESTPLATE, p));
   public static final Item BRONZE_LEGGINGS = register("bronze_leggings",
-      p -> new BaseArmor(ModArmorMaterials.BRONZE, ArmorItem.Type.LEGGINGS, p));
+      p -> new BaseArmor(ModArmorMaterials.BRONZE, ArmorType.LEGGINGS, p));
   public static final Item BRONZE_BOOTS = register("bronze_boots",
-      p -> new BaseArmor(ModArmorMaterials.BRONZE, ArmorItem.Type.BOOTS, p));
+      p -> new BaseArmor(ModArmorMaterials.BRONZE, ArmorType.BOOTS, p));
 
   public static final Item BRONZE_SWORD = register("bronze_sword", BronzeSword::new);
   public static final Item BRONZE_PICKAXE = register("bronze_pickaxe", BronzePickaxe::new);
@@ -257,10 +256,10 @@ public final class ModItems {
   public static final Item NANO_HELMET = register("nano_helmet",
       p -> new NanoHelmet(p.rarity(Rarity.EPIC).fireResistant()));
   public static final Item NANO_CHESTPLATE = register("nano_chestplate",
-      p -> new ItemNanoArmor(ArmorItem.Type.CHESTPLATE, p.rarity(Rarity.EPIC).fireResistant()));
+      p -> new ItemNanoArmor(ArmorType.CHESTPLATE, p.rarity(Rarity.EPIC).fireResistant()));
   public static final Item NANO_LEGGINGS = register("nano_leggings",
-      p -> new ItemNanoArmor(ArmorItem.Type.LEGGINGS, p.rarity(Rarity.EPIC).fireResistant()));
-  public static final Item NANO_BOOTS = register("nano_boots", p -> new ItemNanoArmor(ArmorItem.Type.BOOTS,
+      p -> new ItemNanoArmor(ArmorType.LEGGINGS, p.rarity(Rarity.EPIC).fireResistant()));
+  public static final Item NANO_BOOTS = register("nano_boots", p -> new ItemNanoArmor(ArmorType.BOOTS,
       p.rarity(Rarity.EPIC).fireResistant()));
   public static final Item NANO_SABER = register("nano_saber",
       p -> new ItemNanosaber(p.rarity(Rarity.EPIC).fireResistant()));
@@ -268,13 +267,13 @@ public final class ModItems {
   public static final Item QUANTUM_HELMET = register("quantum_helmet",
       p -> new com.faktocraft.common.item.impl.quantum.QuantumHelmet(p.rarity(Rarity.EPIC).fireResistant()));
   public static final Item QUANTUM_CHESTPLATE = register("quantum_chestplate",
-      p -> new com.faktocraft.common.item.impl.quantum.ItemQuantumArmor(ArmorItem.Type.CHESTPLATE,
+      p -> new com.faktocraft.common.item.impl.quantum.ItemQuantumArmor(ArmorType.CHESTPLATE,
           p.rarity(Rarity.EPIC).fireResistant()));
   public static final Item QUANTUM_LEGGINGS = register("quantum_leggings",
-      p -> new com.faktocraft.common.item.impl.quantum.ItemQuantumArmor(ArmorItem.Type.LEGGINGS,
+      p -> new com.faktocraft.common.item.impl.quantum.ItemQuantumArmor(ArmorType.LEGGINGS,
           p.rarity(Rarity.EPIC).fireResistant()));
   public static final Item QUANTUM_BOOTS = register("quantum_boots",
-      p -> new com.faktocraft.common.item.impl.quantum.ItemQuantumArmor(ArmorItem.Type.BOOTS,
+      p -> new com.faktocraft.common.item.impl.quantum.ItemQuantumArmor(ArmorType.BOOTS,
           p.rarity(Rarity.EPIC).fireResistant()));
 
   public static final Item SMALL_POWER_UNIT = register("small_power_unit", MaterialItem::new);
@@ -295,22 +294,24 @@ public final class ModItems {
       p -> new ElectricWrench(p, 0, 10000, EnergyType.RECEIVE, EnergyTier.LOW));
 
   public static final Item CHAINSAW = register("chainsaw",
-      p -> new Chainsaw(Tiers.IRON, 6.0F, -3.1F, p, 0, 30000, 50, 100, EnergyType.RECEIVE, EnergyTier.LOW));
-  public static final Item DIAMOND_CHAINSAW = register("diamond_chainsaw", p -> new Chainsaw(Tiers.DIAMOND, 5.0F,
-      -3.0F, p, 0, 80000, 70, 120, EnergyType.RECEIVE, EnergyTier.MEDIUM));
-  public static final Item IRIDIUM_CHAINSAW = register("iridium_chainsaw", p -> new Chainsaw(ModTiers.IRIDIUM, 5.0F,
-      -3.0F, p.rarity(Rarity.RARE), 0, 300000, 200, 400, EnergyType.RECEIVE, EnergyTier.HIGH));
+      p -> new Chainsaw(ToolMaterial.IRON, 1.0F, 6.0F, -3.1F, p, 0, 30000, 50, 100, EnergyType.RECEIVE,
+          EnergyTier.LOW));
+  public static final Item DIAMOND_CHAINSAW = register("diamond_chainsaw", p -> new Chainsaw(ModTiers.DIAMOND_TOOL,
+      1.05F, 5.0F, -3.0F, p, 0, 80000, 70, 120, EnergyType.RECEIVE, EnergyTier.MEDIUM));
+  public static final Item IRIDIUM_CHAINSAW = register("iridium_chainsaw", p -> new Chainsaw(ModTiers.IRIDIUM_TOOL,
+      1.2F, 5.0F, -3.0F, p.rarity(Rarity.RARE), 0, 300000, 200, 400, EnergyType.RECEIVE, EnergyTier.HIGH));
 
   public static final Item MINING_DRILL = register("mining_drill",
-      p -> new MiningDrill(Tiers.IRON, 1, -2.8F, p, 0, 30000, 50, 100, EnergyType.RECEIVE, EnergyTier.LOW));
-  public static final Item DIAMOND_DRILL = register("diamond_drill", p -> new MiningDrill(Tiers.DIAMOND, 1,
-      -2.8F, p, 0, 80000, 70, 120, EnergyType.RECEIVE, EnergyTier.MEDIUM));
-  public static final Item IRIDIUM_DRILL = register("iridium_drill", p -> new MiningDrill(ModTiers.IRIDIUM, 1, -2.8F,
-      p.rarity(Rarity.RARE), 0, 300000, 200, 400, EnergyType.RECEIVE, EnergyTier.HIGH));
+      p -> new MiningDrill(ToolMaterial.IRON, 1.0F, 1, -2.8F, p, 0, 30000, 50, 100, EnergyType.RECEIVE,
+          EnergyTier.LOW));
+  public static final Item DIAMOND_DRILL = register("diamond_drill", p -> new MiningDrill(ModTiers.DIAMOND_TOOL, 1.05F,
+      1, -2.8F, p, 0, 80000, 70, 120, EnergyType.RECEIVE, EnergyTier.MEDIUM));
+  public static final Item IRIDIUM_DRILL = register("iridium_drill", p -> new MiningDrill(ModTiers.IRIDIUM_TOOL,
+      1.2F, 1, -2.8F, p.rarity(Rarity.RARE), 0, 300000, 200, 400, EnergyType.RECEIVE, EnergyTier.HIGH));
 
   public static final Item HOLE_DRILL = register("hole_drill",
       com.faktocraft.common.item.impl.tools.HoleDrill::new);
-  public static final Item ELECTRIC_HOE = register("electric_hoe", p -> new ElectricHoe(Tiers.IRON, -2, -1.0F, p,
+  public static final Item ELECTRIC_HOE = register("electric_hoe", p -> new ElectricHoe(ToolMaterial.IRON, -2, -1.0F, p,
       0, 10000, 50, 100, 50, EnergyType.RECEIVE, EnergyTier.LOW));
   public static final Item WIND_METER = register("wind_meter",
       com.faktocraft.common.item.impl.tools.WindMeter::new);
@@ -322,7 +323,7 @@ public final class ModItems {
   public static final Item PROSPECTOR = register("prospector",
       p -> new com.faktocraft.common.item.impl.tools.Prospector(p.rarity(Rarity.RARE)));
   public static final Item PLUNGER = register("plunger", com.faktocraft.common.item.impl.tools.Plunger::new);
-  public static final Item MULTI_TOOL = register("multi_tool", p -> new MultiTool(Tiers.DIAMOND, -3, 0.0F, p, 0,
+  public static final Item MULTI_TOOL = register("multi_tool", p -> new MultiTool(ToolMaterial.DIAMOND, -3, 0.0F, p, 0,
       300000, 800, 1400, 500, EnergyType.RECEIVE, EnergyTier.HIGH));
 
   public static final Item MEMORY_CARD = register("memory_card", MemoryCardItem::new,
@@ -394,6 +395,7 @@ public final class ModItems {
   }
 
   public static Item register(String name, Function<Item.Properties, Item> factory, Item.Properties properties) {
+    properties.setId(ResourceKey.create(Registries.ITEM, RegistrationHandler.id(name)));
     Item item = factory.apply(properties);
     RegistrationHandler.item(name, item);
     ALL_ITEMS.add(item);
@@ -428,7 +430,9 @@ public final class ModItems {
   private static Item registerBlockItemInternal(Block block, Rarity rarity,
       java.util.function.BiFunction<Block, Item.Properties, Item> factory) {
     String name = ModBlocks.nameOf(block);
-    Item.Properties properties = new Item.Properties();
+    Item.Properties properties = new Item.Properties()
+        .setId(ResourceKey.create(Registries.ITEM, RegistrationHandler.id(name)))
+        .useBlockDescriptionPrefix();
     if (rarity != Rarity.COMMON) {
       properties = properties.rarity(rarity);
     }

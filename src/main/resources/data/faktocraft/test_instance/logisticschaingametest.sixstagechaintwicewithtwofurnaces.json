@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:function",
+  "function": "faktocraft:logisticschaingametest.sixstagechaintwicewithtwofurnaces",
+  "environment": "minecraft:default",
+  "structure": "faktocraft:gametest_platform",
+  "max_ticks": 7200,
+  "sky_access": true
+}

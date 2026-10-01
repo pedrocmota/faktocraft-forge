@@ -1,11 +1,16 @@
 package com.faktocraft.common.block.impl.monitor;
 
+import com.faktocraft.common.util.PlayerMessages;
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.common.block.FaktocraftBlock;
 import com.faktocraft.common.interfaces.block.IStateFacing;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -28,7 +33,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class BlockStatusMonitor extends FaktocraftBlock implements EntityBlock, IStateFacing {
 
@@ -115,7 +119,7 @@ public class BlockStatusMonitor extends FaktocraftBlock implements EntityBlock, 
   }
 
   @Override
-  public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+  public boolean propagatesSkylightDown(BlockState state) {
     return true;
   }
 
@@ -140,34 +144,33 @@ public class BlockStatusMonitor extends FaktocraftBlock implements EntityBlock, 
   }
 
   @Override
-  public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+  public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
     if (!level.isClientSide() && player.isCreative() && !isMaster(state)) {
       BlockPos master = masterPos(state, pos);
       if (level.getBlockState(master).is(this)) {
         level.setBlock(master, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
       }
     }
-    super.playerWillDestroy(level, pos, state, player);
+    return super.playerWillDestroy(level, pos, state, player);
   }
 
   @Override
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.is(newState.getBlock())) {
-      BlockPos master = masterPos(state, pos);
-      Direction facing = facingOf(state);
-      if (!isMaster(state) && level.getBlockState(master).is(this)) {
-        level.destroyBlock(master, true);
-      }
-      for (int x = 0; x < WIDTH; x++) {
-        for (int y = 0; y < HEIGHT; y++) {
-          BlockPos part = partPos(master, facing, x, y);
-          if (!part.equals(pos) && level.getBlockState(part).is(this)) {
-            level.setBlock(part, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-          }
+  protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos,
+      boolean movedByPiston) {
+    BlockPos master = masterPos(state, pos);
+    Direction facing = facingOf(state);
+    if (!isMaster(state) && level.getBlockState(master).is(this)) {
+      level.destroyBlock(master, true);
+    }
+    for (int x = 0; x < WIDTH; x++) {
+      for (int y = 0; y < HEIGHT; y++) {
+        BlockPos part = partPos(master, facing, x, y);
+        if (!part.equals(pos) && level.getBlockState(part).is(this)) {
+          level.setBlock(part, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         }
       }
     }
-    super.onRemove(state, level, pos, newState, isMoving);
+    super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
   }
 
   @Override
@@ -178,15 +181,15 @@ public class BlockStatusMonitor extends FaktocraftBlock implements EntityBlock, 
     }
     if (!level.isClientSide()
         && level.getBlockEntity(masterPos(state, pos)) instanceof BlockEntityStatusMonitor monitor) {
-      player.displayClientMessage(monitor.describeTarget(), true);
+      PlayerMessages.display(player, monitor.describeTarget(), true);
     }
-    return InteractionResult.sidedSuccess(level.isClientSide());
+    return InteractionResult.SUCCESS;
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-      TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip.faktocraft.status_monitor").withStyle(ChatFormatting.GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("tooltip.faktocraft.status_monitor").withStyle(ChatFormatting.GRAY));
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 }

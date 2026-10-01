@@ -1,9 +1,9 @@
 {
-	"parent": "block/orientable",
-	"textures": {
-		"front": "faktocraft:block/machines/iron_furnace_front",
-		"top": "faktocraft:block/machines/iron_furnace_top",
-		"bottom": "faktocraft:block/machines/iron_furnace_bottom",
-		"side": "faktocraft:block/machines/iron_furnace_side"
-	}
+  "parent": "block/orientable",
+  "textures": {
+    "front": "faktocraft:block/machines/iron_furnace_front",
+    "top": "faktocraft:block/machines/iron_furnace_top",
+    "bottom": "faktocraft:block/machines/iron_furnace_bottom",
+    "side": "faktocraft:block/machines/iron_furnace_side"
+  }
 }

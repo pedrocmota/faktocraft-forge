@@ -2,11 +2,12 @@ package com.faktocraft.common.util;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import com.faktocraft.common.util.transfer.IItemHandler;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemStackHandler implements net.minecraft.world.Container {
+public class ItemStackHandler implements net.minecraft.world.Container, IItemHandler {
 
   protected NonNullList<ItemStack> stacks;
 
@@ -66,8 +67,14 @@ public class ItemStackHandler implements net.minecraft.world.Container {
     onContentsChanged(slot);
   }
 
+  @Override
   public void setStackInSlot(int slot, ItemStack stack) {
     setItem(slot, stack);
+  }
+
+  @Override
+  public boolean supportsSetStackInSlot() {
+    return true;
   }
 
   @Override
@@ -100,7 +107,7 @@ public class ItemStackHandler implements net.minecraft.world.Container {
     int limit = Math.min(getSlotLimit(slot), stack.getMaxStackSize());
 
     if (!existing.isEmpty()) {
-      if (!ItemStack.isSameItemSameTags(existing, stack)) {
+      if (!ItemStack.isSameItemSameComponents(existing, stack)) {
         return stack;
       }
       limit -= existing.getCount();
@@ -165,11 +172,11 @@ public class ItemStackHandler implements net.minecraft.world.Container {
   }
 
   public void save(CompoundTag tag) {
-    ContainerHelper.saveAllItems(tag, stacks);
+    NbtBridge.saveItems(tag, stacks);
   }
 
   public void load(CompoundTag tag) {
     stacks = NonNullList.withSize(stacks.size(), ItemStack.EMPTY);
-    ContainerHelper.loadAllItems(tag, stacks);
+    NbtBridge.loadItems(tag, stacks);
   }
 }

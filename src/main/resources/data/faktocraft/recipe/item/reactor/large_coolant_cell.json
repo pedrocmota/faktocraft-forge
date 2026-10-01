@@ -1,0 +1,29 @@
+{
+  "group": "faktocraft",
+  "key": {
+    "m": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "items": "faktocraft:medium_coolant_cell",
+      "components": {
+        "faktocraft:fluid": {
+          "fluid": "faktocraft:coolant",
+          "amount": 3000
+        }
+      }
+    },
+    "t": "#c:plates/tin"
+  },
+  "pattern": [
+    "tmt",
+    "ttt",
+    "tmt"
+  ],
+  "result": {
+    "id": "faktocraft:large_coolant_cell",
+    "nbt": {
+      "fluid": "faktocraft:coolant",
+      "fluid_amount": 6000
+    }
+  },
+  "type": "minecraft:crafting_shaped"
+}

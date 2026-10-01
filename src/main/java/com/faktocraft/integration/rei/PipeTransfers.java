@@ -15,7 +15,7 @@ import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.plugin.common.BuiltinPlugin;
-import me.shedaniel.rei.plugin.common.displays.crafting.DefaultCraftingDisplay;
+import me.shedaniel.rei.plugin.common.displays.crafting.CraftingDisplay;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public final class PipeTransfers {
 
   public static final TransferHandler CRAFT_PIPE_PATTERN = context -> {
     if (!(context.getMenu() instanceof MenuCraftPipe menu)
-        || !(context.getDisplay() instanceof DefaultCraftingDisplay<?> display)) {
+        || !(context.getDisplay() instanceof CraftingDisplay display)) {
       return TransferHandler.Result.createNotApplicable();
     }
     if (!context.isActuallyCrafting()) {

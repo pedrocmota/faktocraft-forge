@@ -4,19 +4,20 @@ import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.fluid.ModFluids;
 import com.faktocraft.common.item.base.FluidItem;
 import com.faktocraft.common.item.base.FluidItemHandlerProvider;
+import com.faktocraft.common.util.transfer.IFluidHandlerItem;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
 public class CoolantCell extends FluidItem {
-
   private static final int BAR_COLOR = 0x4FD8FF;
 
   private final int sizeFactor;
@@ -42,7 +43,7 @@ public class CoolantCell extends FluidItem {
   }
 
   @Override
-  public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+  public IFluidHandlerItem createFluidHandler(ItemStack stack) {
     return new FluidItemHandlerProvider(stack, getFluidCapacity()) {
       @Override
       public boolean isFluidValid(int tank, FluidStack resource) {
@@ -56,14 +57,10 @@ public class CoolantCell extends FluidItem {
     };
   }
 
+  @Nullable
   @Override
-  public boolean hasCraftingRemainingItem(ItemStack stack) {
-    return false;
-  }
-
-  @Override
-  public ItemStack getCraftingRemainingItem(ItemStack stack) {
-    return ItemStack.EMPTY;
+  public ItemStackTemplate getCraftingRemainder(ItemInstance instance) {
+    return null;
   }
 
   @Override
@@ -82,8 +79,9 @@ public class CoolantCell extends FluidItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip.faktocraft.coolant_cell").withStyle(ChatFormatting.GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("tooltip.faktocraft.coolant_cell").withStyle(ChatFormatting.GRAY));
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 }

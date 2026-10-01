@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "faktocraft:nano"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "faktocraft:nano"
+      }
+    ]
+  }
+}

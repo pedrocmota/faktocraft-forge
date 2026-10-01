@@ -6,7 +6,7 @@ import com.faktocraft.common.screen.widgets.GuiElement;
 import com.faktocraft.common.util.GuiUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import java.util.function.IntSupplier;
@@ -21,7 +21,7 @@ public class GuiTextWind extends GuiElement {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     MutableComponent component = Component.translatable("gui." + Faktocraft.MODID + ".wind_strength",
         percent.getAsInt());
     Font font = GuiUtil.getFont();

@@ -9,6 +9,7 @@ import com.faktocraft.common.registries.ModTags;
 import com.faktocraft.common.util.BlockStateHelper;
 import com.faktocraft.common.util.wrench.WrenchHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -16,20 +17,23 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
+import java.util.function.Consumer;
 
-public class FaktocraftBlock extends Block {
-
+public class FaktocraftBlock extends Block implements IPreRemoveSideEffects, IBlockHoverText {
   public FaktocraftBlock(Properties properties) {
     super(properties);
     registerDefaultState(BlockStateHelper.getDefaultState(this, getStateDefinition().any()));
@@ -61,16 +65,20 @@ public class FaktocraftBlock extends Block {
   }
 
   @Override
-  public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+  public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
     if (!level.isClientSide() && !player.isCreative()
         && player.getMainHandItem().is(ModTags.WRENCHES) && WrenchHelper.hasAction(this)) {
       WrenchHelper.dismantleBlock(state, level, pos);
     }
-    super.playerWillDestroy(level, pos, state, player);
+    return super.playerWillDestroy(level, pos, state, player);
   }
 
-  @SuppressWarnings("deprecation")
   @Override
+  protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+      InteractionHand hand, BlockHitResult hitResult) {
+    return use(state, level, pos, player, hand, hitResult);
+  }
+
   public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
       BlockHitResult hitResult) {
     ItemStack held = player.getMainHandItem();
@@ -79,12 +87,12 @@ public class FaktocraftBlock extends Block {
     }
     if (this instanceof IHasMenu hasMenu) {
       if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
-        NetworkHooks.openScreen(serverPlayer, new FaktocraftMenuProvider(hasMenu, level, pos, getName()),
+        serverPlayer.openMenu(new FaktocraftMenuProvider(hasMenu, level, pos, getName()),
             buf -> buf.writeBlockPos(pos));
       }
       return InteractionResult.SUCCESS;
     }
-    return super.use(state, level, pos, player, hand, hitResult);
+    return InteractionResult.PASS;
   }
 
   @Override
@@ -98,18 +106,20 @@ public class FaktocraftBlock extends Block {
     }
   }
 
-  @SuppressWarnings("deprecation")
   @Override
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.is(newState.getBlock()) && level instanceof ServerLevel serverLevel) {
-      affectNeighborsAfterRemoval(state, serverLevel, pos, isMoving);
-    }
-    super.onRemove(state, level, pos, newState, isMoving);
-  }
-
   protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+    super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
     level.updateNeighbourForOutputSignal(pos, this);
     EnergyCore.get(level).removeEnergyBlock(pos);
+  }
+
+  @Override
+  public void preRemoveSideEffects(BlockState state, Level level, BlockPos pos, BlockEntity blockEntity) {
+  }
+
+  @Override
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
   }
 
   @Override

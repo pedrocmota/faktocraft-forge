@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.machines.nuclear_reactor;
 
+import com.faktocraft.common.util.PlayerMessages;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.config.ServerConfig;
@@ -31,11 +32,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -362,7 +363,7 @@ public class BlockEntityNuclearReactor extends FaktocraftBlockEntity implements 
     long rangeSq = (long) MELTDOWN_MESSAGE_RANGE * MELTDOWN_MESSAGE_RANGE;
     for (ServerPlayer player : serverLevel.players()) {
       if (player.blockPosition().distSqr(center) <= rangeSq) {
-        player.displayClientMessage(message, false);
+        PlayerMessages.display(player, message, false);
       }
     }
     NuclearReactorMultiblock.destroy(serverLevel, origin);
@@ -519,18 +520,18 @@ public class BlockEntityNuclearReactor extends FaktocraftBlockEntity implements 
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    heat = tag.getInt("heat");
-    running = tag.getBoolean("running");
-    throttled = tag.getBoolean("throttled");
-    reactionOutput = tag.getInt("reaction");
-    outputPerTick = tag.getInt("output");
-    heatPerTick = tag.getInt("heatRate");
-    coolingPerTick = tag.getInt("cooling");
-    rods = tag.getInt("rods");
-    status = tag.getInt("status");
-    burnTick = tag.getInt("burnTick");
+    heat = tag.getIntOr("heat", 0);
+    running = tag.getBooleanOr("running", false);
+    throttled = tag.getBooleanOr("throttled", false);
+    reactionOutput = tag.getIntOr("reaction", 0);
+    outputPerTick = tag.getIntOr("output", 0);
+    heatPerTick = tag.getIntOr("heatRate", 0);
+    coolingPerTick = tag.getIntOr("cooling", 0);
+    rods = tag.getIntOr("rods", 0);
+    status = tag.getIntOr("status", 0);
+    burnTick = tag.getIntOr("burnTick", 0);
     if (tag.contains("water")) {
-      water.load(tag.getCompound("water"));
+      water.load(tag.getCompoundOrEmpty("water"));
     }
   }
 }

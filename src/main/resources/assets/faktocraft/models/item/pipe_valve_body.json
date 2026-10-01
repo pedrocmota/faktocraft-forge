@@ -1,9 +1,9 @@
 {
   "credit": "Faktocraft",
   "textures": {
-    "body": "minecraft:block/copper_block",
-    "dark": "minecraft:block/anvil",
-    "particle": "minecraft:block/copper_block",
+    "body": "faktocraft:item/valve/copper_block",
+    "dark": "faktocraft:item/valve/anvil",
+    "particle": "faktocraft:item/valve/copper_block",
     "shadow_radial": "faktocraft:item/valve_shadow_radial",
     "shadow_ring": "faktocraft:item/valve_shadow_ring"
   },

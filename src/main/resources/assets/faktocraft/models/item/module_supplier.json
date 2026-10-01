@@ -1,6 +1,6 @@
 {
- "parent": "minecraft:item/generated",
- "textures": {
-  "layer0": "faktocraft:item/module_supplier"
- }
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "faktocraft:item/module_supplier"
+  }
 }

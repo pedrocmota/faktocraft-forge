@@ -111,8 +111,8 @@
             "item": "item/tool/electric/diamond_drill"
           },
           "desc": {
-            "en": "Faster, stronger tiers of the drill.",
-            "pt": "Versões mais rápidas e fortes da furadeira."
+            "en": "Faster, stronger tiers of the drill. Hold Alt while mining with the iridium drill to break the whole ore vein at once: drops and XP go straight to your inventory, extra blocks cost more energy.",
+            "pt": "Versões mais rápidas e fortes da furadeira. Segure Alt ao minerar com a de irídio para derrubar o veio inteiro de uma vez: itens e XP vão direto para o inventário, blocos extras custam mais energia."
           }
         },
         {
@@ -124,8 +124,8 @@
             "item": "item/tool/electric/chainsaw"
           },
           "desc": {
-            "en": "Axe, sword and shears rolled into one.",
-            "pt": "Machado, espada e tesoura em um."
+            "en": "Axe, sword and shears rolled into one. The iridium chainsaw fells a whole tree when you hold Alt, sending logs and XP straight to your inventory.",
+            "pt": "Machado, espada e tesoura em um. A de irídio derruba a árvore inteira segurando Alt, mandando troncos e XP direto para o inventário."
           }
         },
         {

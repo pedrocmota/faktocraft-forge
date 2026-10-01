@@ -1,11 +1,10 @@
 package com.faktocraft.gametest.world;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.radiation.RadiationManager;
 import com.faktocraft.common.registries.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -16,13 +15,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class ReinforcedStoneDoorGameTest {
-
   private static final String TEMPLATE = "gametest_platform";
   private static final BlockPos DOOR = new BlockPos(2, 1, 2);
 
@@ -39,11 +33,15 @@ public class ReinforcedStoneDoorGameTest {
   @GameTest(template = TEMPLATE, timeoutTicks = 40)
   public static void reinforcedStoneDoorOpensByRedstoneOnly(GameTestHelper helper) {
     placeDoor(helper, DOOR);
-    Player player = helper.makeMockPlayer();
+    Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
     BlockPos abs = helper.absolutePos(DOOR);
     BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(abs), Direction.NORTH, abs, false);
-    InteractionResult result = helper.getBlockState(DOOR).use(helper.getLevel(), player,
-        InteractionHand.MAIN_HAND, hit);
+    BlockState doorState = helper.getBlockState(DOOR);
+    InteractionResult result = doorState.useItemOn(player.getItemInHand(InteractionHand.MAIN_HAND), helper.getLevel(),
+        player, InteractionHand.MAIN_HAND, hit);
+    if (result instanceof InteractionResult.TryEmptyHandInteraction) {
+      result = doorState.useWithoutItem(helper.getLevel(), player, hit);
+    }
     if (result.consumesAction() || isOpen(helper, DOOR)) {
       helper.fail("the door opened by hand: " + result);
     }

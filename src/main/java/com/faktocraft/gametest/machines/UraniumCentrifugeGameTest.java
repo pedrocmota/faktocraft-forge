@@ -1,22 +1,17 @@
 package com.faktocraft.gametest.machines;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.uranium_centrifuge.BlockEntityUraniumCentrifuge;
 import com.faktocraft.common.entity.block.BlockEntityStandardMachine;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.registries.machines.M3Registry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestAssertException;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class UraniumCentrifugeGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -24,8 +19,8 @@ public class UraniumCentrifugeGameTest {
 
   private static BlockEntityUraniumCentrifuge place(GameTestHelper helper) {
     helper.setBlock(POS, M3Registry.URANIUM_CENTRIFUGE.defaultBlockState());
-    if (!(helper.getBlockEntity(POS) instanceof BlockEntityUraniumCentrifuge centrifuge)) {
-      throw new GameTestAssertException("no uranium centrifuge block entity");
+    if (!(TestUtil.blockEntity(helper, POS) instanceof BlockEntityUraniumCentrifuge centrifuge)) {
+      throw TestUtil.assertion(helper, "no uranium centrifuge block entity");
     }
     centrifuge.getBatteryStackHandler().setStackInSlot(0, new ItemStack(ModItems.BASIC_CAPACITOR));
     centrifuge.getEnergyStorage().setEnergy(centrifuge.getEnergyStorage().maxEnergy());

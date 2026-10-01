@@ -1,12 +1,12 @@
 {
-	"parent": "block/cube",
-	"textures": {
-		"down": "faktocraft:block/machines/extractor_bottom",
-		"up": "faktocraft:block/machines/extractor_top",
-		"north": "faktocraft:block/machines/extractor_front",
-		"east": "faktocraft:block/machines/extractor_leftright",
-		"south": "faktocraft:block/machines/extractor_back",
-		"west": "faktocraft:block/machines/extractor_leftright",
-		"particle": "faktocraft:block/machines/extractor_leftright"
-	}
+  "parent": "block/cube",
+  "textures": {
+    "down": "faktocraft:block/machines/extractor_bottom",
+    "up": "faktocraft:block/machines/extractor_top",
+    "north": "faktocraft:block/machines/extractor_front",
+    "east": "faktocraft:block/machines/extractor_leftright",
+    "south": "faktocraft:block/machines/extractor_back",
+    "west": "faktocraft:block/machines/extractor_leftright",
+    "particle": "faktocraft:block/machines/extractor_leftright"
+  }
 }

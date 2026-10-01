@@ -1,5 +1,6 @@
 package com.faktocraft.common.command;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.energy.provider.EnergyCore;
 import com.faktocraft.common.energy.provider.EnergyNetwork;
@@ -11,12 +12,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
-@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
+@EventBusSubscriber(modid = Faktocraft.MODID)
 public final class DebugCableTest {
 
   private DebugCableTest() {
@@ -66,8 +66,8 @@ public final class DebugCableTest {
   }
 
   @SubscribeEvent
-  public static void onServerTick(TickEvent.ServerTickEvent event) {
-    if (!armed || event.phase != TickEvent.Phase.END) {
+  public static void onServerTick(ServerTickEvent.Post event) {
+    if (!armed) {
       return;
     }
     ServerLevel level = event.getServer().overworld();

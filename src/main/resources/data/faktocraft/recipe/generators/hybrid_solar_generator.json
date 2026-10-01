@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "k": "faktocraft:advanced_capacitor",
+    "l": "minecraft:lapis_block",
+    "L": "faktocraft:lapotron_crystal",
+    "s": "faktocraft:advanced_solar_generator",
+    "c": "faktocraft:advanced_circuit",
+    "e": "faktocraft:energy_crystal"
+  },
+  "pattern": [
+    "klk",
+    "LsL",
+    "cec"
+  ],
+  "result": {
+    "id": "faktocraft:hybrid_solar_generator",
+    "count": 1
+  }
+}

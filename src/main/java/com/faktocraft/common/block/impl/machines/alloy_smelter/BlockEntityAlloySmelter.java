@@ -104,7 +104,7 @@ public class BlockEntityAlloySmelter extends AbstractBlockEntityAlloySmelter
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("heatLevel")) {
-      heatLevel.load(tag.getCompound("heatLevel"));
+      heatLevel.load(tag.getCompoundOrEmpty("heatLevel"));
     }
   }
 

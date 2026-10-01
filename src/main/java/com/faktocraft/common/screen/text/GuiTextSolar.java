@@ -7,7 +7,7 @@ import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.util.TextComponentUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import java.util.function.IntSupplier;
@@ -22,7 +22,7 @@ public class GuiTextSolar extends GuiElement {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     MutableComponent component = Component.translatable(EnumLang.POWER_TICK.getTranslationKey(),
         TextComponentUtil.getFormattedEnergyUnit(amount.getAsInt()));
     Font font = GuiUtil.getFont();

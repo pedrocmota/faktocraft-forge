@@ -5,25 +5,121 @@
   },
   "elements": [
     {
-      "from": [6.5, 0, 6.5],
-      "to": [9.5, 3.95, 9.5],
+      "from": [
+        6.5,
+        0,
+        6.5
+      ],
+      "to": [
+        9.5,
+        3.95,
+        9.5
+      ],
       "faces": {
-        "north": { "texture": "#support", "uv": [6.5, 12.05, 9.5, 16] },
-        "south": { "texture": "#support", "uv": [6.5, 12.05, 9.5, 16] },
-        "east": { "texture": "#support", "uv": [6.5, 12.05, 9.5, 16] },
-        "west": { "texture": "#support", "uv": [6.5, 12.05, 9.5, 16] },
-        "up": { "texture": "#support", "uv": [6.5, 6.5, 9.5, 9.5] }
+        "north": {
+          "texture": "#support",
+          "uv": [
+            6.5,
+            12.05,
+            9.5,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#support",
+          "uv": [
+            6.5,
+            12.05,
+            9.5,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#support",
+          "uv": [
+            6.5,
+            12.05,
+            9.5,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#support",
+          "uv": [
+            6.5,
+            12.05,
+            9.5,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#support",
+          "uv": [
+            6.5,
+            6.5,
+            9.5,
+            9.5
+          ]
+        }
       }
     },
     {
-      "from": [5, 0, 5],
-      "to": [11, 2, 11],
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        2,
+        11
+      ],
       "faces": {
-        "north": { "texture": "#support", "uv": [5, 14, 11, 16] },
-        "south": { "texture": "#support", "uv": [5, 14, 11, 16] },
-        "east": { "texture": "#support", "uv": [5, 14, 11, 16] },
-        "west": { "texture": "#support", "uv": [5, 14, 11, 16] },
-        "up": { "texture": "#support", "uv": [5, 5, 11, 11] }
+        "north": {
+          "texture": "#support",
+          "uv": [
+            5,
+            14,
+            11,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#support",
+          "uv": [
+            5,
+            14,
+            11,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#support",
+          "uv": [
+            5,
+            14,
+            11,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#support",
+          "uv": [
+            5,
+            14,
+            11,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#support",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        }
       }
     }
   ]

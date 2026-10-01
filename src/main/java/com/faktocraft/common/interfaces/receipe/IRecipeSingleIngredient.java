@@ -1,8 +1,8 @@
 package com.faktocraft.common.interfaces.receipe;
 
-import net.minecraft.world.Container;
+import com.faktocraft.common.recipe.MachineRecipeInput;
 
-public interface IRecipeSingleIngredient extends IBaseRecipe<Container> {
+public interface IRecipeSingleIngredient extends IBaseRecipe<MachineRecipeInput> {
 
   int getIngredientCount();
 }

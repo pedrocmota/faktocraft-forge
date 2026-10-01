@@ -15,7 +15,7 @@ public class BlockDistilleryGuard extends Block {
 
   public BlockDistilleryGuard(Properties properties) {
     super(properties.strength(-1.0F, 3600000.0F).noLootTable().noOcclusion()
-        .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK));
+        .pushReaction(net.minecraft.world.level.material.PushReaction.IMMOVEABLE));
   }
 
   @Override
@@ -62,11 +62,11 @@ public class BlockDistilleryGuard extends Block {
     return Shapes.empty();
   }
 
-  @SuppressWarnings("deprecation")
   @Override
-  public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos fromPos,
+  public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
+      @org.jetbrains.annotations.Nullable net.minecraft.world.level.redstone.Orientation orientation,
       boolean movedByPiston) {
-    super.neighborChanged(state, level, pos, neighborBlock, fromPos, movedByPiston);
+    super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
     if (level.isClientSide()) {
       return;
     }

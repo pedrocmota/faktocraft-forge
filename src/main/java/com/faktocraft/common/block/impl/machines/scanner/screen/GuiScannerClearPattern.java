@@ -6,7 +6,7 @@ import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.button.GuiButton;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 
 public class GuiScannerClearPattern extends GuiButton {
@@ -20,7 +20,7 @@ public class GuiScannerClearPattern extends GuiButton {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     if (entity.getMode().getId() >= 4) {
       super.renderBg(graphics, minecraft, mouseX, mouseY);
     }
@@ -35,9 +35,9 @@ public class GuiScannerClearPattern extends GuiButton {
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY) && entity.getMode().getId() >= 4) {
-      graphics.renderTooltip(com.faktocraft.common.util.GuiUtil.getFont(),
+      graphics.setTooltipForNextFrame(com.faktocraft.common.util.GuiUtil.getFont(),
           EnumLang.CLEAR_PATTERN.getTranslationComponent(), mouseX,
           mouseY);
     }

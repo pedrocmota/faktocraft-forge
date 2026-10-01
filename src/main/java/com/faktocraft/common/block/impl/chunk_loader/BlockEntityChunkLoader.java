@@ -1,6 +1,5 @@
 package com.faktocraft.common.block.impl.chunk_loader;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.energy.interfaces.IEnergyBlock;
 import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
@@ -13,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.world.ForgeChunkManager;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockEntityChunkLoader extends FaktocraftBlockEntity implements IEnergyBlock {
@@ -192,10 +190,10 @@ public class BlockEntityChunkLoader extends FaktocraftBlockEntity implements IEn
   }
 
   private void forceRange(ServerLevel serverLevel, int from, int to, boolean add) {
-    ChunkPos base = new ChunkPos(worldPosition);
+    ChunkPos base = ChunkPos.containing(worldPosition);
     for (int i = from; i < to; i++) {
-      ForgeChunkManager.forceChunk(serverLevel, Faktocraft.MODID, worldPosition,
-          base.x + CHUNK_OFFSETS[i][0], base.z + CHUNK_OFFSETS[i][1], add, true);
+      ChunkLoaderManager.TICKETS.forceChunk(serverLevel, worldPosition,
+          base.x() + CHUNK_OFFSETS[i][0], base.z() + CHUNK_OFFSETS[i][1], add, true);
     }
   }
 
@@ -249,9 +247,9 @@ public class BlockEntityChunkLoader extends FaktocraftBlockEntity implements IEn
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    enabledByPlayer = tag.getBoolean("enabled");
+    enabledByPlayer = tag.getBooleanOr("enabled", false);
     if (tag.contains("chunkCount")) {
-      chunkCount = clampChunks(tag.getInt("chunkCount"));
+      chunkCount = clampChunks(tag.getIntOr("chunkCount", 0));
     }
   }
 }

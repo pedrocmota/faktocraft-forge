@@ -41,23 +41,30 @@ public class BlockTransformer extends FaktocraftEntityBlock implements IStateFac
 
   @Override
   public void appendHoverText(net.minecraft.world.item.ItemStack stack,
-      @Nullable net.minecraft.world.level.BlockGetter level,
-      java.util.List<net.minecraft.network.chat.Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
+      net.minecraft.world.item.Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> tooltip,
+      net.minecraft.world.item.TooltipFlag flag) {
     EnergyTier high = transformerTier.getMaxTier();
     EnergyTier low = transformerTier.getMinTier();
     String conversionKey = transformerTier.isStepUpAllowed() ? "tooltip.faktocraft.transformer_conversion"
         : "tooltip.faktocraft.transformer_step_down_only";
-    tooltip.add(net.minecraft.network.chat.Component.translatable(
+    tooltip.accept(net.minecraft.network.chat.Component.translatable(
         conversionKey,
         high.getLang().getTranslationComponent(),
         com.faktocraft.common.util.TextComponentUtil.getFormattedLong(high.getBasicTransfer()),
         low.getLang().getTranslationComponent(),
         com.faktocraft.common.util.TextComponentUtil.getFormattedLong(low.getBasicTransfer()))
         .withStyle(net.minecraft.ChatFormatting.GRAY));
-    tooltip.add(net.minecraft.network.chat.Component.translatable(
+    tooltip.accept((transformerTier.isStepUpAllowed()
+        ? net.minecraft.network.chat.Component.translatable("tooltip.faktocraft.transformer_loss",
+            transformerTier.getStepUpLossPercent(), transformerTier.getStepDownLossPercent())
+        : net.minecraft.network.chat.Component.translatable("tooltip.faktocraft.transformer_loss_step_down",
+            transformerTier.getStepDownLossPercent()))
+                .withStyle(net.minecraft.ChatFormatting.GRAY));
+    tooltip.accept(net.minecraft.network.chat.Component.translatable(
         "tooltip.faktocraft.transformer_redstone_default")
         .withStyle(net.minecraft.ChatFormatting.GOLD));
-    super.appendHoverText(stack, level, tooltip, flag);
+    super.appendHoverText(stack, context, display, tooltip, flag);
   }
 
   @Override

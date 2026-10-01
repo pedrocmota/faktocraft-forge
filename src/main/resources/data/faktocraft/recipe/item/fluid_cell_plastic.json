@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "g": "#c:glass_panes",
+    "p": "faktocraft:plastic"
+  },
+  "pattern": [
+    " p ",
+    "pgp",
+    " p "
+  ],
+  "result": {
+    "id": "faktocraft:fluid_cell",
+    "count": 6
+  }
+}

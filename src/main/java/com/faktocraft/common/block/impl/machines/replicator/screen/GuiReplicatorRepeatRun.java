@@ -5,7 +5,7 @@ import com.faktocraft.common.enums.EnumLang;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.button.GuiButton;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 
 public class GuiReplicatorRepeatRun extends GuiButton {
@@ -15,9 +15,9 @@ public class GuiReplicatorRepeatRun extends GuiButton {
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY)) {
-      graphics.renderTooltip(com.faktocraft.common.util.GuiUtil.getFont(),
+      graphics.setTooltipForNextFrame(com.faktocraft.common.util.GuiUtil.getFont(),
           EnumLang.REPEAT_RUN.getTranslationComponent(), mouseX, mouseY);
     }
   }

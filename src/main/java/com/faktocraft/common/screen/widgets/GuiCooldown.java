@@ -6,10 +6,10 @@ import com.faktocraft.Faktocraft;
 import com.faktocraft.common.interfaces.entity.ICooldown;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.util.Constants;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class GuiCooldown extends GuiElement {
 
@@ -25,23 +25,23 @@ public class GuiCooldown extends GuiElement {
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY)) {
       if (be.getCooldown() > 0) {
-        graphics.renderTooltip(GuiUtil.getFont(),
+        graphics.setTooltipForNextFrame(GuiUtil.getFont(),
             Component.translatable("gui." + Faktocraft.MODID + ".can_operate_in", be.getCooldown()), mouseX, mouseY);
       } else if (bufferFull()) {
-        graphics.renderTooltip(GuiUtil.getFont(),
+        graphics.setTooltipForNextFrame(GuiUtil.getFont(),
             Component.translatable("gui." + Faktocraft.MODID + ".buffer_full"), mouseX, mouseY);
       } else {
-        graphics.renderTooltip(GuiUtil.getFont(),
+        graphics.setTooltipForNextFrame(GuiUtil.getFont(),
             Component.translatable("gui." + Faktocraft.MODID + ".can_operate"), mouseX, mouseY);
       }
     }
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     if (be.getCooldown() == 0 && !bufferFull()) {
       blit(graphics, getLeftOffset(), getTopOffset(), 0, 100, getWidth(), getHeight());
     } else {
@@ -52,7 +52,7 @@ public class GuiCooldown extends GuiElement {
   }
 
   @Override
-  public ResourceLocation getResourceLocation() {
+  public Identifier getResourceLocation() {
     return Constants.COMMON;
   }
 }

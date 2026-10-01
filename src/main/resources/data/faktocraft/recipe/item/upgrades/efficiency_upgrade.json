@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": "faktocraft:purified_copper",
+    "t": "faktocraft:purified_tin",
+    "a": "faktocraft:copper_cable_insulated",
+    "e": "faktocraft:electronic_circuit",
+    "p": "faktocraft:plastic"
+  },
+  "pattern": [
+    "ctc",
+    "aea",
+    "ppp"
+  ],
+  "result": {
+    "id": "faktocraft:efficiency_upgrade",
+    "count": 1
+  }
+}

@@ -1,9 +1,9 @@
 package com.faktocraft.common.registries;
 
+import com.faktocraft.common.util.LegacyNbtBlockEntity;
 import com.faktocraft.common.block.impl.cable.BlockEntityCable;
 import com.faktocraft.common.block.impl.luminator.BlockEntityLuminator;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class ModBlockEntities {
@@ -29,7 +29,7 @@ public class ModBlockEntities {
           "teleport_anchor", com.faktocraft.common.block.impl.teleport_anchor.BlockEntityTeleportAnchor::new,
           ModBlocks.TELEPORT_ANCHOR, ModBlocks.DIMENSIONAL_TELEPORT_ANCHOR);
 
-  private static <T extends BlockEntity> BlockEntityType<T> register(String name,
+  private static <T extends LegacyNbtBlockEntity> BlockEntityType<T> register(String name,
       BlockEntityType.BlockEntitySupplier<T> factory, Block... blocks) {
     return RegistrationHandler.blockEntity(name, factory, blocks);
   }

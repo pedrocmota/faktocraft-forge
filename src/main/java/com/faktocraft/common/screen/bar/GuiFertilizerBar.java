@@ -7,10 +7,10 @@ import com.faktocraft.common.interfaces.entity.IProgress;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.progress.GuiProgress;
 import com.faktocraft.common.util.Constants;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class GuiFertilizerBar extends GuiProgress {
 
@@ -19,14 +19,14 @@ public class GuiFertilizerBar extends GuiProgress {
   }
 
   @Override
-  public ResourceLocation getResourceLocation() {
+  public Identifier getResourceLocation() {
     return Constants.COMMON;
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY)) {
-      graphics.renderTooltip(GuiUtil.getFont(),
+      graphics.setTooltipForNextFrame(GuiUtil.getFont(),
           Component.translatable("gui." + Faktocraft.MODID + ".waste", getProgress().getPercentProgressString() + "%"),
           mouseX, mouseY);
     }

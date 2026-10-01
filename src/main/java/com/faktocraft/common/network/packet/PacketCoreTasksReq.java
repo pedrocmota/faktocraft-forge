@@ -1,5 +1,11 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.faktocraft.common.block.impl.logistics.BlockEntityLogisticsController;
 import com.faktocraft.common.block.impl.logistics.LogisticsGraph;
 import com.faktocraft.common.block.impl.logistics.MenuCoreTasks;
@@ -8,12 +14,20 @@ import com.faktocraft.common.network.ModNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
-public record PacketCoreTasksReq(BlockPos blockPos) {
+public record PacketCoreTasksReq(BlockPos blockPos) implements CustomPacketPayload {
+
+  public static final Type<PacketCoreTasksReq> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_core_tasks_req"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketCoreTasksReq> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketCoreTasksReq::decode);
+
+  @Override
+  public Type<PacketCoreTasksReq> type() {
+    return TYPE;
+  }
 
   public static void encode(PacketCoreTasksReq msg, FriendlyByteBuf buf) {
     buf.writeBlockPos(msg.blockPos);
@@ -23,9 +37,9 @@ public record PacketCoreTasksReq(BlockPos blockPos) {
     return new PacketCoreTasksReq(buf.readBlockPos());
   }
 
-  public static void handle(PacketCoreTasksReq msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> {
-      ServerPlayer player = ctx.get().getSender();
+  public static void handle(PacketCoreTasksReq msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> {
+      ServerPlayer player = ctx.getSender();
       if (player == null || !(player.containerMenu instanceof MenuCoreTasks menu)
           || !menu.getCorePos().equals(msg.blockPos)) {
         return;
@@ -62,7 +76,7 @@ public record PacketCoreTasksReq(BlockPos blockPos) {
       ModNetworking.sendToPlayer(player,
           new PacketTableState(msg.blockPos, List.of(), tasks, errors));
     });
-    ctx.get().setPacketHandled(true);
+    ctx.setPacketHandled(true);
   }
 
   private static PacketTableState.TaskLine line(long id, net.minecraft.world.item.ItemStack stack, int count,

@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.monitor;
 
+import com.faktocraft.common.util.NbtBridge;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.util.TextComponentUtil;
@@ -9,7 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
@@ -19,12 +20,11 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
+import com.faktocraft.common.util.transfer.IItemHandler;
+import net.minecraft.core.registries.BuiltInRegistries;
 import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -70,20 +70,21 @@ public final class GenericStatusSources {
       if (blockEntity == null || blockEntity instanceof FaktocraftBlockEntity) {
         return;
       }
-      IEnergyStorage storage = blockEntity.getCapability(ForgeCapabilities.ENERGY).orElse(null);
-      if (storage != null && storage.getMaxEnergyStored() > 0) {
-        out.putInt(TAG_FE, storage.getEnergyStored());
-        out.putInt(TAG_FE_MAX, storage.getMaxEnergyStored());
+      EnergyHandler storage = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK, pos,
+          state, blockEntity, null);
+      if (storage != null && storage.getCapacityAsInt() > 0) {
+        out.putInt(TAG_FE, storage.getAmountAsInt());
+        out.putInt(TAG_FE_MAX, storage.getCapacityAsInt());
       }
     }
 
     @Override
     public void lines(BlockState state, CompoundTag data, List<StatusLine> out) {
-      int max = data.getInt(TAG_FE_MAX);
+      int max = data.getIntOr(TAG_FE_MAX, 0);
       if (max <= 0) {
         return;
       }
-      int stored = data.getInt(TAG_FE);
+      int stored = data.getIntOr(TAG_FE, 0);
       out.add(new StatusLine.Bar(Math.min(1.0F, (float) stored / max), 0xFFC03030,
           Component.literal(TextComponentUtil.getFormattedEnergyUnit(stored) + " / "
               + TextComponentUtil.getFormattedEnergyUnit(max) + " FE")));
@@ -98,7 +99,7 @@ public final class GenericStatusSources {
       if (blockEntity == null) {
         return;
       }
-      IFluidHandler handler = blockEntity.getCapability(ForgeCapabilities.FLUID_HANDLER).orElse(null);
+      IFluidHandler handler = com.faktocraft.common.util.transfer.CapabilityBridge.fluidHandler(level, pos, null);
       if (handler == null) {
         return;
       }
@@ -110,7 +111,7 @@ public final class GenericStatusSources {
           continue;
         }
         CompoundTag tank = new CompoundTag();
-        tank.putString("fluid", String.valueOf(ForgeRegistries.FLUIDS.getKey(fluid.getFluid())));
+        tank.putString("fluid", String.valueOf(BuiltInRegistries.FLUID.getKey(fluid.getFluid())));
         tank.putInt("amount", fluid.getAmount());
         tank.putInt("capacity", capacity);
         tanks.add(tank);
@@ -122,11 +123,11 @@ public final class GenericStatusSources {
 
     @Override
     public void lines(BlockState state, CompoundTag data, List<StatusLine> out) {
-      for (Tag element : data.getList(TAG_FLUIDS, Tag.TAG_COMPOUND)) {
+      for (Tag element : data.getListOrEmpty(TAG_FLUIDS)) {
         CompoundTag tank = (CompoundTag) element;
-        int amount = tank.getInt("amount");
-        int capacity = Math.max(tank.getInt("capacity"), amount);
-        Fluid fluid = ForgeRegistries.FLUIDS.getValue(ResourceLocation.tryParse(tank.getString("fluid")));
+        int amount = tank.getIntOr("amount", 0);
+        int capacity = Math.max(tank.getIntOr("capacity", 0), amount);
+        Fluid fluid = BuiltInRegistries.FLUID.getValue(Identifier.tryParse(tank.getStringOr("fluid", "")));
         boolean empty = fluid == null || fluid == Fluids.EMPTY || amount <= 0;
         Component label = empty
             ? Component.literal("0 / " + capacity + " mB")
@@ -146,7 +147,7 @@ public final class GenericStatusSources {
       if (blockEntity == null) {
         return;
       }
-      IItemHandler handler = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+      IItemHandler handler = com.faktocraft.common.util.transfer.CapabilityBridge.itemHandler(level, pos, null);
       if (handler == null || handler.getSlots() == 0) {
         return;
       }
@@ -158,7 +159,7 @@ public final class GenericStatusSources {
           continue;
         }
         total += stack.getCount();
-        counts.merge(String.valueOf(ForgeRegistries.ITEMS.getKey(stack.getItem())), stack.getCount(),
+        counts.merge(String.valueOf(BuiltInRegistries.ITEM.getKey(stack.getItem())), stack.getCount(),
             Integer::sum);
       }
       out.putInt(TAG_ITEM_TOTAL, total);
@@ -181,17 +182,17 @@ public final class GenericStatusSources {
       if (!data.contains(TAG_ITEM_SLOTS)) {
         return;
       }
-      out.add(new StatusLine.Text(Component.translatable(key("items"), data.getInt(TAG_ITEM_TOTAL),
-          data.getInt(TAG_ITEM_SLOTS)).withStyle(ChatFormatting.GRAY)));
-      for (Tag element : data.getList(TAG_ITEMS, Tag.TAG_COMPOUND)) {
+      out.add(new StatusLine.Text(Component.translatable(key("items"), data.getIntOr(TAG_ITEM_TOTAL, 0),
+          data.getIntOr(TAG_ITEM_SLOTS, 0)).withStyle(ChatFormatting.GRAY)));
+      for (Tag element : data.getListOrEmpty(TAG_ITEMS)) {
         CompoundTag item = (CompoundTag) element;
-        net.minecraft.world.item.Item found = ForgeRegistries.ITEMS.getValue(
-            ResourceLocation.tryParse(item.getString("id")));
+        net.minecraft.world.item.Item found = BuiltInRegistries.ITEM.getValue(
+            Identifier.tryParse(item.getStringOr("id", "")));
         if (found == null) {
           continue;
         }
         ItemStack stack = new ItemStack(found);
-        out.add(new StatusLine.Item(stack, Component.literal(item.getInt("count") + "x ")
+        out.add(new StatusLine.Item(stack, Component.literal(item.getIntOr("count", 0) + "x ")
             .append(stack.getHoverName()).withStyle(ChatFormatting.GRAY)));
       }
     }
@@ -205,10 +206,10 @@ public final class GenericStatusSources {
       if (!(blockEntity instanceof AbstractFurnaceBlockEntity)) {
         return;
       }
-      CompoundTag saved = blockEntity.saveWithoutMetadata();
-      out.putInt(TAG_COOK, saved.getInt("CookTime"));
-      out.putInt(TAG_COOK_TOTAL, saved.getInt("CookTimeTotal"));
-      out.putBoolean(TAG_BURNING, saved.getInt("BurnTime") > 0);
+      CompoundTag saved = blockEntity.saveWithoutMetadata(NbtBridge.registries());
+      out.putInt(TAG_COOK, saved.getIntOr("CookTime", 0));
+      out.putInt(TAG_COOK_TOTAL, saved.getIntOr("CookTimeTotal", 0));
+      out.putBoolean(TAG_BURNING, saved.getIntOr("BurnTime", 0) > 0);
     }
 
     @Override
@@ -216,11 +217,11 @@ public final class GenericStatusSources {
       if (!data.contains(TAG_COOK)) {
         return;
       }
-      int total = data.getInt(TAG_COOK_TOTAL);
-      float ratio = total > 0 ? Math.min(1.0F, (float) data.getInt(TAG_COOK) / total) : 0.0F;
+      int total = data.getIntOr(TAG_COOK_TOTAL, 0);
+      float ratio = total > 0 ? Math.min(1.0F, (float) data.getIntOr(TAG_COOK, 0) / total) : 0.0F;
       out.add(new StatusLine.Bar(ratio, PROGRESS_COLOR,
           Component.translatable(key("progress")).append(" " + Math.round(ratio * 100.0F) + "%")));
-      if (data.getBoolean(TAG_BURNING)) {
+      if (data.getBooleanOr(TAG_BURNING, false)) {
         out.add(new StatusLine.Bar(1.0F, BURN_COLOR, Component.translatable(key("burning"))));
       }
     }

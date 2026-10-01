@@ -1,35 +1,33 @@
 package com.faktocraft.gametest.fluids;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.pipe.BlockEntityEnderTank;
 import com.faktocraft.common.registries.PipeRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestAssertException;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.CapabilityBridge;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 
-@net.minecraftforge.gametest.GameTestHolder(Faktocraft.MODID)
-@net.minecraftforge.gametest.PrefixGameTestTemplate(false)
 public class EnderTankGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
 
   private static BlockEntityEnderTank place(GameTestHelper helper, BlockPos rel, int code) {
     helper.setBlock(rel, PipeRegistry.ENDER_TANK.defaultBlockState());
-    if (!(helper.getBlockEntity(rel) instanceof BlockEntityEnderTank tank)) {
-      throw new GameTestAssertException("no ender tank at " + rel.toShortString());
+    if (!(TestUtil.blockEntity(helper, rel) instanceof BlockEntityEnderTank tank)) {
+      throw TestUtil.assertion(helper, "no ender tank at " + rel.toShortString());
     }
     tank.setCode(code);
     return tank;
   }
 
   private static IFluidHandler handler(GameTestHelper helper, BlockEntityEnderTank tank) {
-    return tank.getCapability(ForgeCapabilities.FLUID_HANDLER)
-        .orElseThrow(() -> new GameTestAssertException("ender tank without fluid handler"));
+    return CapabilityBridge.lazy(tank, ForgeCapabilities.FLUID_HANDLER, null)
+        .orElseThrow(() -> TestUtil.assertion(helper, "ender tank without fluid handler"));
   }
 
   private static int amount(GameTestHelper helper, BlockEntityEnderTank tank) {
@@ -70,8 +68,8 @@ public class EnderTankGameTest {
   @GameTest(template = TEMPLATE)
   public static void enderTankWithoutCodeRefusesFluid(GameTestHelper helper) {
     helper.setBlock(new BlockPos(1, 1, 1), PipeRegistry.ENDER_TANK.defaultBlockState());
-    if (!(helper.getBlockEntity(new BlockPos(1, 1, 1)) instanceof BlockEntityEnderTank tank)) {
-      throw new GameTestAssertException("no ender tank");
+    if (!(TestUtil.blockEntity(helper, new BlockPos(1, 1, 1)) instanceof BlockEntityEnderTank tank)) {
+      throw TestUtil.assertion(helper, "no ender tank");
     }
     helper.assertFalse(tank.hasCode(), "fresh tank should have no code");
     int filled = handler(helper, tank).fill(new FluidStack(Fluids.WATER, 1000), IFluidHandler.FluidAction.EXECUTE);

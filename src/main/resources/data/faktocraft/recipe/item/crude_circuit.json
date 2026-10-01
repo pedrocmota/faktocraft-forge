@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": "faktocraft:copper_cable_insulated",
+    "p": "#minecraft:planks",
+    "r": "#c:dusts/redstone"
+  },
+  "pattern": [
+    "pcp",
+    "crc",
+    "pcp"
+  ],
+  "result": {
+    "id": "faktocraft:crude_circuit"
+  }
+}

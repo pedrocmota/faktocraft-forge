@@ -1,5 +1,7 @@
 package com.faktocraft.common.block.impl.machines.iron_furnace;
 
+import com.faktocraft.common.util.FuelUtil;
+import com.faktocraft.common.util.ItemStackUtil;
 import com.faktocraft.common.entity.block.BlockEntityProgress;
 import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.entity.slot.FaktocraftSlot;
@@ -8,27 +10,25 @@ import com.faktocraft.common.enums.InventorySlotType;
 import com.faktocraft.common.interfaces.entity.IExpCollector;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketExperience;
-import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.registries.machines.M2Registry;
 import com.faktocraft.common.util.StackHandlerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
+import com.faktocraft.common.util.RecipeUtil;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.IItemHandler;
+import com.faktocraft.common.util.transfer.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class BlockEntityIronFurnace extends FaktocraftBlockEntity implements IEx
   public final BlockEntityProgress smelting = new BlockEntityProgress();
   public final BlockEntityProgress fuel = new BlockEntityProgress();
 
-  private final RecipeManager.CachedCheck<Container, SmeltingRecipe> quickCheck = RecipeManager
+  private final RecipeUtil.CachedCheck<SingleRecipeInput, SmeltingRecipe> quickCheck = RecipeUtil
       .createCheck(RecipeType.SMELTING);
 
   private ItemStack cachedInputStack = ItemStack.EMPTY;
@@ -64,23 +64,23 @@ public class BlockEntityIronFurnace extends FaktocraftBlockEntity implements IEx
     if (!(level instanceof ServerLevel serverLevel)) {
       return Optional.empty();
     }
-    return quickCheck.getRecipeFor(MachineRecipeInput.of(input), serverLevel);
+    return quickCheck.getRecipeFor(new SingleRecipeInput(input), serverLevel);
   }
 
   protected ItemStack getRecipeResult(ItemStack stack) {
     return furnaceRecipe != null && level != null
-        ? furnaceRecipe.assemble(MachineRecipeInput.of(stack), level.registryAccess())
+        ? furnaceRecipe.assemble(new SingleRecipeInput(stack))
         : ItemStack.EMPTY;
   }
 
   private boolean canSmelt(ItemStack inputStack, ItemStack outputStack, ItemStack resultStack) {
     return !inputStack.isEmpty() && !resultStack.isEmpty()
         && outputStack.getCount() < outputStack.getMaxStackSize()
-        && (outputStack.isEmpty() || ItemStack.isSameItemSameTags(outputStack, resultStack));
+        && (outputStack.isEmpty() || ItemStack.isSameItemSameComponents(outputStack, resultStack));
   }
 
   private float getSmeltTime() {
-    return furnaceRecipe != null ? furnaceRecipe.getCookingTime() : 200;
+    return furnaceRecipe != null ? furnaceRecipe.cookingTime() : 200;
   }
 
   @Override
@@ -93,7 +93,7 @@ public class BlockEntityIronFurnace extends FaktocraftBlockEntity implements IEx
 
     final ItemStack inputStack = itemStackHandler.getStackInSlot(INPUT_SLOT);
 
-    if (!ItemStack.isSameItemSameTags(cachedInputStack, inputStack)) {
+    if (!ItemStack.isSameItemSameComponents(cachedInputStack, inputStack)) {
       boolean hadInput = !cachedInputStack.isEmpty();
       SmeltingRecipe oldRecipe = furnaceRecipe;
       cachedInputStack = inputStack.copy();
@@ -135,11 +135,11 @@ public class BlockEntityIronFurnace extends FaktocraftBlockEntity implements IEx
       }
 
       if (canSmelt) {
-        final int burnTime = ForgeHooks.getBurnTime(fuelItemStack, RecipeType.SMELTING);
+        final int burnTime = FuelUtil.burnTime(level, fuelItemStack, this);
         if (burnTime > 0) {
           fuel.setBoth(burnTime * 1.20F);
 
-          ItemStack remainder = fuelItemStack.getCraftingRemainingItem();
+          ItemStack remainder = ItemStackUtil.craftingRemainder(fuelItemStack);
           StackHandlerHelper.shrinkInputStack(itemStackHandler, FUEL_SLOT, 1);
           if (!remainder.isEmpty()) {
             if (itemStackHandler.getStackInSlot(FUEL_SLOT).isEmpty()) {
@@ -167,12 +167,12 @@ public class BlockEntityIronFurnace extends FaktocraftBlockEntity implements IEx
   public boolean isItemValidForSlot(int slot, ItemStack stack) {
     if (slot == INPUT_SLOT) {
       if (level instanceof ServerLevel serverLevel) {
-        return quickCheck.getRecipeFor(MachineRecipeInput.of(stack), serverLevel).isPresent();
+        return quickCheck.getRecipeFor(new SingleRecipeInput(stack), serverLevel).isPresent();
       }
       return true;
     }
     if (slot == FUEL_SLOT) {
-      return level != null && ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0;
+      return level != null && FuelUtil.burnTime(level, stack, this) > 0;
     }
     return false;
   }
@@ -188,7 +188,7 @@ public class BlockEntityIronFurnace extends FaktocraftBlockEntity implements IEx
   @Override
   public float getExperience(Recipe<?> recipe) {
     if (recipe instanceof AbstractCookingRecipe cookingRecipe) {
-      return cookingRecipe.getExperience();
+      return cookingRecipe.experience();
     }
     return 0;
   }
@@ -255,12 +255,12 @@ public class BlockEntityIronFurnace extends FaktocraftBlockEntity implements IEx
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    activeState = tag.getBoolean("active");
+    activeState = tag.getBooleanOr("active", false);
     if (tag.contains("smelting")) {
-      smelting.load(tag.getCompound("smelting"));
+      smelting.load(tag.getCompoundOrEmpty("smelting"));
     }
     if (tag.contains("fuel")) {
-      fuel.load(tag.getCompound("fuel"));
+      fuel.load(tag.getCompoundOrEmpty("fuel"));
     }
   }
 

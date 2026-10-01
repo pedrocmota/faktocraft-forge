@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": "faktocraft:carbon_plate",
+    "w": "faktocraft:wind_rotor"
+  },
+  "pattern": [
+    " c ",
+    "cwc",
+    " c "
+  ],
+  "result": {
+    "id": "faktocraft:advanced_wind_rotor"
+  }
+}

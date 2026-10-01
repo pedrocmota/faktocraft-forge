@@ -7,19 +7,15 @@ import com.faktocraft.common.util.BlockStateHelper;
 import java.util.Locale;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.minecraft.world.level.levelgen.feature.Feature;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class RubberTreeGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -114,10 +110,10 @@ public class RubberTreeGameTest {
   private static Stats runFeature(GameTestHelper helper, String featureName) {
     ServerLevel level = helper.getLevel();
     BlockPos origin = helper.absolutePos(ORIGIN);
-    ResourceKey<ConfiguredFeature<?, ?>> key = ResourceKey.create(Registries.CONFIGURED_FEATURE,
-        new ResourceLocation(Faktocraft.MODID, featureName));
-    ConfiguredFeature<?, ?> feature = level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE)
-        .getOrThrow(key);
+    ResourceKey<Feature> key = ResourceKey.create(Registries.FEATURE,
+        Identifier.fromNamespaceAndPath(Faktocraft.MODID, featureName));
+    Feature feature = level.registryAccess().lookupOrThrow(Registries.FEATURE)
+        .getValueOrThrow(key);
     Stats stats = new Stats();
     for (int run = 0; run < RUNS; run++) {
       clearArea(level, origin);

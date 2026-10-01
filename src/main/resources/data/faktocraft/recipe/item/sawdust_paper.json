@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "S": "faktocraft:sawdust"
+  },
+  "pattern": [
+    "SSS"
+  ],
+  "result": {
+    "id": "minecraft:paper",
+    "count": 6
+  }
+}

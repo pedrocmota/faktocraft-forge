@@ -8,16 +8,15 @@ import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import static com.faktocraft.common.util.Constants.JEI_LARGE;
 import static com.faktocraft.common.util.Constants.JEI_LARGE_2;
@@ -25,8 +24,8 @@ import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class PolymerizingCategory extends AbstractRecipeCategory<PolymerizingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "polymerizing");
-  public static final RecipeType<PolymerizingRecipe> TYPE = new RecipeType<>(UID, PolymerizingRecipe.class);
+  public static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "polymerizing");
+  public static final IRecipeType<PolymerizingRecipe> TYPE = IRecipeType.create(UID, PolymerizingRecipe.class);
 
   private final LoadingCache<Integer, IDrawableAnimated> progress;
   private final IDrawableAnimated energy;
@@ -41,7 +40,7 @@ public class PolymerizingCategory extends AbstractRecipeCategory<PolymerizingRec
         "polymerizing",
         guiHelper,
         guiHelper.createDrawable(JEI_LARGE_2, 0, 110, 152, 54),
-        guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M3Registry.POLYMERIZER)));
+        guiHelper.createDrawableItemStack(new ItemStack(M3Registry.POLYMERIZER)));
     this.tankFrame = guiHelper.createDrawable(JEI_LARGE, 160, 165, 16, 37);
     this.slotFrame = guiHelper.createDrawable(JEI_LARGE, 180, 165, 18, 18);
     this.arrowBase = guiHelper.createDrawable(PROCESS, 0, 0, 24, 16);
@@ -55,16 +54,16 @@ public class PolymerizingCategory extends AbstractRecipeCategory<PolymerizingRec
   public void setRecipe(IRecipeLayoutBuilder builder, PolymerizingRecipe recipe, IFocusGroup focuses) {
     builder.addSlot(RecipeIngredientRole.INPUT, 38, 12)
         .setFluidRenderer(recipe.getFluidInput().amountMb(), false, 8, 29)
-        .addFluidStack(recipe.getFluidInput().getFluid(), recipe.getFluidInput().amountMb());
+        .add(recipe.getFluidInput().getFluid(), recipe.getFluidInput().amountMb());
 
     builder.addSlot(RecipeIngredientRole.INPUT, 60, 19)
         .addItemStacks(stacks(recipe.getIngredient(), recipe.getIngredientCount()));
 
-    builder.addSlot(RecipeIngredientRole.OUTPUT, 106, 19).addItemStack(recipe.getResult());
+    builder.addSlot(RecipeIngredientRole.OUTPUT, 106, 19).add(recipe.getResult());
   }
 
   @Override
-  public void draw(PolymerizingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics,
+  public void draw(PolymerizingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor graphics,
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 

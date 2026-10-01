@@ -47,28 +47,28 @@ public class PipeRegistry {
       net.minecraft.world.item.Rarity.UNCOMMON);
 
   public static final Item MOTOR_CHAMBER = RegistrationHandler.item("motor_chamber",
-      new Item(new Item.Properties()));
+      new Item(RegistrationHandler.itemProperties("motor_chamber")));
 
   public static final Item PUMP_TUBE = RegistrationHandler.item("pump_tube",
-      new Item(new Item.Properties()));
+      new Item(RegistrationHandler.itemProperties("pump_tube")));
 
   public static final Item BREAKER_HANDLE = RegistrationHandler.item("breaker_handle",
-      new Item(new Item.Properties()));
+      new Item(RegistrationHandler.itemProperties("breaker_handle")));
 
   public static final Item BREAKER_DIAL = RegistrationHandler.item("breaker_dial",
-      new Item(new Item.Properties()));
+      new Item(RegistrationHandler.itemProperties("breaker_dial")));
 
   public static final Item PIPE_SUPPORT = RegistrationHandler.item("pipe_support",
-      new Item(new Item.Properties()));
+      new Item(RegistrationHandler.itemProperties("pipe_support")));
 
   public static final Item VALVE_WHEEL = RegistrationHandler.item("valve_wheel",
-      new Item(new Item.Properties()));
+      new Item(RegistrationHandler.itemProperties("valve_wheel")));
 
   public static final Item PIPE_VALVE_BODY = RegistrationHandler.item("pipe_valve_body",
-      new Item(new Item.Properties()));
+      new Item(RegistrationHandler.itemProperties("pipe_valve_body")));
 
   public static final Item VALVE_GATE = RegistrationHandler.item("valve_gate",
-      new Item(new Item.Properties()));
+      new Item(RegistrationHandler.itemProperties("valve_gate")));
 
   public static final BlockEntityType<
       com.faktocraft.common.block.impl.pipe.BlockEntityFluidPipe> FLUID_PIPE_BLOCK_ENTITY = RegistrationHandler

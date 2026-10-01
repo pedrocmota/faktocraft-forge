@@ -1,5 +1,8 @@
 package com.faktocraft.common.item.impl.tools;
 
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.cable.BlockEntityCable;
 import com.faktocraft.common.energy.EnergyLookup;
@@ -22,8 +25,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class IEMeter extends BaseItem {
 
@@ -32,9 +33,11 @@ public class IEMeter extends BaseItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("ie." + Faktocraft.MODID + ".desc").withStyle(ChatFormatting.GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+  @SuppressWarnings("deprecation")
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("ie." + Faktocraft.MODID + ".desc").withStyle(ChatFormatting.GRAY));
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 
   @Override

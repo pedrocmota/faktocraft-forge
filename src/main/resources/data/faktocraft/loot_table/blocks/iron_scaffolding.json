@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:iron_scaffolding"
+        }
+      ],
+      "name": "IRON_SCAFFOLDING",
+      "rolls": 1
+    }
+  ]
+}

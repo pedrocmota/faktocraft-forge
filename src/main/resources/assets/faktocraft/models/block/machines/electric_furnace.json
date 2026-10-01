@@ -1,9 +1,9 @@
 {
-	"parent": "block/orientable",
-	"textures": {
-		"front": "faktocraft:block/machines/electric_furnace_front",
-		"top": "faktocraft:block/machines/electric_furnace_top",
-		"bottom": "faktocraft:block/machines/electric_furnace_bottom",
-		"side": "faktocraft:block/machines/electric_furnace_side"
-	}
+  "parent": "block/orientable",
+  "textures": {
+    "front": "faktocraft:block/machines/electric_furnace_front",
+    "top": "faktocraft:block/machines/electric_furnace_top",
+    "bottom": "faktocraft:block/machines/electric_furnace_bottom",
+    "side": "faktocraft:block/machines/electric_furnace_side"
+  }
 }

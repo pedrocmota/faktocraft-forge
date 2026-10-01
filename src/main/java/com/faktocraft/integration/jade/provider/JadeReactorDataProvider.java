@@ -3,7 +3,7 @@ package com.faktocraft.integration.jade.provider;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.nuclear_reactor.BlockEntityNuclearReactor;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IServerDataProvider;
 
@@ -16,10 +16,10 @@ public class JadeReactorDataProvider implements IServerDataProvider<BlockAccesso
   public static final String TAG_STATUS = "faktocraftReactorStatus";
   public static final String TAG_RODS = "faktocraftReactorRods";
 
-  private static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "reactor_info_data");
+  private static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "reactor_info_data");
 
   @Override
-  public ResourceLocation getUid() {
+  public Identifier getUid() {
     return UID;
   }
 

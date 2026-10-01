@@ -1,29 +1,3 @@
 {
-  "parent": "faktocraft:item/battery/charging_lapotron_crystal_0",
-  "overrides": [
-    {
-      "predicate": {
-        "faktocraft:charge_ratio": 0.001
-      },
-      "model": "faktocraft:item/battery/charging_lapotron_crystal_1"
-    },
-    {
-      "predicate": {
-        "faktocraft:charge_ratio": 0.5
-      },
-      "model": "faktocraft:item/battery/charging_lapotron_crystal_2"
-    },
-    {
-      "predicate": {
-        "faktocraft:charge_ratio": 0.75
-      },
-      "model": "faktocraft:item/battery/charging_lapotron_crystal_3"
-    },
-    {
-      "predicate": {
-        "faktocraft:charge_ratio": 0.999
-      },
-      "model": "faktocraft:item/battery/charging_lapotron_crystal_4"
-    }
-  ]
+  "parent": "faktocraft:item/battery/charging_lapotron_crystal_0"
 }

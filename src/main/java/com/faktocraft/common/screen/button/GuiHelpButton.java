@@ -1,7 +1,8 @@
 package com.faktocraft.common.screen.button;
 
+import com.faktocraft.common.util.GuiUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
@@ -14,7 +15,7 @@ public class GuiHelpButton extends Button {
   }
 
   @Override
-  protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+  protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
     int line = isHoveredOrFocused() ? 0xFF101010 : 0xFF4A4A4A;
     int fill = isHoveredOrFocused() ? 0x50FFFFFF : 0x30FFFFFF;
     int x = getX();
@@ -24,6 +25,6 @@ public class GuiHelpButton extends Button {
     graphics.fill(x + 1, y + 10, x + 11, y + 11, line);
     graphics.fill(x + 1, y + 1, x + 2, y + 11, line);
     graphics.fill(x + 10, y + 1, x + 11, y + 11, line);
-    graphics.drawString(Minecraft.getInstance().font, "?", x + 4, y + 2, line, false);
+    graphics.text(Minecraft.getInstance().font, "?", x + 4, y + 2, GuiUtil.opaque(line), false);
   }
 }

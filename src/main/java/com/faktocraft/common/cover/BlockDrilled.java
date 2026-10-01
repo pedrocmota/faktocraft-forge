@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,7 +19,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
@@ -49,9 +49,9 @@ public class BlockDrilled extends FaktocraftBlock implements EntityBlock {
     return BlockBehaviour.Properties.of()
         .strength(1.5F, 6.0F)
         .noOcclusion()
-        .pushReaction(PushReaction.BLOCK)
+        .pushReaction(PushReaction.IMMOVEABLE)
         .isSuffocating((state, level, pos) -> true)
-        .isViewBlocking((state, level, pos) -> true);
+        .isViewBlocking((state, level, pos, box) -> true);
   }
 
   @Nullable
@@ -69,18 +69,17 @@ public class BlockDrilled extends FaktocraftBlock implements EntityBlock {
   public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
       BlockHitResult hitResult) {
     if (CoverSupport.tryPlaceHeldInto(level, pos, player, hand)) {
-      return InteractionResult.sidedSuccess(level.isClientSide());
+      return InteractionResult.SUCCESS;
     }
     return super.use(state, level, pos, player, hand, hitResult);
   }
 
   @Override
-  public int getLightBlock(BlockState state, BlockGetter level, BlockPos pos) {
+  protected int getLightDampening(BlockState state) {
     return CoverSupport.HOLE_LIGHT_BLOCK;
   }
 
   @Override
-  @SuppressWarnings("deprecation")
   public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
     BlockState cover = cover(level, pos);
     return cover != null ? cover.getDestroyProgress(player, level, pos) : super.getDestroyProgress(state, player,
@@ -102,16 +101,15 @@ public class BlockDrilled extends FaktocraftBlock implements EntityBlock {
   }
 
   @Override
-  public SoundType getSoundType(BlockState state, net.minecraft.world.level.LevelReader level, BlockPos pos,
-      @Nullable Entity entity) {
+  public SoundType getSoundType(BlockState state, LevelReader level, BlockPos pos, @Nullable Entity entity) {
     BlockState cover = cover(level, pos);
     return cover != null ? cover.getSoundType(level, pos, entity) : super.getSoundType(state, level, pos, entity);
   }
 
   @Override
-  public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos,
+  public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData,
       Player player) {
     BlockState cover = cover(level, pos);
-    return cover != null ? cover.getCloneItemStack(target, level, pos, player) : ItemStack.EMPTY;
+    return cover != null ? cover.getCloneItemStack(pos, level, includeData, player) : ItemStack.EMPTY;
   }
 }

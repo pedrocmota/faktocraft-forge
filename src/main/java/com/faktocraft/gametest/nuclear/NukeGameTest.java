@@ -1,6 +1,5 @@
 package com.faktocraft.gametest.nuclear;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.nuke.BlockEntityNuke;
 import com.faktocraft.common.block.impl.nuke.BlockNuke;
 import com.faktocraft.common.block.impl.nuke.NukeBlast;
@@ -11,17 +10,13 @@ import com.faktocraft.common.config.ServerConfig;
 import com.faktocraft.common.radiation.RadiationSources;
 import com.faktocraft.common.registries.ModBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class NukeGameTest {
-
   private static final String TEMPLATE = "gametest_platform";
   private static final BlockPos NUKE = new BlockPos(5, 2, 5);
 
@@ -110,7 +105,7 @@ public class NukeGameTest {
     helper.succeed();
   }
 
-  @GameTest(template = TEMPLATE, timeoutTicks = 40)
+  @GameTest(template = TEMPLATE, timeoutTicks = 40, batch = "nukeDecontaminate")
   public static void decontaminatorWipesFalloutNearby(GameTestHelper helper) {
     RadiationSources sources = RadiationSources.get(helper.getLevel());
     BlockPos crater = helper.absolutePos(NUKE);
@@ -134,7 +129,7 @@ public class NukeGameTest {
     try {
       helper.setBlock(NUKE, ModBlocks.NUKE.defaultBlockState());
       boolean primed = BlockNuke.prime(helper.getLevel(), helper.absolutePos(NUKE), null);
-      boolean armed = helper.getBlockEntity(NUKE) instanceof BlockEntityNuke nuke && nuke.isPrimed();
+      boolean armed = TestUtil.blockEntity(helper, NUKE) instanceof BlockEntityNuke nuke && nuke.isPrimed();
       if (primed || armed) {
         helper.fail("a disabled nuke was primed");
       }

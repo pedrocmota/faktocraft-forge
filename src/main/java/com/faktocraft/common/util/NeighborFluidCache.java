@@ -4,9 +4,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.CapabilityBridge;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
@@ -38,7 +39,7 @@ public final class NeighborFluidCache {
     }
     BlockEntity neighbor = level.getBlockEntity(neighborPos);
     if (neighbor != null) {
-      LazyOptional<IFluidHandler> cap = neighbor.getCapability(ForgeCapabilities.FLUID_HANDLER,
+      LazyOptional<IFluidHandler> cap = CapabilityBridge.lazy(neighbor, ForgeCapabilities.FLUID_HANDLER,
           direction.getOpposite());
       if (cap.isPresent()) {
         cache.put(direction, new Entry(cap, currentState));

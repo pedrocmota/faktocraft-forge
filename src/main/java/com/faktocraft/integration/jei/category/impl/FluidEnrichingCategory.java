@@ -8,24 +8,23 @@ import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import static com.faktocraft.common.util.Constants.JEI_LARGE;
 import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class FluidEnrichingCategory extends AbstractRecipeCategory<FluidEnrichingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "fluid_enriching");
-  public static final RecipeType<FluidEnrichingRecipe> TYPE = new RecipeType<>(UID, FluidEnrichingRecipe.class);
+  public static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "fluid_enriching");
+  public static final IRecipeType<FluidEnrichingRecipe> TYPE = IRecipeType.create(UID, FluidEnrichingRecipe.class);
 
   private final LoadingCache<Integer, IDrawableAnimated> progress;
   private final IDrawableAnimated energy;
@@ -40,7 +39,7 @@ public class FluidEnrichingCategory extends AbstractRecipeCategory<FluidEnrichin
         "fluid_enriching",
         guiHelper,
         guiHelper.createDrawable(JEI_LARGE, 0, 165, 152, 54),
-        guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M3Registry.FLUID_ENRICHER)));
+        guiHelper.createDrawableItemStack(new ItemStack(M3Registry.FLUID_ENRICHER)));
     this.tankFrame = guiHelper.createDrawable(JEI_LARGE, 160, 165, 16, 37);
     this.slotFrame = guiHelper.createDrawable(JEI_LARGE, 180, 165, 18, 18);
     this.mixArrow = guiHelper.createDrawable(JEI_LARGE, 200, 165, 15, 13);
@@ -61,7 +60,7 @@ public class FluidEnrichingCategory extends AbstractRecipeCategory<FluidEnrichin
           .addItemStacks(stacks(recipe.getIngredient(), recipe.getIngredientCount()));
       builder.addSlot(RecipeIngredientRole.INPUT, 50, 12)
           .setFluidRenderer(recipe.getFluidInput().amountMb(), false, 8, 29)
-          .addFluidStack(recipe.getFluidInput().getFluid(), recipe.getFluidInput().amountMb());
+          .add(recipe.getFluidInput().getFluid(), recipe.getFluidInput().amountMb());
     } else {
       builder.addSlot(RecipeIngredientRole.INPUT, 8, 10)
           .addItemStacks(stacks(recipe.getIngredient(), recipe.getIngredientCount()));
@@ -69,18 +68,18 @@ public class FluidEnrichingCategory extends AbstractRecipeCategory<FluidEnrichin
           .addItemStacks(stacks(second.ingredient(), second.count())));
       builder.addSlot(RecipeIngredientRole.INPUT, 37, 12)
           .setFluidRenderer(recipe.getFluidInput().amountMb(), false, 8, 29)
-          .addFluidStack(recipe.getFluidInput().getFluid(), recipe.getFluidInput().amountMb());
+          .add(recipe.getFluidInput().getFluid(), recipe.getFluidInput().amountMb());
       recipe.getFluidInput2().ifPresent(second -> builder.addSlot(RecipeIngredientRole.INPUT, 55, 12)
           .setFluidRenderer(second.amountMb(), false, 8, 29)
-          .addFluidStack(second.getFluid(), second.amountMb()));
+          .add(second.getFluid(), second.amountMb()));
     }
     builder.addSlot(RecipeIngredientRole.OUTPUT, 106, 12)
         .setFluidRenderer(recipe.getResult().amountMb(), false, 8, 29)
-        .addFluidStack(recipe.getResult().getFluid(), recipe.getResult().amountMb());
+        .add(recipe.getResult().getFluid(), recipe.getResult().amountMb());
   }
 
   @Override
-  public void draw(FluidEnrichingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics,
+  public void draw(FluidEnrichingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor graphics,
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 

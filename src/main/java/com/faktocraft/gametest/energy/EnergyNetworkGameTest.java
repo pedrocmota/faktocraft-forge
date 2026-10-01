@@ -1,6 +1,5 @@
 package com.faktocraft.gametest.energy;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.generators.combustion_generator.BlockEntityCombustionGenerator;
 import com.faktocraft.common.block.impl.transformer.BlockEntityTransformer;
 import com.faktocraft.common.enums.EnergyTier;
@@ -11,16 +10,13 @@ import com.faktocraft.common.registries.ModBlocks;
 import com.faktocraft.common.registries.machines.M1Registry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class EnergyNetworkGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -42,20 +38,20 @@ public class EnergyNetworkGameTest {
 
   private static void placeTransformer(GameTestHelper helper, BlockPos rel, Block block, Direction facing) {
     place(helper, rel, block, facing);
-    if (helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be) {
+    if (TestUtil.blockEntity(helper, rel) instanceof FaktocraftBlockEntity be) {
       be.setRedstoneOnly(false);
     }
   }
 
   private static void fillEnergy(GameTestHelper helper, BlockPos rel) {
-    if (helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be) {
+    if (TestUtil.blockEntity(helper, rel) instanceof FaktocraftBlockEntity be) {
       be.getEnergyStorage().setEnergy(be.getEnergyStorage().maxEnergy());
     }
   }
 
   private static void succeedWhenCharged(GameTestHelper helper, BlockPos rel) {
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be)) {
+      if (!(TestUtil.blockEntity(helper, rel) instanceof FaktocraftBlockEntity be)) {
         helper.fail("no transformer block entity");
         return;
       }
@@ -69,7 +65,7 @@ public class EnergyNetworkGameTest {
   private static String describe(GameTestHelper helper) {
     StringBuilder sb = new StringBuilder("transformer has no energy;");
     BlockPos origin = helper.absolutePos(BlockPos.ZERO);
-    if (helper.getBlockEntity(new BlockPos(1, 1, 1)) instanceof FaktocraftBlockEntity mfe) {
+    if (TestUtil.blockEntity(helper, new BlockPos(1, 1, 1)) instanceof FaktocraftBlockEntity mfe) {
       sb.append(" mfe=").append(mfe.getEnergyStorage().energyStored())
           .append('/').append(mfe.getEnergyStorage().maxEnergy())
           .append(" ext=").append(mfe.getEnergyStorage().maxExtract());
@@ -111,9 +107,9 @@ public class EnergyNetworkGameTest {
   }
 
   private static void fuelCombustionGenerator(GameTestHelper helper, BlockPos rel) {
-    if (helper.getBlockEntity(
+    if (TestUtil.blockEntity(helper,
         rel) instanceof BlockEntityCombustionGenerator be) {
-      be.fluidStorage.fillFluid(new net.minecraftforge.fluids.FluidStack(
+      be.fluidStorage.fillFluid(new net.neoforged.neoforge.fluids.FluidStack(
           com.faktocraft.common.fluid.ModFluids.BIOGAS.still(), 8000), 8000, false);
     }
   }
@@ -148,7 +144,7 @@ public class EnergyNetworkGameTest {
     }
 
     helper.runAfterDelay(300, () -> {
-      if (!(helper.getBlockEntity(gen) instanceof FaktocraftBlockEntity be)) {
+      if (!(TestUtil.blockEntity(helper, gen) instanceof FaktocraftBlockEntity be)) {
         helper.fail("no generator block entity");
         return;
       }
@@ -187,7 +183,7 @@ public class EnergyNetworkGameTest {
     }
 
     helper.runAfterDelay(125, () -> {
-      if (!(helper.getBlockEntity(gen) instanceof FaktocraftBlockEntity genBe)) {
+      if (!(TestUtil.blockEntity(helper, gen) instanceof FaktocraftBlockEntity genBe)) {
         helper.fail("no generator block entity");
         return;
       }
@@ -195,13 +191,13 @@ public class EnergyNetworkGameTest {
         helper.fail("saturated chain drew charge: generator at " + genBe.getEnergyStorage().energyStored());
         return;
       }
-      if (helper.getBlockEntity(mfe) instanceof FaktocraftBlockEntity mfeBe) {
+      if (TestUtil.blockEntity(helper, mfe) instanceof FaktocraftBlockEntity mfeBe) {
         mfeBe.getEnergyStorage().setEnergy(mfeBe.getEnergyStorage().maxEnergy() - 500);
       }
     });
 
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(mfe) instanceof FaktocraftBlockEntity be)) {
+      if (!(TestUtil.blockEntity(helper, mfe) instanceof FaktocraftBlockEntity be)) {
         helper.fail("no mfe block entity");
         return;
       }
@@ -224,7 +220,7 @@ public class EnergyNetworkGameTest {
     fuelCombustionGenerator(helper, gen);
 
     helper.runAfterDelay(60, () -> {
-      if (!(helper.getBlockEntity(gen) instanceof FaktocraftBlockEntity be)) {
+      if (!(TestUtil.blockEntity(helper, gen) instanceof FaktocraftBlockEntity be)) {
         helper.fail("no generator block entity");
         return;
       }
@@ -236,7 +232,7 @@ public class EnergyNetworkGameTest {
     });
 
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(machine) instanceof FaktocraftBlockEntity be)) {
+      if (!(TestUtil.blockEntity(helper, machine) instanceof FaktocraftBlockEntity be)) {
         helper.fail("machine not placed yet");
         return;
       }
@@ -266,9 +262,9 @@ public class EnergyNetworkGameTest {
 
     fillEnergy(helper, gen);
     fillEnergy(helper, mfe);
-    if (helper.getBlockEntity(
+    if (TestUtil.blockEntity(helper,
         gen) instanceof BlockEntityCombustionGenerator be) {
-      be.fluidStorage.fillFluid(new net.minecraftforge.fluids.FluidStack(
+      be.fluidStorage.fillFluid(new net.neoforged.neoforge.fluids.FluidStack(
           com.faktocraft.common.fluid.ModFluids.BIOGAS.still(), 8000), 8000, false);
     }
 
@@ -293,7 +289,7 @@ public class EnergyNetworkGameTest {
     }
 
     helper.runAfterDelay(460, () -> {
-      if (!(helper.getBlockEntity(gen) instanceof FaktocraftBlockEntity be)) {
+      if (!(TestUtil.blockEntity(helper, gen) instanceof FaktocraftBlockEntity be)) {
         helper.fail("no generator block entity");
         return;
       }
@@ -311,7 +307,7 @@ public class EnergyNetworkGameTest {
   public static void veryHighTransformerOnlyStepsDown(GameTestHelper helper) {
     BlockPos transformer = new BlockPos(1, 1, 1);
     placeTransformer(helper, transformer, M1Registry.VERY_HIGH_TRANSFORMER, Direction.EAST);
-    if (!(helper.getBlockEntity(transformer) instanceof BlockEntityTransformer be)) {
+    if (!(TestUtil.blockEntity(helper, transformer) instanceof BlockEntityTransformer be)) {
       helper.fail("no transformer block entity");
       return;
     }
@@ -625,7 +621,8 @@ public class EnergyNetworkGameTest {
         net.minecraft.world.phys.Vec3.atCenterOf(clickedAbs).add(0, 0.5, 0),
         Direction.UP, clickedAbs, false);
     var context = new net.minecraft.world.item.context.BlockPlaceContext(
-        helper.makeMockPlayer(), net.minecraft.world.InteractionHand.MAIN_HAND,
+        helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE),
+        net.minecraft.world.InteractionHand.MAIN_HAND,
         new ItemStack(com.faktocraft.common.registries.ModItems.CIRCUIT_BREAKER), hit);
     BlockState state = ModBlocks.CIRCUIT_BREAKER.getStateForPlacement(context);
     if (state == null
@@ -653,12 +650,12 @@ public class EnergyNetworkGameTest {
     placeBreaker(helper, breaker, Direction.Axis.X, Direction.UP);
     helper.runAfterDelay(40, () -> toggleBreaker(helper, breaker, false));
     helper.runAfterDelay(45, () -> {
-      if (helper.getBlockEntity(transformer) instanceof FaktocraftBlockEntity be) {
+      if (TestUtil.blockEntity(helper, transformer) instanceof FaktocraftBlockEntity be) {
         be.getEnergyStorage().setEnergy(0);
       }
     });
     helper.runAfterDelay(80, () -> {
-      if (helper.getBlockEntity(transformer) instanceof FaktocraftBlockEntity be
+      if (TestUtil.blockEntity(helper, transformer) instanceof FaktocraftBlockEntity be
           && be.getEnergyStorage().energyStored() > 0) {
         helper.fail("breaker off did not cut the flow");
       }
@@ -773,7 +770,7 @@ public class EnergyNetworkGameTest {
     placeCable(helper, new BlockPos(4, 1, 1), ModBlocks.GOLD_CABLE_INSULATED);
     placeCable(helper, new BlockPos(4, 1, 2), ModBlocks.GOLD_CABLE_INSULATED);
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(receiver) instanceof FaktocraftBlockEntity be)
+      if (!(TestUtil.blockEntity(helper, receiver) instanceof FaktocraftBlockEntity be)
           || be.getEnergyStorage().energyStored() <= 0) {
         helper.fail("receiver MFE not charged; " + describe(helper));
       }
@@ -781,7 +778,7 @@ public class EnergyNetworkGameTest {
   }
 
   private static int stored(GameTestHelper helper, BlockPos rel) {
-    return helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be
+    return TestUtil.blockEntity(helper, rel) instanceof FaktocraftBlockEntity be
         ? be.getEnergyStorage().energyStored()
         : -1;
   }
@@ -799,16 +796,16 @@ public class EnergyNetworkGameTest {
     placeCable(helper, new BlockPos(3, 1, 3), ModBlocks.TIN_CABLE_INSULATED);
     fillEnergy(helper, genHigh);
     fillEnergy(helper, genLow);
-    if (helper.getBlockEntity(genHigh) instanceof FaktocraftBlockEntity highBe) {
+    if (TestUtil.blockEntity(helper, genHigh) instanceof FaktocraftBlockEntity highBe) {
       highBe.setGeneratorPriorityMode(5);
     }
-    if (helper.getBlockEntity(genLow) instanceof FaktocraftBlockEntity lowBe) {
+    if (TestUtil.blockEntity(helper, genLow) instanceof FaktocraftBlockEntity lowBe) {
       lowBe.setGeneratorPriorityMode(1);
     }
     helper.runAfterDelay(30, () -> {
       int high = stored(helper, genHigh);
       int low = stored(helper, genLow);
-      int max = helper.getBlockEntity(genLow) instanceof FaktocraftBlockEntity be
+      int max = TestUtil.blockEntity(helper, genLow) instanceof FaktocraftBlockEntity be
           ? be.getEnergyStorage().maxEnergy()
           : -1;
       if (high >= max) {
@@ -830,20 +827,20 @@ public class EnergyNetworkGameTest {
     placeCable(helper, new BlockPos(3, 1, 1), ModBlocks.TIN_CABLE_INSULATED);
     fillEnergy(helper, gen);
     final int initialLava = 1000;
-    if (helper.getBlockEntity(
+    if (TestUtil.blockEntity(helper,
         gen) instanceof com.faktocraft.common.block.impl.generators.geo_generator.BlockEntityGeoGenerator geoBe) {
-      geoBe.fluidStorage.fillFluid(new net.minecraftforge.fluids.FluidStack(
+      geoBe.fluidStorage.fillFluid(new net.neoforged.neoforge.fluids.FluidStack(
           net.minecraft.world.level.material.Fluids.LAVA, initialLava), initialLava, false);
     }
     helper.runAfterDelay(8, () -> {
-      int lava = helper.getBlockEntity(
+      int lava = TestUtil.blockEntity(helper,
           gen) instanceof com.faktocraft.common.block.impl.generators.geo_generator.BlockEntityGeoGenerator geoBe
               ? geoBe.fluidStorage.getFluidAmount()
               : -1;
       if (lava != initialLava) {
         helper.fail("lava consumed above the restart threshold: " + lava + "/" + initialLava);
       }
-      int max = helper.getBlockEntity(gen) instanceof FaktocraftBlockEntity be
+      int max = TestUtil.blockEntity(helper, gen) instanceof FaktocraftBlockEntity be
           ? be.getEnergyStorage().maxEnergy()
           : -1;
       if (stored(helper, gen) >= max) {
@@ -851,7 +848,7 @@ public class EnergyNetworkGameTest {
       }
     });
     helper.runAfterDelay(120, () -> {
-      int lava = helper.getBlockEntity(
+      int lava = TestUtil.blockEntity(helper,
           gen) instanceof com.faktocraft.common.block.impl.generators.geo_generator.BlockEntityGeoGenerator geoBe
               ? geoBe.fluidStorage.getFluidAmount()
               : -1;
@@ -903,7 +900,7 @@ public class EnergyNetworkGameTest {
           return;
         }
       }
-      if (!(helper.getBlockEntity(transformer) instanceof FaktocraftBlockEntity be)
+      if (!(TestUtil.blockEntity(helper, transformer) instanceof FaktocraftBlockEntity be)
           || be.getEnergyStorage().energyStored() <= 0) {
         helper.fail("transformer behind the breaker never charged");
         return;

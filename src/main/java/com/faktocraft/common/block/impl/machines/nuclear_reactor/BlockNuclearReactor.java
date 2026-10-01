@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.machines.nuclear_reactor;
 
+import com.faktocraft.common.util.PlayerMessages;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.container.FaktocraftMenuProvider;
 import com.faktocraft.common.energy.provider.EnergyCore;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -37,11 +39,9 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockNuclearReactor extends Block implements EntityBlock, IHasMenu {
-
   public static final EnumProperty<ReactorPart> PART = EnumProperty.create("part", ReactorPart.class);
   public static final BooleanProperty PLACED = BooleanProperty.create("placed");
   public static final ReactorPart CORE_PART = ReactorPart.of(ReactorPart.SIZE / 2, ReactorPart.SIZE - 1,
@@ -57,7 +57,7 @@ public class BlockNuclearReactor extends Block implements EntityBlock, IHasMenu 
         .mapColor(MapColor.METAL)
         .strength(5F, 12F)
         .sound(SoundType.METAL)
-        .pushReaction(PushReaction.BLOCK)
+        .pushReaction(PushReaction.IMMOVEABLE)
         .requiresCorrectToolForDrops();
   }
 
@@ -83,22 +83,31 @@ public class BlockNuclearReactor extends Block implements EntityBlock, IHasMenu 
     }
     Player player = context.getPlayer();
     if (player != null && level.isClientSide()) {
-      player.displayClientMessage(Component.translatable("chat." + Faktocraft.MODID + ".nuclear_reactor.needs_cube")
+      PlayerMessages.display(player, Component.translatable("chat." + Faktocraft.MODID + ".nuclear_reactor.needs_cube")
           .withStyle(ChatFormatting.RED), true);
     }
     return null;
   }
 
-  @SuppressWarnings("deprecation")
   @Override
   public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
     super.onPlace(state, level, pos, oldState, isMoving);
+    if (oldState.is(this) && level instanceof ServerLevel serverLevel) {
+      ReactorPart part = oldState.getValue(PART);
+      boolean partGone = !part.isSingle() && state.getValue(PART) != part;
+      if (partGone) {
+        if (isCore(oldState) && level.getBlockEntity(pos) instanceof FaktocraftBlockEntity blockEntity) {
+          blockEntity.preRemoveSideEffects(pos, oldState);
+        }
+        EnergyCore.get(serverLevel).removeEnergyBlock(pos);
+        level.removeBlockEntity(pos);
+      }
+    }
     if (!isMoving && state.getValue(PART).isSingle() && !oldState.is(this) && !level.isClientSide()) {
       level.scheduleTick(pos, this, 1);
     }
   }
 
-  @SuppressWarnings("deprecation")
   @Override
   public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
     super.tick(state, level, pos, random);
@@ -107,24 +116,14 @@ public class BlockNuclearReactor extends Block implements EntityBlock, IHasMenu 
     }
   }
 
-  @SuppressWarnings("deprecation")
   @Override
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-    ReactorPart part = state.getValue(PART);
-    boolean partGone = !part.isSingle() && !(newState.is(this) && newState.getValue(PART) == part);
-    if (partGone && level instanceof ServerLevel serverLevel) {
-      if (isCore(state) && level.getBlockEntity(pos) instanceof FaktocraftBlockEntity blockEntity) {
-        blockEntity.preRemoveSideEffects(pos, state);
-      }
-      EnergyCore.get(serverLevel).removeEnergyBlock(pos);
+  protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos,
+      boolean movedByPiston) {
+    super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+    if (!state.getValue(PART).isSingle()) {
+      EnergyCore.get(level).removeEnergyBlock(pos);
     }
-    if (partGone) {
-      level.removeBlockEntity(pos);
-    }
-    if (!newState.is(this)) {
-      NuclearReactorMultiblock.unform(level, pos, state.getValue(PART));
-    }
-    super.onRemove(state, level, pos, newState, isMoving);
+    NuclearReactorMultiblock.unform(level, pos, state.getValue(PART));
   }
 
   @Override
@@ -185,8 +184,8 @@ public class BlockNuclearReactor extends Block implements EntityBlock, IHasMenu 
   }
 
   @Override
-  public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
-      BlockHitResult hitResult) {
+  protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+      InteractionHand hand, BlockHitResult hitResult) {
     if (!isCore(state) || !(level.getBlockEntity(pos) instanceof BlockEntityNuclearReactor reactor)) {
       return InteractionResult.PASS;
     }
@@ -197,11 +196,11 @@ public class BlockNuclearReactor extends Block implements EntityBlock, IHasMenu 
         return InteractionResult.SUCCESS;
       }
       if (player instanceof ServerPlayer serverPlayer) {
-        NetworkHooks.openScreen(serverPlayer, new FaktocraftMenuProvider(this, level, core, getName()),
+        serverPlayer.openMenu(new FaktocraftMenuProvider(this, level, core, getName()),
             buf -> buf.writeBlockPos(core));
       }
     }
-    return InteractionResult.sidedSuccess(level.isClientSide());
+    return InteractionResult.SUCCESS;
   }
 
   @Override

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "x": "#c:storage_blocks/steel"
+  },
+  "pattern": [
+    "x  "
+  ],
+  "result": {
+    "id": "faktocraft:steel_ingot",
+    "count": 9
+  }
+}

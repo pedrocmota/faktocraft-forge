@@ -4,17 +4,16 @@ import com.faktocraft.common.entity.block.FluidStorage;
 import com.faktocraft.common.item.base.FluidItem;
 import com.faktocraft.common.item.impl.FluidCell;
 import com.faktocraft.common.util.FluidInteractionHelper;
+import com.faktocraft.common.util.FluidInteractionHelper.FluidActionResult;
 import com.faktocraft.common.util.ItemStackHandler;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 
 public final class FluidCellTankHelper {
 
@@ -43,8 +42,8 @@ public final class FluidCellTankHelper {
       return false;
     }
     FluidActionResult result = fill
-        ? FluidUtil.tryFillContainer(up, tank, Integer.MAX_VALUE, null, true)
-        : FluidUtil.tryEmptyContainer(up, tank, Integer.MAX_VALUE, null, true);
+        ? FluidInteractionHelper.tryFillContainer(up, tank, Integer.MAX_VALUE, null, true)
+        : FluidInteractionHelper.tryEmptyContainer(up, tank, Integer.MAX_VALUE, null, true);
     if (!result.isSuccess()) {
       return false;
     }
@@ -61,7 +60,7 @@ public final class FluidCellTankHelper {
   }
 
   private static ItemStack waterBottle() {
-    return PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER);
+    return PotionContents.createItemStack(Items.POTION, Potions.WATER);
   }
 
   public static boolean canFillBottle(ItemStack up, ItemStack down, FluidStorage tank) {
@@ -126,7 +125,7 @@ public final class FluidCellTankHelper {
     if (down.isEmpty()) {
       return true;
     }
-    return down.getCount() + 1 <= down.getMaxStackSize() && ItemStack.isSameItemSameTags(down, result);
+    return down.getCount() + 1 <= down.getMaxStackSize() && ItemStack.isSameItemSameComponents(down, result);
   }
 
   private static ItemStack filledCopy(ItemStack up, Fluid fluid) {
@@ -148,7 +147,7 @@ public final class FluidCellTankHelper {
       return canFillBottle(up, down, tank);
     }
     if (isContainer(up)) {
-      FluidActionResult result = FluidUtil.tryFillContainer(up, tank, Integer.MAX_VALUE, null, false);
+      FluidActionResult result = FluidInteractionHelper.tryFillContainer(up, tank, Integer.MAX_VALUE, null, false);
       return result.isSuccess() && outputAccepts(down, result.getResult());
     }
     if (!hasEnoughToFill(up, tank)) {
@@ -198,7 +197,8 @@ public final class FluidCellTankHelper {
 
   public static boolean canFillFromCell(ItemStack up, ItemStack down, FluidStorage tank) {
     if (isContainer(up)) {
-      FluidActionResult result = FluidUtil.tryEmptyContainer(up, tank, Integer.MAX_VALUE, null, false);
+      FluidActionResult result = FluidInteractionHelper.tryEmptyContainer(up, tank, Integer.MAX_VALUE, null,
+          false);
       return result.isSuccess() && outputAccepts(down, result.getResult());
     }
     if (up.isEmpty() || !(up.getItem() instanceof FluidItem)) {

@@ -1,6 +1,5 @@
 package com.faktocraft.gametest.logistics;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.logistics.BlockEntityChassis;
 import com.faktocraft.common.block.impl.logistics.BlockEntityLogisticsController;
 import com.faktocraft.common.block.impl.logistics.BlockEntityRecipePipe;
@@ -16,24 +15,24 @@ import com.faktocraft.common.item.base.FluidItem;
 import com.faktocraft.common.registries.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.fluids.FluidStack;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class RecipePipeBatchGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -47,26 +46,27 @@ public class RecipePipeBatchGameTest {
   private static final BlockPos MACHINE = new BlockPos(4, 1, 3);
 
   private static ItemStack waterBottle() {
-    return PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER);
+    return PotionContents.createItemStack(Items.POTION, Potions.WATER);
   }
 
   private static ItemStack awkwardPotion() {
-    return PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD);
+    return PotionContents.createItemStack(Items.POTION, Potions.AWKWARD);
   }
 
-  private static boolean isPotion(ItemStack stack, net.minecraft.world.item.alchemy.Potion potion) {
-    return stack.is(Items.POTION) && PotionUtils.getPotion(stack) == potion;
+  private static boolean isPotion(ItemStack stack, Holder<Potion> potion) {
+    return stack.is(Items.POTION)
+        && stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(potion);
   }
 
   private static void fillCore(GameTestHelper helper, BlockPos rel) {
-    if (helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be) {
+    if (TestUtil.blockEntity(helper, rel) instanceof FaktocraftBlockEntity be) {
       be.getBatteryStackHandler().setStackInSlot(0, new ItemStack(ModItems.BASIC_CAPACITOR));
       be.getEnergyStorage().setEnergy(be.getEnergyStorage().maxEnergy());
     }
   }
 
   private static void putModule(GameTestHelper helper, BlockPos rel, int slot, ItemStack module) {
-    if (helper.getBlockEntity(rel) instanceof BlockEntityChassis chassis) {
+    if (TestUtil.blockEntity(helper, rel) instanceof BlockEntityChassis chassis) {
       chassis.getModules().setStackInSlot(slot, module);
     } else {
       helper.fail("no chassis at " + rel);
@@ -75,7 +75,7 @@ public class RecipePipeBatchGameTest {
 
   private static void placeChest(GameTestHelper helper, BlockPos rel, ItemStack... stacks) {
     helper.setBlock(rel, Blocks.CHEST.defaultBlockState());
-    if (helper.getBlockEntity(rel) instanceof ChestBlockEntity chest) {
+    if (TestUtil.blockEntity(helper, rel) instanceof ChestBlockEntity chest) {
       for (int i = 0; i < stacks.length; i++) {
         chest.setItem(i, stacks[i]);
       }
@@ -83,7 +83,7 @@ public class RecipePipeBatchGameTest {
   }
 
   private static int countInChest(GameTestHelper helper, BlockPos rel, java.util.function.Predicate<ItemStack> what) {
-    if (!(helper.getBlockEntity(rel) instanceof ChestBlockEntity chest)) {
+    if (!(TestUtil.blockEntity(helper, rel) instanceof ChestBlockEntity chest)) {
       return -1;
     }
     int count = 0;
@@ -131,7 +131,7 @@ public class RecipePipeBatchGameTest {
 
   private static boolean configureBrewingRecipe(GameTestHelper helper) {
     helper.setBlock(MACHINE, Blocks.BREWING_STAND.defaultBlockState());
-    if (!(helper.getBlockEntity(PIPE) instanceof BlockEntityRecipePipe pipe)) {
+    if (!(TestUtil.blockEntity(helper, PIPE) instanceof BlockEntityRecipePipe pipe)) {
       helper.fail("no recipe pipe");
       return false;
     }
@@ -152,7 +152,7 @@ public class RecipePipeBatchGameTest {
 
   private static void requestPotions(GameTestHelper helper, int quantity) {
     helper.runAfterDelay(20, () -> {
-      if (helper.getBlockEntity(TABLE) instanceof BlockEntityRequestTable table) {
+      if (TestUtil.blockEntity(helper, TABLE) instanceof BlockEntityRequestTable table) {
         table.setGhostTarget(awkwardPotion());
         table.request(null, quantity);
       } else {
@@ -163,7 +163,7 @@ public class RecipePipeBatchGameTest {
 
   private static String ledgerState(GameTestHelper helper) {
     StringBuilder out = new StringBuilder();
-    if (helper.getBlockEntity(MACHINE) instanceof BrewingStandBlockEntity stand) {
+    if (TestUtil.blockEntity(helper, MACHINE) instanceof BrewingStandBlockEntity stand) {
       out.append("stand=[");
       for (int i = 0; i < stand.getContainerSize(); i++) {
         ItemStack stack = stand.getItem(i);
@@ -171,7 +171,7 @@ public class RecipePipeBatchGameTest {
       }
       out.append("] ");
     }
-    if (helper.getBlockEntity(CORE) instanceof BlockEntityLogisticsController core) {
+    if (TestUtil.blockEntity(helper, CORE) instanceof BlockEntityLogisticsController core) {
       for (TaskLedger.TaskSummary task : core.getLedger().summaries()) {
         out.append("task{").append(task.stateKey()).append(' ').append(task.detail()).append(" x")
             .append(task.count());
@@ -191,7 +191,7 @@ public class RecipePipeBatchGameTest {
   private static void expectPotions(GameTestHelper helper, int quantity, int wartUsed, int stockBottles,
       int stockWart) {
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(TABLE) instanceof BlockEntityRequestTable table)) {
+      if (!(TestUtil.blockEntity(helper, TABLE) instanceof BlockEntityRequestTable table)) {
         helper.fail("no request table");
         return;
       }
@@ -201,7 +201,7 @@ public class RecipePipeBatchGameTest {
             + ledgerState(helper));
         return;
       }
-      if (!(helper.getBlockEntity(MACHINE) instanceof BrewingStandBlockEntity stand)) {
+      if (!(TestUtil.blockEntity(helper, MACHINE) instanceof BrewingStandBlockEntity stand)) {
         helper.fail("no brewing stand");
         return;
       }
@@ -262,12 +262,12 @@ public class RecipePipeBatchGameTest {
     everything.put(com.faktocraft.common.block.impl.logistics.LogisticsItemTree.NODE_ALL, true);
     com.faktocraft.common.block.impl.logistics.ModuleSettings.putTreeOverrides(sink, everything);
     putModule(helper, new BlockPos(2, 1, 1), 1, sink);
-    if (helper.getBlockEntity(MACHINE) instanceof BrewingStandBlockEntity stand) {
+    if (TestUtil.blockEntity(helper, MACHINE) instanceof BrewingStandBlockEntity stand) {
       stand.setItem(1, waterBottle());
     }
     requestPotions(helper, 1);
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(TABLE) instanceof BlockEntityRequestTable table)) {
+      if (!(TestUtil.blockEntity(helper, TABLE) instanceof BlockEntityRequestTable table)) {
         helper.fail("no request table");
         return;
       }
@@ -276,7 +276,7 @@ public class RecipePipeBatchGameTest {
         helper.fail("expected 1 awkward potion at the table, found " + delivered + "; " + ledgerState(helper));
         return;
       }
-      if (!(helper.getBlockEntity(MACHINE) instanceof BrewingStandBlockEntity stand)) {
+      if (!(TestUtil.blockEntity(helper, MACHINE) instanceof BrewingStandBlockEntity stand)) {
         helper.fail("no brewing stand");
         return;
       }
@@ -302,7 +302,7 @@ public class RecipePipeBatchGameTest {
   }
 
   private static int fluidInTable(GameTestHelper helper, BlockPos rel) {
-    if (!(helper.getBlockEntity(rel) instanceof BlockEntityRequestTable table)) {
+    if (!(TestUtil.blockEntity(helper, rel) instanceof BlockEntityRequestTable table)) {
       helper.fail("no request table");
       return -1;
     }
@@ -324,13 +324,13 @@ public class RecipePipeBatchGameTest {
     }
     helper.setBlock(MACHINE, stationState);
     fillCore(helper, MACHINE);
-    if (helper.getBlockEntity(MACHINE) instanceof BlockEntityFuelingStation station) {
+    if (TestUtil.blockEntity(helper, MACHINE) instanceof BlockEntityFuelingStation station) {
       station.tank.fillFluid(new FluidStack(Fluids.WATER, 16000), 16000, false);
     } else {
       helper.fail("no fueling station");
       return;
     }
-    if (helper.getBlockEntity(PIPE) instanceof BlockEntityRecipePipe pipe) {
+    if (TestUtil.blockEntity(helper, PIPE) instanceof BlockEntityRecipePipe pipe) {
       int recipe = pipe.addRecipe();
       pipe.setIo(recipe, 0, cell(0));
       pipe.setIo(recipe, BlockEntityRecipePipe.outputId(0), cell(1000));
@@ -339,7 +339,7 @@ public class RecipePipeBatchGameTest {
       return;
     }
     helper.runAfterDelay(20, () -> {
-      if (helper.getBlockEntity(TABLE) instanceof BlockEntityRequestTable table) {
+      if (TestUtil.blockEntity(helper, TABLE) instanceof BlockEntityRequestTable table) {
         table.setGhostTarget(cell(1000));
         table.request(null, 1);
       } else {

@@ -1,28 +1,24 @@
 package com.faktocraft.gametest.machines;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.FluidCellTankHelper;
 import com.faktocraft.common.block.impl.machines.canning_machine.BlockEntityCanningMachine;
 import com.faktocraft.common.enums.CanningMachineMode;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.registries.machines.M3Registry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestAssertException;
+import net.minecraft.core.component.DataComponents;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class CanningMachineGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -30,8 +26,8 @@ public class CanningMachineGameTest {
 
   private static BlockEntityCanningMachine place(GameTestHelper helper, Fluid fluid, int amount) {
     helper.setBlock(POS, M3Registry.CANNING_MACHINE.defaultBlockState());
-    if (!(helper.getBlockEntity(POS) instanceof BlockEntityCanningMachine machine)) {
-      throw new GameTestAssertException("no canning machine block entity");
+    if (!(TestUtil.blockEntity(helper, POS) instanceof BlockEntityCanningMachine machine)) {
+      throw TestUtil.assertion(helper, "no canning machine block entity");
     }
     machine.getBatteryStackHandler().setStackInSlot(0, new ItemStack(ModItems.BASIC_CAPACITOR));
     machine.getEnergyStorage().setEnergy(machine.getEnergyStorage().maxEnergy());
@@ -40,7 +36,8 @@ public class CanningMachineGameTest {
   }
 
   private static boolean isWaterBottle(ItemStack stack) {
-    return stack.is(Items.POTION) && PotionUtils.getPotion(stack) == Potions.WATER;
+    return stack.is(Items.POTION)
+        && stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(Potions.WATER);
   }
 
   @GameTest(template = TEMPLATE, timeoutTicks = 400)
@@ -54,7 +51,7 @@ public class CanningMachineGameTest {
       ItemStack output = machine.getItemStackHandler().getStackInSlot(BlockEntityCanningMachine.CELL_DOWN);
       if (!output.isEmpty()) {
         if (!isWaterBottle(output) || output.getCount() != 1) {
-          throw new GameTestAssertException("expected one water bottle, got " + output);
+          throw TestUtil.assertion(helper, "expected one water bottle, got " + output);
         }
         machine.getItemStackHandler().setStackInSlot(BlockEntityCanningMachine.CELL_DOWN, ItemStack.EMPTY);
         collected[0]++;
@@ -67,7 +64,7 @@ public class CanningMachineGameTest {
       }
       int expected = 1000 - 2 * FluidCellTankHelper.BOTTLE_MB;
       if (machine.fluidStorage.getFluidAmount() != expected) {
-        throw new GameTestAssertException("tank should hold " + expected + " mB, holds "
+        throw TestUtil.assertion(helper, "tank should hold " + expected + " mB, holds "
             + machine.fluidStorage.getFluidAmount());
       }
     });
@@ -110,10 +107,10 @@ public class CanningMachineGameTest {
         helper.fail("expected a water bucket, got " + output);
       }
       if (!machine.getItemStackHandler().getStackInSlot(BlockEntityCanningMachine.CELL_UP).isEmpty()) {
-        throw new GameTestAssertException("empty bucket was not consumed");
+        throw TestUtil.assertion(helper, "empty bucket was not consumed");
       }
       if (machine.fluidStorage.getFluidAmount() != 0) {
-        throw new GameTestAssertException("tank should be empty, holds " + machine.fluidStorage.getFluidAmount());
+        throw TestUtil.assertion(helper, "tank should be empty, holds " + machine.fluidStorage.getFluidAmount());
       }
     });
   }
@@ -134,7 +131,7 @@ public class CanningMachineGameTest {
         helper.fail("expected an empty bucket, got " + output);
       }
       if (machine.fluidStorage.getFluid() != Fluids.LAVA || machine.fluidStorage.getFluidAmount() != 1000) {
-        throw new GameTestAssertException("tank should hold 1000 mB of lava, holds "
+        throw TestUtil.assertion(helper, "tank should hold 1000 mB of lava, holds "
             + machine.fluidStorage.getFluidAmount() + " of " + machine.fluidStorage.getFluid());
       }
     });

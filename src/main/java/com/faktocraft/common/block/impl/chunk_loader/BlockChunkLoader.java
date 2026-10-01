@@ -1,5 +1,8 @@
 package com.faktocraft.common.block.impl.chunk_loader;
 
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.interfaces.block.IHasMenu;
 import com.faktocraft.common.util.wrench.WrenchHelper;
@@ -10,12 +13,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class BlockChunkLoader extends FaktocraftEntityBlock implements IHasMenu {
 
@@ -35,10 +36,8 @@ public class BlockChunkLoader extends FaktocraftEntityBlock implements IHasMenu 
     return new MenuChunkLoader(windowId, level, pos, playerInventory, player);
   }
 
-  @Override
-  public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-      TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip.faktocraft.chunk_loader").withStyle(ChatFormatting.GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("tooltip.faktocraft.chunk_loader").withStyle(ChatFormatting.GRAY));
   }
 }

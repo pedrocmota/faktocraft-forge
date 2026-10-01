@@ -23,6 +23,7 @@ import com.faktocraft.common.recipe.FluidIngredientData;
 import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.recipe.impl.FluidEnrichingRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
+import com.faktocraft.common.util.RecipeUtil;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.EnergyCosts;
@@ -36,11 +37,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -96,11 +97,10 @@ public class BlockEntityFluidEnricher extends FaktocraftBlockEntity
   }
 
   protected Optional<FluidEnrichingRecipe> getRawRecipe(ItemStack input) {
-    if (!(level instanceof ServerLevel serverLevel)) {
+    if (!(level instanceof ServerLevel)) {
       return Optional.empty();
     }
-    return serverLevel.getRecipeManager().getRecipeFor(ModRecipeType.FLUID_ENRICHING, MachineRecipeInput.of(input),
-        level);
+    return RecipeUtil.findRecipe(level, ModRecipeType.FLUID_ENRICHING, MachineRecipeInput.of(input));
   }
 
   @Nullable
@@ -158,11 +158,10 @@ public class BlockEntityFluidEnricher extends FaktocraftBlockEntity
   }
 
   protected Optional<FluidEnrichingRecipe> getRecipe() {
-    if (!(level instanceof ServerLevel serverLevel)) {
+    if (!(level instanceof ServerLevel)) {
       return Optional.empty();
     }
-    List<FluidEnrichingRecipe> candidates = serverLevel.getRecipeManager()
-        .getAllRecipesFor(ModRecipeType.FLUID_ENRICHING);
+    List<FluidEnrichingRecipe> candidates = RecipeUtil.getAllRecipesFor(level, ModRecipeType.FLUID_ENRICHING);
     for (FluidEnrichingRecipe enrichingRecipe : candidates) {
       if (itemAssignment(enrichingRecipe, false) != null && fluidAssignment(enrichingRecipe, false) != null) {
         return Optional.of(enrichingRecipe);
@@ -305,17 +304,17 @@ public class BlockEntityFluidEnricher extends FaktocraftBlockEntity
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("fluidInputStorage")) {
-      fluidInputStorage.load(tag.getCompound("fluidInputStorage"));
+      fluidInputStorage.load(tag.getCompoundOrEmpty("fluidInputStorage"));
     }
     if (tag.contains("fluidInputStorage2")) {
-      fluidInputStorage2.load(tag.getCompound("fluidInputStorage2"));
+      fluidInputStorage2.load(tag.getCompoundOrEmpty("fluidInputStorage2"));
     }
     if (tag.contains("fluidOutputStorage")) {
-      fluidOutputStorage.load(tag.getCompound("fluidOutputStorage"));
+      fluidOutputStorage.load(tag.getCompoundOrEmpty("fluidOutputStorage"));
     }
-    this.activeState = tag.getBoolean("active");
+    this.activeState = tag.getBooleanOr("active", false);
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
   }
 

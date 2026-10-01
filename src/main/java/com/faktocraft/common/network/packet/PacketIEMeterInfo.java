@@ -1,16 +1,29 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.network.ClientPacketDispatch;
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
-import java.util.function.Supplier;
 
 public record PacketIEMeterInfo(boolean network, int tierLvl, int voltageLvl, long transfer,
     int generators, int machines, int batteries, long stored, long capacity,
     boolean showGenerated, long lastGenerated, long totalGenerated,
     boolean showConsumed, long lastConsumed, long totalConsumed,
-    long netInput, long netOutput, long netDemand, long receiveRate) {
+    long netInput, long netOutput, long netDemand, long receiveRate) implements CustomPacketPayload {
+
+  public static final Type<PacketIEMeterInfo> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_i_e_meter_info"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketIEMeterInfo> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketIEMeterInfo::decode);
+
+  @Override
+  public Type<PacketIEMeterInfo> type() {
+    return TYPE;
+  }
 
   public static void encode(PacketIEMeterInfo msg, FriendlyByteBuf buf) {
     buf.writeBoolean(msg.network);
@@ -42,9 +55,8 @@ public record PacketIEMeterInfo(boolean network, int tierLvl, int voltageLvl, lo
         buf.readLong(), buf.readLong(), buf.readLong(), buf.readLong());
   }
 
-  public static void handle(PacketIEMeterInfo msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-        () -> () -> com.faktocraft.client.ClientPacketHandlers.handleIEMeterInfo(msg)));
-    ctx.get().setPacketHandled(true);
+  public static void handle(PacketIEMeterInfo msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> ClientPacketDispatch.dispatch(msg));
+    ctx.setPacketHandled(true);
   }
 }

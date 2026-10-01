@@ -22,7 +22,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.items.IItemHandler;
+import com.faktocraft.common.util.transfer.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayDeque;
@@ -263,11 +263,11 @@ public class BlockEntityForester extends BlockEntityGantry {
   }
 
   @Override
-  public boolean headGoal(float[] out) {
+  public boolean headGoal(double[] out) {
     if (stage == STAGE_WORK && resizePhase != RESIZE_NONE && !targetValid) {
       boolean client = level != null && level.isClientSide();
       out[0] = client ? clientHeadX : headX;
-      out[1] = worldPosition.getY() + frameHeight - 0.5F;
+      out[1] = worldPosition.getY() + frameHeight - 0.5;
       out[2] = client ? clientHeadZ : headZ;
       return true;
     }
@@ -982,17 +982,17 @@ public class BlockEntityForester extends BlockEntityGantry {
   @Override
   protected void loadWork(CompoundTag tag) {
     if (tag.contains("inputs")) {
-      inputs.load(tag.getCompound("inputs"));
+      inputs.load(tag.getCompoundOrEmpty("inputs"));
     }
-    resinMode = tag.getBoolean("resinMode");
-    scanIndex = tag.getInt("scanIndex");
-    job = tag.getInt("job");
-    treeBaseX = tag.getInt("treeBaseX");
-    treeBaseZ = tag.getInt("treeBaseZ");
-    fertilizeCooldown = tag.getInt("fertilizeCooldown");
-    fertilizeDoses = tag.getInt("fertilizeDoses");
-    emptyScanned = tag.getInt("emptyScanned");
-    int[] box = tag.getIntArray("treeBox");
+    resinMode = tag.getBooleanOr("resinMode", false);
+    scanIndex = tag.getIntOr("scanIndex", 0);
+    job = tag.getIntOr("job", 0);
+    treeBaseX = tag.getIntOr("treeBaseX", 0);
+    treeBaseZ = tag.getIntOr("treeBaseZ", 0);
+    fertilizeCooldown = tag.getIntOr("fertilizeCooldown", 0);
+    fertilizeDoses = tag.getIntOr("fertilizeDoses", 0);
+    emptyScanned = tag.getIntOr("emptyScanned", 0);
+    int[] box = tag.getIntArray("treeBox").orElse(new int[0]);
     treeBoxSet = box.length == 6;
     if (treeBoxSet) {
       treeMinX = box[0];
@@ -1002,16 +1002,16 @@ public class BlockEntityForester extends BlockEntityGantry {
       treeMaxY = box[4];
       treeMaxZ = box[5];
     }
-    plantableSeen = tag.getBoolean("plantableSeen");
-    idleResult = tag.getInt("idleResult");
-    frameHeight = tag.contains("frameHeight") ? tag.getInt("frameHeight") : DEFAULT_FRAME_HEIGHT;
-    frameTarget = tag.contains("frameTarget") ? tag.getInt("frameTarget") : frameHeight;
-    resizePhase = tag.getInt("resizePhase");
-    resizeOldHeight = tag.contains("resizeOldHeight") ? tag.getInt("resizeOldHeight") : frameHeight;
-    resizeNewHeight = tag.contains("resizeNewHeight") ? tag.getInt("resizeNewHeight") : frameTarget;
-    resizeIndex = tag.getInt("resizeIndex");
-    resizeWait = tag.getInt("resizeWait");
-    shrinkRetry = tag.getInt("shrinkRetry");
+    plantableSeen = tag.getBooleanOr("plantableSeen", false);
+    idleResult = tag.getIntOr("idleResult", 0);
+    frameHeight = tag.contains("frameHeight") ? tag.getIntOr("frameHeight", 0) : DEFAULT_FRAME_HEIGHT;
+    frameTarget = tag.contains("frameTarget") ? tag.getIntOr("frameTarget", 0) : frameHeight;
+    resizePhase = tag.getIntOr("resizePhase", 0);
+    resizeOldHeight = tag.contains("resizeOldHeight") ? tag.getIntOr("resizeOldHeight", 0) : frameHeight;
+    resizeNewHeight = tag.contains("resizeNewHeight") ? tag.getIntOr("resizeNewHeight", 0) : frameTarget;
+    resizeIndex = tag.getIntOr("resizeIndex", 0);
+    resizeWait = tag.getIntOr("resizeWait", 0);
+    shrinkRetry = tag.getIntOr("shrinkRetry", 0);
     if (resizePhase == RESIZE_BUILD) {
       resizeQueue = buildQueue();
     } else if (resizePhase == RESIZE_REMOVE) {

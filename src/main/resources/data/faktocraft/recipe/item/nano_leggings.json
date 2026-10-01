@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_armour",
+  "key": {
+    "c": "faktocraft:carbon_plate",
+    "e": "faktocraft:energy_crystal"
+  },
+  "pattern": [
+    "cec",
+    "c c",
+    "c c"
+  ],
+  "result": {
+    "id": "faktocraft:nano_leggings"
+  }
+}

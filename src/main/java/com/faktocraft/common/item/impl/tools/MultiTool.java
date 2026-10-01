@@ -5,14 +5,14 @@ import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.util.wrench.WrenchHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class MultiTool extends ElectricHoe {
 
-  public MultiTool(Tier material, float attackDamage, float attackSpeed, Properties properties,
+  public MultiTool(ToolMaterial material, float attackDamage, float attackSpeed, Properties properties,
       int energyStored, int maxEnergy, int energyCostMine, int energyCostHurt, int energyCostTill,
       EnergyType energyType, EnergyTier energyTier) {
     super(material, attackDamage, attackSpeed, properties, energyStored, maxEnergy,

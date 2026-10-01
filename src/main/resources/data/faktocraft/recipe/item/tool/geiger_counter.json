@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_tool",
+  "key": {
+    "g": "minecraft:glass_pane",
+    "l": "faktocraft:lead_plate",
+    "e": "faktocraft:electronic_circuit",
+    "r": "minecraft:redstone"
+  },
+  "pattern": [
+    " g ",
+    "lel",
+    "lrl"
+  ],
+  "result": {
+    "id": "faktocraft:geiger_counter"
+  }
+}

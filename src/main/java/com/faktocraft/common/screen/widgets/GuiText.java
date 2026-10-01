@@ -3,7 +3,7 @@ package com.faktocraft.common.screen.widgets;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.util.GuiUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class GuiText extends GuiElement {
@@ -16,7 +16,7 @@ public class GuiText extends GuiElement {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     float scale = 0.8f;
     int textWidth = minecraft.font.width(component.getString());
     if (textWidth * scale > getWidth()) {

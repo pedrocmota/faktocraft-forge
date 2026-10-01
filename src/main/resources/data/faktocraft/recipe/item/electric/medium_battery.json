@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "p": "#c:plates/bronze",
+    "s": "#c:dusts/silver",
+    "c": "faktocraft:copper_cable_insulated",
+    "b": "faktocraft:battery",
+    "r": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "items": "faktocraft:fluid_cell",
+      "components": {
+        "faktocraft:fluid": {
+          "fluid": "faktocraft:sulfuric_acid",
+          "amount": 1000
+        }
+      }
+    },
+    "l": "#c:dusts/lithium"
+  },
+  "pattern": [
+    "lsl",
+    "cbc",
+    "prp"
+  ],
+  "result": {
+    "id": "faktocraft:medium_battery"
+  }
+}

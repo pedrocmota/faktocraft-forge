@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "P": "#c:plates/iron",
+    "I": "#c:ingots/iron",
+    "E": "faktocraft:electronic_circuit",
+    "G": "faktocraft:generator"
+  },
+  "pattern": [
+    "IPI",
+    "PGP",
+    "IEI"
+  ],
+  "result": {
+    "id": "faktocraft:wind_generator",
+    "count": 1
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_pipes",
+  "key": {
+    "m": "#minecraft:planks",
+    "g": "minecraft:glass",
+    "r": "#c:rubber",
+    "e": "faktocraft:electric_motor"
+  },
+  "pattern": [
+    "mgm",
+    "rer"
+  ],
+  "result": {
+    "id": "faktocraft:fluid_extractor_pipe",
+    "count": 2
+  }
+}

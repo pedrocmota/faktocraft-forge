@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "m": "faktocraft:mud_pile"
+  },
+  "pattern": [
+    "mm ",
+    "mm "
+  ],
+  "result": {
+    "id": "minecraft:mud"
+  }
+}

@@ -22,6 +22,7 @@ import com.faktocraft.common.network.packet.PacketExperience;
 import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.recipe.impl.OreWashingRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
+import com.faktocraft.common.util.RecipeUtil;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.EnergyCosts;
@@ -35,11 +36,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -80,11 +81,10 @@ public class BlockEntityOreWashingPlant extends FaktocraftBlockEntity
   }
 
   protected Optional<OreWashingRecipe> getRawRecipe(ItemStack input) {
-    if (!(level instanceof ServerLevel serverLevel)) {
+    if (!(level instanceof ServerLevel)) {
       return Optional.empty();
     }
-    return serverLevel.getRecipeManager().getRecipeFor(ModRecipeType.ORE_WASHING, MachineRecipeInput.of(input),
-        level);
+    return RecipeUtil.findRecipe(level, ModRecipeType.ORE_WASHING, MachineRecipeInput.of(input));
   }
 
   protected Optional<OreWashingRecipe> getRecipe(ItemStack input) {
@@ -306,15 +306,15 @@ public class BlockEntityOreWashingPlant extends FaktocraftBlockEntity
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    this.activeState = tag.getBoolean("active");
+    this.activeState = tag.getBooleanOr("active", false);
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
     if (tag.contains("waterStorage")) {
-      waterStorage.load(tag.getCompound("waterStorage"));
+      waterStorage.load(tag.getCompoundOrEmpty("waterStorage"));
     }
     if (tag.contains("acidStorage")) {
-      acidStorage.load(tag.getCompound("acidStorage"));
+      acidStorage.load(tag.getCompoundOrEmpty("acidStorage"));
     }
   }
 

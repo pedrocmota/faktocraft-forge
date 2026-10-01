@@ -1,24 +1,19 @@
 package com.faktocraft.gametest.world;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.chunk_loader.BlockEntityChunkLoader;
 import com.faktocraft.common.block.impl.chunk_loader.ChunkLoaderManager;
 import com.faktocraft.common.block.impl.chunk_loader.ChunkLoaderRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.ForcedChunksSavedData;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class ChunkLoaderGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -31,14 +26,14 @@ public class ChunkLoaderGameTest {
   }
 
   private static BlockEntityChunkLoader loader(GameTestHelper helper, BlockPos rel) {
-    if (helper.getBlockEntity(rel) instanceof BlockEntityChunkLoader be) {
+    if (TestUtil.blockEntity(helper, rel) instanceof BlockEntityChunkLoader be) {
       return be;
     }
     throw new IllegalStateException("no chunk loader block entity at " + rel);
   }
 
   private static void fillEnergy(GameTestHelper helper, BlockPos rel) {
-    if (helper.getBlockEntity(rel) instanceof com.faktocraft.common.entity.block.FaktocraftBlockEntity be) {
+    if (TestUtil.blockEntity(helper, rel) instanceof com.faktocraft.common.entity.block.FaktocraftBlockEntity be) {
       be.getEnergyStorage().setEnergy(be.getEnergyStorage().maxEnergy());
     }
   }
@@ -48,11 +43,7 @@ public class ChunkLoaderGameTest {
   }
 
   private static boolean ownChunkForced(GameTestHelper helper, BlockPos rel) {
-    ForcedChunksSavedData saved = helper.getLevel().getDataStorage()
-        .computeIfAbsent(ForcedChunksSavedData::load, ForcedChunksSavedData::new, ForcedChunksSavedData.FILE_ID);
-    long chunk = new ChunkPos(helper.absolutePos(rel)).toLong();
-    return saved.getBlockForcedChunks().getTickingChunks().values().stream().anyMatch(set -> set.contains(chunk))
-        || saved.getBlockForcedChunks().getChunks().values().stream().anyMatch(set -> set.contains(chunk));
+    return TestUtil.blockChunkForced(helper.getLevel(), ChunkPos.containing(helper.absolutePos(rel)).pack());
   }
 
   @GameTest(template = TEMPLATE, timeoutTicks = 300)

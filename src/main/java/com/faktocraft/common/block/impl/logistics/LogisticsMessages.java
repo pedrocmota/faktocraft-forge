@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.util.PlayerMessages;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketTableMessage;
 import net.minecraft.network.chat.Component;
@@ -18,7 +19,7 @@ public final class LogisticsMessages {
     if (player.containerMenu instanceof MenuRequestTable) {
       ModNetworking.sendToPlayer(player, new PacketTableMessage(message, true));
     } else {
-      player.displayClientMessage(message, true);
+      PlayerMessages.display(player, message, true);
     }
   }
 }

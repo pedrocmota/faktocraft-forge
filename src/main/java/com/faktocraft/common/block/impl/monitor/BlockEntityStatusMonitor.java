@@ -1,6 +1,7 @@
 package com.faktocraft.common.block.impl.monitor;
 
-import com.faktocraft.client.render.StatusClientBridges;
+import com.faktocraft.common.util.LegacyNbtBlockEntity;
+import com.faktocraft.common.util.ClientProxy;
 import com.faktocraft.common.config.ModConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -12,18 +13,16 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
-public class BlockEntityStatusMonitor extends BlockEntity {
-
+public class BlockEntityStatusMonitor extends LegacyNbtBlockEntity {
   public static final int STATUS_NONE = 0;
   public static final int STATUS_OK = 1;
   public static final int STATUS_UNLOADED = 2;
@@ -152,11 +151,10 @@ public class BlockEntityStatusMonitor extends BlockEntity {
     }
   }
 
-  @Override
   public AABB getRenderBoundingBox() {
     BlockState state = getBlockState();
     if (!(state.getBlock() instanceof BlockStatusMonitor)) {
-      return super.getRenderBoundingBox();
+      return new AABB(getBlockPos());
     }
     Direction right = BlockStatusMonitor.rightOf(BlockStatusMonitor.facingOf(state));
     BlockPos far = worldPosition.relative(right, BlockStatusMonitor.WIDTH - 1).above(BlockStatusMonitor.HEIGHT - 1);
@@ -209,11 +207,12 @@ public class BlockEntityStatusMonitor extends BlockEntity {
     cachedState = StatusSources.readState(level, data);
     cachedLines = StatusSources.lines(cachedState, data);
     cachedBridge = null;
-    if (status == STATUS_OK && target != null && !StatusClientBridges.isEmpty()
+    if (status == STATUS_OK && target != null && ClientProxy.get().hasStatusBridges()
         && level.dimension().equals(targetDimension) && level.isLoaded(target)) {
       BlockState liveState = level.getBlockState(target);
       if (!liveState.isAir()) {
-        cachedBridge = StatusClientBridges.build(level, target, liveState, level.getBlockEntity(target), data);
+        cachedBridge = ClientProxy.get().buildStatusBridge(level, target, liveState, level.getBlockEntity(target),
+            data);
       }
     }
   }
@@ -222,7 +221,7 @@ public class BlockEntityStatusMonitor extends BlockEntity {
   protected void saveAdditional(CompoundTag tag) {
     super.saveAdditional(tag);
     if (targetDimension != null && target != null) {
-      tag.putString(TAG_DIMENSION, targetDimension.location().toString());
+      tag.putString(TAG_DIMENSION, targetDimension.identifier().toString());
       tag.putLong(TAG_POS, target.asLong());
     }
     tag.put(TAG_DATA, data.copy());
@@ -233,15 +232,15 @@ public class BlockEntityStatusMonitor extends BlockEntity {
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains(TAG_DIMENSION) && tag.contains(TAG_POS)) {
-      ResourceLocation id = ResourceLocation.tryParse(tag.getString(TAG_DIMENSION));
+      Identifier id = Identifier.tryParse(tag.getStringOr(TAG_DIMENSION, ""));
       targetDimension = id != null ? ResourceKey.create(Registries.DIMENSION, id) : null;
-      target = targetDimension != null ? BlockPos.of(tag.getLong(TAG_POS)) : null;
+      target = targetDimension != null ? BlockPos.of(tag.getLongOr(TAG_POS, 0L)) : null;
     } else {
       targetDimension = null;
       target = null;
     }
-    data = tag.getCompound(TAG_DATA).copy();
-    status = tag.getInt(TAG_STATUS);
+    data = tag.getCompoundOrEmpty(TAG_DATA).copy();
+    status = tag.getIntOr(TAG_STATUS, 0);
     dataVersion++;
   }
 

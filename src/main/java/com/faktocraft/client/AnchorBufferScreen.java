@@ -1,19 +1,21 @@
 package com.faktocraft.client;
 
+import com.faktocraft.common.util.GuiUtil;
+import net.minecraft.client.input.KeyEvent;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketAnchorBuffer;
 import com.faktocraft.common.util.TextComponentUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import org.lwjgl.glfw.GLFW;
 
 public class AnchorBufferScreen extends Screen {
 
@@ -38,7 +40,7 @@ public class AnchorBufferScreen extends Screen {
   }
 
   public static void open(BlockPos target, int current, int min, int max) {
-    Minecraft.getInstance().setScreen(new AnchorBufferScreen(target, current, min, max));
+    Minecraft.getInstance().gui.setScreen(new AnchorBufferScreen(target, current, min, max));
   }
 
   @Override
@@ -79,17 +81,17 @@ public class AnchorBufferScreen extends Screen {
   }
 
   @Override
-  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-    if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+  public boolean keyPressed(KeyEvent event) {
+    int keyCode = event.key();
+    if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_NUMPADENTER) {
       apply();
       return true;
     }
-    return super.keyPressed(keyCode, scanCode, modifiers);
+    return super.keyPressed(event);
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    renderBackground(graphics);
+  public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
     int left = (width - PANEL_W) / 2;
     int top = (height - PANEL_H) / 2;
     graphics.fill(left, top, left + PANEL_W, top + PANEL_H, 0xE8101014);
@@ -97,14 +99,19 @@ public class AnchorBufferScreen extends Screen {
     graphics.fill(left, top + PANEL_H - 1, left + PANEL_W, top + PANEL_H, 0xFF8A8A96);
     graphics.fill(left, top, left + 1, top + PANEL_H, 0xFF8A8A96);
     graphics.fill(left + PANEL_W - 1, top, left + PANEL_W, top + PANEL_H, 0xFF8A8A96);
-    graphics.drawCenteredString(font, title.copy().withStyle(ChatFormatting.BOLD),
+    graphics.centeredText(font, title.copy().withStyle(ChatFormatting.BOLD),
         left + PANEL_W / 2, top + 14, 0xFFE8C43A);
-    graphics.drawCenteredString(font,
+    graphics.centeredText(font,
         Component.translatable("gui." + Faktocraft.MODID + ".anchor_buffer.hint",
             TextComponentUtil.getFormattedEnergyUnit(min),
             TextComponentUtil.getFormattedEnergyUnit(max)).withStyle(ChatFormatting.GRAY),
-        left + PANEL_W / 2, top + 58, 0xA0A0A0);
-    super.render(graphics, mouseX, mouseY, partialTick);
+        left + PANEL_W / 2, top + 58, GuiUtil.opaque(0xA0A0A0));
+    super.extractRenderState(graphics, mouseX, mouseY, partialTick);
+  }
+
+  @Override
+  public boolean isInGameUi() {
+    return true;
   }
 
   @Override

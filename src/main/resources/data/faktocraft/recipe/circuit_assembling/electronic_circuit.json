@@ -1,0 +1,22 @@
+{
+  "type": "faktocraft:circuit_assembling",
+  "duration": 200,
+  "ingredients": [
+    {
+      "count": 4,
+      "item": "faktocraft:copper_cable_insulated"
+    },
+    {
+      "count": 1,
+      "tag": "c:plates/iron"
+    },
+    {
+      "count": 2,
+      "tag": "c:dusts/redstone"
+    }
+  ],
+  "power_cost": 10,
+  "result": {
+    "item": "faktocraft:electronic_circuit"
+  }
+}

@@ -1,18 +1,21 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import net.minecraft.world.phys.Vec3;
 import com.faktocraft.common.util.ItemStackHandler;
+import com.faktocraft.common.util.RecipeUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.entity.player.StackedItemContents;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -74,7 +77,7 @@ public class MenuRequestTable extends AbstractContainerMenu {
       @Override
       public void onTake(Player taker, ItemStack stack) {
         consumeMatrix(taker);
-        stack.getItem().onCraftedBy(stack, level, taker);
+        stack.getItem().onCraftedBy(stack, taker);
         super.onTake(taker, stack);
       }
     });
@@ -188,9 +191,9 @@ public class MenuRequestTable extends AbstractContainerMenu {
   }
 
   private ItemStack currentResult() {
-    CraftingRecipe recipe = level.getRecipeManager()
-        .getRecipeFor(RecipeType.CRAFTING, craftView, level).orElse(null);
-    return recipe != null ? recipe.assemble(craftView, level.registryAccess()) : ItemStack.EMPTY;
+    CraftingInput input = craftView.asCraftInput();
+    CraftingRecipe recipe = RecipeUtil.findRecipe(level, RecipeType.CRAFTING, input).orElse(null);
+    return recipe != null ? recipe.assemble(input) : ItemStack.EMPTY;
   }
 
   void refreshResult() {
@@ -221,20 +224,20 @@ public class MenuRequestTable extends AbstractContainerMenu {
       if (inMatrix.isEmpty()) {
         continue;
       }
-      ItemStack remainder = inMatrix.getCraftingRemainingItem();
+      ItemStack remainder = com.faktocraft.common.util.ItemStackUtil.craftingRemainder(inMatrix);
       craftView.removeItem(i, 1);
       if (!remainder.isEmpty()) {
         if (craftView.getItem(i).isEmpty()) {
           craftView.setItem(i, remainder);
         } else if (!taker.getInventory().add(remainder)) {
-          taker.drop(remainder, false);
+          taker.drop(remainder, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
       }
     }
   }
 
   @Override
-  public void clicked(int slotId, int button, ClickType clickType, Player player) {
+  public void clicked(int slotId, int button, ContainerInput clickType, Player player) {
     if (slotId == GHOST_INDEX && table != null) {
       table.setGhostTarget(getCarried());
       ghostView.setStackInSlot(0, table.getGhostTarget());
@@ -285,10 +288,10 @@ public class MenuRequestTable extends AbstractContainerMenu {
       if (!stack.isEmpty()) {
         ItemStack leftover = stack.copy();
         stack.setCount(0);
-        player.drop(leftover, false);
+        player.drop(leftover, false, net.minecraft.util.Prediction.SERVER_ONLY);
       }
       slot.onTake(player, crafted);
-      return ItemStack.EMPTY;
+      return crafted;
     } else if (index < PLAYER_START) {
       if (!moveItemStackTo(stack, PLAYER_START, this.slots.size(), true)) {
         return ItemStack.EMPTY;
@@ -325,7 +328,7 @@ public class MenuRequestTable extends AbstractContainerMenu {
     if (remote) {
       return true;
     }
-    return player.distanceToSqr(table.getBlockPos().getCenter()) <= 64.0;
+    return player.distanceToSqr(Vec3.atCenterOf(table.getBlockPos())) <= 64.0;
   }
 
   private class CraftView implements CraftingContainer {
@@ -409,7 +412,7 @@ public class MenuRequestTable extends AbstractContainerMenu {
     }
 
     @Override
-    public void fillStackedContents(StackedContents contents) {
+    public void fillStackedContents(StackedItemContents contents) {
       for (int i = 0; i < 9; i++) {
         contents.accountSimpleStack(backing.getStackInSlot(i));
       }

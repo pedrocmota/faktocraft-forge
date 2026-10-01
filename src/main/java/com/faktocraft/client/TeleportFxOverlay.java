@@ -1,23 +1,24 @@
 package com.faktocraft.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.faktocraft.Faktocraft;
+import com.faktocraft.client.render.FluidSprites;
+import net.minecraft.util.Util;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
-import net.minecraft.Util;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.client.gui.overlay.IGuiOverlay;
+import net.neoforged.neoforge.client.gui.GuiLayer;
 import org.jetbrains.annotations.Nullable;
 
-public class TeleportFxOverlay implements IGuiOverlay {
+public class TeleportFxOverlay implements GuiLayer {
 
-  public static final String ID = "teleport_fx";
+  public static final Identifier ID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "teleport_fx");
 
   private static final long FLASH_IN_MS = 120;
   private static final long FADE_OUT_MS = 900;
@@ -30,7 +31,7 @@ public class TeleportFxOverlay implements IGuiOverlay {
   private static final int DIMENSIONAL_GLOW_RGB = 0x8A3FE6;
   private static final int DIMENSIONAL_CORE_RGB = 0xF4E6FF;
 
-  private static final ResourceLocation PORTAL_SPRITE = new ResourceLocation("minecraft", "block/nether_portal");
+  private static final Identifier PORTAL_SPRITE = Identifier.fromNamespaceAndPath("minecraft", "block/nether_portal");
 
   private static final float[] PORTAL_TINT = { 0.35F, 0.95F, 1.0F };
   private static final float[] DIMENSIONAL_PORTAL_TINT = { 1.0F, 0.85F, 1.0F };
@@ -111,7 +112,9 @@ public class TeleportFxOverlay implements IGuiOverlay {
   }
 
   @Override
-  public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int screenWidth, int screenHeight) {
+  public void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
+    int screenWidth = graphics.guiWidth();
+    int screenHeight = graphics.guiHeight();
     float portal = portalAlpha();
     if (portal > 0F) {
       renderPortal(graphics, screenWidth, screenHeight, portal);
@@ -143,21 +146,14 @@ public class TeleportFxOverlay implements IGuiOverlay {
     }
   }
 
-  private static void renderPortal(GuiGraphics graphics, int screenWidth, int screenHeight, float alpha) {
+  private static void renderPortal(GuiGraphicsExtractor graphics, int screenWidth, int screenHeight, float alpha) {
     float[] tint = dimensional ? DIMENSIONAL_PORTAL_TINT : PORTAL_TINT;
-    TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-        .apply(PORTAL_SPRITE);
-    RenderSystem.disableDepthTest();
-    RenderSystem.depthMask(false);
-    RenderSystem.enableBlend();
-    RenderSystem.defaultBlendFunc();
-    graphics.setColor(tint[0], tint[1], tint[2], alpha);
-    graphics.blit(0, 0, -90, screenWidth, screenHeight, sprite);
-    graphics.setColor(1F, 1F, 1F, 1F);
+    TextureAtlasSprite sprite = FluidSprites.block(PORTAL_SPRITE);
+    int color = withAlpha(((int) (tint[0] * 255F) << 16) | ((int) (tint[1] * 255F) << 8) | (int) (tint[2] * 255F),
+        alpha);
+    graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, 0, 0, screenWidth, screenHeight, color);
     graphics.fill(0, 0, screenWidth, screenHeight, withAlpha(dimensional ? DIMENSIONAL_GLOW_RGB : GLOW_RGB,
         alpha * 0.3F));
-    RenderSystem.depthMask(true);
-    RenderSystem.enableDepthTest();
   }
 
   private static int withAlpha(int rgb, float alpha) {

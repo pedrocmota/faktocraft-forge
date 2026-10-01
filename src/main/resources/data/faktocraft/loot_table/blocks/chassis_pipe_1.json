@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:chassis_pipe_1"
+        }
+      ],
+      "rolls": 1
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:function",
+  "function": "faktocraft:nukegametest.decontaminatorwipesfalloutnearby",
+  "environment": "faktocraft:nuke_decontaminate",
+  "structure": "faktocraft:gametest_platform",
+  "max_ticks": 40,
+  "sky_access": true
+}

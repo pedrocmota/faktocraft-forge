@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "b": "faktocraft:advanced_battery",
+    "c": "faktocraft:copper_cable",
+    "p": "#c:plates/bronze"
+  },
+  "pattern": [
+    "pcp",
+    "bbb",
+    "ppp"
+  ],
+  "result": {
+    "id": "faktocraft:cesu"
+  }
+}

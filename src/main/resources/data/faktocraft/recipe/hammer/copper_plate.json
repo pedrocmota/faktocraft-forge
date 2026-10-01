@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:hammer",
+    "#c:ingots/copper"
+  ],
+  "result": {
+    "id": "faktocraft:copper_plate"
+  }
+}

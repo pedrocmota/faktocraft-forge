@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "faktocraft:bronze"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "faktocraft:bronze"
+      }
+    ]
+  }
+}

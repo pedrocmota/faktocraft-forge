@@ -1,11 +1,11 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.util.NbtBridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -83,7 +83,7 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
     CompoundTag save() {
       CompoundTag tag = new CompoundTag();
       if (!stack.isEmpty()) {
-        tag.put("item", stack.save(new CompoundTag()));
+        tag.put("item", NbtBridge.saveStack(stack));
         tag.putInt("cnt", count);
       }
       if (!this.tag.isEmpty()) {
@@ -105,14 +105,14 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
 
     static Io load(CompoundTag tag) {
       Io io = new Io();
-      io.stack = ItemStack.of(tag.getCompound("item"));
-      io.count = tag.getInt("cnt");
-      io.tag = tag.getString("tag");
-      io.bindSlot = tag.contains("slot") ? tag.getInt("slot") : -1;
-      io.bindEnd = tag.contains("slotEnd") ? Math.max(io.bindSlot, tag.getInt("slotEnd")) : io.bindSlot;
-      io.bindBlock = tag.getString("block");
-      io.bindSlots = tag.getInt("slots");
-      io.mode = tag.contains("mode") ? IoMode.of(tag.getByte("mode")) : IoMode.PER_UNIT;
+      io.stack = NbtBridge.loadStack(tag.getCompoundOrEmpty("item"));
+      io.count = tag.getIntOr("cnt", 0);
+      io.tag = com.faktocraft.common.util.LegacyTags.migrate(tag.getStringOr("tag", ""));
+      io.bindSlot = tag.contains("slot") ? tag.getIntOr("slot", 0) : -1;
+      io.bindEnd = tag.contains("slotEnd") ? Math.max(io.bindSlot, tag.getIntOr("slotEnd", 0)) : io.bindSlot;
+      io.bindBlock = tag.getStringOr("block", "");
+      io.bindSlots = tag.getIntOr("slots", 0);
+      io.mode = tag.contains("mode") ? IoMode.of(tag.getByteOr("mode", (byte) 0)) : IoMode.PER_UNIT;
       return io;
     }
   }
@@ -174,14 +174,14 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
 
     static MachineRecipe load(CompoundTag tag) {
       MachineRecipe recipe = new MachineRecipe();
-      recipe.batchSize = tag.contains("batch") ? Math.max(1, Math.min(MAX_BATCH, tag.getInt("batch"))) : 1;
-      ListTag inputList = tag.getList("in", Tag.TAG_COMPOUND);
+      recipe.batchSize = tag.contains("batch") ? Math.max(1, Math.min(MAX_BATCH, tag.getIntOr("batch", 0))) : 1;
+      ListTag inputList = tag.getListOrEmpty("in");
       for (int i = 0; i < Math.min(inputList.size(), MAX_INPUTS); i++) {
-        recipe.inputs[i] = Io.load(inputList.getCompound(i));
+        recipe.inputs[i] = Io.load(inputList.getCompoundOrEmpty(i));
       }
-      ListTag outputList = tag.getList("out", Tag.TAG_COMPOUND);
+      ListTag outputList = tag.getListOrEmpty("out");
       for (int i = 0; i < Math.min(outputList.size(), MAX_OUTPUTS); i++) {
-        recipe.outputs[i] = Io.load(outputList.getCompound(i));
+        recipe.outputs[i] = Io.load(outputList.getCompoundOrEmpty(i));
       }
       return recipe;
     }
@@ -353,7 +353,7 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
     if (io == null || io.isEmpty()) {
       return;
     }
-    List<String> tags = io.stack.getTags().map(key -> key.location().toString()).sorted().toList();
+    List<String> tags = io.stack.typeHolder().tags().map(key -> key.location().toString()).sorted().toList();
     int next = io.tag.isEmpty() ? 0 : tags.indexOf(io.tag) + 1;
     io.tag = next >= 0 && next < tags.size() ? tags.get(next) : "";
     changed();
@@ -365,12 +365,13 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
       return options;
     }
     options.add(ItemKey.of(io.stack));
-    if (io.tag.isEmpty() || !ResourceLocation.isValidResourceLocation(io.tag)) {
+    if (io.tag.isEmpty() || !(Identifier.tryParse(io.tag) != null)) {
       return options;
     }
-    TagKey<Item> key = TagKey.create(Registries.ITEM, new ResourceLocation(io.tag));
-    for (Item tagItem : net.minecraftforge.registries.ForgeRegistries.ITEMS.tags().getTag(key)) {
-      ItemKey option = ItemKey.of(tagItem);
+    TagKey<Item> key = TagKey.create(Registries.ITEM, Identifier.parse(io.tag));
+    for (net.minecraft.core.Holder<Item> tagHolder : net.minecraft.core.registries.BuiltInRegistries.ITEM.get(key)
+        .map(set -> (Iterable<net.minecraft.core.Holder<Item>>) set).orElse(java.util.List.of())) {
+      ItemKey option = ItemKey.of(tagHolder.value());
       if (options.size() < MAX_TAG_ITEMS && !options.contains(option)) {
         options.add(option);
       }
@@ -425,9 +426,9 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
 
   public void loadRecipes(CompoundTag tag) {
     recipes.clear();
-    ListTag list = tag.getList("recipes", Tag.TAG_COMPOUND);
+    ListTag list = tag.getListOrEmpty("recipes");
     for (int i = 0; i < Math.min(list.size(), MAX_RECIPES); i++) {
-      recipes.add(MachineRecipe.load(list.getCompound(i)));
+      recipes.add(MachineRecipe.load(list.getCompoundOrEmpty(i)));
     }
     recipesVersion++;
   }
@@ -445,7 +446,7 @@ public class BlockEntityRecipePipe extends BlockEntityDockingPipe {
     if (tag.contains("recipes")) {
       loadRecipes(tag);
     }
-    shared = !tag.contains("share") || tag.getBoolean("share");
+    shared = !tag.contains("share") || tag.getBooleanOr("share", false);
   }
 
   @Override

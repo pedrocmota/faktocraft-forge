@@ -1,10 +1,10 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.util.NbtBridge;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -34,8 +34,8 @@ public final class ModuleSettings {
       }
       return switch (mode) {
         case ITEM -> matchesItem(stack);
-        case TAG -> stack.is(TagKey.create(Registries.ITEM, new ResourceLocation(text)));
-        case NAMESPACE -> net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(stack.getItem()).getNamespace()
+        case TAG -> stack.is(TagKey.create(Registries.ITEM, Identifier.parse(text)));
+        case NAMESPACE -> net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace()
             .equals(text);
       };
     }
@@ -47,7 +47,7 @@ public final class ModuleSettings {
       if (matchDamage && stack.getDamageValue() != item.getDamageValue()) {
         return false;
       }
-      if (matchNbt && !ItemStack.isSameItemSameTags(stack, item)) {
+      if (matchNbt && !ItemStack.isSameItemSameComponents(stack, item)) {
         return false;
       }
       return true;
@@ -58,11 +58,11 @@ public final class ModuleSettings {
   }
 
   private static CompoundTag root(ItemStack module) {
-    return module.getOrCreateTag().getCompound(ROOT);
+    return NbtBridge.customDataOrEmpty(module).getCompoundOrEmpty(ROOT);
   }
 
   private static void putRoot(ItemStack module, CompoundTag tag) {
-    module.getOrCreateTag().put(ROOT, tag);
+    NbtBridge.updateCustomData(module, data -> data.put(ROOT, tag));
   }
 
   public static List<FilterLine> lines(ItemStack module) {
@@ -71,16 +71,16 @@ public final class ModuleSettings {
 
   public static List<FilterLine> lines(CompoundTag rootTag) {
     List<FilterLine> result = new ArrayList<>();
-    ListTag list = rootTag.getList("lines", Tag.TAG_COMPOUND);
+    ListTag list = rootTag.getListOrEmpty("lines");
     for (int i = 0; i < Math.min(list.size(), MAX_LINES); i++) {
-      CompoundTag entry = list.getCompound(i);
+      CompoundTag entry = list.getCompoundOrEmpty(i);
       result.add(new FilterLine(
-          LineMode.values()[Math.floorMod(entry.getByte("mode"), LineMode.values().length)],
-          ItemStack.of(entry.getCompound("item")),
-          entry.getString("text"),
-          entry.getBoolean("nbt"),
-          entry.getBoolean("dmg"),
-          entry.getInt("count")));
+          LineMode.values()[Math.floorMod(entry.getByteOr("mode", (byte) 0), LineMode.values().length)],
+          NbtBridge.loadStack(entry.getCompoundOrEmpty("item")),
+          entry.getStringOr("text", ""),
+          entry.getBooleanOr("nbt", false),
+          entry.getBooleanOr("dmg", false),
+          entry.getIntOr("count", 0)));
     }
     while (result.size() < MAX_LINES) {
       result.add(new FilterLine(LineMode.ITEM, ItemStack.EMPTY, "", false, false, 0));
@@ -105,7 +105,7 @@ public final class ModuleSettings {
       CompoundTag tag = new CompoundTag();
       tag.putByte("mode", (byte) entry.mode().ordinal());
       if (!entry.item().isEmpty()) {
-        tag.put("item", entry.item().save(new CompoundTag()));
+        tag.put("item", NbtBridge.saveStack(entry.item()));
       }
       if (!entry.text().isEmpty()) {
         tag.putString("text", entry.text());
@@ -140,21 +140,21 @@ public final class ModuleSettings {
     }
     if (trimmed.startsWith("#")) {
       String tag = trimmed.substring(1);
-      if (ResourceLocation.isValidResourceLocation(tag)) {
+      if ((Identifier.tryParse(tag) != null)) {
         return new FilterLine(LineMode.TAG, ItemStack.EMPTY, tag, base.matchNbt(), base.matchDamage(), base.count());
       }
       return null;
     }
     if (trimmed.endsWith(":*")) {
       String ns = trimmed.substring(0, trimmed.length() - 2);
-      if (ResourceLocation.isValidNamespace(ns)) {
+      if (Identifier.isValidNamespace(ns)) {
         return new FilterLine(LineMode.NAMESPACE, ItemStack.EMPTY, ns, base.matchNbt(), base.matchDamage(),
             base.count());
       }
       return null;
     }
-    if (ResourceLocation.isValidResourceLocation(trimmed)) {
-      Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(new ResourceLocation(trimmed));
+    if ((Identifier.tryParse(trimmed) != null)) {
+      Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(Identifier.parse(trimmed));
       if (item != net.minecraft.world.item.Items.AIR) {
         return new FilterLine(LineMode.ITEM, new ItemStack(item), "", base.matchNbt(), base.matchDamage(),
             base.count());
@@ -196,14 +196,14 @@ public final class ModuleSettings {
   }
 
   public static boolean isTreeCurrent(ItemStack module) {
-    return root(module).getInt("treeV") >= TREE_VERSION;
+    return root(module).getIntOr("treeV", 0) >= TREE_VERSION;
   }
 
   public static java.util.Map<String, Boolean> treeOverrides(ItemStack module) {
     java.util.Map<String, Boolean> map = new java.util.LinkedHashMap<>();
-    CompoundTag tree = root(module).getCompound("tree");
-    for (String key : tree.getAllKeys()) {
-      map.put(key, tree.getBoolean(key));
+    CompoundTag tree = root(module).getCompoundOrEmpty("tree");
+    for (String key : tree.keySet()) {
+      map.put(key, tree.getBooleanOr(key, false));
     }
     return map;
   }
@@ -219,9 +219,9 @@ public final class ModuleSettings {
 
   public static java.util.Map<String, Integer> treeCounts(ItemStack module) {
     java.util.Map<String, Integer> map = new java.util.LinkedHashMap<>();
-    CompoundTag counts = root(module).getCompound("counts");
-    for (String key : counts.getAllKeys()) {
-      map.put(key, counts.getInt(key));
+    CompoundTag counts = root(module).getCompoundOrEmpty("counts");
+    for (String key : counts.keySet()) {
+      map.put(key, counts.getIntOr(key, 0));
     }
     return map;
   }
@@ -245,7 +245,7 @@ public final class ModuleSettings {
   }
 
   public static int getPriority(ItemStack module) {
-    return root(module).getInt("priority");
+    return root(module).getIntOr("priority", 0);
   }
 
   public static void setPriority(ItemStack module, int value) {
@@ -255,7 +255,7 @@ public final class ModuleSettings {
   }
 
   public static boolean getFlag(ItemStack module, String key) {
-    return root(module).getBoolean(key);
+    return root(module).getBooleanOr(key, false);
   }
 
   public static void setFlag(ItemStack module, String key, boolean value) {
@@ -269,7 +269,7 @@ public final class ModuleSettings {
   public static final String FLAG_ALLOW_CRAFTS = "allowCrafts";
 
   public static int getMinReserve(ItemStack module) {
-    return root(module).getInt("reserve");
+    return root(module).getIntOr("reserve", 0);
   }
 
   public static void setMinReserve(ItemStack module, int value) {

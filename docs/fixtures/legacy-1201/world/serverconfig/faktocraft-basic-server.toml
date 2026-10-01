@@ -1,0 +1,17 @@
+
+[tank]
+	#Whether breaking a tank holding at least 1000mB places one source block of its fluid.
+	#Disabled, the stored fluid is simply discarded when the tank breaks.
+	breakPlacesFluidSource = true
+
+[content]
+	#Whether the teleport anchor exists.
+	#Disabled it is hidden from the creative tabs and from JEI.
+	teleportAnchor = true
+	#Whether the chunk loader exists.
+	#Disabled it is hidden from the creative tabs and from JEI.
+	chunkLoader = true
+	#Whether the nuke can be placed and detonated.
+	#Disabled it is hidden from the creative tabs and from JEI, and placed nukes will not go off.
+	nuke = true
+

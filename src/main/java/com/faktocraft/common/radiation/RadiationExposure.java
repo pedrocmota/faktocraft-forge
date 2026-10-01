@@ -11,11 +11,11 @@ public final class RadiationExposure {
   }
 
   public static float get(LivingEntity living) {
-    return living.getPersistentData().getFloat(TAG);
+    return living.getPersistentData().getFloatOr(TAG, 0.0F);
   }
 
   public static float pendingDamage(LivingEntity living) {
-    return living.getPersistentData().getFloat(TAG_DAMAGE);
+    return living.getPersistentData().getFloatOr(TAG_DAMAGE, 0.0F);
   }
 
   public static void setPendingDamage(LivingEntity living, float damage) {

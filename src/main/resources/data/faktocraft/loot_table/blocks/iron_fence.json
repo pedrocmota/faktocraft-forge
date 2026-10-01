@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:iron_fence"
+        }
+      ],
+      "name": "IRON_FENCE",
+      "rolls": 1
+    }
+  ]
+}

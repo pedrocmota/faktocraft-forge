@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:status_monitor"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "faktocraft:status_monitor",
+        "state": {
+          "part_x": "0",
+          "part_y": "0"
+        }
+      }
+    }
+  ]
+}

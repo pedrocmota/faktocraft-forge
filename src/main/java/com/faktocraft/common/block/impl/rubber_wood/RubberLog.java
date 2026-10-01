@@ -84,7 +84,7 @@ public class RubberLog extends FaktocraftBlock implements IStateRubberLog, IStat
       }
       energy.consumeEnergy(50, false);
     } else {
-      itemStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+      itemStack.hurtAndBreak(1, player, hand);
     }
 
     int dropCount = 0;

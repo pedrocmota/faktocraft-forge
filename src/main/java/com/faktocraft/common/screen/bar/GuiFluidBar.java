@@ -1,5 +1,7 @@
 package com.faktocraft.common.screen.bar;
 
+import net.minecraft.client.renderer.RenderPipelines;
+import com.faktocraft.common.util.SpriteUtil;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.entity.block.FluidStorage;
@@ -8,14 +10,11 @@ import com.faktocraft.common.screen.widgets.GuiElement;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.TextComponentUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraft.resources.Identifier;
 
 public class GuiFluidBar extends GuiElement {
 
@@ -85,7 +84,7 @@ public class GuiFluidBar extends GuiElement {
     var fluid = com.faktocraft.common.item.base.FluidItem.getFluid(carried);
     int amount = com.faktocraft.common.item.base.FluidItem.getFluidAmount(carried);
     return fluid != net.minecraft.world.level.material.Fluids.EMPTY && amount > 0
-        && fluidStorage.fillFluid(new net.minecraftforge.fluids.FluidStack(fluid, amount), amount, true) == amount;
+        && fluidStorage.fillFluid(new net.neoforged.neoforge.fluids.FluidStack(fluid, amount), amount, true) == amount;
   }
 
   private boolean bucketPourable() {
@@ -99,7 +98,7 @@ public class GuiFluidBar extends GuiElement {
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY)) {
       java.util.List<Component> lines = new java.util.ArrayList<>();
       if (!fluidStorage.isEmpty()) {
@@ -134,18 +133,17 @@ public class GuiFluidBar extends GuiElement {
         lines.add(Component.translatable("gui." + Faktocraft.MODID + ".cell_drain_all_hint")
             .withStyle(net.minecraft.ChatFormatting.DARK_AQUA));
       }
-      graphics.renderComponentTooltip(GuiUtil.getFont(), lines, mouseX, mouseY);
+      graphics.setComponentTooltipForNextFrame(GuiUtil.getFont(), lines, mouseX, mouseY);
     }
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     blit(graphics, getLeftOffset(), getTopOffset(), textureX, textureY, getWidth(), getHeight());
 
     final int fluidStored = fluidStorage.getFluidAmount();
     if (fluidStored > 0 && !fluidStorage.isEmpty()) {
-      IClientFluidTypeExtensions fluidAttributes = IClientFluidTypeExtensions.of(fluidStorage.getFluid());
-      int color = fluidAttributes.getTintColor();
+      int color = SpriteUtil.getFluidTint(fluidStorage.getFluid());
 
       int fluidLeft = getLeftOffset() + 4;
       int fluidTop = getTopOffset() + 4;
@@ -155,20 +153,15 @@ public class GuiFluidBar extends GuiElement {
       int renderAmount = Math.max(Math.min(fluidHeight, fluidStored * fluidHeight / fluidStorage.getCapacityMb()), 1);
       int posY = fluidTop + fluidHeight - renderAmount;
 
-      ResourceLocation stillTexture = fluidAttributes.getStillTexture();
-      TextureAtlasSprite sprite = stillTexture != null
-          ? Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTexture)
-          : null;
+      TextureAtlasSprite sprite = SpriteUtil.getFluidSprite(fluidStorage.getFluid());
       if (sprite != null) {
         graphics.enableScissor(fluidLeft, posY, fluidLeft + fluidWidth, posY + renderAmount);
-        graphics.setColor(FastColor.ARGB32.red(color) / 255.0F, FastColor.ARGB32.green(color) / 255.0F,
-            FastColor.ARGB32.blue(color) / 255.0F, 1.0F);
+        int tint = color | 0xFF000000;
         for (int i = 0; i < fluidWidth; i += 16) {
           for (int j = 0; j < renderAmount; j += 16) {
-            graphics.blit(fluidLeft + i, posY + j, 0, 16, 16, sprite);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, fluidLeft + i, posY + j, 16, 16, tint);
           }
         }
-        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         graphics.disableScissor();
       } else {
         graphics.fill(fluidLeft, posY, fluidLeft + fluidWidth, posY + renderAmount, color | 0xFF000000);
@@ -180,11 +173,9 @@ public class GuiFluidBar extends GuiElement {
     super.renderBg(graphics, minecraft, mouseX, mouseY);
   }
 
-  private void renderPlungerDrain(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  private void renderPlungerDrain(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
 
-    boolean pressed = org.lwjgl.glfw.GLFW.glfwGetMouseButton(
-        minecraft.getWindow().getWindow(),
-        org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT) == org.lwjgl.glfw.GLFW.GLFW_PRESS;
+    boolean pressed = minecraft.mouseHandler.isLeftPressed();
     boolean pressEdge = pressed && !prevPressed;
     prevPressed = pressed;
 
@@ -196,7 +187,7 @@ public class GuiFluidBar extends GuiElement {
       lastSoundStep = -1;
       return;
     }
-    long now = net.minecraft.Util.getMillis();
+    long now = net.minecraft.util.Util.getMillis();
     int x0 = getLeftOffset();
     int y0 = getTopOffset();
     int x1 = x0 + width;
@@ -214,7 +205,7 @@ public class GuiFluidBar extends GuiElement {
     if (cell || drainCell) {
       if (pressEdge && over && menu != null) {
         var pos = menu.getBlockEntity().getBlockPos();
-        boolean all = net.minecraft.client.gui.screens.Screen.hasShiftDown();
+        boolean all = GuiUtil.hasShiftDown();
         com.faktocraft.common.network.ModNetworking.sendToServer(cell
             ? new com.faktocraft.common.network.packet.PacketCellFill(pos, drainIndex, all)
             : new com.faktocraft.common.network.packet.PacketCellDrain(pos, drainIndex, all));
@@ -255,7 +246,7 @@ public class GuiFluidBar extends GuiElement {
   }
 
   @Override
-  public ResourceLocation getResourceLocation() {
+  public Identifier getResourceLocation() {
     return Constants.COMMON;
   }
 }

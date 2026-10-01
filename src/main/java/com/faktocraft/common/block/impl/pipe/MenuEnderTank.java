@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.pipe;
 
+import net.minecraft.world.phys.Vec3;
 import com.faktocraft.common.registries.PipeRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
@@ -31,6 +32,6 @@ public class MenuEnderTank extends AbstractContainerMenu {
   @Override
   public boolean stillValid(Player player) {
     return tank != null && !tank.isRemoved()
-        && player.distanceToSqr(tank.getBlockPos().getCenter()) <= 64.0;
+        && player.distanceToSqr(Vec3.atCenterOf(tank.getBlockPos())) <= 64.0;
   }
 }

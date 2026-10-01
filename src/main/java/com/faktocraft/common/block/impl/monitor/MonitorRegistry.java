@@ -16,7 +16,7 @@ public final class MonitorRegistry {
 
   public static final Block STATUS_MONITOR = ModBlocks.register("status_monitor", BlockStatusMonitor::new,
       BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(1.5F).sound(SoundType.METAL)
-          .noOcclusion().pushReaction(PushReaction.BLOCK));
+          .noOcclusion().pushReaction(PushReaction.IMMOVEABLE));
 
   public static final Item STATUS_MONITOR_ITEM = ModItems.registerBlockItem(STATUS_MONITOR, Rarity.UNCOMMON,
       StatusMonitorItem::new);

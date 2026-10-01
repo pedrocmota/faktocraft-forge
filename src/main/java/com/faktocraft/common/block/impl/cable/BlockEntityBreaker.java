@@ -52,9 +52,9 @@ public class BlockEntityBreaker extends BlockEntityCable {
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    int lvl = tag.contains("adoptedTier") ? tag.getInt("adoptedTier") : -1;
+    int lvl = tag.contains("adoptedTier") ? tag.getIntOr("adoptedTier", 0) : -1;
     adoptedTier = lvl >= 0 ? EnergyTier.getTierFromLvl(lvl) : null;
-    redstoneOnly = tag.getBoolean("redstoneOnly");
+    redstoneOnly = tag.getBooleanOr("redstoneOnly", false);
   }
 
   @Override

@@ -23,6 +23,7 @@ public class BlockEntityTransformer extends FaktocraftBlockEntity
 
   private final TransformerTier tier;
   private TransformerMode transformerMode = TransformerMode.STEP_UP;
+  private int lossCarry;
 
   public BlockEntityTransformer(BlockPos pos, BlockState state) {
     super(M1Registry.TRANSFORMER_BE, pos, state);
@@ -82,16 +83,32 @@ public class BlockEntityTransformer extends FaktocraftBlockEntity
   }
 
   @Override
+  public int energyReceiveLossPercent() {
+    return tier.getLossPercent(transformerMode);
+  }
+
+  @Override
+  public int energyAfterReceiveLoss(int accepted, boolean simulate) {
+    long total = (long) accepted * energyReceiveLossPercent() + lossCarry;
+    if (!simulate) {
+      lossCarry = (int) (total % 100);
+    }
+    return accepted - (int) (total / 100);
+  }
+
+  @Override
   protected void saveAdditional(CompoundTag tag) {
     tag.putInt("transformerMode", transformerMode.getId());
+    tag.putInt("lossCarry", lossCarry);
     super.saveAdditional(tag);
   }
 
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
+    lossCarry = tag.getIntOr("lossCarry", 0);
     transformerMode = TransformerMode.getModeFromId(
-        tag.contains("transformerMode") ? tag.getInt("transformerMode") : defaultMode().getId());
+        tag.contains("transformerMode") ? tag.getIntOr("transformerMode", 0) : defaultMode().getId());
     if (!tier.isStepUpAllowed()) {
       transformerMode = TransformerMode.STEP_DOWN;
     }

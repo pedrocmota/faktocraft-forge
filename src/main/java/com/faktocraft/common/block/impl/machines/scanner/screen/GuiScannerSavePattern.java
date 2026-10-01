@@ -1,6 +1,6 @@
 package com.faktocraft.common.block.impl.machines.scanner.screen;
 
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.faktocraft.common.block.impl.machines.scanner.BlockEntityScanner;
 import com.faktocraft.common.enums.EnumLang;
 import com.faktocraft.common.enums.GuiSprite;
@@ -8,10 +8,10 @@ import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.button.GuiButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import java.util.List;
 
 public class GuiScannerSavePattern extends GuiButton {
@@ -25,7 +25,7 @@ public class GuiScannerSavePattern extends GuiButton {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     if (entity.getMode().getId() >= 4) {
       super.renderBg(graphics, minecraft, mouseX, mouseY);
     }
@@ -40,10 +40,10 @@ public class GuiScannerSavePattern extends GuiButton {
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY) && entity.getMode().getId() >= 4) {
-      ResourceLocation rl = ForgeRegistries.ITEMS.getKey(entity.getResult().getResultStack().getItem());
-      graphics.renderComponentTooltip(com.faktocraft.common.util.GuiUtil.getFont(), List.of(
+      Identifier rl = BuiltInRegistries.ITEM.getKey(entity.getResult().getResultStack().getItem());
+      graphics.setComponentTooltipForNextFrame(com.faktocraft.common.util.GuiUtil.getFont(), List.of(
           EnumLang.SAVE_PATTERN.getTranslationComponent(),
           Component.literal(entity.getResult().getResultStack().getHoverName().getString())
               .withStyle(ChatFormatting.GRAY),

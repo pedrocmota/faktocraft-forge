@@ -5,7 +5,7 @@ import com.faktocraft.common.util.TransferUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockFluidPipe extends VoxelBlock implements EntityBlock {
-
   public enum Tier {
     EXTRACTOR(50, 200), STONE(50, 200), GOLD(200, 800);
 
@@ -44,23 +43,20 @@ public class BlockFluidPipe extends VoxelBlock implements EntityBlock {
   }
 
   @Override
-  public void onRemove(net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.Level level,
-      net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState newState, boolean isMoving) {
-    if (!state.is(newState.getBlock())) {
-      PipeValveHelper.dropValve(level, pos, state);
-    }
-    super.onRemove(state, level, pos, newState, isMoving);
+  public void preRemoveSideEffects(BlockState state, Level level, BlockPos pos, BlockEntity blockEntity) {
+    PipeValveHelper.dropValve(level, pos, state);
+    super.preRemoveSideEffects(state, level, pos, blockEntity);
   }
 
   @Override
   public boolean onDestroyedByPlayer(net.minecraft.world.level.block.state.BlockState state,
       net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos,
-      net.minecraft.world.entity.player.Player player, boolean willHarvest,
-      net.minecraft.world.level.material.FluidState fluid) {
+      net.minecraft.world.entity.player.Player player, net.minecraft.world.item.ItemStack toolStack,
+      boolean willHarvest, net.minecraft.world.level.material.FluidState fluid) {
     if (PipeValveHelper.breakValveFirst(level, pos)) {
       return false;
     }
-    return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+    return super.onDestroyedByPlayer(state, level, pos, player, toolStack, willHarvest, fluid);
   }
 
   public Tier getTier() {
@@ -73,7 +69,7 @@ public class BlockFluidPipe extends VoxelBlock implements EntityBlock {
   }
 
   @Override
-  protected boolean canConnect(LevelAccessor level, BlockPos pos, Direction direction) {
+  protected boolean canConnect(LevelReader level, BlockPos pos, Direction direction) {
     BlockPos relative = pos.relative(direction);
     BlockState state = level.getBlockState(relative);
     if (state.getBlock() instanceof BlockFluidPipe other) {

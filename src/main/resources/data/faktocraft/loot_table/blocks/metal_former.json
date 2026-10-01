@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:basic_machine_casing"
+        }
+      ],
+      "name": "metal_former",
+      "rolls": 1
+    }
+  ]
+}

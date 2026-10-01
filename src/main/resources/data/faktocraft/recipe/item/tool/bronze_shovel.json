@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_tool",
+  "key": {
+    "b": "#c:ingots/bronze",
+    "s": "#c:rods/wooden"
+  },
+  "pattern": [
+    " b ",
+    " s ",
+    " s "
+  ],
+  "result": {
+    "id": "faktocraft:bronze_shovel"
+  }
+}

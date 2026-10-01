@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "a": "faktocraft:advanced_alloy",
+    "d": "#c:gems/diamond",
+    "i": "faktocraft:iridium"
+  },
+  "pattern": [
+    "iai",
+    "ada",
+    "iai"
+  ],
+  "result": {
+    "id": "faktocraft:raw_iridium_plate"
+  }
+}

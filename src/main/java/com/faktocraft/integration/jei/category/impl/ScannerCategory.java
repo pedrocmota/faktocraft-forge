@@ -9,25 +9,24 @@ import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
-import net.minecraft.client.gui.GuiGraphics;
+import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import static com.faktocraft.common.util.Constants.JEI_LARGE_2;
 import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class ScannerCategory extends AbstractRecipeCategory<ScannerRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "scanner");
-  public static final RecipeType<ScannerRecipe> TYPE = new RecipeType<>(UID, ScannerRecipe.class);
+  public static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "scanner");
+  public static final IRecipeType<ScannerRecipe> TYPE = IRecipeType.create(UID, ScannerRecipe.class);
 
   private final LoadingCache<Integer, IDrawableAnimated> progress;
   private final IDrawableAnimated energy;
@@ -38,7 +37,7 @@ public class ScannerCategory extends AbstractRecipeCategory<ScannerRecipe> {
         "scanner",
         guiHelper,
         guiHelper.createDrawable(JEI_LARGE_2, 0, 55, 152, 54),
-        guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M4Registry.SCANNER)));
+        guiHelper.createDrawableItemStack(new ItemStack(M4Registry.SCANNER)));
     this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
         (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 62, 122, 61, 42).buildAnimated(duration,
             IDrawableAnimated.StartDirection.LEFT, false)));
@@ -51,7 +50,7 @@ public class ScannerCategory extends AbstractRecipeCategory<ScannerRecipe> {
   }
 
   @Override
-  public void draw(ScannerRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX,
+  public void draw(ScannerRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor graphics, double mouseX,
       double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 

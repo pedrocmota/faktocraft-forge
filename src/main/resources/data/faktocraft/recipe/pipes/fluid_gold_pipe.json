@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft_pipes",
+  "ingredients": [
+    "faktocraft:gold_pipe",
+    "#c:rubber"
+  ],
+  "result": {
+    "id": "faktocraft:fluid_gold_pipe"
+  }
+}

@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,7 +10,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkHooks;
 
 public class MenuChassis extends AbstractContainerMenu {
 
@@ -98,10 +98,9 @@ public class MenuChassis extends AbstractContainerMenu {
       return false;
     }
     BlockPos pos = chassis.getBlockPos();
-    NetworkHooks.openScreen(serverPlayer,
-        new net.minecraft.world.SimpleMenuProvider(
-            (windowId, inventory, p) -> new MenuModule(windowId, p.level(), pos, slot, inventory, p),
-            Component.translatable(module.getDescriptionId())),
+    serverPlayer.openMenu(new net.minecraft.world.SimpleMenuProvider(
+        (windowId, inventory, p) -> new MenuModule(windowId, p.level(), pos, slot, inventory, p),
+        Component.translatable(module.getItem().getDescriptionId())),
         buf -> {
           buf.writeBlockPos(pos);
           buf.writeVarInt(slot);
@@ -147,6 +146,6 @@ public class MenuChassis extends AbstractContainerMenu {
   @Override
   public boolean stillValid(Player player) {
     return chassis != null && !chassis.isRemoved()
-        && player.distanceToSqr(chassis.getBlockPos().getCenter()) <= 64.0;
+        && player.distanceToSqr(Vec3.atCenterOf(chassis.getBlockPos())) <= 64.0;
   }
 }

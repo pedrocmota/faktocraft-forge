@@ -7,10 +7,10 @@ import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.GuiUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class GuiCapacitorWarning extends GuiElement {
 
@@ -30,7 +30,7 @@ public class GuiCapacitorWarning extends GuiElement {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     if (!active()) {
       return;
     }
@@ -47,9 +47,9 @@ public class GuiCapacitorWarning extends GuiElement {
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (active() && isMouseOver(mouseX, mouseY)) {
-      graphics.renderTooltip(GuiUtil.getFont(),
+      graphics.setTooltipForNextFrame(GuiUtil.getFont(),
           Component.translatable("gui." + Faktocraft.MODID + ".capacitor_required")
               .withStyle(ChatFormatting.RED),
           mouseX, mouseY);
@@ -57,7 +57,7 @@ public class GuiCapacitorWarning extends GuiElement {
   }
 
   @Override
-  public ResourceLocation getResourceLocation() {
+  public Identifier getResourceLocation() {
     return Constants.COMMON;
   }
 }

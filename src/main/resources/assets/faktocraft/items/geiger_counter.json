@@ -1,0 +1,105 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "faktocraft:dose",
+    "entries": [
+      {
+        "threshold": 0.25,
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:display_context",
+          "cases": [
+            {
+              "when": "gui",
+              "model": {
+                "type": "minecraft:model",
+                "model": "faktocraft:item/tool/electric/geiger_counter_1_gui"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "faktocraft:item/tool/electric/geiger_counter_1"
+          }
+        }
+      },
+      {
+        "threshold": 0.5,
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:display_context",
+          "cases": [
+            {
+              "when": "gui",
+              "model": {
+                "type": "minecraft:model",
+                "model": "faktocraft:item/tool/electric/geiger_counter_2_gui"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "faktocraft:item/tool/electric/geiger_counter_2"
+          }
+        }
+      },
+      {
+        "threshold": 0.75,
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:display_context",
+          "cases": [
+            {
+              "when": "gui",
+              "model": {
+                "type": "minecraft:model",
+                "model": "faktocraft:item/tool/electric/geiger_counter_3_gui"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "faktocraft:item/tool/electric/geiger_counter_3"
+          }
+        }
+      },
+      {
+        "threshold": 1.0,
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:display_context",
+          "cases": [
+            {
+              "when": "gui",
+              "model": {
+                "type": "minecraft:model",
+                "model": "faktocraft:item/tool/electric/geiger_counter_4_gui"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "faktocraft:item/tool/electric/geiger_counter_4"
+          }
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:select",
+      "property": "minecraft:display_context",
+      "cases": [
+        {
+          "when": "gui",
+          "model": {
+            "type": "minecraft:model",
+            "model": "faktocraft:item/geiger_counter_gui"
+          }
+        }
+      ],
+      "fallback": {
+        "type": "minecraft:model",
+        "model": "faktocraft:item/geiger_counter"
+      }
+    }
+  }
+}

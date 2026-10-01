@@ -15,6 +15,7 @@ import com.faktocraft.common.interfaces.item.IElectricItem;
 import com.faktocraft.common.network.packet.PacketParticle;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.ItemStackHandler;
+import com.faktocraft.common.util.LegacySavedData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -27,6 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayDeque;
@@ -40,6 +42,8 @@ import java.util.WeakHashMap;
 public class EnergyCore extends SavedData implements IEnergyCore {
 
   public static final String DATA_NAME = Faktocraft.MODID + "_energy_core";
+  private static final SavedDataType<EnergyCore> TYPE = LegacySavedData.type("energy_core",
+      EnergyCore::new, EnergyCore::load, core -> core.save(new CompoundTag()));
 
   private static final Map<Level, EnergyCore> CLIENT_CORES = new WeakHashMap<>();
 
@@ -65,7 +69,7 @@ public class EnergyCore extends SavedData implements IEnergyCore {
 
   public static EnergyCore get(Level level) {
     if (level instanceof ServerLevel serverLevel) {
-      EnergyCore core = serverLevel.getDataStorage().computeIfAbsent(EnergyCore::load, EnergyCore::new, DATA_NAME);
+      EnergyCore core = LegacySavedData.get(serverLevel, TYPE, EnergyCore::load);
       core.bindLevel(serverLevel);
       return core;
     }
@@ -802,15 +806,14 @@ public class EnergyCore extends SavedData implements IEnergyCore {
 
   public void deserializeData(CompoundTag tag) {
     energyBlocks.clear();
-    for (long pos : tag.getLongArray("energyBlocks")) {
+    for (long pos : tag.getLongArray("energyBlocks").orElse(new long[0])) {
       energyBlocks.add(BlockPos.of(pos));
     }
     if (networks != null) {
-      networks.deserializeNBT(tag.getCompound("networks"));
+      networks.deserializeNBT(tag.getCompoundOrEmpty("networks"));
     }
   }
 
-  @Override
   public CompoundTag save(CompoundTag tag) {
     tag.merge(serializeData());
     return tag;

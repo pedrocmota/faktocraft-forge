@@ -1,0 +1,65 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_ingredient_0": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "faktocraft:battery_box"
+          }
+        ]
+      }
+    },
+    "has_ingredient_1": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "faktocraft:electronic_circuit"
+          }
+        ]
+      }
+    },
+    "has_ingredient_2": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:stone_pressure_plate"
+          }
+        ]
+      }
+    },
+    "has_ingredient_3": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:rubber"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipes": "faktocraft:charge_pad/charge_pad_battery_box"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ingredient_0",
+      "has_ingredient_1",
+      "has_ingredient_2",
+      "has_ingredient_3",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "faktocraft:charge_pad/charge_pad_battery_box"
+    ]
+  }
+}

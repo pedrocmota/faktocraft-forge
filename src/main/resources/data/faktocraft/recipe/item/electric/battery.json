@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "C": "faktocraft:copper_cable_insulated",
+    "T": "#c:plates/tin",
+    "r": "#c:dusts/redstone"
+  },
+  "pattern": [
+    " C ",
+    "TrT",
+    "TrT"
+  ],
+  "result": {
+    "id": "faktocraft:battery"
+  }
+}

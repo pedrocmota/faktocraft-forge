@@ -1,15 +1,16 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.util.ItemStackHandler;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "textures/gui/container/craft_pipe.png");
 
   public static final int ARROW_X = 94 + PAD;
@@ -72,7 +73,7 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
     }
     CraftingRecipe recipe = pipe.patternRecipe(index);
     if (recipe != null) {
-      return recipe.getResultItem(this.minecraft.level.registryAccess());
+      return pipe.patternResult(index);
     }
     ItemStackHandler pattern = pipe.pattern(index);
     if (pattern != null) {
@@ -91,7 +92,7 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
     if (pipe != null && this.minecraft != null && this.minecraft.level != null) {
       CraftingRecipe recipe = pipe.patternRecipe(index);
       if (recipe != null) {
-        ItemStack result = recipe.getResultItem(this.minecraft.level.registryAccess());
+        ItemStack result = pipe.patternResult(index);
         Component name = result.getHoverName();
         return result.getCount() > 1
             ? Component.empty().append(name).append(" x" + result.getCount())
@@ -123,7 +124,7 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
   }
 
   @Override
-  protected ResourceLocation getGuiTexture() {
+  protected Identifier getGuiTexture() {
     return BACKGROUND;
   }
 
@@ -181,7 +182,7 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
 
   private int patternAt(double mouseX, double mouseY) {
     int left = (this.width - this.imageWidth) / 2;
-    int top = (this.height - this.imageHeight) / 2;
+    int top = (this.height - getImageHeight()) / 2;
     double relX = mouseX - left - PATTERN_X;
     double relY = mouseY - top - PATTERN_Y;
     if (relX < 0 || relY < 0 || relX >= 3 * 18 || relY >= 3 * 18) {
@@ -207,16 +208,17 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
   }
 
   @Override
-  protected void renderDetailBg(GuiGraphics graphics) {
+  protected void renderDetailBg(GuiGraphicsExtractor graphics) {
     for (int i = 0; i < BlockEntityCraftPipe.PATTERN_SIZE; i++) {
       slotFrame(graphics, PATTERN_X + (i % 3) * 18, PATTERN_Y + (i / 3) * 18);
     }
     slotFrame(graphics, RESULT_X, RESULT_Y);
-    graphics.blit(Constants.PROCESS, this.leftPos + ARROW_X, this.topPos + ARROW_Y, 0, 0, 24, 16, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, this.leftPos + ARROW_X, this.topPos + ARROW_Y, 0, 0,
+        24, 16, 256, 256);
   }
 
   @Override
-  protected void renderDetailLabels(GuiGraphics graphics) {
+  protected void renderDetailLabels(GuiGraphicsExtractor graphics) {
     BlockEntityCraftPipe pipe = pipe();
     int index = this.menu.editIndex();
     if (pipe != null) {
@@ -232,14 +234,14 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
           if (cellOptions(i).size() > 1) {
             graphics.fill(x, y, x + 16, y + 16, FLEXIBLE_TINT);
           }
-          graphics.renderItem(displayStack(i, stack), x, y);
+          graphics.item(displayStack(i, stack), x, y);
         }
       }
       CraftingRecipe recipe = pipe.patternRecipe(index);
       if (recipe != null && this.minecraft != null && this.minecraft.level != null) {
-        ItemStack result = recipe.getResultItem(this.minecraft.level.registryAccess());
-        graphics.renderItem(result, RESULT_X, RESULT_Y);
-        graphics.renderItemDecorations(this.font, result, RESULT_X, RESULT_Y);
+        ItemStack result = pipe.patternResult(index);
+        graphics.item(result, RESULT_X, RESULT_Y);
+        graphics.itemDecorations(this.font, result, RESULT_X, RESULT_Y);
       }
     }
     if (this.menu.hasAssembly()) {
@@ -247,14 +249,14 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
     }
     int y = STATUS_Y;
     for (FormattedCharSequence sequence : statusLines()) {
-      graphics.drawString(this.font, sequence, (this.imageWidth - this.font.width(sequence)) / 2, y,
-          0x404040, false);
+      graphics.text(this.font, sequence, (this.imageWidth - this.font.width(sequence)) / 2, y,
+          GuiUtil.opaque(0x404040), false);
       y += 10;
     }
   }
 
   @Override
-  protected void renderDetailHover(GuiGraphics graphics, int mouseX, int mouseY) {
+  protected void renderDetailHover(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     int cell = patternAt(mouseX, mouseY);
     List<Item> options = cell < 0 ? List.of() : cellOptions(cell);
     if (options.isEmpty()) {
@@ -274,6 +276,6 @@ public class ScreenCraftPipe extends ScreenPipeRecipes<MenuCraftPipe> {
             new ItemStack(options.get(0)).getHoverName()).withStyle(ChatFormatting.DARK_GRAY));
       }
     }
-    graphics.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
+    graphics.setComponentTooltipForNextFrame(this.font, tooltip, mouseX, mouseY);
   }
 }

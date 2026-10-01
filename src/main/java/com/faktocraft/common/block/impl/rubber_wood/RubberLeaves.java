@@ -9,7 +9,7 @@ import net.minecraft.world.level.material.PushReaction;
 public class RubberLeaves extends LeavesBlock {
 
   public RubberLeaves(Properties properties) {
-    super(properties);
+    super(net.minecraft.world.level.block.sounds.AmbientLeavesBlockSoundPlayer.noAmbientSound(), properties);
   }
 
   public static BlockBehaviour.Properties leavesProperties() {
@@ -21,9 +21,9 @@ public class RubberLeaves extends LeavesBlock {
         .noOcclusion()
         .isValidSpawn((state, level, pos, type) -> false)
         .isSuffocating((state, level, pos) -> false)
-        .isViewBlocking((state, level, pos) -> false)
+        .isViewBlocking((state, level, pos, box) -> false)
         .ignitedByLava()
-        .pushReaction(PushReaction.DESTROY)
+        .pushReaction(PushReaction.POPPED)
         .isRedstoneConductor((state, level, pos) -> false);
   }
 }

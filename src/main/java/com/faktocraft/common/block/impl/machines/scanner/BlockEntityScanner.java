@@ -26,6 +26,7 @@ import com.faktocraft.common.registries.machines.M4Registry;
 import com.faktocraft.common.registries.ModComponentsFluids;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.registries.ModRecipeType;
+import com.faktocraft.common.util.RecipeUtil;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.util.EnergyCosts;
 import net.minecraft.core.BlockPos;
@@ -221,7 +222,7 @@ public class BlockEntityScanner extends FaktocraftBlockEntity
     if (level == null) {
       return Optional.empty();
     }
-    return level.getRecipeManager().getRecipeFor(ModRecipeType.SCANNER, MachineRecipeInput.of(input), level);
+    return RecipeUtil.findRecipe(level, ModRecipeType.SCANNER, MachineRecipeInput.of(input));
   }
 
   public boolean isScannable(ItemStack stack) {
@@ -319,13 +320,14 @@ public class BlockEntityScanner extends FaktocraftBlockEntity
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
-    this.result = tag.contains("result") ? ScannerResult.load(tag.getCompound("result")) : ScannerResult.EMPTY;
-    this.mode = ScannerMode.getModeFromId(tag.contains("mode") ? tag.getInt("mode") : ScannerMode.NO_POWER.getId());
-    this.currentModeTick = tag.getInt("currentModeTick");
+    this.result = tag.contains("result") ? ScannerResult.load(tag.getCompoundOrEmpty("result")) : ScannerResult.EMPTY;
+    this.mode = ScannerMode.getModeFromId(
+        tag.contains("mode") ? tag.getIntOr("mode", 0) : ScannerMode.NO_POWER.getId());
+    this.currentModeTick = tag.getIntOr("currentModeTick", 0);
 
-    if (!tag.getBoolean("recipeLoaded")) {
+    if (!tag.getBooleanOr("recipeLoaded", false)) {
       seedInputCache(INPUT_SLOT);
     }
   }

@@ -1,16 +1,17 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketRecipePipeBind;
 import com.faktocraft.common.util.GuiUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "textures/gui/container/recipe_pipe.png");
 
   private static final float LABEL_SCALE = 0.75f;
@@ -177,7 +178,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
   }
 
   @Override
-  protected ResourceLocation getGuiTexture() {
+  protected Identifier getGuiTexture() {
     return BACKGROUND;
   }
 
@@ -193,18 +194,18 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
     int y = top + settingsY();
     Tooltip timeoutTip = Tooltip.create(Component.translatable(key("craft.timeout")));
     timeoutMinus = addRenderableWidget(Button.builder(Component.literal("-"),
-        b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_TIMEOUT_DOWN, hasShiftDown() ? 1 : 0)))
+        b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_TIMEOUT_DOWN, GuiUtil.hasShiftDown() ? 1 : 0)))
         .tooltip(timeoutTip).bounds(left + SETTING_MINUS_X, y, SETTING_BUTTON_W, 14).build());
     timeoutPlus = addRenderableWidget(Button.builder(Component.literal("+"),
-        b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_TIMEOUT_UP, hasShiftDown() ? 1 : 0)))
+        b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_TIMEOUT_UP, GuiUtil.hasShiftDown() ? 1 : 0)))
         .tooltip(timeoutTip).bounds(left + SETTING_PLUS_X, y, SETTING_BUTTON_W, 14).build());
     Tooltip batchTip = Tooltip.create(Component.empty().append(Component.translatable(key("craft.batch")))
         .append("\n").append(Component.translatable(key("craft.batch_tip")).withStyle(ChatFormatting.GRAY)));
     batchMinus = addRenderableWidget(Button.builder(Component.literal("-"),
-        b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_BATCH_DOWN, hasShiftDown() ? 1 : 0)))
+        b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_BATCH_DOWN, GuiUtil.hasShiftDown() ? 1 : 0)))
         .tooltip(batchTip).bounds(left + SETTING_MINUS_X, y + SETTING_ROW_H, SETTING_BUTTON_W, 14).build());
     batchPlus = addRenderableWidget(Button.builder(Component.literal("+"),
-        b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_BATCH_UP, hasShiftDown() ? 1 : 0)))
+        b -> press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_BATCH_UP, GuiUtil.hasShiftDown() ? 1 : 0)))
         .tooltip(batchTip).bounds(left + SETTING_PLUS_X, y + SETTING_ROW_H, SETTING_BUTTON_W, 14).build());
     shareShown = this.menu.shared();
     shareButton = addRenderableWidget(Button.builder(shareLabel(),
@@ -319,7 +320,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
 
   private int indexAt(double mouseX, double mouseY, int x, int y, int columns, int rows) {
     int left = (this.width - this.imageWidth) / 2;
-    int top = (this.height - this.imageHeight) / 2;
+    int top = (this.height - getImageHeight()) / 2;
     double relX = mouseX - left - x;
     double relY = mouseY - top - y;
     if (relX < 0 || relY < 0 || relX >= columns * 18 || relY >= rows * 18) {
@@ -359,7 +360,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
       return Integer.MIN_VALUE;
     }
     int left = (this.width - this.imageWidth) / 2;
-    int top = (this.height - this.imageHeight) / 2;
+    int top = (this.height - getImageHeight()) / 2;
     int inputs = visibleInputs(recipe);
     for (int i = 0; i < inputs; i++) {
       if (recipe.inputs[i].isEmpty()) {
@@ -403,7 +404,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
         }
       } else if (!this.menu.getCarried().isEmpty()) {
         press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_SET_IO, MenuRecipePipe.ioValue(io)));
-      } else if (hasShiftDown() && !BlockEntityRecipePipe.isOutputId(io)
+      } else if (GuiUtil.hasShiftDown() && !BlockEntityRecipePipe.isOutputId(io)
           && recipe != null && !recipe.io(io).isEmpty()) {
         press(MenuPipeRecipes.encode(MenuRecipePipe.ACTION_CYCLE_TAG, MenuRecipePipe.ioValue(io)));
       } else if (recipe != null && !recipe.io(io).isEmpty()) {
@@ -451,7 +452,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
     }
     BlockEntityRecipePipe.MachineRecipe recipe = recipe();
     BlockEntityRecipePipe.Io io = recipe != null ? recipe.io(selectedBind) : null;
-    if (io != null && hasShiftDown() && boundToDock(io)) {
+    if (io != null && GuiUtil.hasShiftDown() && boundToDock(io)) {
       int start = Math.min(io.bindSlot, slot);
       int end = Math.max(io.lastSlot(), slot);
       ModNetworking.sendToServer(new PacketRecipePipeBind(this.menu.getPipePos(), selectedBind, start, end));
@@ -468,8 +469,8 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
     int io = ioAt(mouseX, mouseY);
     if (io != Integer.MIN_VALUE) {
       int action = delta > 0
-          ? (hasShiftDown() ? MenuRecipePipe.ACTION_COUNT_UP_16 : MenuRecipePipe.ACTION_COUNT_UP)
-          : (hasShiftDown() ? MenuRecipePipe.ACTION_COUNT_DOWN_16 : MenuRecipePipe.ACTION_COUNT_DOWN);
+          ? (GuiUtil.hasShiftDown() ? MenuRecipePipe.ACTION_COUNT_UP_16 : MenuRecipePipe.ACTION_COUNT_UP)
+          : (GuiUtil.hasShiftDown() ? MenuRecipePipe.ACTION_COUNT_DOWN_16 : MenuRecipePipe.ACTION_COUNT_DOWN);
       press(MenuPipeRecipes.encode(action, MenuRecipePipe.ioValue(io)));
       return true;
     }
@@ -501,7 +502,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
   }
 
   @Override
-  protected void renderDetailBg(GuiGraphics graphics) {
+  protected void renderDetailBg(GuiGraphicsExtractor graphics) {
     BlockEntityRecipePipe.MachineRecipe recipe = recipe();
     if (recipe == null) {
       return;
@@ -514,7 +515,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
     for (int i = 0; i < outputs; i++) {
       slotFrame(graphics, OUT_X + (i % OUT_COLUMNS) * 18, IO_Y + (i / OUT_COLUMNS) * 18);
     }
-    graphics.blit(com.faktocraft.common.util.Constants.PROCESS, this.leftPos + ARROW_X,
+    graphics.blit(RenderPipelines.GUI_TEXTURED, com.faktocraft.common.util.Constants.PROCESS, this.leftPos + ARROW_X,
         this.topPos + arrowY(), 0, 0, 24, 16, 256, 256);
     int count = this.menu.machineSlotCount();
     for (int row = 0; row < gridRows(); row++) {
@@ -527,7 +528,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
   }
 
   @Override
-  protected void renderDetailLabels(GuiGraphics graphics) {
+  protected void renderDetailLabels(GuiGraphicsExtractor graphics) {
     BlockEntityRecipePipe.MachineRecipe recipe = recipe();
     if (recipe == null) {
       return;
@@ -551,7 +552,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
     renderMachineGrid(graphics, recipe);
   }
 
-  private void renderSettings(GuiGraphics graphics, BlockEntityRecipePipe.MachineRecipe recipe) {
+  private void renderSettings(GuiGraphicsExtractor graphics, BlockEntityRecipePipe.MachineRecipe recipe) {
     int separator = machineBottom() + 3;
     graphics.fill(LIST_X, separator, LIST_X + LIST_W, separator + 1, 0xFF8B8B8B);
     graphics.fill(LIST_X, separator + 1, LIST_X + LIST_W, separator + 2, 0xFFFFFFFF);
@@ -561,50 +562,49 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
     settingRow(graphics, "craft.share", null, y + 2 * SETTING_ROW_H);
   }
 
-  private void settingRow(GuiGraphics graphics, String captionKey, String value, int y) {
-    graphics.drawString(this.font, Component.translatable(key(captionKey)), LIST_X, y + 3, LABEL_COLOR, false);
+  private void settingRow(GuiGraphicsExtractor graphics, String captionKey, String value, int y) {
+    graphics.text(this.font, Component.translatable(key(captionKey)), LIST_X, y + 3, GuiUtil.opaque(LABEL_COLOR),
+        false);
     if (value != null) {
-      graphics.drawString(this.font, value, SETTING_VALUE_X + (SETTING_VALUE_W - this.font.width(value)) / 2,
-          y + 3, LABEL_COLOR, false);
+      graphics.text(this.font, value, SETTING_VALUE_X + (SETTING_VALUE_W - this.font.width(value)) / 2,
+          y + 3, GuiUtil.opaque(LABEL_COLOR), false);
     }
   }
 
-  private void drawIo(GuiGraphics graphics, BlockEntityRecipePipe.MachineRecipe recipe, int ioId, int x, int y) {
+  private void drawIo(GuiGraphicsExtractor graphics, BlockEntityRecipePipe.MachineRecipe recipe, int ioId, int x,
+      int y) {
     BlockEntityRecipePipe.Io io = recipe.io(ioId);
     if (!io.isEmpty()) {
       if (!io.tag.isEmpty()) {
         graphics.fill(x, y, x + 16, y + 16, FLEXIBLE_TINT);
       }
       ItemStack shown = displayStack(ioId, io);
-      graphics.renderItem(shown, x, y);
+      graphics.item(shown, x, y);
 
-      graphics.renderItemDecorations(this.font, shown, x, y, String.valueOf(io.count));
+      graphics.itemDecorations(this.font, shown, x, y, String.valueOf(io.count));
     }
     if (selectedBind == ioId) {
-      graphics.renderOutline(x - 1, y - 1, 18, 18, 0xFFE8B923);
+      graphics.outline(x - 1, y - 1, 18, 18, 0xFFE8B923);
     } else if (io.bindSlot >= 0) {
-      graphics.renderOutline(x - 1, y - 1, 18, 18,
+      graphics.outline(x - 1, y - 1, 18, 18,
           BlockEntityRecipePipe.isOutputId(ioId) ? 0x803C8AD6 : 0x802E8B2E);
     }
     if (!io.isEmpty() && !BlockEntityRecipePipe.isOutputId(ioId)) {
       int bx = x + BADGE_OFFSET_X;
       int by = y + BADGE_OFFSET_Y;
-      graphics.pose().pushPose();
-      graphics.pose().translate(0, 0, 200);
       graphics.fill(bx, by, bx + BADGE_SIZE, by + BADGE_SIZE, MODE_COLORS[io.mode.ordinal()]);
       String letter = modeLetter(io.mode);
       GuiUtil.renderScaled(graphics, letter, bx + (BADGE_SIZE - Math.round(this.font.width(letter) * 0.5f)) / 2,
           by + 1, 0.5f, 0xFFFFFF, false);
-      graphics.pose().popPose();
     }
   }
 
-  private void renderMachineGrid(GuiGraphics graphics, BlockEntityRecipePipe.MachineRecipe recipe) {
+  private void renderMachineGrid(GuiGraphicsExtractor graphics, BlockEntityRecipePipe.MachineRecipe recipe) {
     int count = this.menu.machineSlotCount();
     if (count <= 0) {
       int y = gridY() - 9;
       for (FormattedCharSequence line : noMachineLines()) {
-        graphics.drawString(this.font, line, LIST_X + 2, y, 0xAA3333, false);
+        graphics.text(this.font, line, LIST_X + 2, y, GuiUtil.opaque(0xAA3333), false);
         y += 10;
       }
       return;
@@ -614,7 +614,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
         LABEL_SCALE, 0x404040, false);
     if (machineRows() > gridRows()) {
       String page = (scrollRow + 1) + "/" + (machineRows() - gridRows() + 1);
-      graphics.drawString(this.font, page, PAD + 168 - this.font.width(page), gridY() - 10, 0x707070, false);
+      graphics.text(this.font, page, PAD + 168 - this.font.width(page), gridY() - 10, GuiUtil.opaque(0x707070), false);
     }
     BlockEntityRecipePipe pipe = pipe();
     BlockPos docked = pipe != null ? pipe.dockedPos() : null;
@@ -644,8 +644,8 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
         }
         int x = GRID_X + (index % GRID_COLUMNS) * 18;
         int y = gridY() + (index / GRID_COLUMNS) * 18;
-        graphics.renderItem(displayStack(ioId, io), x, y);
-        graphics.renderOutline(x - 1, y - 1, 18, 18,
+        graphics.item(displayStack(ioId, io), x, y);
+        graphics.outline(x - 1, y - 1, 18, 18,
             BlockEntityRecipePipe.isOutputId(ioId) ? 0xFF3C8AD6 : 0xFF2E8B2E);
       }
     }
@@ -664,7 +664,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
 
   private String dockedBlockId(BlockPos docked) {
     if (docked != null && this.minecraft != null && this.minecraft.level != null) {
-      return net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(this.minecraft.level.getBlockState(
+      return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(this.minecraft.level.getBlockState(
           docked).getBlock()).toString();
     }
     return "";
@@ -682,7 +682,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
   }
 
   @Override
-  protected void renderDetailHover(GuiGraphics graphics, int mouseX, int mouseY) {
+  protected void renderDetailHover(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     BlockEntityRecipePipe.MachineRecipe recipe = recipe();
     if (recipe == null) {
       return;
@@ -744,7 +744,7 @@ public class ScreenRecipePipe extends ScreenPipeRecipes<MenuRecipePipe> {
       }
     }
     if (!tooltip.isEmpty()) {
-      graphics.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
+      graphics.setComponentTooltipForNextFrame(this.font, tooltip, mouseX, mouseY);
     }
   }
 }

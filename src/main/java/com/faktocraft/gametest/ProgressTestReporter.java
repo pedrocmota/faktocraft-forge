@@ -18,7 +18,7 @@ public final class ProgressTestReporter implements TestReporter {
   }
 
   public static void installIfGameTestServer() {
-    if (installed || System.getProperty("forge.enabledGameTestNamespaces") == null) {
+    if (installed || System.getProperty("neoforge.enabledGameTestNamespaces") == null) {
       return;
     }
     installed = true;
@@ -30,8 +30,7 @@ public final class ProgressTestReporter implements TestReporter {
   @Override
   public void onTestSuccess(GameTestInfo info) {
     finished++;
-    Faktocraft.LOGGER.info("[Gametest] {} ok      {} ({} ms)", finished, info.getTestName(),
-        info.getRunTime());
+    Faktocraft.LOGGER.info("[Gametest] {} ok      {} ({} ms)", finished, info.id(), info.getRunTime());
     delegate.onTestSuccess(info);
   }
 
@@ -39,7 +38,7 @@ public final class ProgressTestReporter implements TestReporter {
   public void onTestFailed(GameTestInfo info) {
     finished++;
     failed++;
-    Faktocraft.LOGGER.info("[Gametest] {} FAILED  {}", finished, info.getTestName());
+    Faktocraft.LOGGER.info("[Gametest] {} FAILED  {}", finished, info.id());
     delegate.onTestFailed(info);
   }
 

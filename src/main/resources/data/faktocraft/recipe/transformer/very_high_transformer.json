@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "b": "faktocraft:high_transformer",
+    "e": "faktocraft:advanced_circuit",
+    "g": "faktocraft:glass_fibre_cable",
+    "n": "faktocraft:lapotron_crystal"
+  },
+  "pattern": [
+    " g ",
+    "ebn",
+    " g "
+  ],
+  "result": {
+    "id": "faktocraft:very_high_transformer"
+  }
+}

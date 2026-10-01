@@ -9,7 +9,7 @@ import com.faktocraft.common.screen.widgets.GuiText;
 import com.faktocraft.common.tier.ChargePadTier;
 import com.faktocraft.common.util.TextComponentUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenChargePad extends BetterScreen<MenuChargePad> {
@@ -36,7 +36,7 @@ public class ScreenChargePad extends BetterScreen<MenuChargePad> {
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/charge_pad.png");
+  public Identifier getGuiLocation() {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, "textures/gui/container/charge_pad.png");
   }
 }

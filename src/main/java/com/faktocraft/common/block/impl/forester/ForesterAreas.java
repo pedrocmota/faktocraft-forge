@@ -6,9 +6,9 @@ import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.event.level.SaplingGrowTreeEvent;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.level.BlockGrowFeatureEvent;
 import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -50,22 +50,22 @@ public final class ForesterAreas {
     return false;
   }
 
-  public static void onSaplingGrow(SaplingGrowTreeEvent event) {
+  public static void onSaplingGrow(BlockGrowFeatureEvent event) {
     if (!(event.getLevel() instanceof ServerLevel serverLevel)) {
       return;
     }
-    Holder<ConfiguredFeature<?, ?>> feature = event.getFeature();
+    Holder<Feature> feature = event.getFeature();
     if (feature == null) {
       return;
     }
-    ResourceKey<ConfiguredFeature<?, ?>> replacement = plainOak(feature);
+    ResourceKey<Feature> replacement = plainOak(feature);
     if (replacement != null && covers(serverLevel, event.getPos())) {
       event.setFeature(replacement);
     }
   }
 
   @Nullable
-  private static ResourceKey<ConfiguredFeature<?, ?>> plainOak(Holder<ConfiguredFeature<?, ?>> feature) {
+  private static ResourceKey<Feature> plainOak(Holder<Feature> feature) {
     if (feature.is(TreeFeatures.FANCY_OAK)) {
       return TreeFeatures.OAK;
     }
@@ -75,8 +75,8 @@ public final class ForesterAreas {
     if (feature.is(TreeFeatures.FANCY_OAK_BEES_002)) {
       return TreeFeatures.OAK_BEES_002;
     }
-    if (feature.is(TreeFeatures.FANCY_OAK_BEES_0002)) {
-      return TreeFeatures.OAK_BEES_0002;
+    if (feature.is(TreeFeatures.FANCY_OAK_BEES_0002_LEAF_LITTER)) {
+      return TreeFeatures.OAK_BEES_0002_LEAF_LITTER;
     }
     return null;
   }

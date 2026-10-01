@@ -1,5 +1,6 @@
 package com.faktocraft.client.render;
 
+import com.faktocraft.common.util.SpriteUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -12,13 +13,12 @@ public final class CuboidRenderer {
 
   public static void vertex(PoseStack.Pose pose, VertexConsumer vc, float x, float y, float z,
       float u, float v, int color, int light, float nx, float ny, float nz) {
-    vc.vertex(pose.pose(), x, y, z)
-        .color(color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF, color >>> 24)
-        .uv(u, v)
-        .overlayCoords(OverlayTexture.NO_OVERLAY)
-        .uv2(light)
-        .normal(pose.normal(), nx, ny, nz)
-        .endVertex();
+    vc.addVertex(pose, x, y, z)
+        .setColor(color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF, color >>> 24)
+        .setUv(u, v)
+        .setOverlay(OverlayTexture.NO_OVERLAY)
+        .setLight(light)
+        .setNormal(pose, nx, ny, nz);
   }
 
   public static void drawBox(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite sprite,
@@ -29,14 +29,14 @@ public final class CuboidRenderer {
   public static void drawBox(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite sprite,
       int color, int light, float x0, float y0, float z0, float x1, float y1, float z1,
       boolean drawDown, boolean drawUp) {
-    float ux0 = sprite.getU(clamp01(x0) * 16.0f);
-    float ux1 = sprite.getU(clamp01(x1) * 16.0f);
-    float uz0 = sprite.getU(clamp01(z0) * 16.0f);
-    float uz1 = sprite.getU(clamp01(z1) * 16.0f);
-    float vz0 = sprite.getV(clamp01(z0) * 16.0f);
-    float vz1 = sprite.getV(clamp01(z1) * 16.0f);
-    float vyTop = sprite.getV(clamp01(1 - y1) * 16.0f);
-    float vyBottom = sprite.getV(clamp01(1 - y0) * 16.0f);
+    float ux0 = SpriteUtil.getU(sprite, clamp01(x0) * 16.0f);
+    float ux1 = SpriteUtil.getU(sprite, clamp01(x1) * 16.0f);
+    float uz0 = SpriteUtil.getU(sprite, clamp01(z0) * 16.0f);
+    float uz1 = SpriteUtil.getU(sprite, clamp01(z1) * 16.0f);
+    float vz0 = SpriteUtil.getV(sprite, clamp01(z0) * 16.0f);
+    float vz1 = SpriteUtil.getV(sprite, clamp01(z1) * 16.0f);
+    float vyTop = SpriteUtil.getV(sprite, clamp01(1 - y1) * 16.0f);
+    float vyBottom = SpriteUtil.getV(sprite, clamp01(1 - y0) * 16.0f);
 
     if (drawDown) {
       vertex(pose, vc, x0, y0, z0, ux0, vz0, color, light, 0, -1, 0);

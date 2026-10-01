@@ -1,40 +1,60 @@
 package com.faktocraft.common.recipe.impl;
 
 import com.faktocraft.common.interfaces.receipe.IBaseRecipe;
+import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.recipe.RecipeJsonHelper;
 import com.faktocraft.common.registries.ModRecipeType;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class RecyclingRecipe implements IBaseRecipe<Container> {
+public class RecyclingRecipe implements IBaseRecipe<MachineRecipeInput> {
+  public static final MapCodec<RecyclingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+      Codec.FLOAT.optionalFieldOf("chance", 1.0F).forGetter(recipe -> recipe.chance),
+      RecipeJsonHelper.RESULT.fieldOf("result").forGetter(recipe -> recipe.result),
+      RecipeJsonHelper.INGREDIENT.listOf().optionalFieldOf("excluded", List.of()).forGetter(recipe -> recipe.excluded),
+      RecipeJsonHelper.INGREDIENT.optionalFieldOf("ingredient").forGetter(recipe -> recipe.ingredient))
+      .apply(i, RecyclingRecipe::new));
 
-  public static final RecipeSerializer<RecyclingRecipe> SERIALIZER = new Serializer();
+  public static final StreamCodec<RegistryFriendlyByteBuf, RecyclingRecipe> STREAM_CODEC = StreamCodec.of(
+      (buf, recipe) -> {
+        buf.writeFloat(recipe.chance);
+        ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.result);
+        Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buf, recipe.excluded);
+        Ingredient.OPTIONAL_CONTENTS_STREAM_CODEC.encode(buf, recipe.ingredient);
+      }, buf -> {
+        float chance = buf.readFloat();
+        ItemStackTemplate result = ItemStackTemplate.STREAM_CODEC.decode(buf);
+        List<Ingredient> excluded = Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf);
+        Optional<Ingredient> ingredient = Ingredient.OPTIONAL_CONTENTS_STREAM_CODEC.decode(buf);
+        return new RecyclingRecipe(chance, result, excluded, ingredient);
+      });
 
-  private final ResourceLocation id;
+  public static final RecipeSerializer<RecyclingRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC,
+      STREAM_CODEC);
+
   private final float chance;
-  private final ItemStack result;
+  private final ItemStackTemplate result;
   private final List<Ingredient> excluded;
-  private final Ingredient ingredient;
+  private final Optional<Ingredient> ingredient;
 
-  public RecyclingRecipe(ResourceLocation id, float chance, ItemStack result, List<Ingredient> excluded) {
-    this(id, chance, result, excluded, Ingredient.EMPTY);
+  public RecyclingRecipe(float chance, ItemStackTemplate result, List<Ingredient> excluded) {
+    this(chance, result, excluded, Optional.empty());
   }
 
-  public RecyclingRecipe(ResourceLocation id, float chance, ItemStack result, List<Ingredient> excluded,
-      Ingredient ingredient) {
-    this.id = id;
+  public RecyclingRecipe(float chance, ItemStackTemplate result, List<Ingredient> excluded,
+      Optional<Ingredient> ingredient) {
     this.chance = chance;
     this.result = result;
     this.excluded = List.copyOf(excluded);
@@ -42,25 +62,25 @@ public class RecyclingRecipe implements IBaseRecipe<Container> {
   }
 
   public boolean isSpecific() {
-    return !ingredient.isEmpty();
+    return ingredient.isPresent();
   }
 
-  public Ingredient getIngredient() {
+  public Optional<Ingredient> getIngredient() {
     return ingredient;
   }
 
   @Override
-  public boolean matches(Container container, Level level) {
-    ItemStack input = container.getItem(0);
-    if (input.isEmpty()) {
+  public boolean matches(MachineRecipeInput input, Level level) {
+    ItemStack stack = input.getItem(0);
+    if (stack.isEmpty()) {
       return false;
     }
-    return isSpecific() ? ingredient.test(input) : !isExcluded(input);
+    return isSpecific() ? ingredient.get().test(stack) : !isExcluded(stack);
   }
 
   public boolean isExcluded(ItemStack stack) {
-    for (Ingredient ingredient : excluded) {
-      if (ingredient.test(stack)) {
+    for (Ingredient excludedIngredient : excluded) {
+      if (excludedIngredient.test(stack)) {
         return true;
       }
     }
@@ -68,13 +88,13 @@ public class RecyclingRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public ItemStack assemble(Container container, RegistryAccess registryAccess) {
-    return result.copy();
+  public ItemStack assemble(MachineRecipeInput input) {
+    return result.create();
   }
 
   @Override
   public ItemStack getResultItem() {
-    return result.copy();
+    return result.create();
   }
 
   public float getChance() {
@@ -97,11 +117,6 @@ public class RecyclingRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public ResourceLocation getId() {
-    return id;
-  }
-
-  @Override
   public RecipeSerializer<RecyclingRecipe> getSerializer() {
     return SERIALIZER;
   }
@@ -109,49 +124,5 @@ public class RecyclingRecipe implements IBaseRecipe<Container> {
   @Override
   public RecipeType<RecyclingRecipe> getType() {
     return ModRecipeType.RECYCLING;
-  }
-
-  public static class Serializer implements RecipeSerializer<RecyclingRecipe> {
-
-    @Override
-    public RecyclingRecipe fromJson(ResourceLocation id, JsonObject json) {
-      float chance = GsonHelper.getAsFloat(json, "chance", 1.0F);
-      ItemStack result = RecipeJsonHelper.result(json.get("result"));
-      List<Ingredient> excluded = new ArrayList<>();
-      if (json.has("excluded")) {
-        JsonArray array = RecipeJsonHelper.array(json, "excluded");
-        for (int i = 0; i < array.size(); i++) {
-          excluded.add(RecipeJsonHelper.ingredient(array.get(i)));
-        }
-      }
-      Ingredient ingredient = json.has("ingredient")
-          ? RecipeJsonHelper.ingredient(json.get("ingredient"))
-          : Ingredient.EMPTY;
-      return new RecyclingRecipe(id, chance, result, excluded, ingredient);
-    }
-
-    @Override
-    public RecyclingRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-      float chance = buf.readFloat();
-      ItemStack result = buf.readItem();
-      int size = buf.readVarInt();
-      List<Ingredient> excluded = new ArrayList<>(size);
-      for (int i = 0; i < size; i++) {
-        excluded.add(Ingredient.fromNetwork(buf));
-      }
-      Ingredient ingredient = Ingredient.fromNetwork(buf);
-      return new RecyclingRecipe(id, chance, result, excluded, ingredient);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buf, RecyclingRecipe recipe) {
-      buf.writeFloat(recipe.chance);
-      buf.writeItem(recipe.result);
-      buf.writeVarInt(recipe.excluded.size());
-      for (Ingredient ingredient : recipe.excluded) {
-        ingredient.toNetwork(buf);
-      }
-      recipe.ingredient.toNetwork(buf);
-    }
   }
 }

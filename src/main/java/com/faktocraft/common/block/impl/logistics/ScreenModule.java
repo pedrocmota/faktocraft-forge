@@ -1,24 +1,30 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.screen.widgets.FilteredEditBox;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketModuleTree;
 import com.faktocraft.common.util.Constants;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
 
 public class ScreenModule extends AbstractContainerScreen<MenuModule> {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "textures/gui/container/logistics_module.png");
 
   private static final int CONTROLS_Y = 146;
@@ -31,16 +37,14 @@ public class ScreenModule extends AbstractContainerScreen<MenuModule> {
   private EditBox search;
   private String query = "";
   private ModuleTreePanel treePanel;
-  private EditBox countBox;
+  private FilteredEditBox countBox;
   private String countNode;
   private Button flagButton;
   private Button priorityButton;
   private Button reserveButton;
 
   public ScreenModule(MenuModule menu, Inventory inventory, Component title) {
-    super(menu, inventory, title);
-    this.imageWidth = 236;
-    this.imageHeight = 256;
+    super(menu, inventory, title, 236, 256);
     this.inventoryLabelX = 37;
     this.inventoryLabelY = MenuModule.PLAYER_INV_Y - 11;
   }
@@ -124,7 +128,7 @@ public class ScreenModule extends AbstractContainerScreen<MenuModule> {
     search = new EditBox(this.font, left + 12, top + SEARCH_Y + 3, SEARCH_RIGHT - 16, 10, Component.empty());
     search.setBordered(false);
     search.setMaxLength(48);
-    search.setTextColor(0xFFFFFF);
+    search.setTextColor(0xFFFFFFFF);
     search.setValue(query);
     search.setHint(Component.translatable(key("search_hint")).withStyle(ChatFormatting.GRAY));
     search.setResponder(text -> {
@@ -186,13 +190,13 @@ public class ScreenModule extends AbstractContainerScreen<MenuModule> {
   private void openCountEditor(ModuleTreePanel.CountField field) {
     closeCountEditor(true);
     countNode = field.node();
-    countBox = new EditBox(this.font, field.x(), field.y(), field.width(), 10, Component.empty());
+    countBox = new FilteredEditBox(this.font, field.x(), field.y(), field.width(), 10, Component.empty());
     countBox.setBordered(false);
     countBox.setMaxLength(4);
-    countBox.setTextColor(0xFFFFFF);
+    countBox.setTextColor(0xFFFFFFFF);
     countBox.setFilter(text -> text.isEmpty() || text.matches("\\d{1,4}"));
     countBox.setValue(String.valueOf(field.count()));
-    countBox.moveCursorToEnd();
+    countBox.moveCursorToEnd(false);
     countBox.setHighlightPos(0);
     addWidget(countBox);
     setFocused(countBox);
@@ -279,7 +283,10 @@ public class ScreenModule extends AbstractContainerScreen<MenuModule> {
   }
 
   @Override
-  public boolean mouseClicked(double mouseX, double mouseY, int button) {
+  public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int button = GuiUtil.legacyButton(event);
     if (button == 1 && adjustClicked(mouseX, mouseY, -1)) {
       return true;
     }
@@ -287,7 +294,7 @@ public class ScreenModule extends AbstractContainerScreen<MenuModule> {
       int left = (this.width - this.imageWidth) / 2;
       int top = (this.height - this.imageHeight) / 2;
       if (countBox != null && countBox.isMouseOver(mouseX, mouseY)) {
-        return countBox.mouseClicked(mouseX, mouseY, button);
+        return countBox.mouseClicked(event, doubleClick);
       }
       closeCountEditor(false);
       ModuleTreePanel.CountField field = treePanel.countFieldAt(left, top, mouseX, mouseY);
@@ -305,65 +312,67 @@ public class ScreenModule extends AbstractContainerScreen<MenuModule> {
       }
     }
     closeCountEditor(false);
-    return super.mouseClicked(mouseX, mouseY, button);
+    return super.mouseClicked(event, doubleClick);
   }
 
   @Override
-  public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+  public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+    double mouseY = event.y();
     if (treePanel != null && treePanel.mouseDragged((this.height - this.imageHeight) / 2, mouseY)) {
       return true;
     }
-    return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    return super.mouseDragged(event, dragX, dragY);
   }
 
   @Override
-  public boolean mouseReleased(double mouseX, double mouseY, int button) {
+  public boolean mouseReleased(MouseButtonEvent event) {
     if (treePanel != null) {
       treePanel.mouseReleased();
     }
-    return super.mouseReleased(mouseX, mouseY, button);
+    return super.mouseReleased(event);
   }
 
   @Override
-  public boolean charTyped(char codePoint, int modifiers) {
+  public boolean charTyped(CharacterEvent event) {
     if (countBox != null && countBox.isFocused()) {
-      return countBox.charTyped(codePoint, modifiers);
+      return countBox.charTyped(event);
     }
-    return super.charTyped(codePoint, modifiers);
+    return super.charTyped(event);
   }
 
   @Override
-  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+  public boolean keyPressed(KeyEvent event) {
+    int keyCode = event.key();
     if (countBox != null && countBox.isFocused()) {
-      if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+      if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_NUMPADENTER) {
         closeCountEditor(false);
         return true;
       }
-      if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+      if (keyCode == InputConstants.KEY_ESCAPE) {
         closeCountEditor(true);
         return true;
       }
-      if (countBox.keyPressed(keyCode, scanCode, modifiers)) {
+      if (countBox.keyPressed(event)) {
         return true;
       }
-      return keyCode != GLFW.GLFW_KEY_TAB;
+      return keyCode != InputConstants.KEY_TAB;
     }
     if (search != null && search.isFocused()) {
-      if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+      if (keyCode == InputConstants.KEY_ESCAPE) {
         search.setFocused(false);
         return true;
       }
-      if (search.keyPressed(keyCode, scanCode, modifiers)) {
+      if (search.keyPressed(event)) {
         return true;
       }
 
-      return keyCode != GLFW.GLFW_KEY_TAB;
+      return keyCode != InputConstants.KEY_TAB;
     }
-    return super.keyPressed(keyCode, scanCode, modifiers);
+    return super.keyPressed(event);
   }
 
   @Override
-  public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+  public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double delta) {
     if (delta != 0 && adjust(mouseX, mouseY, delta > 0 ? 1 : -1, false)) {
       return true;
     }
@@ -375,36 +384,40 @@ public class ScreenModule extends AbstractContainerScreen<MenuModule> {
         return true;
       }
     }
-    return super.mouseScrolled(mouseX, mouseY, delta);
+    return super.mouseScrolled(mouseX, mouseY, scrollX, delta);
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    renderBackground(graphics);
-    super.render(graphics, mouseX, mouseY, partialTick);
-    int left = (this.width - this.imageWidth) / 2;
-    int top = (this.height - this.imageHeight) / 2;
+  public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    super.extractRenderState(graphics, mouseX, mouseY, partialTick);
     if (treePanel != null) {
-      treePanel.render(graphics, left, top, mouseX, mouseY);
-    }
-
-    if (countBox != null) {
-      countBox.render(graphics, mouseX, mouseY, partialTick);
-    }
-    renderTooltip(graphics, mouseX, mouseY);
-    if (treePanel != null) {
+      int left = (this.width - this.imageWidth) / 2;
+      int top = (this.height - this.imageHeight) / 2;
       treePanel.renderTooltip(graphics, left, top, mouseX, mouseY);
     }
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+  public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    renderBg(graphics, partialTick, mouseX, mouseY);
+    super.extractContents(graphics, mouseX, mouseY, partialTick);
+    int left = (this.width - this.imageWidth) / 2;
+    int top = (this.height - this.imageHeight) / 2;
+    if (treePanel != null) {
+      treePanel.render(graphics, left, top, mouseX, mouseY);
+    }
+    if (countBox != null) {
+      countBox.extractRenderState(graphics, mouseX, mouseY, partialTick);
+    }
+  }
+
+  protected void renderBg(GuiGraphicsExtractor graphics, float partialTick, int mouseX, int mouseY) {
     int left = (this.width - this.imageWidth) / 2;
     int top = (this.height - this.imageHeight) / 2;
 
-    graphics.blit(BACKGROUND, left, top, 0, 0, this.imageWidth, 130);
-    graphics.blit(BACKGROUND, left, top + 130, 0, 100, this.imageWidth, 20);
-    graphics.blit(BACKGROUND, left, top + 150, 0, 130, this.imageWidth, 106);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, left, top, 0, 0, this.imageWidth, 130, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, left, top + 130, 0, 100, this.imageWidth, 20, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, left, top + 150, 0, 130, this.imageWidth, 106, 256, 256);
     graphics.fill(left + 5, top + 14, left + 231, top + 171, 0xFFC6C6C6);
     slotFrame(graphics, left + 213, top + 8);
     if (this.menu.getModuleType() == null) {
@@ -414,7 +427,7 @@ public class ScreenModule extends AbstractContainerScreen<MenuModule> {
     graphics.fill(left + 9, top + SEARCH_Y + 1, left + SEARCH_RIGHT - 1, top + SEARCH_Y + 12, 0xFF1E1E1E);
   }
 
-  private void slotFrame(GuiGraphics graphics, int itemX, int itemY) {
-    graphics.blit(Constants.PROCESS, itemX - 1, itemY - 1, 84, 27, 18, 18, 256, 256);
+  private void slotFrame(GuiGraphicsExtractor graphics, int itemX, int itemY) {
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, itemX - 1, itemY - 1, 84, 27, 18, 18, 256, 256);
   }
 }

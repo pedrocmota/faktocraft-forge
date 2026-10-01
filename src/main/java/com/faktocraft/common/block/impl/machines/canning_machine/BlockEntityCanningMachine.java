@@ -27,10 +27,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -150,14 +150,14 @@ public class BlockEntityCanningMachine extends FaktocraftBlockEntity
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("fluidStorage")) {
-      fluidStorage.load(tag.getCompound("fluidStorage"));
+      fluidStorage.load(tag.getCompoundOrEmpty("fluidStorage"));
     }
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
     this.mode = CanningMachineMode
-        .getModeFromId(tag.contains("mode") ? tag.getInt("mode") : CanningMachineMode.FILL.getId());
-    this.activeState = tag.getBoolean("active");
+        .getModeFromId(tag.contains("mode") ? tag.getIntOr("mode", 0) : CanningMachineMode.FILL.getId());
+    this.activeState = tag.getBooleanOr("active", false);
   }
 
   public CanningMachineMode getMode() {

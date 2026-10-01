@@ -2,7 +2,7 @@ package com.faktocraft.common.block.impl.logistics;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -21,8 +21,8 @@ public final class LogisticsItemTree {
 
   public static final int DEFAULT_SUPPLY_COUNT = 64;
 
-  private static volatile Map<Item, ResourceLocation> tabIndex = null;
-  private static volatile Map<String, Map<ResourceLocation, List<Item>>> uiIndex = null;
+  private static volatile Map<Item, Identifier> tabIndex = null;
+  private static volatile Map<String, Map<Identifier, List<Item>>> uiIndex = null;
 
   private LogisticsItemTree() {
   }
@@ -31,8 +31,8 @@ public final class LogisticsItemTree {
     if (tabIndex != null) {
       return;
     }
-    Map<Item, ResourceLocation> byItem = new LinkedHashMap<>();
-    Map<String, Map<ResourceLocation, List<Item>>> ui = new LinkedHashMap<>();
+    Map<Item, Identifier> byItem = new LinkedHashMap<>();
+    Map<String, Map<Identifier, List<Item>>> ui = new LinkedHashMap<>();
     try {
       CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(), false, level.registryAccess());
       for (var entry : BuiltInRegistries.CREATIVE_MODE_TAB.entrySet()) {
@@ -40,14 +40,14 @@ public final class LogisticsItemTree {
         if (tab.getType() != CreativeModeTab.Type.CATEGORY) {
           continue;
         }
-        ResourceLocation tabId = entry.getKey().location();
+        Identifier tabId = entry.getKey().identifier();
         for (ItemStack stack : tab.getDisplayItems()) {
           Item item = stack.getItem();
           if (byItem.containsKey(item)) {
             continue;
           }
           byItem.put(item, tabId);
-          String ns = net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(item).getNamespace();
+          String ns = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item).getNamespace();
           ui.computeIfAbsent(ns, key -> new LinkedHashMap<>())
               .computeIfAbsent(tabId, key -> new ArrayList<>())
               .add(item);
@@ -61,21 +61,21 @@ public final class LogisticsItemTree {
   }
 
   @Nullable
-  public static ResourceLocation tabOf(Item item) {
-    Map<Item, ResourceLocation> index = tabIndex;
+  public static Identifier tabOf(Item item) {
+    Map<Item, Identifier> index = tabIndex;
     return index != null ? index.get(item) : null;
   }
 
-  public static Map<String, Map<ResourceLocation, List<Item>>> byNamespace() {
-    Map<String, Map<ResourceLocation, List<Item>>> index = uiIndex;
+  public static Map<String, Map<Identifier, List<Item>>> byNamespace() {
+    Map<String, Map<Identifier, List<Item>>> index = uiIndex;
     return index != null ? index : Map.of();
   }
 
   public static String itemNode(Item item) {
-    return "i:" + net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(item);
+    return "i:" + net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item);
   }
 
-  public static String categoryNode(String namespace, ResourceLocation tab) {
+  public static String categoryNode(String namespace, Identifier tab) {
     return "c:" + namespace + "|" + tab;
   }
 
@@ -98,12 +98,12 @@ public final class LogisticsItemTree {
       return false;
     }
     Item item = stack.getItem();
-    ResourceLocation id = net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(item);
+    Identifier id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item);
     Boolean state = overrides.get("i:" + id);
     if (state != null) {
       return state;
     }
-    ResourceLocation tab = tabOf(item);
+    Identifier tab = tabOf(item);
     if (tab != null) {
       state = overrides.get(categoryNode(id.getNamespace(), tab));
       if (state != null) {
@@ -175,11 +175,11 @@ public final class LogisticsItemTree {
     if (node.startsWith("c:")) {
       int split = node.indexOf('|');
       String ns = node.substring(2, split);
-      ResourceLocation tab = new ResourceLocation(node.substring(split + 1));
+      Identifier tab = Identifier.parse(node.substring(split + 1));
       if (!key.startsWith("i:" + ns + ":")) {
         return false;
       }
-      Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(new ResourceLocation(key.substring(2)));
+      Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(Identifier.parse(key.substring(2)));
       return tab.equals(tabOf(item));
     }
     return false;
@@ -222,9 +222,10 @@ public final class LogisticsItemTree {
         case ITEM -> map.put(itemNode(line.item().getItem()), mark);
         case NAMESPACE -> map.put(namespaceNode(line.text()), mark);
         case TAG -> {
-          TagKey<Item> tag = TagKey.create(Registries.ITEM, new ResourceLocation(line.text()));
-          for (Item tagItem : net.minecraftforge.registries.ForgeRegistries.ITEMS.tags().getTag(tag)) {
-            map.put(itemNode(tagItem), mark);
+          TagKey<Item> tag = TagKey.create(Registries.ITEM, Identifier.parse(line.text()));
+          for (net.minecraft.core.Holder<Item> tagItem : net.minecraft.core.registries.BuiltInRegistries.ITEM
+              .getTagOrEmpty(tag)) {
+            map.put(itemNode(tagItem.value()), mark);
           }
         }
       }
@@ -249,7 +250,7 @@ public final class LogisticsItemTree {
       if (target <= 0) {
         continue;
       }
-      Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(new ResourceLocation(node.substring(2)));
+      Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(Identifier.parse(node.substring(2)));
       if (item != net.minecraft.world.item.Items.AIR) {
         result.add(Map.entry(item, target));
       }

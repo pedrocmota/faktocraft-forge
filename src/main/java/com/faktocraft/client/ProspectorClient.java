@@ -10,7 +10,7 @@ public final class ProspectorClient {
   public static void openScreen() {
     Minecraft minecraft = Minecraft.getInstance();
     if (minecraft.player != null) {
-      minecraft.setScreen(new ProspectorScreen(minecraft.player.chunkPosition()));
+      minecraft.gui.setScreen(new ProspectorScreen(minecraft.player.chunkPosition()));
     }
   }
 }

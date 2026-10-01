@@ -1,16 +1,16 @@
 package com.faktocraft.common.block.impl.cable;
 
+import com.faktocraft.common.util.LegacyNbtBlockEntity;
 import com.faktocraft.common.block.ISupportHost;
 import com.faktocraft.common.energy.interfaces.IEnergyTransmitter;
 import com.faktocraft.common.energy.provider.EnergyCore;
 import com.faktocraft.common.energy.provider.EnergyNetwork;
 import com.faktocraft.common.registries.ModBlockEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEntityCable extends BlockEntity
+public class BlockEntityCable extends LegacyNbtBlockEntity
     implements IEnergyTransmitter, ISupportHost, com.faktocraft.common.cover.ICoverHost {
 
   @org.jetbrains.annotations.Nullable
@@ -36,16 +36,16 @@ public class BlockEntityCable extends BlockEntity
   }
 
   @Override
-  public net.minecraftforge.client.model.data.ModelData getModelData() {
+  public net.neoforged.neoforge.model.data.ModelData getModelData() {
     return com.faktocraft.common.cover.CoverSupport.modelData(cover, coverHoles);
   }
 
   @Override
   public void onDataPacket(net.minecraft.network.Connection connection,
-      net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket packet) {
+      net.minecraft.world.level.storage.ValueInput input) {
     BlockState previousCover = cover;
     int previousHoles = coverHoles;
-    super.onDataPacket(connection, packet);
+    super.onDataPacket(connection, input);
     if (cover != previousCover || coverHoles != previousHoles) {
       com.faktocraft.common.cover.CoverSupport.refreshClientModel(this);
     }

@@ -1,18 +1,19 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.util.GuiUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketModuleTree;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -108,8 +109,8 @@ public class ModuleTreePanel {
     return allowCount == total ? STATE_ALLOW : STATE_MIXED;
   }
 
-  private static Component tabLabel(ResourceLocation tabId) {
-    CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.get(tabId);
+  private static Component tabLabel(Identifier tabId) {
+    CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.getValue(tabId);
     return tab != null ? tab.getDisplayName() : Component.literal(tabId.toString());
   }
 
@@ -132,29 +133,29 @@ public class ModuleTreePanel {
   }
 
   public void rebuildIfChanged() {
-    if (!Objects.equals(menu.getModuleStack().getTag(), builtTag)) {
+    if (!Objects.equals(com.faktocraft.common.util.NbtBridge.customData(menu.getModuleStack()), builtTag)) {
       rebuild();
     }
   }
 
   public void rebuild() {
     rows.clear();
-    CompoundTag currentTag = menu.getModuleStack().getTag();
+    CompoundTag currentTag = com.faktocraft.common.util.NbtBridge.customData(menu.getModuleStack());
     builtTag = currentTag != null ? currentTag.copy() : null;
     Map<String, Boolean> overrides = ModuleSettings.treeOverrides(menu.getModuleStack());
     Map<String, Integer> counts = isSupplier()
         ? ModuleSettings.treeCounts(menu.getModuleStack()) : Map.of();
-    Map<String, Map<ResourceLocation, List<Item>>> index = LogisticsItemTree.byNamespace();
+    Map<String, Map<Identifier, List<Item>>> index = LogisticsItemTree.byNamespace();
     String needle = query.trim().toLowerCase(Locale.ROOT);
     boolean searching = !needle.isEmpty();
     for (String ns : orderedNamespaces(index.keySet())) {
-      Map<ResourceLocation, List<Item>> tabs = index.get(ns);
+      Map<Identifier, List<Item>> tabs = index.get(ns);
       int nsRowIndex = rows.size();
       int nsAllow = 0;
       int nsTotal = 0;
       boolean nsVisible = false;
       boolean nsExpanded = searching || expanded.contains(LogisticsItemTree.namespaceNode(ns));
-      for (Map.Entry<ResourceLocation, List<Item>> tab : tabs.entrySet()) {
+      for (Map.Entry<Identifier, List<Item>> tab : tabs.entrySet()) {
         String catNode = LogisticsItemTree.categoryNode(ns, tab.getKey());
         boolean catMatch = searching
             && tabLabel(tab.getKey()).getString().toLowerCase(Locale.ROOT).contains(needle);
@@ -210,7 +211,7 @@ public class ModuleTreePanel {
     }
   }
 
-  public void render(GuiGraphics graphics, int left, int top, int mouseX, int mouseY) {
+  public void render(GuiGraphicsExtractor graphics, int left, int top, int mouseX, int mouseY) {
     int x0 = left + X;
     int y0 = top + Y;
     if (!hasScrollBar()) {
@@ -224,8 +225,8 @@ public class ModuleTreePanel {
 
     if (rows.isEmpty()) {
       Component empty = Component.translatable(key("tree.empty"));
-      graphics.drawString(font, empty, x0 + (W - font.width(empty)) / 2, y0 + (ROWS * ROW_H - 8) / 2,
-          0x555555, false);
+      graphics.text(font, empty, x0 + (W - font.width(empty)) / 2, y0 + (ROWS * ROW_H - 8) / 2,
+          GuiUtil.opaque(0x555555), false);
       return;
     }
     for (int i = 0; i < ROWS; i++) {
@@ -269,7 +270,7 @@ public class ModuleTreePanel {
     return top + Y + 1 + span * scroll / maxScroll;
   }
 
-  private void drawRow(GuiGraphics graphics, Row row, int x0, int y, int mouseX, int mouseY) {
+  private void drawRow(GuiGraphicsExtractor graphics, Row row, int x0, int y, int mouseX, int mouseY) {
     boolean hovered = mouseX >= x0 && mouseX < x0 + W && mouseY >= y && mouseY < y + ROW_H;
     if (hovered) {
       graphics.fill(x0, y, x0 + W, y + ROW_H, 0x30FFFFFF);
@@ -281,31 +282,31 @@ public class ModuleTreePanel {
       x += 9;
     }
     if (row.item() != null) {
-      graphics.pose().pushPose();
-      graphics.pose().translate(x, y + 1, 0);
-      graphics.pose().scale(0.75f, 0.75f, 1);
-      graphics.renderItem(new ItemStack(row.item()), 0, 0);
-      graphics.pose().popPose();
+      graphics.pose().pushMatrix();
+      graphics.pose().translate(x, y + 1);
+      graphics.pose().scale(0.75f, 0.75f);
+      graphics.item(new ItemStack(row.item()), 0, 0);
+      graphics.pose().popMatrix();
       x += 15;
     }
     boolean showCount = row.leaf() && isSupplier() && row.state() == STATE_ALLOW;
     int textLimit = x0 + W - (showCount ? 22 + COUNT_W + 4 : 22) - x;
-    graphics.drawString(font,
+    graphics.text(font,
         net.minecraft.locale.Language.getInstance().getVisualOrder(font.substrByWidth(row.label(), textLimit)),
-        x, y + 3, TEXT, false);
+        x, y + 3, GuiUtil.opaque(TEXT), false);
     if (showCount) {
       int fieldX = x0 + W - 22 - COUNT_W;
       graphics.fill(fieldX, y + 1, fieldX + COUNT_W, y + ROW_H - 2, FRAME_DARK);
       graphics.fill(fieldX + 1, y + 2, fieldX + COUNT_W - 1, y + ROW_H - 3, 0xFF1E1E1E);
       if (!row.node().equals(editingNode)) {
         String count = String.valueOf(row.count());
-        graphics.drawString(font, count, fieldX + COUNT_W - 3 - font.width(count), y + 3, 0xE0E0E0, false);
+        graphics.text(font, count, fieldX + COUNT_W - 3 - font.width(count), y + 3, GuiUtil.opaque(0xE0E0E0), false);
       }
     }
     drawState(graphics, x0 + W - 17, y + 3, row.state());
   }
 
-  private void drawTriangle(GuiGraphics graphics, int x, int y, boolean open) {
+  private void drawTriangle(GuiGraphicsExtractor graphics, int x, int y, boolean open) {
     if (open) {
       for (int i = 0; i < 4; i++) {
         graphics.fill(x + i, y + i, x + 7 - i, y + i + 1, FRAME_DARK);
@@ -317,7 +318,7 @@ public class ModuleTreePanel {
     }
   }
 
-  private void drawState(GuiGraphics graphics, int x, int y, byte state) {
+  private void drawState(GuiGraphicsExtractor graphics, int x, int y, byte state) {
     if (state == STATE_ALLOW) {
       for (int i = 0; i < 3; i++) {
         graphics.fill(x + i, y + 3 + i, x + i + 1, y + 5 + i, ALLOW);
@@ -337,21 +338,21 @@ public class ModuleTreePanel {
     }
   }
 
-  public void renderTooltip(GuiGraphics graphics, int left, int top, int mouseX, int mouseY) {
+  public void renderTooltip(GuiGraphicsExtractor graphics, int left, int top, int mouseX, int mouseY) {
     Row row = rowAt(left, top, mouseX, mouseY);
     if (row == null || row.item() == null) {
       return;
     }
     List<Component> lines = new ArrayList<>();
     lines.add(row.label());
-    lines.add(Component.literal(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(row.item()).toString())
+    lines.add(Component.literal(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(row.item()).toString())
         .withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
     if (isSupplier() && row.state() == STATE_ALLOW) {
       lines.add(Component.translatable(key("tree.count_tip"))
           .withStyle(net.minecraft.ChatFormatting.GRAY));
     }
 
-    graphics.renderTooltip(font, lines, Optional.empty(), mouseX, mouseY);
+    graphics.setTooltipForNextFrame(font, lines, Optional.empty(), mouseX, mouseY);
   }
 
   @Nullable
@@ -417,7 +418,7 @@ public class ModuleTreePanel {
     boolean onIcon = row.item() != null
         && mouseX >= iconX(row, x0) && mouseX < iconX(row, x0) + 12;
     if (!onMark && !onIcon) {
-      long now = net.minecraft.Util.getMillis();
+      long now = net.minecraft.util.Util.getMillis();
       if (!row.node().equals(armedNode) || now - armedAt > DOUBLE_CLICK_MS) {
         armedNode = row.node();
         armedAt = now;

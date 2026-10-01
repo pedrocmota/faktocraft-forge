@@ -165,6 +165,6 @@ public class BlockTeleportAnchor extends FaktocraftEntityBlock {
   }
 
   public static MutableComponent dimensionText(ResourceKey<Level> dimension) {
-    return Component.literal(dimension.location().toString()).withStyle(ChatFormatting.LIGHT_PURPLE);
+    return Component.literal(dimension.identifier().toString()).withStyle(ChatFormatting.LIGHT_PURPLE);
   }
 }

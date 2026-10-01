@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "I": "faktocraft:iron_furnace",
+    "c": "faktocraft:electronic_circuit",
+    "r": "#c:dusts/redstone"
+  },
+  "pattern": [
+    " c ",
+    "rIr",
+    "   "
+  ],
+  "result": {
+    "id": "faktocraft:electric_furnace"
+  }
+}

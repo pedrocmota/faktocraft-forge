@@ -8,7 +8,7 @@ import com.faktocraft.common.screen.widgets.GuiText;
 import com.faktocraft.common.screen.widgets.GuiTextCurrentProgress;
 import com.faktocraft.common.screen.widgets.GuiTextProgress;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenMatterFabricator extends BetterScreen<MenuMatterFabricator> {
@@ -38,7 +38,7 @@ public class ScreenMatterFabricator extends BetterScreen<MenuMatterFabricator> {
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/matter_fabricator.png");
+  public Identifier getGuiLocation() {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, "textures/gui/container/matter_fabricator.png");
   }
 }

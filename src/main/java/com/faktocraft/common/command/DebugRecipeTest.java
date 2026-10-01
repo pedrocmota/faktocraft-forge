@@ -1,15 +1,19 @@
 package com.faktocraft.common.command;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.faktocraft.Faktocraft;
+import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
+import com.faktocraft.common.util.RecipeUtil;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Faktocraft.MODID)
+@EventBusSubscriber(modid = Faktocraft.MODID)
 public final class DebugRecipeTest {
 
   private DebugRecipeTest() {
@@ -22,17 +26,20 @@ public final class DebugRecipeTest {
     }
     int checked = 0;
     int broken = 0;
-    for (Recipe<?> recipe : event.getServer().getRecipeManager().getRecipes()) {
+    for (RecipeHolder<?> holder : event.getServer().getRecipeManager().getRecipes()) {
+      Recipe<?> recipe = holder.value();
       checked++;
       List<String> bad = new ArrayList<>();
-      for (Ingredient ingredient : recipe.getIngredients()) {
-        if (!ingredient.isEmpty() && ingredient.getItems().length == 0) {
-          bad.add(ingredient.toJson().toString());
+      for (Ingredient ingredient : recipe.placementInfo().ingredients()) {
+        if (!ingredient.isEmpty() && RecipeUtil.ingredientItems(ingredient).findAny().isEmpty()) {
+          bad.add(Ingredient.CODEC.encodeStart(JsonOps.INSTANCE, ingredient).result()
+              .map(JsonElement::toString)
+              .orElse(ingredient.toString()));
         }
       }
       if (!bad.isEmpty()) {
         broken++;
-        Faktocraft.LOGGER.info("[FAKTO-RECIPE-TEST] QUEBRADA: {} -> {}", recipe.getId(), bad);
+        Faktocraft.LOGGER.info("[FAKTO-RECIPE-TEST] QUEBRADA: {} -> {}", holder.id().identifier(), bad);
       }
     }
     Faktocraft.LOGGER.info("[FAKTO-RECIPE-TEST] verificadas {} receitas, {} quebradas", checked, broken);

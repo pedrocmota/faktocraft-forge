@@ -1,5 +1,7 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.util.PlayerMessages;
+import com.faktocraft.common.util.LegacyNbtBlockEntity;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.util.ItemStackHandler;
 import com.faktocraft.common.util.TransferUtil;
@@ -10,16 +12,15 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.items.IItemHandler;
+import com.faktocraft.common.util.transfer.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BlockEntityChassis extends BlockEntity implements com.faktocraft.common.cover.ICoverHost {
+public class BlockEntityChassis extends LegacyNbtBlockEntity implements com.faktocraft.common.cover.ICoverHost {
 
   @org.jetbrains.annotations.Nullable
   private BlockState cover;
@@ -44,16 +45,16 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
   }
 
   @Override
-  public net.minecraftforge.client.model.data.ModelData getModelData() {
+  public net.neoforged.neoforge.model.data.ModelData getModelData() {
     return com.faktocraft.common.cover.CoverSupport.modelData(cover, coverHoles);
   }
 
   @Override
   public void onDataPacket(net.minecraft.network.Connection connection,
-      net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket packet) {
+      net.minecraft.world.level.storage.ValueInput input) {
     BlockState previousCover = cover;
     int previousHoles = coverHoles;
-    super.onDataPacket(connection, packet);
+    super.onDataPacket(connection, input);
     if (previousCover != cover || previousHoles != coverHoles) {
       com.faktocraft.common.cover.CoverSupport.refreshClientModel(this);
     }
@@ -209,7 +210,7 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
     List<Direction> candidates = inventoryDirections();
     if (candidates.size() < 2) {
       if (player != null) {
-        player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+        PlayerMessages.display(player, net.minecraft.network.chat.Component.translatable(
             "logistics." + com.faktocraft.Faktocraft.MODID
                 + (candidates.isEmpty() ? ".chassis.inventory_none" : ".chassis.inventory_single")),
             true);
@@ -223,7 +224,7 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
     LogisticsCores.markDirtyNear(level, worldPosition);
     if (player != null) {
       BlockPos target = worldPosition.relative(selectedInventory);
-      player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+      PlayerMessages.display(player, net.minecraft.network.chat.Component.translatable(
           "logistics." + com.faktocraft.Faktocraft.MODID + ".chassis.inventory_selected",
           level.getBlockState(target).getBlock().getName(), selectedInventory.getName()), true);
     }
@@ -789,15 +790,15 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
     cover = com.faktocraft.common.cover.CoverSupport.load(tag);
     coverHoles = com.faktocraft.common.cover.CoverSupport.loadHoles(tag);
     if (tag.contains("modules")) {
-      modules.load(tag.getCompound("modules"));
+      modules.load(tag.getCompoundOrEmpty("modules"));
     }
     if (tag.contains("upgrades")) {
-      upgrades.load(tag.getCompound("upgrades"));
+      upgrades.load(tag.getCompoundOrEmpty("upgrades"));
     }
     if (tag.contains("collectorBuffer")) {
-      collectorBuffer.load(tag.getCompound("collectorBuffer"));
+      collectorBuffer.load(tag.getCompoundOrEmpty("collectorBuffer"));
     }
-    selectedInventory = tag.contains("invDir") ? Direction.from3DDataValue(tag.getInt("invDir")) : null;
+    selectedInventory = tag.contains("invDir") ? Direction.from3DDataValue(tag.getIntOr("invDir", 0)) : null;
   }
 
   @Override
@@ -814,6 +815,6 @@ public class BlockEntityChassis extends BlockEntity implements com.faktocraft.co
   public net.minecraft.network.protocol.Packet<
       net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
     return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(
-        this, entity -> ((BlockEntityChassis) entity).getUpdateTag());
+        this, (entity, registries) -> ((BlockEntityChassis) entity).getUpdateTag(registries));
   }
 }

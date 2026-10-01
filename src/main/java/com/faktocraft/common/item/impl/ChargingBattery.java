@@ -10,12 +10,15 @@ import com.faktocraft.common.registries.ModComponentsFluids;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EquipmentSlot;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -27,7 +30,7 @@ public class ChargingBattery extends ElectricItem {
   }
 
   @Override
-  public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+  public InteractionResult use(Level level, Player player, InteractionHand hand) {
     ItemStack stack = player.getItemInHand(hand);
     if (player.isShiftKeyDown()) {
       int currentMode = ModComponentsFluids.getChargingMode(stack, 1);
@@ -37,12 +40,12 @@ public class ChargingBattery extends ElectricItem {
           Component.translatable("mode." + Faktocraft.MODID + "." + newMode).withStyle(ChatFormatting.AQUA))
           .withStyle(ChatFormatting.GRAY));
     }
-    return InteractionResultHolder.pass(stack);
+    return InteractionResult.PASS;
   }
 
   @Override
-  public void inventoryTick(ItemStack stack, Level level, Entity owner, int slotId, boolean isSelected) {
-    if (level.isClientSide() || !(owner instanceof Player player)) {
+  public void inventoryTick(ItemStack stack, ServerLevel level, Entity owner, @Nullable EquipmentSlot slot) {
+    if (!(owner instanceof Player player)) {
       return;
     }
 

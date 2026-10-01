@@ -43,9 +43,6 @@ public class ModBlocks {
       BlockOre.oreProperties());
   public static final Block URANIUM_ORE = register("uranium_ore", BlockOre::new, BlockOre.oreProperties());
   public static final Block SILVER_ORE = register("silver_ore", BlockOre::new, BlockOre.oreProperties());
-  public static final Block SULFUR_ORE = register("sulfur_ore", BlockOre::new, BlockOre.oreProperties());
-  public static final Block DEEPSLATE_SULFUR_ORE = register("deepslate_sulfur_ore", BlockOre::new,
-      BlockOre.oreProperties());
   public static final Block DEEPSLATE_SILVER_ORE = register("deepslate_silver_ore", BlockOre::new,
       BlockOre.oreProperties());
   public static final Block LITHIUM_ORE = register("lithium_ore", BlockOre::new, BlockOre.oreProperties());
@@ -159,6 +156,8 @@ public class ModBlocks {
 
   public static Block register(String name, Function<BlockBehaviour.Properties, Block> factory,
       BlockBehaviour.Properties properties) {
+    properties.setId(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK,
+        RegistrationHandler.id(name)));
     Block block = factory.apply(properties);
     NAMES.put(block, name);
     return RegistrationHandler.block(name, block);

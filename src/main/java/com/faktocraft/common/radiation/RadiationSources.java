@@ -1,5 +1,6 @@
 package com.faktocraft.common.radiation;
 
+import com.faktocraft.common.util.LegacySavedData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -7,6 +8,7 @@ import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,7 +19,8 @@ import java.util.function.Predicate;
 
 public class RadiationSources extends SavedData {
 
-  private static final String DATA_NAME = "faktocraft_radiation_sources";
+  private static final SavedDataType<RadiationSources> TYPE = LegacySavedData.type("radiation_sources",
+      RadiationSources::new, RadiationSources::load, data -> data.save(new CompoundTag()));
 
   private final Map<String, Set<Long>> byDimension = new HashMap<>();
   private final Map<String, List<Aftermath>> aftermathByDimension = new HashMap<>();
@@ -31,11 +34,11 @@ public class RadiationSources extends SavedData {
 
   public static RadiationSources get(ServerLevel level) {
     ServerLevel host = level.getServer().overworld();
-    return host.getDataStorage().computeIfAbsent(RadiationSources::load, RadiationSources::new, DATA_NAME);
+    return LegacySavedData.get(host, TYPE, RadiationSources::load);
   }
 
   private static String key(ServerLevel level) {
-    return level.dimension().location().toString();
+    return level.dimension().identifier().toString();
   }
 
   public void add(ServerLevel level, BlockPos pos) {
@@ -101,28 +104,27 @@ public class RadiationSources extends SavedData {
 
   private static RadiationSources load(CompoundTag tag) {
     RadiationSources data = new RadiationSources();
-    CompoundTag dims = tag.getCompound("dimensions");
-    for (String dim : dims.getAllKeys()) {
+    CompoundTag dims = tag.getCompoundOrEmpty("dimensions");
+    for (String dim : dims.keySet()) {
       Set<Long> set = new HashSet<>();
-      for (Tag entry : dims.getList(dim, Tag.TAG_LONG)) {
-        set.add(((LongTag) entry).getAsLong());
+      for (Tag entry : dims.getListOrEmpty(dim)) {
+        set.add(((LongTag) entry).value());
       }
       data.byDimension.put(dim, set);
     }
-    CompoundTag fallout = tag.getCompound("aftermath");
-    for (String dim : fallout.getAllKeys()) {
+    CompoundTag fallout = tag.getCompoundOrEmpty("aftermath");
+    for (String dim : fallout.keySet()) {
       List<Aftermath> list = new ArrayList<>();
-      for (Tag entry : fallout.getList(dim, Tag.TAG_COMPOUND)) {
+      for (Tag entry : fallout.getListOrEmpty(dim)) {
         CompoundTag item = (CompoundTag) entry;
-        list.add(new Aftermath(item.getLong("pos"), item.getFloat("strength"), item.getLong("started"),
-            item.getLong("expires")));
+        list.add(new Aftermath(item.getLongOr("pos", 0L), item.getFloatOr("strength", 0.0F),
+            item.getLongOr("started", 0L), item.getLongOr("expires", 0L)));
       }
       data.aftermathByDimension.put(dim, list);
     }
     return data;
   }
 
-  @Override
   public CompoundTag save(CompoundTag tag) {
     CompoundTag dims = new CompoundTag();
     for (Map.Entry<String, Set<Long>> entry : byDimension.entrySet()) {

@@ -1,5 +1,8 @@
 package com.faktocraft.common.block.impl.luminator;
 
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.interfaces.block.IElectricMachine;
@@ -10,14 +13,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
 import java.util.Set;
 
 public class BlockLuminator extends FaktocraftEntityBlock implements IStateActive, IElectricMachine {
@@ -49,10 +50,10 @@ public class BlockLuminator extends FaktocraftEntityBlock implements IStateActiv
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-      TooltipFlag flag) {
-    tooltip.add(IElectricMachine.tierTooltip(getEnergyTiers()));
-    super.appendHoverText(stack, level, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(IElectricMachine.tierTooltip(getEnergyTiers()));
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 
   @Nullable

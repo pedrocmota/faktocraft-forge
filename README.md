@@ -2,7 +2,7 @@
 
 <img src="docs/banners/main.webp" alt="Faktocraft" width="700">
 
-Faktocraft is a modern port of several classic tech mods - **IndustrialCraft 2**, **BuildCraft** and **Logistics Pipes** - brought together into a single mod: electrical machines, tiered power grids, item and fluid pipes, automated mining and a request-based logistics system.
+Faktocraft is a modern successor of several classic tech mods - **IndustrialCraft 2**, **BuildCraft** and **Logistics Pipes** - brought together into a single mod: electrical machines, tiered power grids, item and fluid pipes, automated mining and a request-based logistics system.
 
 > ℹ️ The mod is in **beta**. The feature set is complete and every system has been played through, but balance is still being tuned and bugs may remain.
 
@@ -45,30 +45,27 @@ Faktocraft is a modern port of several classic tech mods - **IndustrialCraft 2**
 
 ## Requirements
 
-- **Minecraft 1.20.1 with Forge** - this is the only supported version.
-- The mod will be updated to newer Minecraft versions once Minecraft stabilizes its Vulkan support in the future.
+- **Minecraft 26.3 with NeoForge** (26.3.0 beta or newer) - the `26.3` branch. The 1.20.1 Forge version lives on the `main` branch and keeps receiving fixes only.
+- Java 25 (bundled with the launcher).
 
 ## Compatibility
 
-Faktocraft has no mixins, coremods or access transformers, so it rarely conflicts with other mods.
+Faktocraft has a single mixin (it redirects the GUI renderer target while the Status Monitor draws its off-screen panel) and no coremods or access transformers, so it rarely conflicts with other mods.
 
 ### Compatible
 
 - **JEI** - recipe categories for every machine, recipe transfer (the `+` button) into machines, the request table and the craft/recipe pipes.
 - **Jade** - energy, cable, circuit breaker, valve, reactor and machine info in the overlay. When Jade is on both the server and the client, the Status Monitor shows Jade's own tooltip for the watched block.
-- **REI** - native plugin with the same categories and recipe transfer as JEI.
-- **WTHIT** - native plugin with the same overlay information as Jade.
-- **Embeddium** and **Oculus** - including shader packs.
-- **Canary**.
-- **Distant Horizons**.
+- **Sodium** and **Distant Horizons**.
+- **REI** - the plugin is kept in the source tree but is not built until REI ships a NeoForge 26.3 release.
 
 ### Compatible without integration
 
 - Minimaps, inventory tweaks, UI mods and most performance mods.
-- **Any mod using Forge item and fluid capabilities** - inventories, tanks, buckets and hoppers work with the pipes, the quarry and the machines. Storage networks such as Applied Energistics 2 and Refined Storage are reachable as ordinary inventories.
-- **Forge tags** - ores, ingots, dusts and other materials use `forge:` tags, so shared ores and ingredients from other mods are recognized. The quarry mines any ordinary block from any mod and can be tuned with the `faktocraft:quarry_blacklist` and `faktocraft:quarry_mineable` block tags; radiation shielding uses the `faktocraft:radiation_shielding` tag.
+- **Any mod using NeoForge item and fluid capabilities** (the transfer API) - inventories, tanks, buckets and hoppers work with the pipes, the quarry and the machines. Storage networks such as Applied Energistics 2 and Refined Storage are reachable as ordinary inventories.
+- **Common tags** - ores, ingots, dusts and other materials use the `c:` tags, so shared ores and ingredients from other mods are recognized. The quarry mines any ordinary block from any mod and can be tuned with the `faktocraft:quarry_blacklist` and `faktocraft:quarry_mineable` block tags; radiation shielding uses the `faktocraft:radiation_shielding` tag.
 - **Datapacks, KubeJS, CraftTweaker** - every recipe type has a JSON serializer, so Faktocraft recipes can be added, changed or removed. Oil generation is plain worldgen JSON.
-- **Forge Energy mods** (Mekanism, Thermal, Powah, Create and others) - Faktocraft power is its own system and is not exposed as FE. There is no converter yet.
+- **FE mods** (Mekanism, Thermal, Powah, Create and others) - Faktocraft power is its own system and is not exposed as FE. There is no converter yet.
 - **Curios** - the jetpack and the night vision goggles must be worn in the armor slots.
 - **Land claim mods** (FTB Chunks, Flan and similar) - the quarry and the forester do not enforce claims yet, the hole drill does.
 
@@ -78,7 +75,7 @@ Faktocraft has no mixins, coremods or access transformers, so it rarely conflict
 
 ## Fabric?
 
-A Fabric port is unlikely - the mod is deeply tied to Forge internals (energy capabilities, registries, networking), which makes porting it very difficult.
+A Fabric port is unlikely - the mod is deeply tied to NeoForge internals (capabilities, registries, networking), which makes porting it very difficult.
 
 ## Wiki
 

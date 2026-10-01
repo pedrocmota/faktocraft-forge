@@ -1,22 +1,19 @@
 package com.faktocraft.gametest.world;
 
-import com.faktocraft.Faktocraft;
+import com.faktocraft.common.util.NbtBridge;
 import com.faktocraft.common.block.impl.teleport_anchor.BlockEntityTeleportAnchor;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.registries.ModBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class TeleportAnchorGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -26,7 +23,7 @@ public class TeleportAnchorGameTest {
   private static final BlockPos PRELOAD_POS = new BlockPos(8, 200, 200);
 
   private static BlockEntityTeleportAnchor anchor(GameTestHelper helper, BlockPos rel) {
-    if (helper.getBlockEntity(rel) instanceof BlockEntityTeleportAnchor anchor) {
+    if (TestUtil.blockEntity(helper, rel) instanceof BlockEntityTeleportAnchor anchor) {
       return anchor;
     }
     throw new IllegalStateException("no teleport anchor at " + rel);
@@ -61,7 +58,7 @@ public class TeleportAnchorGameTest {
       BlockEntityTeleportAnchor target = anchor.destinationAnchor();
       helper.assertTrue(target != null && target.getLevel() == nether, "destination anchor not resolved in nether");
 
-      CompoundTag saved = anchor.saveWithoutMetadata();
+      CompoundTag saved = anchor.saveWithoutMetadata(NbtBridge.registries());
       BlockEntityTeleportAnchor reloaded = new BlockEntityTeleportAnchor(helper.absolutePos(DIMENSIONAL),
           anchor.getBlockState());
       reloaded.setLevel(helper.getLevel());
@@ -81,8 +78,8 @@ public class TeleportAnchorGameTest {
   @GameTest(template = TEMPLATE, timeoutTicks = 1200)
   public static void dimensionalAnchorPreloadsDestinationArea(GameTestHelper helper) {
     ServerLevel nether = nether(helper);
-    ChunkPos center = new ChunkPos(PRELOAD_POS);
-    ChunkPos far = new ChunkPos(center.x + ModConfig.server().teleport_anchor_preload_radius, center.z);
+    ChunkPos center = ChunkPos.containing(PRELOAD_POS);
+    ChunkPos far = new ChunkPos(center.x() + ModConfig.server().teleport_anchor_preload_radius, center.z());
     nether.setBlock(PRELOAD_POS, ModBlocks.DIMENSIONAL_TELEPORT_ANCHOR.defaultBlockState(), 3);
     helper.setBlock(DIMENSIONAL, ModBlocks.DIMENSIONAL_TELEPORT_ANCHOR.defaultBlockState());
     BlockEntityTeleportAnchor anchor = anchor(helper, DIMENSIONAL);
@@ -90,10 +87,10 @@ public class TeleportAnchorGameTest {
     anchor.preloadDestination();
 
     helper.startSequence()
-        .thenWaitUntil(() -> helper.assertTrue(nether.getChunkSource().hasChunk(far.x, far.z),
+        .thenWaitUntil(() -> helper.assertTrue(nether.getChunkSource().hasChunk(far.x(), far.z()),
             "chunk " + far + " not loaded by the preload ticket"))
         .thenExecute(() -> nether.setBlock(PRELOAD_POS, Blocks.AIR.defaultBlockState(), 3))
-        .thenWaitUntil(() -> helper.assertTrue(!nether.getChunkSource().hasChunk(far.x, far.z),
+        .thenWaitUntil(() -> helper.assertTrue(!nether.getChunkSource().hasChunk(far.x(), far.z()),
             "chunk " + far + " still loaded after the preload ticket expired"))
         .thenSucceed();
   }
@@ -112,7 +109,7 @@ public class TeleportAnchorGameTest {
     anchor.getEnergyStorage().setMaxEnergy(capacity);
     anchor.getEnergyStorage().setEnergy(capacity);
 
-    CompoundTag saved = anchor.saveWithoutMetadata();
+    CompoundTag saved = anchor.saveWithoutMetadata(NbtBridge.registries());
     BlockEntityTeleportAnchor reloaded = new BlockEntityTeleportAnchor(helper.absolutePos(BASIC),
         anchor.getBlockState());
     reloaded.setLevel(helper.getLevel());

@@ -1,11 +1,12 @@
 package com.faktocraft.common.item.impl.tools;
 
+import net.neoforged.neoforge.common.DataMapHooks;
 import com.google.common.collect.ImmutableMap;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
 import com.faktocraft.common.item.base.DiggerElectricItem;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -13,9 +14,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -56,14 +56,21 @@ public class Chainsaw extends DiggerElectricItem {
 
   private final int energyCostMine;
   private final int energyCostHurt;
+  private final float efficiencyScale;
 
-  public Chainsaw(Tier material, float attackDamage, float attackSpeed, Properties properties,
-      int energyStored, int maxEnergy, int energyCostMine, int energyCostHurt,
+  public Chainsaw(ToolMaterial material, float efficiencyScale, float attackDamage, float attackSpeed,
+      Properties properties, int energyStored, int maxEnergy, int energyCostMine, int energyCostHurt,
       EnergyType energyType, EnergyTier energyTier) {
     super(material, attackDamage, attackSpeed, 5.0F, List.of(BlockTags.MINEABLE_WITH_AXE),
         properties, energyStored, maxEnergy, energyType, energyTier);
     this.energyCostMine = energyCostMine;
     this.energyCostHurt = energyCostHurt;
+    this.efficiencyScale = efficiencyScale;
+  }
+
+  @Override
+  protected float efficiencyScale() {
+    return efficiencyScale;
   }
 
   @Override
@@ -74,6 +81,26 @@ public class Chainsaw extends DiggerElectricItem {
   @Override
   public int getMineCost() {
     return energyCostMine;
+  }
+
+  @Override
+  public boolean animatesWhileWorking() {
+    return true;
+  }
+
+  @Override
+  public boolean minesVeins() {
+    return tier() == com.faktocraft.common.registries.ModTiers.IRIDIUM_TOOL;
+  }
+
+  @Override
+  public net.minecraft.tags.TagKey<Block> veinFamily() {
+    return VeinMining.LOGS;
+  }
+
+  @Override
+  protected String veinTooltipKey() {
+    return "tooltip.faktocraft.vein_chopping";
   }
 
   @Override
@@ -97,19 +124,19 @@ public class Chainsaw extends DiggerElectricItem {
       if (state.hasProperty(RotatedPillarBlock.AXIS) && strippedState.hasProperty(RotatedPillarBlock.AXIS)) {
         strippedState = strippedState.setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS));
       }
-      level.playSound(player, pos, SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0F, 1.0F);
+      level.playSound(player, pos, SoundEvents.AXE_STRIP.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
       modified = Optional.of(strippedState);
     } else {
       Optional<BlockState> scraped = WeatheringCopper.getPrevious(state);
       if (scraped.isPresent()) {
-        level.playSound(player, pos, SoundEvents.AXE_SCRAPE, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(player, pos, SoundEvents.AXE_SCRAPE.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
         level.levelEvent(player, 3005, pos, 0);
         modified = scraped;
       } else {
-        Optional<BlockState> waxedOff = Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock()))
+        Optional<BlockState> waxedOff = Optional.ofNullable(DataMapHooks.getBlockUnwaxed(state.getBlock()))
             .map(block -> block.withPropertiesOf(state));
         if (waxedOff.isPresent()) {
-          level.playSound(player, pos, SoundEvents.AXE_WAX_OFF, SoundSource.BLOCKS, 1.0F, 1.0F);
+          level.playSound(player, pos, SoundEvents.AXE_WAX_OFF.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
           level.levelEvent(player, 3004, pos, 0);
           modified = waxedOff;
         }

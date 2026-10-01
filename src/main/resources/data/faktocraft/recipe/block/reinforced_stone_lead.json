@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "l": "#c:ingots/lead",
+    "s": "minecraft:stone"
+  },
+  "pattern": [
+    "sss",
+    "lll",
+    "sss"
+  ],
+  "result": {
+    "id": "faktocraft:reinforced_stone",
+    "count": 6
+  }
+}

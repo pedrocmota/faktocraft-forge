@@ -205,23 +205,23 @@ public class EnergyNetwork implements IEnergy {
   }
 
   public void deserializeNBT(CompoundTag tag) {
-    this.energy = tag.contains("energy") ? tag.getInt("energy") : 0;
-    this.energyTier = EnergyTier.getTierFromLvl(tag.contains("energyTier") ? tag.getInt("energyTier") : 1);
+    this.energy = tag.contains("energy") ? tag.getIntOr("energy", 0) : 0;
+    this.energyTier = EnergyTier.getTierFromLvl(tag.contains("energyTier") ? tag.getIntOr("energyTier", 0) : 1);
     connections.clear();
-    for (long pos : tag.getLongArray("connections")) {
+    for (long pos : tag.getLongArray("connections").orElse(new long[0])) {
       connections.add(BlockPos.of(pos));
     }
     electrics.clear();
-    for (long pos : tag.getLongArray("electrics")) {
+    for (long pos : tag.getLongArray("electrics").orElse(new long[0])) {
       electrics.add(BlockPos.of(pos));
     }
     transmitters.clear();
-    for (long pos : tag.getLongArray("transmitters")) {
+    for (long pos : tag.getLongArray("transmitters").orElse(new long[0])) {
       transmitters.add(BlockPos.of(pos));
     }
-    lastCurrentTier = tag.contains("lastTier") ? EnergyTier.getTierFromLvl(tag.getInt("lastTier")) : null;
-    this.r = tag.contains("r") ? tag.getFloat("r") : 0;
-    this.g = tag.contains("g") ? tag.getFloat("g") : 0;
-    this.b = tag.contains("b") ? tag.getFloat("b") : 0;
+    lastCurrentTier = tag.contains("lastTier") ? EnergyTier.getTierFromLvl(tag.getIntOr("lastTier", 0)) : null;
+    this.r = tag.contains("r") ? tag.getFloatOr("r", 0.0F) : 0;
+    this.g = tag.contains("g") ? tag.getFloatOr("g", 0.0F) : 0;
+    this.b = tag.contains("b") ? tag.getFloatOr("b", 0.0F) : 0;
   }
 }

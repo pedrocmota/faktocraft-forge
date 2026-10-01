@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_tool",
+  "key": {
+    "i": "#c:ingots/iron",
+    "p": "#c:plates/iron"
+  },
+  "pattern": [
+    "p p",
+    " p ",
+    "i i"
+  ],
+  "result": {
+    "id": "faktocraft:cutter"
+  }
+}

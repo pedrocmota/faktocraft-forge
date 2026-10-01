@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.pipe;
 
+import net.minecraft.world.phys.Vec3;
 import com.faktocraft.common.item.base.ElectricItem;
 import com.faktocraft.common.item.impl.CapacitorItem;
 import com.faktocraft.common.registries.PipeRegistry;
@@ -159,6 +160,6 @@ public class MenuPump extends AbstractContainerMenu {
   @Override
   public boolean stillValid(Player player) {
     return pump != null && !pump.isRemoved()
-        && player.distanceToSqr(pump.getBlockPos().getCenter()) <= 64.0;
+        && player.distanceToSqr(Vec3.atCenterOf(pump.getBlockPos())) <= 64.0;
   }
 }

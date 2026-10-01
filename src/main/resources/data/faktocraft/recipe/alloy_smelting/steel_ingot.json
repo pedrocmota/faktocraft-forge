@@ -1,0 +1,19 @@
+{
+  "duration": 560,
+  "experience": 0.5,
+  "ingredients": [
+    {
+      "count": 1,
+      "tag": "c:ingots/iron"
+    },
+    {
+      "count": 3,
+      "tag": "c:dusts/coal"
+    }
+  ],
+  "power_cost": 32,
+  "result": {
+    "item": "faktocraft:steel_ingot"
+  },
+  "type": "faktocraft:alloy_smelting"
+}

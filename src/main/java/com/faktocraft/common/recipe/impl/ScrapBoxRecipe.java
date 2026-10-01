@@ -2,57 +2,71 @@ package com.faktocraft.common.recipe.impl;
 
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.interfaces.receipe.IBaseRecipe;
+import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.recipe.RecipeJsonHelper;
 import com.faktocraft.common.registries.ModRecipeType;
-import com.google.gson.JsonObject;
-import net.minecraft.core.RegistryAccess;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import java.text.DecimalFormat;
 import java.util.Collection;
 
-public class ScrapBoxRecipe implements IBaseRecipe<Container> {
-
+public class ScrapBoxRecipe implements IBaseRecipe<MachineRecipeInput> {
   private static final DecimalFormat DF = new DecimalFormat("0.00");
 
   public static final ResourceKey<Item> SCRAP_BOX_ITEM_KEY = ResourceKey.create(Registries.ITEM,
-      new ResourceLocation(Faktocraft.MODID, "scrap_box"));
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "scrap_box"));
 
-  public static final RecipeSerializer<ScrapBoxRecipe> SERIALIZER = new Serializer();
+  public static final MapCodec<ScrapBoxRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+      Codec.FLOAT.optionalFieldOf("weight", 1.0F).forGetter(recipe -> recipe.weight),
+      RecipeJsonHelper.RESULT.fieldOf("result").forGetter(recipe -> recipe.result))
+      .apply(i, ScrapBoxRecipe::new));
 
-  private final ResourceLocation id;
+  public static final StreamCodec<RegistryFriendlyByteBuf, ScrapBoxRecipe> STREAM_CODEC = StreamCodec.of(
+      (buf, recipe) -> {
+        buf.writeFloat(recipe.weight);
+        ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.result);
+      }, buf -> {
+        float weight = buf.readFloat();
+        ItemStackTemplate result = ItemStackTemplate.STREAM_CODEC.decode(buf);
+        return new ScrapBoxRecipe(weight, result);
+      });
+
+  public static final RecipeSerializer<ScrapBoxRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+
   private final float weight;
-  private final ItemStack result;
+  private final ItemStackTemplate result;
 
-  public ScrapBoxRecipe(ResourceLocation id, float weight, ItemStack result) {
-    this.id = id;
+  public ScrapBoxRecipe(float weight, ItemStackTemplate result) {
     this.weight = weight;
     this.result = result;
   }
 
   @Override
-  public boolean matches(Container container, Level level) {
-    return container.getItem(0).is(holder -> holder.is(SCRAP_BOX_ITEM_KEY));
+  public boolean matches(MachineRecipeInput input, Level level) {
+    return input.getItem(0).is(holder -> holder.is(SCRAP_BOX_ITEM_KEY));
   }
 
   @Override
-  public ItemStack assemble(Container container, RegistryAccess registryAccess) {
-    return result.copy();
+  public ItemStack assemble(MachineRecipeInput input) {
+    return result.create();
   }
 
   @Override
   public ItemStack getResultItem() {
-    return result.copy();
+    return result.create();
   }
 
   public float getWeight() {
@@ -108,11 +122,6 @@ public class ScrapBoxRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public ResourceLocation getId() {
-    return id;
-  }
-
-  @Override
   public RecipeSerializer<ScrapBoxRecipe> getSerializer() {
     return SERIALIZER;
   }
@@ -120,28 +129,5 @@ public class ScrapBoxRecipe implements IBaseRecipe<Container> {
   @Override
   public RecipeType<ScrapBoxRecipe> getType() {
     return ModRecipeType.SCRAP_BOX;
-  }
-
-  public static class Serializer implements RecipeSerializer<ScrapBoxRecipe> {
-
-    @Override
-    public ScrapBoxRecipe fromJson(ResourceLocation id, JsonObject json) {
-      float weight = GsonHelper.getAsFloat(json, "weight", 1.0F);
-      ItemStack result = RecipeJsonHelper.result(json.get("result"));
-      return new ScrapBoxRecipe(id, weight, result);
-    }
-
-    @Override
-    public ScrapBoxRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-      float weight = buf.readFloat();
-      ItemStack result = buf.readItem();
-      return new ScrapBoxRecipe(id, weight, result);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buf, ScrapBoxRecipe recipe) {
-      buf.writeFloat(recipe.weight);
-      buf.writeItem(recipe.result);
-    }
   }
 }

@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.8,
+  "ingredient": {
+    "count": 9,
+    "tag": "c:gems/diamond"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "minecraft:diamond_block"
+  },
+  "type": "faktocraft:compressing"
+}

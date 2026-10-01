@@ -1,16 +1,18 @@
 package com.faktocraft.client;
 
+import com.faktocraft.common.screen.widgets.FilteredEditBox;
+import net.minecraft.client.input.KeyEvent;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.scan.ScanChannels;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
-import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntConsumer;
@@ -27,13 +29,12 @@ public class ScanCodePopup {
   private static final int FIELD_H = 14;
   private static final int PENDING_TICKS = 20;
   private static final int TOOLTIP_W = 180;
-  private static final int OVERLAY_Z = 300;
 
   private final Screen screen;
   private final Font font;
   private final Supplier<String> current;
   private final IntConsumer onApply;
-  private final EditBox box;
+  private final FilteredEditBox box;
   private final DeviceButton button;
 
   private boolean open;
@@ -46,7 +47,7 @@ public class ScanCodePopup {
     this.font = font;
     this.current = current;
     this.onApply = onApply;
-    box = new EditBox(font, 0, 0, FIELD_W, FIELD_H, Component.empty());
+    box = new FilteredEditBox(font, 0, 0, FIELD_W, FIELD_H, Component.empty());
     box.setMaxLength(ScanChannels.CODE_DIGITS);
     box.setFilter(ScanCodePopup::digitsOnly);
     box.setHint(Component.translatable(key("hint")).withStyle(ChatFormatting.DARK_GRAY));
@@ -148,7 +149,7 @@ public class ScanCodePopup {
         && mouseY < panelTop() + panelH();
   }
 
-  public void render(GuiGraphics graphics, int mouseX, int mouseY) {
+  public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     boolean highlight = open || overIcon(mouseX, mouseY);
     int color = highlight ? 0xFFE8C43A : 0xFF8A8E94;
     int x = iconX;
@@ -160,12 +161,11 @@ public class ScanCodePopup {
     graphics.fill(x + 4, y + 6, x + 6, y + 8, 0xFF14161A);
   }
 
-  public void renderOverlay(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+  public void renderOverlay(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
     if (!open) {
       return;
     }
-    graphics.pose().pushPose();
-    graphics.pose().translate(0, 0, OVERLAY_Z);
+    graphics.nextStratum();
     int left = panelLeft();
     int top = panelTop();
     int right = left + panelW();
@@ -175,17 +175,16 @@ public class ScanCodePopup {
     graphics.fill(left, bottom - 1, right, bottom, 0xFF6E747D);
     graphics.fill(left, top, left + 1, bottom, 0xFF6E747D);
     graphics.fill(right - 1, top, right, bottom, 0xFF6E747D);
-    graphics.drawString(font, Component.translatable(key("label")), left + PAD, top + PAD, 0xFF8A8E94);
+    graphics.text(font, Component.translatable(key("label")), left + PAD, top + PAD, 0xFF8A8E94);
     box.setX(left + PAD);
     box.setY(top + PAD + LABEL_H);
     button.setX(left + PAD + FIELD_W + 6);
     button.setY(top + PAD + LABEL_H - 1);
-    box.render(graphics, mouseX, mouseY, partialTick);
-    button.render(graphics, mouseX, mouseY, partialTick);
-    graphics.pose().popPose();
+    box.extractRenderState(graphics, mouseX, mouseY, partialTick);
+    button.extractRenderState(graphics, mouseX, mouseY, partialTick);
   }
 
-  public void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (open || !overIcon(mouseX, mouseY)) {
       return;
     }
@@ -193,7 +192,7 @@ public class ScanCodePopup {
     lines.add(Component.translatable("tooltip." + Faktocraft.MODID + ".scan_code", current.get())
         .withStyle(ChatFormatting.LIGHT_PURPLE).getVisualOrderText());
     lines.addAll(font.split(Component.translatable(key("help")).withStyle(ChatFormatting.GRAY), TOOLTIP_W));
-    graphics.renderTooltip(font, lines, mouseX, mouseY);
+    graphics.setTooltipForNextFrame(font, lines, mouseX, mouseY);
   }
 
   public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
@@ -223,22 +222,24 @@ public class ScanCodePopup {
     return false;
   }
 
-  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+  public boolean keyPressed(KeyEvent event) {
+
+    int keyCode = event.key();
     if (box.isFocused()) {
-      if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+      if (keyCode == InputConstants.KEY_ESCAPE) {
         unfocus();
         return true;
       }
-      if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+      if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_NUMPADENTER) {
         apply();
         return true;
       }
-      if (box.keyPressed(keyCode, scanCode, modifiers)) {
+      if (box.keyPressed(event)) {
         return true;
       }
-      return keyCode != GLFW.GLFW_KEY_TAB;
+      return keyCode != InputConstants.KEY_TAB;
     }
-    if (open && keyCode == GLFW.GLFW_KEY_ESCAPE) {
+    if (open && keyCode == InputConstants.KEY_ESCAPE) {
       close();
       return true;
     }

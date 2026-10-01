@@ -1,19 +1,33 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.network.ClientPacketDispatch;
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.faktocraft.common.block.impl.machines.geo_scanner.BlockEntityGeoScanner;
 import com.faktocraft.common.network.NbtPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
-import java.util.function.Supplier;
 
 public record PacketGeoScannerState(BlockPos blockPos, boolean openScreen, int revision, boolean running,
     int energy, int capacity, int scanned, boolean jobActive, int jobCx, int jobCz, int jobRemaining,
-    boolean manualPending, int manualCx, int manualCz, int code, @Nullable CompoundTag scans) {
+    boolean manualPending, int manualCx, int manualCz, int code, @Nullable CompoundTag scans)
+    implements CustomPacketPayload {
+
+  public static final Type<PacketGeoScannerState> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_geo_scanner_state"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketGeoScannerState> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketGeoScannerState::decode);
+
+  @Override
+  public Type<PacketGeoScannerState> type() {
+    return TYPE;
+  }
 
   public static PacketGeoScannerState of(BlockEntityGeoScanner scanner, boolean openScreen, boolean withScans) {
     return new PacketGeoScannerState(scanner.getBlockPos(), openScreen, scanner.getRevision(),
@@ -48,9 +62,8 @@ public record PacketGeoScannerState(BlockPos blockPos, boolean openScreen, int r
         buf.readInt(), buf.readBoolean(), buf.readInt(), buf.readInt(), buf.readVarInt(), NbtPayload.read(buf));
   }
 
-  public static void handle(PacketGeoScannerState msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-        () -> () -> com.faktocraft.client.ClientPacketHandlers.handleGeoScannerState(msg)));
-    ctx.get().setPacketHandled(true);
+  public static void handle(PacketGeoScannerState msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> ClientPacketDispatch.dispatch(msg));
+    ctx.setPacketHandled(true);
   }
 }

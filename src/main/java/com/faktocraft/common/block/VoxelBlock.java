@@ -5,10 +5,14 @@ import com.faktocraft.common.registries.ModBlocks;
 import com.faktocraft.common.util.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -16,11 +20,11 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
 
 public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.level.block.SimpleWaterloggedBlock {
-
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
   public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
@@ -73,25 +77,24 @@ public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.l
   }
 
   @Override
-  @SuppressWarnings("deprecation")
-  public int getLightBlock(BlockState state, BlockGetter level, BlockPos pos) {
-    return CoverSupport.isCovered(state) ? CoverSupport.HOLE_LIGHT_BLOCK : super.getLightBlock(state, level, pos);
+  protected int getLightDampening(BlockState state) {
+    return CoverSupport.isCovered(state) ? CoverSupport.HOLE_LIGHT_BLOCK : super.getLightDampening(state);
   }
 
   @Override
-  public void playerWillDestroy(net.minecraft.world.level.Level level, BlockPos pos, BlockState state,
+  public BlockState playerWillDestroy(net.minecraft.world.level.Level level, BlockPos pos, BlockState state,
       net.minecraft.world.entity.player.Player player) {
     if (CoverSupport.isCovered(state) && CoverSupport.coverAt(level, pos) != null) {
-      spawnDestroyParticles(level, player, pos, state);
+      spawnDestroyByEntityParticles(level, player, pos, state);
       level.gameEvent(player, net.minecraft.world.level.gameevent.GameEvent.BLOCK_DESTROY, pos);
-      return;
+      return state;
     }
-    super.playerWillDestroy(level, pos, state, player);
+    return super.playerWillDestroy(level, pos, state, player);
   }
 
   @Override
   public boolean onDestroyedByPlayer(BlockState state, net.minecraft.world.level.Level level, BlockPos pos,
-      net.minecraft.world.entity.player.Player player, boolean willHarvest,
+      net.minecraft.world.entity.player.Player player, ItemStack toolStack, boolean willHarvest,
       net.minecraft.world.level.material.FluidState fluid) {
     if (CoverSupport.isCovered(state) && CoverSupport.coverAt(level, pos) != null) {
       if (level.isClientSide()) {
@@ -103,23 +106,24 @@ public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.l
       CoverSupport.releaseToDrilled(level, pos, state);
       return false;
     }
-    return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+    return super.onDestroyedByPlayer(state, level, pos, player, toolStack, willHarvest, fluid);
   }
 
   @Override
-  public void onRemove(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, BlockState newState,
-      boolean isMoving) {
+  public void preRemoveSideEffects(BlockState state, net.minecraft.world.level.Level level, BlockPos pos,
+      BlockEntity blockEntity) {
+    BlockState newState = level.getBlockState(pos);
     if (CoverSupport.isCovered(state) && !newState.is(this) && !newState.is(ModBlocks.DRILLED_BLOCK)) {
       CoverSupport.dropCover(level, pos, CoverSupport.coverAt(level, pos));
     }
-    super.onRemove(state, level, pos, newState, isMoving);
+    super.preRemoveSideEffects(state, level, pos, blockEntity);
   }
 
   protected boolean connectionExtensions() {
     return false;
   }
 
-  private boolean extendsInto(LevelAccessor level, BlockPos pos, Direction direction, boolean connected) {
+  private boolean extendsInto(LevelReader level, BlockPos pos, Direction direction, boolean connected) {
     if (!connected) {
       return false;
     }
@@ -207,11 +211,11 @@ public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.l
     }
   }
 
-  protected boolean canConnect(LevelAccessor level, BlockPos pos, Direction direction) {
+  protected boolean canConnect(LevelReader level, BlockPos pos, Direction direction) {
     return false;
   }
 
-  public BlockState withConnections(BlockState state, LevelAccessor level, BlockPos pos) {
+  public BlockState withConnections(BlockState state, LevelReader level, BlockPos pos) {
     for (Direction direction : Constants.DIRECTIONS) {
       boolean connected = canConnect(level, pos, direction);
       state = state.setValue(FACING_TO_PROPERTY_MAP.get(direction), connected);
@@ -230,8 +234,8 @@ public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.l
   }
 
   @Override
-  public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
-      BlockPos pos, BlockPos neighborPos) {
+  public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos,
+      Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
     if (waterloggable()) {
       boolean above = hasWaterAbove(level, pos);
       if (!state.getValue(WATERLOGGED)) {
@@ -243,7 +247,7 @@ public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.l
       }
     }
     if (state.getValue(WATERLOGGED)) {
-      level.scheduleTick(pos, net.minecraft.world.level.material.Fluids.WATER,
+      ticks.scheduleTick(pos, net.minecraft.world.level.material.Fluids.WATER,
           net.minecraft.world.level.material.Fluids.WATER.getTickDelay(level));
     }
     boolean connected = canConnect(level, pos, direction);
@@ -255,15 +259,15 @@ public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.l
   }
 
   @Override
-  public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+  public boolean propagatesSkylightDown(BlockState state) {
     return false;
   }
 
-  private static boolean hasWaterAbove(LevelAccessor level, BlockPos pos) {
+  private static boolean hasWaterAbove(LevelReader level, BlockPos pos) {
     return level.getBlockState(pos.above()).getFluidState().is(net.minecraft.tags.FluidTags.WATER);
   }
 
-  private static boolean hasSideWater(LevelAccessor level, BlockPos pos) {
+  private static boolean hasSideWater(LevelReader level, BlockPos pos) {
     for (Direction direction : Constants.DIRECTIONS) {
       if (direction == Direction.UP) {
         continue;
@@ -285,14 +289,14 @@ public class VoxelBlock extends FaktocraftBlock implements net.minecraft.world.l
   }
 
   @Override
-  public boolean canPlaceLiquid(BlockGetter level, BlockPos pos, BlockState state,
-      net.minecraft.world.level.material.Fluid fluid) {
+  public boolean canPlaceLiquid(@Nullable net.minecraft.world.entity.LivingEntity user, BlockGetter level,
+      BlockPos pos, BlockState state, net.minecraft.world.level.material.Fluid fluid) {
     return waterloggable()
-        && net.minecraft.world.level.block.SimpleWaterloggedBlock.super.canPlaceLiquid(level, pos, state, fluid);
+        && net.minecraft.world.level.block.SimpleWaterloggedBlock.super.canPlaceLiquid(user, level, pos, state,
+            fluid);
   }
 
   @Override
-  @SuppressWarnings("deprecation")
   public net.minecraft.world.level.material.FluidState getFluidState(BlockState state) {
     return state.getValue(WATERLOGGED)
         ? net.minecraft.world.level.material.Fluids.WATER.getSource(false)

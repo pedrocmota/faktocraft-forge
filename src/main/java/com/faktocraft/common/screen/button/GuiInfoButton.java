@@ -8,7 +8,7 @@ import com.faktocraft.common.enums.UpgradeType;
 import com.faktocraft.common.interfaces.entity.ISupportUpgrades;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class GuiInfoButton extends GuiButton {
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY)) {
       List<Component> elements = new ArrayList<>();
       elements
@@ -46,12 +46,12 @@ public class GuiInfoButton extends GuiButton {
             .withStyle(ChatFormatting.DARK_GRAY));
       }
 
-      graphics.renderComponentTooltip(GuiUtil.getFont(), elements, mouseX, mouseY);
+      graphics.setComponentTooltipForNextFrame(GuiUtil.getFont(), elements, mouseX, mouseY);
     }
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     super.renderBg(graphics, minecraft, mouseX, mouseY);
 
     GuiSprite sprite = GuiSprite.INFO_ICON;

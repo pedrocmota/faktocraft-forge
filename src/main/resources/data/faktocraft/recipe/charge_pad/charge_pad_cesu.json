@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "b": "faktocraft:cesu",
+    "e": "faktocraft:electronic_circuit",
+    "p": "minecraft:stone_pressure_plate",
+    "r": "#c:rubber"
+  },
+  "pattern": [
+    "epe",
+    "rbr"
+  ],
+  "result": {
+    "id": "faktocraft:charge_pad_cesu"
+  }
+}

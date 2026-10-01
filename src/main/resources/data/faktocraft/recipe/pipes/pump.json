@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_pipes",
+  "key": {
+    "p": "#c:plates/iron",
+    "c": "faktocraft:crude_circuit",
+    "m": "faktocraft:electric_motor",
+    "t": "faktocraft:fluid_stone_pipe"
+  },
+  "pattern": [
+    "pcp",
+    "pmp",
+    " t "
+  ],
+  "result": {
+    "id": "faktocraft:pump"
+  }
+}

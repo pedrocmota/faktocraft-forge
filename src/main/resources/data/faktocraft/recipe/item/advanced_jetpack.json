@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:jetpack",
+    "faktocraft:advanced_circuit",
+    "faktocraft:carbon_plate",
+    "faktocraft:carbon_plate",
+    "faktocraft:advanced_alloy",
+    "faktocraft:advanced_alloy"
+  ],
+  "result": {
+    "id": "faktocraft:advanced_jetpack"
+  }
+}

@@ -3,9 +3,9 @@ package com.faktocraft.common.fluid;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
+import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 
-public abstract class BaseFluid extends ForgeFlowingFluid {
+public abstract class BaseFluid extends BaseFlowingFluid {
 
   protected BaseFluid(Properties properties) {
     super(properties);

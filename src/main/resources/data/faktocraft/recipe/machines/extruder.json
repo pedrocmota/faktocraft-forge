@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "b": "faktocraft:basic_machine_casing",
+    "c": "faktocraft:fluid_cell",
+    "e": "faktocraft:electronic_circuit",
+    "p": "minecraft:piston",
+    "t": "#c:plates/tin"
+  },
+  "pattern": [
+    " p ",
+    "cbc",
+    "tet"
+  ],
+  "result": {
+    "id": "faktocraft:extruder"
+  }
+}

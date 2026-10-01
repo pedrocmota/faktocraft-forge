@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:rubber_wood"
+        }
+      ],
+      "name": "rubber_wood",
+      "rolls": 1
+    }
+  ]
+}

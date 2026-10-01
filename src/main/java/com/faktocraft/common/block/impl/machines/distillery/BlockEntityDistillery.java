@@ -18,11 +18,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -30,7 +30,6 @@ import java.util.ArrayList;
 public class BlockEntityDistillery extends FaktocraftBlockEntity
     implements IEnergyBlock, com.faktocraft.common.interfaces.entity.ISupportUpgrades,
     com.faktocraft.common.interfaces.entity.ITileSound {
-
   public static final int SULFUR_SLOT = 0;
 
   public static final int OIL_PER_OP = 100;
@@ -294,14 +293,14 @@ public class BlockEntityDistillery extends FaktocraftBlockEntity
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    activeState = tag.getBoolean("active");
+    activeState = tag.getBooleanOr("active", false);
     if (tag.contains("op")) {
-      progress.load(tag.getCompound("op"));
+      progress.load(tag.getCompoundOrEmpty("op"));
     }
     for (var entry : new Object[][] { { "oil", oilTank }, { "acid", acidTank },
         { "water", waterTank }, { "fuel", fuelTank } }) {
       if (tag.contains((String) entry[0])) {
-        ((FluidStorage) entry[1]).load(tag.getCompound((String) entry[0]));
+        ((FluidStorage) entry[1]).load(tag.getCompoundOrEmpty((String) entry[0]));
       }
     }
   }
@@ -323,7 +322,6 @@ public class BlockEntityDistillery extends FaktocraftBlockEntity
     return com.faktocraft.common.registries.ModSounds.DISTILLERY;
   }
 
-  @Override
   public net.minecraft.world.phys.AABB getRenderBoundingBox() {
     return new net.minecraft.world.phys.AABB(getBlockPos()).expandTowards(0, 5, 0);
   }

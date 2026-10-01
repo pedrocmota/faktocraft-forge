@@ -5,11 +5,14 @@ import com.faktocraft.common.interfaces.block.IHasMenu;
 import com.faktocraft.common.registries.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -20,12 +23,12 @@ public abstract class BlockDockingPipe extends VoxelBlock implements EntityBlock
     super(properties, 0.25f);
   }
 
-  public boolean connects(LevelAccessor level, BlockPos pos, Direction direction) {
+  public boolean connects(LevelReader level, BlockPos pos, Direction direction) {
     return canConnect(level, pos, direction);
   }
 
   @Override
-  protected boolean canConnect(LevelAccessor level, BlockPos pos, Direction direction) {
+  protected boolean canConnect(LevelReader level, BlockPos pos, Direction direction) {
     BlockState state = level.getBlockState(pos.relative(direction));
     if (LogisticsGraph.isNetworkMember(state) && !(state.getBlock() instanceof BlockAssemblyTable)) {
       return true;
@@ -34,9 +37,9 @@ public abstract class BlockDockingPipe extends VoxelBlock implements EntityBlock
   }
 
   @Override
-  public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
-      LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-    state = super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+  public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos,
+      Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+    state = super.updateShape(state, level, ticks, pos, direction, neighborPos, neighborState, random);
     return withConnections(state, level, pos);
   }
 
@@ -54,7 +57,6 @@ public abstract class BlockDockingPipe extends VoxelBlock implements EntityBlock
     return super.use(state, level, pos, player, hand, hit);
   }
 
-  @SuppressWarnings("deprecation")
   @Override
   public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
     super.onPlace(state, level, pos, oldState, isMoving);
@@ -64,10 +66,9 @@ public abstract class BlockDockingPipe extends VoxelBlock implements EntityBlock
   }
 
   @Override
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.is(newState.getBlock()) && !level.isClientSide()) {
-      LogisticsCores.markDirtyNear(level, pos);
-    }
-    super.onRemove(state, level, pos, newState, isMoving);
+  protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos,
+      boolean movedByPiston) {
+    LogisticsCores.markDirtyNear(level, pos);
+    super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
   }
 }

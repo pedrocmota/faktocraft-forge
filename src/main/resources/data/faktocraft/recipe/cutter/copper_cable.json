@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:cutter",
+    "#c:plates/copper"
+  ],
+  "result": {
+    "id": "faktocraft:copper_cable",
+    "count": 2
+  }
+}

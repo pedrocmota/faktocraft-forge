@@ -1,6 +1,5 @@
 package com.faktocraft.gametest.nuclear;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.fueling_station.BlockEntityFuelingStation;
 import com.faktocraft.common.block.impl.machines.fueling_station.FuelingStationRegistry;
 import com.faktocraft.common.block.impl.machines.nuclear_reactor.BlockEntityNuclearReactor;
@@ -23,8 +22,8 @@ import com.faktocraft.common.registries.machines.M1Registry;
 import com.faktocraft.common.util.TransferUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestAssertException;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -34,16 +33,12 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class NuclearReactorGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -70,8 +65,8 @@ public class NuclearReactorGameTest {
     assertFormed(helper);
     ReactorPart corePart = BlockNuclearReactor.CORE_PART;
     BlockPos core = ORIGIN.offset(corePart.x(), corePart.y(), corePart.z());
-    if (!(helper.getBlockEntity(core) instanceof BlockEntityNuclearReactor be)) {
-      throw new GameTestAssertException("no reactor core block entity at " + core.toShortString());
+    if (!(TestUtil.blockEntity(helper, core) instanceof BlockEntityNuclearReactor be)) {
+      throw TestUtil.assertion(helper, "no reactor core block entity at " + core.toShortString());
     }
     return be;
   }
@@ -276,7 +271,8 @@ public class NuclearReactorGameTest {
     BlockPos min = helper.absolutePos(ORIGIN.offset(-2, -1, -2));
     BlockPos max = helper.absolutePos(ORIGIN.offset(5, 6, 5));
     int count = 0;
-    for (ItemEntity entity : helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(min, max))) {
+    for (ItemEntity entity : helper.getLevel().getEntitiesOfClass(ItemEntity.class,
+        new AABB(Vec3.atLowerCornerOf(min), Vec3.atLowerCornerOf(max)))) {
       if (entity.getItem().is(item)) {
         count += entity.getItem().getCount();
       }
@@ -421,11 +417,11 @@ public class NuclearReactorGameTest {
     helper.setBlock(transformer, state);
     M1Registry.VERY_HIGH_TRANSFORMER.setPlacedBy(helper.getLevel(), helper.absolutePos(transformer), state, null,
         ItemStack.EMPTY);
-    if (helper.getBlockEntity(transformer) instanceof FaktocraftBlockEntity be) {
+    if (TestUtil.blockEntity(helper, transformer) instanceof FaktocraftBlockEntity be) {
       be.setRedstoneOnly(false);
     }
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(transformer) instanceof FaktocraftBlockEntity be)) {
+      if (!(TestUtil.blockEntity(helper, transformer) instanceof FaktocraftBlockEntity be)) {
         helper.fail("no transformer block entity");
         return;
       }
@@ -465,7 +461,7 @@ public class NuclearReactorGameTest {
   public static void fuelingStationRefillsCoolantCell(GameTestHelper helper) {
     BlockPos station = ORIGIN.offset(5, 0, 1);
     helper.setBlock(station, FuelingStationRegistry.FUELING_STATION.defaultBlockState());
-    if (!(helper.getBlockEntity(station) instanceof BlockEntityFuelingStation be)) {
+    if (!(TestUtil.blockEntity(helper, station) instanceof BlockEntityFuelingStation be)) {
       helper.fail("no fueling station block entity");
       return;
     }
@@ -518,9 +514,9 @@ public class NuclearReactorGameTest {
     }
     helper.runAfterDelay(2, () -> {
       assertFormed(helper);
-      if (!(helper.getBlockEntity(reactor) instanceof BlockEntityReactorPart part)
+      if (!(TestUtil.blockEntity(helper, reactor) instanceof BlockEntityReactorPart part)
           || part.getBlockState() != helper.getBlockState(reactor)) {
-        helper.fail("reactor placed last has a stale block entity: " + helper.getBlockEntity(reactor));
+        helper.fail("reactor placed last has a stale block entity: " + TestUtil.blockEntity(helper, reactor));
       }
       helper.succeed();
     });
@@ -534,7 +530,7 @@ public class NuclearReactorGameTest {
     helper.setBlock(core, ModBlocks.NUCLEAR_REACTOR.defaultBlockState());
     helper.runAfterDelay(2, () -> {
       assertFormed(helper);
-      if (!(helper.getBlockEntity(core) instanceof BlockEntityNuclearReactor reactor)) {
+      if (!(TestUtil.blockEntity(helper, core) instanceof BlockEntityNuclearReactor reactor)) {
         helper.fail("no reactor core block entity at " + core.toShortString());
         return;
       }
@@ -560,15 +556,15 @@ public class NuclearReactorGameTest {
     helper.setBlock(reactor, ModBlocks.NUCLEAR_REACTOR.defaultBlockState());
     NuclearReactorMultiblock.tryForm(helper.getLevel(), helper.absolutePos(reactor));
     assertFormed(helper);
-    if (!(helper.getBlockEntity(reactor) instanceof BlockEntityReactorPart)) {
-      helper.fail("placed reactor should start as a side part, found " + helper.getBlockEntity(reactor));
+    if (!(TestUtil.blockEntity(helper, reactor) instanceof BlockEntityReactorPart)) {
+      helper.fail("placed reactor should start as a side part, found " + TestUtil.blockEntity(helper, reactor));
     }
     helper.setBlock(ORIGIN, Blocks.AIR.defaultBlockState());
     if (partAt(helper, reactor) != ReactorPart.SINGLE) {
       helper.fail("cube did not unform after losing a corner");
     }
-    if (helper.getBlockEntity(reactor) != null) {
-      helper.fail("stale block entity survived unforming: " + helper.getBlockEntity(reactor));
+    if (TestUtil.blockEntity(helper, reactor) != null) {
+      helper.fail("stale block entity survived unforming: " + TestUtil.blockEntity(helper, reactor));
     }
     for (int y = 0; y < ReactorPart.SIZE; y++) {
       for (int z = 0; z < ReactorPart.SIZE; z++) {
@@ -580,8 +576,8 @@ public class NuclearReactorGameTest {
       if (!state.is(ModBlocks.NUCLEAR_REACTOR) || !BlockNuclearReactor.isCore(state)) {
         helper.fail("reactor should now be the core of the shifted cube, is " + state);
       }
-      if (!(helper.getBlockEntity(reactor) instanceof BlockEntityNuclearReactor core)) {
-        helper.fail("shifted cube has no core block entity, found " + helper.getBlockEntity(reactor));
+      if (!(TestUtil.blockEntity(helper, reactor) instanceof BlockEntityNuclearReactor core)) {
+        helper.fail("shifted cube has no core block entity, found " + TestUtil.blockEntity(helper, reactor));
         return;
       }
       putRod(core, 5);
@@ -647,7 +643,7 @@ public class NuclearReactorGameTest {
             if (!helper.getBlockState(pos).is(ModBlocks.ADVANCED_MACHINE_CASING)) {
               helper.fail("block " + pos.toShortString() + " did not revert to casing");
             }
-            if (helper.getBlockEntity(pos) != null) {
+            if (TestUtil.blockEntity(helper, pos) != null) {
               helper.fail("block " + pos.toShortString() + " kept a reactor block entity after reverting");
             }
           }
@@ -662,7 +658,7 @@ public class NuclearReactorGameTest {
 
   private static BlockState placementState(GameTestHelper helper, BlockPos rel) {
     BlockPos abs = helper.absolutePos(rel);
-    Player player = helper.makeMockPlayer();
+    Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
     BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(abs), Direction.UP, abs.below(), false);
     BlockPlaceContext context = new BlockPlaceContext(helper.getLevel(), player, InteractionHand.MAIN_HAND,
         new ItemStack(ModBlocks.NUCLEAR_REACTOR), hit);

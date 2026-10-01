@@ -1,27 +1,39 @@
 package com.faktocraft.common.block.impl.chunk_loader;
 
+import com.faktocraft.Faktocraft;
 import com.faktocraft.common.config.ModConfig;
+import com.faktocraft.common.util.LegacySavedData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.common.world.ForgeChunkManager;
+import net.minecraft.world.level.saveddata.SavedDataType;
+import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
+import net.neoforged.neoforge.common.world.chunk.TicketController;
+import net.neoforged.neoforge.common.world.chunk.TicketHelper;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 public class ChunkLoaderManager extends SavedData {
+  private static final SavedDataType<ChunkLoaderManager> TYPE = LegacySavedData.type("chunk_loaders",
+      ChunkLoaderManager::new, ChunkLoaderManager::load, manager -> manager.save(new CompoundTag()));
 
-  private static final String DATA_NAME = "faktocraft_chunk_loaders";
+  public static final TicketController TICKETS = new TicketController(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "chunk_loaders"), ChunkLoaderManager::validateTickets);
 
   private final Set<GlobalPos> active = new LinkedHashSet<>();
+
+  public static void register(RegisterTicketControllersEvent event) {
+    event.register(TICKETS);
+  }
 
   public static ChunkLoaderManager get(MinecraftServer server) {
     return storageFor(server.overworld());
@@ -34,7 +46,7 @@ public class ChunkLoaderManager extends SavedData {
   }
 
   private static ChunkLoaderManager storageFor(ServerLevel host) {
-    return host.getDataStorage().computeIfAbsent(ChunkLoaderManager::load, ChunkLoaderManager::new, DATA_NAME);
+    return LegacySavedData.get(host, TYPE, ChunkLoaderManager::load);
   }
 
   public static int maxActive() {
@@ -67,7 +79,7 @@ public class ChunkLoaderManager extends SavedData {
     return active.size();
   }
 
-  public static void validateTickets(ServerLevel level, ForgeChunkManager.TicketHelper helper) {
+  public static void validateTickets(ServerLevel level, TicketHelper helper) {
     ChunkLoaderManager manager = get(level);
     for (BlockPos owner : List.copyOf(helper.getBlockTickets().keySet())) {
       if (!manager.isActive(GlobalPos.of(level.dimension(), owner))) {
@@ -76,27 +88,42 @@ public class ChunkLoaderManager extends SavedData {
     }
   }
 
+  public static void reloadTickets(MinecraftServer server) {
+    ChunkLoaderManager manager = get(server);
+    for (GlobalPos key : List.copyOf(manager.active)) {
+      ServerLevel level = server.getLevel(key.dimension());
+      if (level == null) {
+        continue;
+      }
+      BlockPos owner = key.pos();
+      ChunkPos chunk = ChunkPos.containing(owner);
+      TICKETS.forceChunk(level, owner, chunk.x(), chunk.z(), true, true);
+      if (!(level.getBlockEntity(owner) instanceof BlockEntityChunkLoader)) {
+        TICKETS.forceChunk(level, owner, chunk.x(), chunk.z(), false, true);
+      }
+    }
+  }
+
   private static ChunkLoaderManager load(CompoundTag tag) {
     ChunkLoaderManager manager = new ChunkLoaderManager();
-    ListTag list = tag.getList("loaders", Tag.TAG_COMPOUND);
+    ListTag list = tag.getListOrEmpty("loaders");
     for (int i = 0; i < list.size(); i++) {
-      CompoundTag entry = list.getCompound(i);
-      ResourceLocation dimension = ResourceLocation.tryParse(entry.getString("dim"));
+      CompoundTag entry = list.getCompoundOrEmpty(i);
+      Identifier dimension = Identifier.tryParse(entry.getStringOr("dim", ""));
       if (dimension == null) {
         continue;
       }
       manager.active.add(GlobalPos.of(ResourceKey.create(Registries.DIMENSION, dimension),
-          BlockPos.of(entry.getLong("pos"))));
+          BlockPos.of(entry.getLongOr("pos", 0L))));
     }
     return manager;
   }
 
-  @Override
   public CompoundTag save(CompoundTag tag) {
     ListTag list = new ListTag();
     for (GlobalPos pos : active) {
       CompoundTag entry = new CompoundTag();
-      entry.putString("dim", pos.dimension().location().toString());
+      entry.putString("dim", pos.dimension().identifier().toString());
       entry.putLong("pos", pos.pos().asLong());
       list.add(entry);
     }

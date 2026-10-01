@@ -24,24 +24,28 @@ import com.faktocraft.common.registries.ModRecipeType;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.EnergyCosts;
+import com.faktocraft.common.util.RecipeUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class BlockEntityExtruder extends FaktocraftBlockEntity
     implements IEnergyBlock, ITileSound, IExpCollector, ISupportUpgrades, IMachineActions.IRecipeSwitcher {
@@ -101,10 +105,9 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
 
   public void initRecipes() {
     if (level instanceof ServerLevel serverLevel) {
-      recipes = serverLevel.getRecipeManager().getRecipes().stream()
-          .filter(holder -> holder.getType() == ModRecipeType.FLUID_EXTRUDING)
-          .map(holder -> (FluidExtrudingRecipe) holder)
-          .sorted(Comparator.comparing(Recipe::getId))
+      recipes = RecipeUtil.getAllRecipeHoldersFor(serverLevel, ModRecipeType.FLUID_EXTRUDING).stream()
+          .sorted(Comparator.comparing(holder -> holder.id().identifier()))
+          .map(RecipeHolder::value)
           .toList();
     }
   }
@@ -132,7 +135,7 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
       return -1;
     }
     for (int i = 0; i < recipes.size(); i++) {
-      if (recipes.get(i).getId().toString().equals(id)) {
+      if (RecipeUtil.idOf(level, recipes.get(i)).filter(recipeId -> recipeId.toString().equals(id)).isPresent()) {
         return i;
       }
     }
@@ -257,8 +260,9 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
     CompoundTag progressTag = new CompoundTag();
     progress.save(progressTag);
     tag.put("progress", progressTag);
-    if (recipe != null) {
-      tag.putString("recipe", recipe.getId().toString());
+    Optional<Identifier> recipeId = RecipeUtil.idOf(level, recipe);
+    if (recipeId.isPresent()) {
+      tag.putString("recipe", recipeId.get().toString());
     } else if (pendingRecipeId != null) {
       tag.putString("recipe", pendingRecipeId);
     }
@@ -268,19 +272,19 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    this.cachedWater = tag.getInt("cachedWater");
-    this.cachedLava = tag.getInt("cachedLava");
+    this.cachedWater = tag.getIntOr("cachedWater", 0);
+    this.cachedLava = tag.getIntOr("cachedLava", 0);
     if (tag.contains("water_storage")) {
-      waterStorage.load(tag.getCompound("water_storage"));
+      waterStorage.load(tag.getCompoundOrEmpty("water_storage"));
     }
     if (tag.contains("lava_storage")) {
-      lavaStorage.load(tag.getCompound("lava_storage"));
+      lavaStorage.load(tag.getCompoundOrEmpty("lava_storage"));
     }
-    this.activeState = tag.getBoolean("active");
+    this.activeState = tag.getBooleanOr("active", false);
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
-    this.pendingRecipeId = tag.contains("recipe") ? tag.getString("recipe") : null;
+    this.pendingRecipeId = tag.contains("recipe") ? tag.getStringOr("recipe", "") : null;
   }
 
   @Override

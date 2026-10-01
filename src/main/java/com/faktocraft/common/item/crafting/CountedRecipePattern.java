@@ -1,13 +1,15 @@
 package com.faktocraft.common.item.crafting;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-import net.minecraft.core.NonNullList;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.inventory.CraftingContainer;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.Ingredient;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,65 +17,77 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 public final class CountedRecipePattern {
-
   private static final int MAX_SIZE = 3;
   public static final char EMPTY_SLOT = ' ';
+
+  public record Data(Map<Character, CountedIngredient> key, List<String> pattern) {
+    private static final Codec<List<String>> PATTERN_CODEC = Codec.STRING.listOf().comapFlatMap(pattern -> {
+      if (pattern.size() > MAX_SIZE) {
+        return DataResult.error(() -> "Invalid pattern: too many rows, " + MAX_SIZE + " is maximum");
+      }
+      if (pattern.isEmpty()) {
+        return DataResult.error(() -> "Invalid pattern: empty pattern not allowed");
+      }
+      int firstLength = pattern.get(0).length();
+      for (String line : pattern) {
+        if (line.length() > MAX_SIZE) {
+          return DataResult.error(() -> "Invalid pattern: too many columns, " + MAX_SIZE + " is maximum");
+        }
+        if (firstLength != line.length()) {
+          return DataResult.error(() -> "Invalid pattern: each row must be the same width");
+        }
+      }
+      return DataResult.success(pattern);
+    }, Function.identity());
+
+    private static final Codec<Character> SYMBOL_CODEC = Codec.STRING.comapFlatMap(symbol -> {
+      if (symbol.length() != 1) {
+        return DataResult.error(
+            () -> "Invalid key entry: '" + symbol + "' is an invalid symbol (must be 1 character only).");
+      }
+      if (" ".equals(symbol)) {
+        return DataResult.error(() -> "Invalid key entry: ' ' is a reserved symbol.");
+      }
+      return DataResult.success(symbol.charAt(0));
+    }, String::valueOf);
+
+    public static final MapCodec<Data> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+        ExtraCodecs.strictUnboundedMap(SYMBOL_CODEC, CountedIngredient.CODEC).fieldOf("key").forGetter(Data::key),
+        PATTERN_CODEC.fieldOf("pattern").forGetter(Data::pattern))
+        .apply(i, Data::new));
+  }
+
+  public static final MapCodec<CountedRecipePattern> MAP_CODEC = Data.MAP_CODEC.flatXmap(
+      CountedRecipePattern::unpack,
+      pattern -> pattern.data.map(DataResult::success)
+          .orElseGet(() -> DataResult.error(() -> "Cannot encode unpacked recipe")));
+
+  public static final StreamCodec<RegistryFriendlyByteBuf, CountedRecipePattern> STREAM_CODEC = StreamCodec.composite(
+      ByteBufCodecs.VAR_INT, CountedRecipePattern::width,
+      ByteBufCodecs.VAR_INT, CountedRecipePattern::height,
+      ByteBufCodecs.<RegistryFriendlyByteBuf, CountedIngredient>optional(CountedIngredient.STREAM_CODEC)
+          .apply(ByteBufCodecs.list()),
+      pattern -> pattern.ingredients,
+      CountedRecipePattern::new);
 
   private final int width;
   private final int height;
   private final List<Optional<CountedIngredient>> ingredients;
+  private final Optional<Data> data;
 
   public CountedRecipePattern(int width, int height, List<Optional<CountedIngredient>> ingredients) {
+    this(width, height, ingredients, Optional.empty());
+  }
+
+  private CountedRecipePattern(int width, int height, List<Optional<CountedIngredient>> ingredients,
+      Optional<Data> data) {
     this.width = width;
     this.height = height;
     this.ingredients = List.copyOf(ingredients);
-  }
-
-  public static CountedRecipePattern fromJson(JsonObject json) {
-    Map<Character, CountedIngredient> key = keyFromJson(GsonHelper.getAsJsonObject(json, "key"));
-    List<String> pattern = patternFromJson(json);
-    return unpack(key, pattern);
-  }
-
-  private static Map<Character, CountedIngredient> keyFromJson(JsonObject json) {
-    Map<Character, CountedIngredient> key = new java.util.HashMap<>();
-    for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-      String symbol = entry.getKey();
-      if (symbol.length() != 1) {
-        throw new JsonSyntaxException(
-            "Invalid key entry: '" + symbol + "' is an invalid symbol (must be 1 character only).");
-      }
-      if (" ".equals(symbol)) {
-        throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
-      }
-      key.put(symbol.charAt(0), CountedIngredient.fromJson(entry.getValue()));
-    }
-    return key;
-  }
-
-  private static List<String> patternFromJson(JsonObject json) {
-    List<String> pattern = new ArrayList<>();
-    for (JsonElement element : GsonHelper.getAsJsonArray(json, "pattern")) {
-      pattern.add(GsonHelper.convertToString(element, "pattern"));
-    }
-    if (pattern.size() > MAX_SIZE) {
-      throw new JsonSyntaxException("Invalid pattern: too many rows, " + MAX_SIZE + " is maximum");
-    }
-    if (pattern.isEmpty()) {
-      throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
-    }
-    int firstLength = pattern.get(0).length();
-    for (String line : pattern) {
-      if (line.length() > MAX_SIZE) {
-        throw new JsonSyntaxException("Invalid pattern: too many columns, " + MAX_SIZE + " is maximum");
-      }
-      if (firstLength != line.length()) {
-        throw new JsonSyntaxException("Invalid pattern: each row must be the same width");
-      }
-    }
-    return pattern;
+    this.data = data;
   }
 
   public static CountedRecipePattern of(Map<Character, CountedIngredient> key, String... pattern) {
@@ -81,15 +95,15 @@ public final class CountedRecipePattern {
   }
 
   public static CountedRecipePattern of(Map<Character, CountedIngredient> key, List<String> pattern) {
-    return unpack(key, pattern);
+    return unpack(new Data(key, pattern)).getOrThrow(IllegalArgumentException::new);
   }
 
-  private static CountedRecipePattern unpack(Map<Character, CountedIngredient> key, List<String> pattern) {
-    String[] shrunkPattern = shrink(pattern);
+  private static DataResult<CountedRecipePattern> unpack(Data data) {
+    String[] shrunkPattern = shrink(data.pattern());
     int width = shrunkPattern.length == 0 ? 0 : shrunkPattern[0].length();
     int height = shrunkPattern.length;
     List<Optional<CountedIngredient>> ingredients = new ArrayList<>(width * height);
-    Set<Character> unusedSymbols = new HashSet<>(key.keySet());
+    Set<Character> unusedSymbols = new HashSet<>(data.key().keySet());
 
     for (String line : shrunkPattern) {
       for (int x = 0; x < line.length(); x++) {
@@ -98,10 +112,10 @@ public final class CountedRecipePattern {
         if (symbol == EMPTY_SLOT) {
           ingredient = Optional.empty();
         } else {
-          CountedIngredient ingredientForSymbol = key.get(symbol);
+          CountedIngredient ingredientForSymbol = data.key().get(symbol);
           if (ingredientForSymbol == null) {
-            throw new JsonSyntaxException(
-                "Pattern references symbol '" + symbol + "' but it's not defined in the key");
+            return DataResult.error(
+                () -> "Pattern references symbol '" + symbol + "' but it's not defined in the key");
           }
           ingredient = Optional.of(ingredientForSymbol);
         }
@@ -112,9 +126,9 @@ public final class CountedRecipePattern {
     }
 
     if (!unusedSymbols.isEmpty()) {
-      throw new JsonSyntaxException("Key defines symbols that aren't used in pattern: " + unusedSymbols);
+      return DataResult.error(() -> "Key defines symbols that aren't used in pattern: " + unusedSymbols);
     }
-    return new CountedRecipePattern(width, height, ingredients);
+    return DataResult.success(new CountedRecipePattern(width, height, ingredients, Optional.of(data)));
   }
 
   static String[] shrink(List<String> pattern) {
@@ -165,31 +179,18 @@ public final class CountedRecipePattern {
     return index;
   }
 
-  public void toNetwork(FriendlyByteBuf buf) {
-    buf.writeVarInt(width);
-    buf.writeVarInt(height);
-    for (Optional<CountedIngredient> cell : ingredients) {
-      buf.writeBoolean(cell.isPresent());
-      if (cell.isPresent()) {
-        cell.get().toNetwork(buf);
-      }
-    }
+  public void toNetwork(RegistryFriendlyByteBuf buf) {
+    STREAM_CODEC.encode(buf, this);
   }
 
-  public static CountedRecipePattern fromNetwork(FriendlyByteBuf buf) {
-    int width = buf.readVarInt();
-    int height = buf.readVarInt();
-    List<Optional<CountedIngredient>> ingredients = new ArrayList<>(width * height);
-    for (int i = 0; i < width * height; i++) {
-      ingredients.add(buf.readBoolean() ? Optional.of(CountedIngredient.fromNetwork(buf)) : Optional.empty());
-    }
-    return new CountedRecipePattern(width, height, ingredients);
+  public static CountedRecipePattern fromNetwork(RegistryFriendlyByteBuf buf) {
+    return STREAM_CODEC.decode(buf);
   }
 
-  public boolean matches(CraftingContainer container) {
-    for (int x = 0; x <= container.getWidth() - this.width; x++) {
-      for (int y = 0; y <= container.getHeight() - this.height; y++) {
-        if (matches(container, x, y, true) || matches(container, x, y, false)) {
+  public boolean matches(CraftingInput input) {
+    for (int x = 0; x <= input.width() - this.width; x++) {
+      for (int y = 0; y <= input.height() - this.height; y++) {
+        if (matches(input, x, y, true) || matches(input, x, y, false)) {
           return true;
         }
       }
@@ -197,16 +198,16 @@ public final class CountedRecipePattern {
     return false;
   }
 
-  private boolean matches(CraftingContainer container, int startX, int startY, boolean xFlip) {
-    for (int x = 0; x < container.getWidth(); x++) {
-      for (int y = 0; y < container.getHeight(); y++) {
+  private boolean matches(CraftingInput input, int startX, int startY, boolean xFlip) {
+    for (int x = 0; x < input.width(); x++) {
+      for (int y = 0; y < input.height(); y++) {
         int patternX = x - startX;
         int patternY = y - startY;
         Optional<CountedIngredient> expected = Optional.empty();
         if (patternX >= 0 && patternY >= 0 && patternX < this.width && patternY < this.height) {
           expected = cell(patternX, patternY, xFlip);
         }
-        ItemStack actual = container.getItem(x + y * container.getWidth());
+        ItemStack actual = input.getItem(x, y);
         if (!testCell(expected, actual)) {
           return false;
         }
@@ -225,13 +226,13 @@ public final class CountedRecipePattern {
     return expected.map(ci -> ci.test(actual)).orElseGet(actual::isEmpty);
   }
 
-  public void consumeExtra(CraftingContainer container) {
-    for (int startX = 0; startX <= container.getWidth() - this.width; startX++) {
-      for (int startY = 0; startY <= container.getHeight() - this.height; startY++) {
+  public void consumeExtra(CraftingInput input) {
+    for (int startX = 0; startX <= input.width() - this.width; startX++) {
+      for (int startY = 0; startY <= input.height() - this.height; startY++) {
         boolean xFlip;
-        if (matches(container, startX, startY, true)) {
+        if (matches(input, startX, startY, true)) {
           xFlip = true;
-        } else if (matches(container, startX, startY, false)) {
+        } else if (matches(input, startX, startY, false)) {
           xFlip = false;
         } else {
           continue;
@@ -241,9 +242,7 @@ public final class CountedRecipePattern {
           for (int x = 0; x < this.width; x++) {
             Optional<CountedIngredient> expected = this.cell(x, y, xFlip);
             if (expected.isPresent() && expected.get().count() > 1) {
-              int gridX = startX + x;
-              int gridY = startY + y;
-              container.getItem(gridX + gridY * container.getWidth()).shrink(expected.get().count() - 1);
+              input.getItem(startX + x, startY + y).shrink(expected.get().count() - 1);
             }
           }
         }
@@ -260,14 +259,15 @@ public final class CountedRecipePattern {
     return this.height;
   }
 
-  public NonNullList<Ingredient> plainIngredients() {
-    NonNullList<Ingredient> list = NonNullList.withSize(ingredients.size(), Ingredient.EMPTY);
-    for (int i = 0; i < ingredients.size(); i++) {
-      Optional<CountedIngredient> cell = ingredients.get(i);
-      if (cell.isPresent()) {
-        list.set(i, cell.get().ingredient());
-      }
+  public List<Optional<CountedIngredient>> ingredients() {
+    return this.ingredients;
+  }
+
+  public List<Optional<Ingredient>> plainIngredients() {
+    List<Optional<Ingredient>> list = new ArrayList<>(ingredients.size());
+    for (Optional<CountedIngredient> cell : ingredients) {
+      list.add(cell.map(CountedIngredient::ingredient));
     }
-    return list;
+    return List.copyOf(list);
   }
 }

@@ -1,7 +1,7 @@
 {
-	"parent": "faktocraft:block/base/cable/cable",
-	"textures": {
-		"wall": "faktocraft:block/cable/copper_cable",
-		"particle": "#wall"
-	}
+  "parent": "faktocraft:block/base/cable/cable",
+  "textures": {
+    "wall": "faktocraft:block/cable/copper_cable",
+    "particle": "#wall"
+  }
 }

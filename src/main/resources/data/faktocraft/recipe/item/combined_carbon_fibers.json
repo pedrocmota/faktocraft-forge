@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": "faktocraft:carbon_fibers"
+  },
+  "pattern": [
+    "cc "
+  ],
+  "result": {
+    "id": "faktocraft:combined_carbon_fibers"
+  }
+}

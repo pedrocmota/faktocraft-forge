@@ -3,7 +3,7 @@ package com.faktocraft.common.block.impl.logistics;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.screen.BetterScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenLogisticsController extends BetterScreen<MenuLogisticsController> {
@@ -27,7 +27,7 @@ public class ScreenLogisticsController extends BetterScreen<MenuLogisticsControl
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/logistics_controller.png");
+  public Identifier getGuiLocation() {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, "textures/gui/container/logistics_controller.png");
   }
 }

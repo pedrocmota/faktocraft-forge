@@ -1,33 +1,20 @@
 package com.faktocraft.common.item.base;
 
-import net.minecraft.core.Direction;
+import com.faktocraft.common.util.FluidStackCompat;
+import com.faktocraft.common.util.transfer.IFluidHandlerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class FluidItemHandlerProvider implements ICapabilityProvider, IFluidHandlerItem {
-
+public class FluidItemHandlerProvider implements IFluidHandlerItem {
   private final ItemStack stack;
   private final int capacityMb;
-  private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
 
   public FluidItemHandlerProvider(ItemStack stack, int capacityMb) {
     this.stack = stack;
     this.capacityMb = capacityMb;
-  }
-
-  @NotNull
-  @Override
-  public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-    return cap == ForgeCapabilities.FLUID_HANDLER_ITEM ? holder.cast() : LazyOptional.empty();
   }
 
   @NotNull
@@ -61,12 +48,11 @@ public class FluidItemHandlerProvider implements ICapabilityProvider, IFluidHand
 
   @Override
   public int fill(FluidStack resource, FluidAction action) {
-
     if (resource.isEmpty() || stack.getCount() != 1) {
       return 0;
     }
     FluidStack current = getFluidInTank(0);
-    if (!current.isEmpty() && !current.isFluidEqual(resource)) {
+    if (!current.isEmpty() && !FluidStackCompat.isFluidEqual(current, resource)) {
       return 0;
     }
     int filled = Math.min(capacityMb - current.getAmount(), resource.getAmount());
@@ -80,7 +66,7 @@ public class FluidItemHandlerProvider implements ICapabilityProvider, IFluidHand
   @Override
   public FluidStack drain(FluidStack resource, FluidAction action) {
     FluidStack current = getFluidInTank(0);
-    if (resource.isEmpty() || current.isEmpty() || !current.isFluidEqual(resource)) {
+    if (resource.isEmpty() || current.isEmpty() || !FluidStackCompat.isFluidEqual(current, resource)) {
       return FluidStack.EMPTY;
     }
     return drain(resource.getAmount(), action);

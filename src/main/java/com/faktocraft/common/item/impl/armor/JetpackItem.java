@@ -5,31 +5,35 @@ import com.faktocraft.common.fluid.ModFluids;
 import com.faktocraft.common.item.base.BaseArmor;
 import com.faktocraft.common.item.base.FluidItem;
 import com.faktocraft.common.item.base.FluidItemHandlerProvider;
+import com.faktocraft.common.util.transfer.CapabilityBridge;
+import com.faktocraft.common.util.transfer.IFluidHandlerItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.neoforged.fml.util.ObfuscationReflectionHelper;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
-import java.util.List;
+import java.util.function.Consumer;
 
-public class JetpackItem extends BaseArmor {
-
+public class JetpackItem extends BaseArmor implements CapabilityBridge.IFluidHandlerItemProvider {
   public static final String TAG_THRUST = "faktocraftJetpackThrust";
 
   public static final String TAG_GLIDE = "faktocraftJetpackGlide";
@@ -41,20 +45,19 @@ public class JetpackItem extends BaseArmor {
   public static final int BOOST_MB_PER_TICK = 6;
 
   @Nullable
-  private static final Field ABOVE_GROUND_TICKS = findFloatingField("f_9737_", "aboveGroundTickCount");
+  private static final Field ABOVE_GROUND_TICKS = findFloatingField("aboveGroundTickCount");
 
   @Nullable
-  private static final Field ABOVE_GROUND_VEHICLE_TICKS = findFloatingField("f_9739_",
-      "aboveGroundVehicleTickCount");
+  private static final Field ABOVE_GROUND_VEHICLE_TICKS = findFloatingField("aboveGroundVehicleTickCount");
 
   private final int capacityMb;
 
   public JetpackItem(Properties properties) {
-    this(properties, 6000);
+    this(ModArmorMaterials.JETPACK, properties, 6000);
   }
 
-  protected JetpackItem(Properties properties, int capacityMb) {
-    super(ModArmorMaterials.JETPACK, ArmorItem.Type.CHESTPLATE, properties.stacksTo(1));
+  protected JetpackItem(ArmorMaterial material, Properties properties, int capacityMb) {
+    super(material, ArmorType.CHESTPLATE, properties.stacksTo(1));
     this.capacityMb = capacityMb;
   }
 
@@ -85,34 +88,37 @@ public class JetpackItem extends BaseArmor {
   }
 
   @Override
-  public void inventoryTick(ItemStack stack, Level level, net.minecraft.world.entity.Entity entity,
-      int slot, boolean selected) {
+  public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
+    wornTick(stack, level, entity);
+  }
+
+  public void wornTick(ItemStack stack, Level level, Entity entity) {
     if (entity instanceof Player player && player.getItemBySlot(EquipmentSlot.CHEST) == stack) {
       if (player.onGround()) {
         player.getPersistentData().remove(TAG_GLIDE);
         player.getPersistentData().putInt(TAG_AIR_TICKS, 0);
       } else {
         player.getPersistentData().putInt(TAG_AIR_TICKS,
-            player.getPersistentData().getInt(TAG_AIR_TICKS) + 1);
+            player.getPersistentData().getIntOr(TAG_AIR_TICKS, 0) + 1);
       }
       jetpackTick(stack, level, player);
-      if (player instanceof ServerPlayer serverPlayer && (player.getPersistentData().getBoolean(TAG_THRUST)
-          || player.getPersistentData().getBoolean(TAG_GLIDE))) {
+      if (player instanceof ServerPlayer serverPlayer && (player.getPersistentData().getBooleanOr(TAG_THRUST, false)
+          || player.getPersistentData().getBooleanOr(TAG_GLIDE, false))) {
         resetFloatingTicks(serverPlayer);
       }
     }
   }
 
   @Nullable
-  private static Field findFloatingField(String srgName, String mojangName) {
+  private static Field findFloatingField(String name) {
     try {
-      return ObfuscationReflectionHelper.findField(ServerGamePacketListenerImpl.class, srgName);
-    } catch (Exception srgFailure) {
+      return ObfuscationReflectionHelper.findField(ServerGamePacketListenerImpl.class, name);
+    } catch (Exception helperFailure) {
       try {
-        Field field = ServerGamePacketListenerImpl.class.getDeclaredField(mojangName);
+        Field field = ServerGamePacketListenerImpl.class.getDeclaredField(name);
         field.setAccessible(true);
         return field;
-      } catch (Exception mojangFailure) {
+      } catch (Exception reflectionFailure) {
         return null;
       }
     }
@@ -141,7 +147,7 @@ public class JetpackItem extends BaseArmor {
   public static final float GLIDE_FALL_SPEED = 0.15F;
 
   protected void jetpackTick(ItemStack stack, Level level, Player player) {
-    if (player.isFallFlying() || !player.getPersistentData().getBoolean(TAG_THRUST)) {
+    if (player.isFallFlying() || !player.getPersistentData().getBooleanOr(TAG_THRUST, false)) {
       return;
     }
     if (!drainFuel(stack, VERTICAL_MB_PER_TICK, true)) {
@@ -163,7 +169,7 @@ public class JetpackItem extends BaseArmor {
 
   protected static void glideTick(Level level, Player player) {
     if (player.onGround() || player.isInWater() || player.getAbilities().flying
-        || !player.getPersistentData().getBoolean(TAG_GLIDE)) {
+        || !player.getPersistentData().getBooleanOr(TAG_GLIDE, false)) {
       return;
     }
     Vec3 dm = player.getDeltaMovement();
@@ -201,7 +207,7 @@ public class JetpackItem extends BaseArmor {
   }
 
   @Override
-  public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+  public IFluidHandlerItem createFluidHandler(ItemStack stack) {
     return new FluidItemHandlerProvider(stack, capacityMb) {
       @Override
       public int fill(FluidStack resource, FluidAction action) {
@@ -257,39 +263,21 @@ public class JetpackItem extends BaseArmor {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+  @SuppressWarnings("deprecation")
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
     Fluid fluid = FluidItem.getFluid(stack);
     if (fluid != Fluids.EMPTY) {
-      tooltip.add(Component.literal("< " + FluidItem.getFluidAmount(stack) + " / " + capacityMb + " mB, ")
+      tooltip.accept(Component.literal("< " + FluidItem.getFluidAmount(stack) + " / " + capacityMb + " mB, ")
           .append(FluidItem.getFluidName(fluid))
           .append(" >").withStyle(ChatFormatting.GRAY));
     } else {
-      tooltip.add(Component.translatable("item.faktocraft.empty_fluid").withStyle(ChatFormatting.GRAY));
+      tooltip.accept(Component.translatable("item.faktocraft.empty_fluid").withStyle(ChatFormatting.GRAY));
     }
-    super.appendHoverText(stack, level, tooltip, flag);
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 
   public static boolean isWearingJetpack(Player player) {
     return player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof JetpackItem;
-  }
-
-  @Override
-  public void initializeClient(
-      java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
-    consumer.accept(new net.minecraftforge.client.extensions.common.IClientItemExtensions() {
-      @Override
-      public net.minecraft.client.model.HumanoidModel<?> getHumanoidArmorModel(
-          net.minecraft.world.entity.LivingEntity living, ItemStack stack, EquipmentSlot slot,
-          net.minecraft.client.model.HumanoidModel<?> original) {
-        return com.faktocraft.client.model.JetpackModel.get();
-      }
-    });
-  }
-
-  @Nullable
-  @Override
-  public String getArmorTexture(ItemStack stack, net.minecraft.world.entity.Entity entity,
-      EquipmentSlot slot, String type) {
-    return "faktocraft:textures/models/armor/jetpack_layer_1.png";
   }
 }

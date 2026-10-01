@@ -9,7 +9,7 @@ import net.minecraft.world.level.material.MapColor;
 public class RubberStairs extends StairBlock {
 
   public RubberStairs(Properties properties) {
-    super(() -> ModBlocks.RUBBER_PLANKS.defaultBlockState(), properties);
+    super(ModBlocks.RUBBER_PLANKS.defaultBlockState(), properties);
   }
 
   public static BlockBehaviour.Properties stairsProperties() {

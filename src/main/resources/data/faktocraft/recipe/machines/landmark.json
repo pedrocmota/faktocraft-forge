@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "l": "#c:gems/lapis",
+    "t": "minecraft:redstone_torch"
+  },
+  "pattern": [
+    "l",
+    "t"
+  ],
+  "result": {
+    "id": "faktocraft:landmark"
+  }
+}

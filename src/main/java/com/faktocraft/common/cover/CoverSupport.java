@@ -1,5 +1,6 @@
 package com.faktocraft.common.cover;
 
+import com.faktocraft.common.util.PlayerMessages;
 import com.faktocraft.common.block.VoxelBlock;
 import com.faktocraft.common.registries.ModBlocks;
 import net.minecraft.core.BlockPos;
@@ -22,8 +23,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.client.model.data.ModelProperty;
+import net.neoforged.neoforge.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelProperty;
 import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,20 +60,20 @@ public final class CoverSupport {
 
   public static int loadHoles(CompoundTag tag) {
     if (tag.contains(HOLES_KEY)) {
-      return tag.getInt(HOLES_KEY);
+      return tag.getIntOr(HOLES_KEY, 0);
     }
-    Direction.Axis legacy = tag.contains(LEGACY_AXIS_KEY) ? Direction.Axis.byName(tag.getString(LEGACY_AXIS_KEY))
+    Direction.Axis legacy = tag.contains(LEGACY_AXIS_KEY) ? Direction.Axis.byName(tag.getStringOr(LEGACY_AXIS_KEY, ""))
         : null;
     return legacy != null ? axisMask(legacy) : 0;
   }
 
   @Nullable
-  @SuppressWarnings("deprecation")
   public static BlockState load(CompoundTag tag) {
     if (!tag.contains(KEY)) {
       return null;
     }
-    BlockState state = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), tag.getCompound(KEY));
+    BlockState state = NbtUtils.readBlockState(BuiltInRegistries.BLOCK,
+        com.faktocraft.common.util.NbtBridge.blockStateTag(tag.getCompoundOrEmpty(KEY)));
     return state.isAir() ? null : state;
   }
 
@@ -198,7 +199,7 @@ public final class CoverSupport {
     if (!isPassable(holes)) {
       return false;
     }
-    Vec3 hit = Vec3.atCenterOf(pos).add(Vec3.atLowerCornerOf(face.getNormal()).scale(0.5D));
+    Vec3 hit = Vec3.atCenterOf(pos).add(Vec3.atLowerCornerOf(face.getUnitVec3i()).scale(0.5D));
     BlockPlaceContext context = new BlockPlaceContext(level, player, InteractionHand.MAIN_HAND, stack,
         new BlockHitResult(hit, face, pos, false));
     BlockState state = block.getStateForPlacement(BlockPlaceContext.at(context, pos, face));
@@ -231,7 +232,7 @@ public final class CoverSupport {
       return true;
     }
     if (!isPassable(level.getBlockEntity(pos) instanceof ICoverHost host ? host.getCoverHoles() : 0)) {
-      player.displayClientMessage(net.minecraft.network.chat.Component
+      PlayerMessages.display(player, net.minecraft.network.chat.Component
           .translatable("chat.faktocraft.drill_need_two_holes").withStyle(net.minecraft.ChatFormatting.RED), true);
       return true;
     }

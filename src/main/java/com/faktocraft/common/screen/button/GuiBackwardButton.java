@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import java.util.List;
@@ -20,7 +20,7 @@ public class GuiBackwardButton extends GuiButton {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     super.renderBg(graphics, minecraft, mouseX, mouseY);
 
     GuiSprite sprite = GuiSprite.BACKWARD_ICON;
@@ -29,10 +29,10 @@ public class GuiBackwardButton extends GuiButton {
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (isMouseOver(mouseX, mouseY)) {
       if (tooltip != null) {
-        graphics.renderComponentTooltip(GuiUtil.getFont(), tooltip, mouseX, mouseY);
+        graphics.setComponentTooltipForNextFrame(GuiUtil.getFont(), tooltip, mouseX, mouseY);
       }
     }
   }

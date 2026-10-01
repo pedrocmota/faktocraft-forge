@@ -14,7 +14,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
@@ -41,7 +41,7 @@ public class ElectricHoe extends DiggerElectricItem {
   private final int energyCostHurt;
   private final int energyCostTill;
 
-  public ElectricHoe(Tier material, float attackDamage, float attackSpeed, Properties properties,
+  public ElectricHoe(ToolMaterial material, float attackDamage, float attackSpeed, Properties properties,
       int energyStored, int maxEnergy, int energyCostMine, int energyCostHurt, int energyCostTill,
       EnergyType energyType, EnergyTier energyTier) {
     super(material, attackDamage, attackSpeed, List.of(BlockTags.MINEABLE_WITH_HOE),
@@ -78,7 +78,7 @@ public class ElectricHoe extends DiggerElectricItem {
 
     if (pair.getFirst().test(context)) {
       Player player = context.getPlayer();
-      level.playSound(player, pos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+      level.playSound(player, pos, SoundEvents.HOE_TILL.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
       if (!level.isClientSide()) {
         pair.getSecond().accept(context);
         if (player != null) {

@@ -11,10 +11,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
@@ -103,9 +103,9 @@ public class BlockEntityCombustionAlloySmelter extends AbstractBlockEntityAlloyS
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("fluidStorage")) {
-      fluidStorage.load(tag.getCompound("fluidStorage"));
+      fluidStorage.load(tag.getCompoundOrEmpty("fluidStorage"));
     }
-    burnTicks = tag.getInt("burnTicks");
+    burnTicks = tag.getIntOr("burnTicks", 0);
   }
 
   @Override

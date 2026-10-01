@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:memory_card",
+    "#c:ender_pearls"
+  ],
+  "result": {
+    "id": "faktocraft:teleport_card"
+  }
+}

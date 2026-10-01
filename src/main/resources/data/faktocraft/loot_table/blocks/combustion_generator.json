@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:basic_machine_casing"
+        }
+      ],
+      "name": "combustion_generator",
+      "rolls": 1
+    }
+  ]
+}

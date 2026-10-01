@@ -1,5 +1,11 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.faktocraft.common.block.impl.logistics.BlockEntityLogisticsController;
 import com.faktocraft.common.block.impl.logistics.BlockEntityRequestTable;
 import com.faktocraft.common.block.impl.logistics.LogisticsGraph;
@@ -12,14 +18,22 @@ import net.minecraft.server.level.ServerPlayer;
 import com.faktocraft.common.block.impl.logistics.ItemKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 
-public record PacketReqTableState(BlockPos blockPos, String dimension) {
+public record PacketReqTableState(BlockPos blockPos, String dimension) implements CustomPacketPayload {
+
+  public static final Type<PacketReqTableState> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_req_table_state"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketReqTableState> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketReqTableState::decode);
+
+  @Override
+  public Type<PacketReqTableState> type() {
+    return TYPE;
+  }
 
   private static final int MAX_ENTRIES = 2048;
 
@@ -32,9 +46,9 @@ public record PacketReqTableState(BlockPos blockPos, String dimension) {
     return new PacketReqTableState(buf.readBlockPos(), buf.readUtf(128));
   }
 
-  public static void handle(PacketReqTableState msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> {
-      ServerPlayer player = ctx.get().getSender();
+  public static void handle(PacketReqTableState msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> {
+      ServerPlayer player = ctx.getSender();
       if (player == null) {
         return;
       }
@@ -42,14 +56,18 @@ public record PacketReqTableState(BlockPos blockPos, String dimension) {
           || !menu.getTablePos().equals(msg.blockPos)) {
         return;
       }
-      BlockEntityRequestTable table = menu.getTable();
-      Level level = table != null ? table.getLevel() : null;
-      if (table == null || table.isRemoved() || level == null) {
-        return;
-      }
-      ModNetworking.sendToPlayer(player, build(level, table));
+      sendTo(player, menu);
     });
-    ctx.get().setPacketHandled(true);
+    ctx.setPacketHandled(true);
+  }
+
+  public static void sendTo(ServerPlayer player, com.faktocraft.common.block.impl.logistics.MenuRequestTable menu) {
+    BlockEntityRequestTable table = menu.getTable();
+    Level level = table != null ? table.getLevel() : null;
+    if (table == null || table.isRemoved() || level == null) {
+      return;
+    }
+    ModNetworking.sendToPlayer(player, build(level, table));
   }
 
   private static List<PacketTableState.SubLine> subLines(List<TaskLedger.SubRecord> subs) {

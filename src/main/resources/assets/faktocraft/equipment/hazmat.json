@@ -1,0 +1,26 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "faktocraft:hazmat",
+        "dyeable": {
+          "color_when_undyed": 15254586
+        }
+      },
+      {
+        "texture": "faktocraft:hazmat_overlay"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "faktocraft:hazmat",
+        "dyeable": {
+          "color_when_undyed": 15254586
+        }
+      },
+      {
+        "texture": "faktocraft:hazmat_overlay"
+      }
+    ]
+  }
+}

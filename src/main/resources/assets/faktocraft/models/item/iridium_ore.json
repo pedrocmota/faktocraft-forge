@@ -1,6 +1,6 @@
 {
- "parent": "minecraft:block/cube_all",
- "textures": {
-  "all": "faktocraft:block/ore/iridium"
- }
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "faktocraft:block/ore/iridium"
+  }
 }

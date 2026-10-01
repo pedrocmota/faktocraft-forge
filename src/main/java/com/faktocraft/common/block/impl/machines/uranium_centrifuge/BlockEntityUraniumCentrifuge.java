@@ -12,21 +12,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeManager;
+import com.faktocraft.common.util.RecipeUtil;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public class BlockEntityUraniumCentrifuge extends BlockEntityStandardMachine {
-
-  private final RecipeManager.CachedCheck<Container, UraniumCentrifugingRecipe> quickCheck = RecipeManager
+  private final RecipeUtil.CachedCheck<MachineRecipeInput, UraniumCentrifugingRecipe> quickCheck = RecipeUtil
       .createCheck(ModRecipeType.URANIUM_CENTRIFUGING);
 
   public float drumAngle;
@@ -70,7 +68,6 @@ public class BlockEntityUraniumCentrifuge extends BlockEntityStandardMachine {
     return super.getCapability(cap, side);
   }
 
-  @Override
   public AABB getRenderBoundingBox() {
     return new AABB(worldPosition).expandTowards(0.0, 0.2, 0.0);
   }

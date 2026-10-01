@@ -1,0 +1,15 @@
+{
+  "duration": 500,
+  "experience": 0.1,
+  "ingredient": {
+    "count": 1,
+    "tag": "c:raw_materials/tin"
+  },
+  "power_cost": 48,
+  "result_1": {
+    "count": 2,
+    "item": "faktocraft:tin_chunk"
+  },
+  "temperature": 231,
+  "type": "faktocraft:thermal_centrifuging"
+}

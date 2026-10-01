@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "b": "#c:plates/bronze",
+    "s": "faktocraft:small_power_unit",
+    "t": "#c:plates/tin"
+  },
+  "pattern": [
+    " t ",
+    "tbt",
+    " ts"
+  ],
+  "result": {
+    "id": "faktocraft:wind_meter"
+  }
+}

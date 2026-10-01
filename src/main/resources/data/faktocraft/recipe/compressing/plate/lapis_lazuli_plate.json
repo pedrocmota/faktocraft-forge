@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 1,
+    "tag": "c:dusts/lapis"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "faktocraft:lapis_lazuli_plate"
+  },
+  "type": "faktocraft:compressing"
+}

@@ -1,5 +1,6 @@
 package com.faktocraft.client;
 
+import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.geo_scanner.BlockEntityGeoScanner;
 import com.faktocraft.common.network.ModNetworking;
@@ -11,7 +12,7 @@ import com.faktocraft.common.network.packet.PacketScanCode;
 import com.faktocraft.common.scan.ScanChannels;
 import com.faktocraft.common.util.TextComponentUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -47,7 +48,7 @@ public class GeoScannerScreen extends ScanMapScreen {
 
   public GeoScannerScreen(PacketGeoScannerState state) {
     super(Component.translatable("block." + Faktocraft.MODID + ".geological_scanner"),
-        new ChunkPos(state.blockPos()).x, new ChunkPos(state.blockPos()).z);
+        ChunkPos.containing(state.blockPos()).x(), ChunkPos.containing(state.blockPos()).z());
     this.pos = state.blockPos();
     applyState(state);
   }
@@ -146,7 +147,7 @@ public class GeoScannerScreen extends ScanMapScreen {
   }
 
   @Override
-  protected void renderFooter(GuiGraphics graphics, int footerTop) {
+  protected void renderFooter(GuiGraphicsExtractor graphics, int footerTop) {
     Component status;
     ChatFormatting statusColor;
     if (jobActive) {
@@ -162,10 +163,10 @@ public class GeoScannerScreen extends ScanMapScreen {
       status = Component.translatable(GUI_PREFIX + "status_paused");
       statusColor = ChatFormatting.YELLOW;
     }
-    graphics.drawCenteredString(font, status.copy().withStyle(statusColor),
-        panelLeft + panelW / 2, footerTop + 8, 0xFFFFFF);
-    graphics.drawCenteredString(font, infoLine(scanned, energy), panelLeft + panelW / 2, footerTop + 22,
-        0xFFFFFF);
+    graphics.centeredText(font, status.copy().withStyle(statusColor),
+        panelLeft + panelW / 2, footerTop + 8, GuiUtil.opaque(0xFFFFFF));
+    graphics.centeredText(font, infoLine(scanned, energy), panelLeft + panelW / 2, footerTop + 22,
+        GuiUtil.opaque(0xFFFFFF));
     float progress = 1.0F - jobRemaining / (float) BlockEntityGeoScanner.SCAN_DURATION_TICKS;
     drawProgressBar(graphics, footerTop + 34, progress, jobActive);
   }
@@ -192,7 +193,7 @@ public class GeoScannerScreen extends ScanMapScreen {
     if (jobActive && jobCx == chunkX && jobCz == chunkZ) {
       return;
     }
-    long now = net.minecraft.Util.getMillis();
+    long now = net.minecraft.util.Util.getMillis();
     if (chunkX == lastClickCx && chunkZ == lastClickCz && now - lastClickMs <= 350) {
       lastClickMs = 0;
       manualPending = true;

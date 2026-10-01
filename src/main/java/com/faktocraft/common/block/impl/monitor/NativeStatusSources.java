@@ -99,14 +99,14 @@ public final class NativeStatusSources {
       if (!data.contains(TAG_REACTOR_STATUS)) {
         return;
       }
-      float heat = data.getFloat(TAG_REACTOR_HEAT);
-      int status = data.getInt(TAG_REACTOR_STATUS);
+      float heat = data.getFloatOr(TAG_REACTOR_HEAT, 0.0F);
+      int status = data.getIntOr(TAG_REACTOR_STATUS, 0);
       out.add(new StatusLine.Bar(heat, heatColor(heat),
           Component.translatable(key("reactor_heat"), Math.round(heat * 100.0F))));
       out.add(new StatusLine.Text(Component.translatable(BlockEntityNuclearReactor.statusKey(status))
           .withStyle(status == 0 ? ChatFormatting.GREEN : ChatFormatting.GOLD)));
       out.add(new StatusLine.Text(Component.translatable(key("reactor_output"),
-          IGenerationInfo.rate(data.getInt(TAG_REACTOR_OUTPUT))).withStyle(ChatFormatting.GRAY)));
+          IGenerationInfo.rate(data.getIntOr(TAG_REACTOR_OUTPUT, 0))).withStyle(ChatFormatting.GRAY)));
     }
   }
 
@@ -141,8 +141,8 @@ public final class NativeStatusSources {
 
     @Override
     public void lines(BlockState state, CompoundTag data, List<StatusLine> out) {
-      if (data.getBoolean(TAG_VALVE_PRESENT)) {
-        out.add(new StatusLine.Text(WailaData.valveLine(data.getBoolean(TAG_VALVE_OPEN))));
+      if (data.getBooleanOr(TAG_VALVE_PRESENT, false)) {
+        out.add(new StatusLine.Text(WailaData.valveLine(data.getBooleanOr(TAG_VALVE_OPEN, false))));
       }
     }
   }

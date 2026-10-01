@@ -8,8 +8,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
 
 public final class FluidInteractionUtil {
@@ -19,7 +19,7 @@ public final class FluidInteractionUtil {
 
   public static Fluid getContainedFluid(ItemStack stack) {
     if (stack.getItem() instanceof BucketItem bucketItem) {
-      return bucketItem.getFluid();
+      return bucketItem.content;
     }
     if (stack.getItem() instanceof FluidItem) {
       return FluidItem.getFluid(stack);
@@ -29,7 +29,7 @@ public final class FluidInteractionUtil {
 
   public static int getContainedAmount(ItemStack stack) {
     if (stack.getItem() instanceof BucketItem bucketItem) {
-      return bucketItem.getFluid() == Fluids.EMPTY ? 0 : 1000;
+      return bucketItem.content == Fluids.EMPTY ? 0 : 1000;
     }
     if (stack.getItem() instanceof FluidItem) {
       return FluidItem.getFluidAmount(stack);
@@ -68,7 +68,7 @@ public final class FluidInteractionUtil {
     tank.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
     heldStack.shrink(1);
     if (!player.addItem(emptyContainer)) {
-      player.drop(emptyContainer, false);
+      player.drop(emptyContainer, false, net.minecraft.util.Prediction.SERVER_ONLY);
     }
     return true;
   }

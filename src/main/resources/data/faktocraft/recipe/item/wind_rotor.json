@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "p": "#c:plates/iron",
+    "b": "faktocraft:bronze_plate"
+  },
+  "pattern": [
+    " p ",
+    "pbp",
+    " p "
+  ],
+  "result": {
+    "id": "faktocraft:wind_rotor"
+  }
+}

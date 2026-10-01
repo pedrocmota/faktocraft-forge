@@ -1,12 +1,13 @@
 package com.faktocraft.client.screens;
 
+import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.config.BasicConfig;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class BasicConfigScreen extends Screen {
 
@@ -47,13 +48,16 @@ public class BasicConfigScreen extends Screen {
     y += ROW_HEIGHT;
     addToggle(left, y, "gui.faktocraft.config.tank_break_fluid",
         BasicConfig.SERVER.tankBreakPlacesFluid, BasicConfig.SERVER_SPEC, editable);
+    y += ROW_HEIGHT;
+    addToggle(left, y, "gui.faktocraft.config.vein_mining",
+        BasicConfig.SERVER.veinMiningEnabled, BasicConfig.SERVER_SPEC, editable);
 
     addRenderableWidget(Button.builder(Component.translatable("gui.done"),
         b -> onClose()).bounds(width / 2 - 100, height - 30, 200, 20).build());
   }
 
-  private void addToggle(int x, int y, String key, ForgeConfigSpec.BooleanValue value,
-      ForgeConfigSpec spec, boolean editable) {
+  private void addToggle(int x, int y, String key, ModConfigSpec.BooleanValue value,
+      ModConfigSpec spec, boolean editable) {
     Button button = addRenderableWidget(Button.builder(Component.empty(), b -> {
       value.set(!value.get());
       spec.save();
@@ -76,21 +80,20 @@ public class BasicConfigScreen extends Screen {
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    renderBackground(graphics);
-    graphics.drawCenteredString(font, title, width / 2, 18, 0xFFFFFF);
+  public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    graphics.centeredText(font, title, width / 2, 18, GuiUtil.opaque(0xFFFFFF));
     if (!serverEditable()) {
-      graphics.drawCenteredString(font,
+      graphics.centeredText(font,
           Component.translatable("gui.faktocraft.config.server_locked").withStyle(ChatFormatting.GRAY),
-          width / 2, height - 48, 0xA0A0A0);
+          width / 2, height - 48, GuiUtil.opaque(0xA0A0A0));
     }
-    super.render(graphics, mouseX, mouseY, partialTick);
+    super.extractRenderState(graphics, mouseX, mouseY, partialTick);
   }
 
   @Override
   public void onClose() {
     if (minecraft != null) {
-      minecraft.setScreen(parent);
+      minecraft.gui.setScreen(parent);
     }
   }
 }

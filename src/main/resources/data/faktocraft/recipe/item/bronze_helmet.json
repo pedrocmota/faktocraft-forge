@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_armour",
+  "key": {
+    "b": "#c:ingots/bronze"
+  },
+  "pattern": [
+    "bbb",
+    "b b"
+  ],
+  "result": {
+    "id": "faktocraft:bronze_helmet"
+  }
+}

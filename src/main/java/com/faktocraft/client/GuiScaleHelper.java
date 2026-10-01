@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 
 public final class GuiScaleHelper {
-
   private static final int MIN_SCALE = 1;
 
   private static boolean restoring;
@@ -38,12 +37,10 @@ public final class GuiScaleHelper {
 
   private static void apply(Minecraft minecraft, Screen screen, int scale) {
     Window window = minecraft.getWindow();
-    if ((int) window.getGuiScale() == scale) {
+    if (window.getGuiScale() == scale) {
       return;
     }
     window.setGuiScale(scale);
-    minecraft.getMainRenderTarget().resize(window.getWidth(), window.getHeight(), Minecraft.ON_OSX);
-    minecraft.gameRenderer.resize(window.getWidth(), window.getHeight());
     minecraft.mouseHandler.setIgnoreFirstMove();
     screen.width = window.getGuiScaledWidth();
     screen.height = window.getGuiScaledHeight();
@@ -56,10 +53,10 @@ public final class GuiScaleHelper {
   public static void restore(Minecraft minecraft) {
     Window window = minecraft.getWindow();
     int preferred = window.calculateScale(minecraft.options.guiScale().get(), minecraft.isEnforceUnicode());
-    if ((int) window.getGuiScale() != preferred) {
+    if (window.getGuiScale() != preferred) {
       restoring = true;
       try {
-        minecraft.resizeDisplay();
+        minecraft.resizeGui();
       } finally {
         restoring = false;
       }

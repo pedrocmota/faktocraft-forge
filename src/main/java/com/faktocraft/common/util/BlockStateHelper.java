@@ -15,15 +15,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.Fluids;
 
 public class BlockStateHelper {
 
   public static final EnumProperty<Direction.Axis> axisProperty = BlockStateProperties.AXIS;
-  public static final DirectionProperty facingProperty = BlockStateProperties.FACING;
-  public static final DirectionProperty horizontalFacingProperty = BlockStateProperties.HORIZONTAL_FACING;
+  public static final EnumProperty<Direction> facingProperty = BlockStateProperties.FACING;
+  public static final EnumProperty<Direction> horizontalFacingProperty = BlockStateProperties.HORIZONTAL_FACING;
   public static final BooleanProperty activeProperty = BooleanProperty.create("active");
   public static final BooleanProperty wetProperty = BooleanProperty.create("wet");
   public static final BooleanProperty dryProperty = BooleanProperty.create("dry");

@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.nuke;
 
+import com.faktocraft.common.util.LegacyNbtBlockEntity;
 import com.faktocraft.common.config.ModConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -7,10 +8,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class BlockEntityNuke extends BlockEntity {
+public class BlockEntityNuke extends LegacyNbtBlockEntity {
 
   private static final int FLASH_INTERVAL = 6;
   private static final int BEEP_INTERVAL = 20;
@@ -55,7 +55,7 @@ public class BlockEntityNuke extends BlockEntity {
     }
     if (fuse % BEEP_INTERVAL == 0 && fuse > 0) {
       float pitch = 0.8F + (1.0F - fuse / (float) total) * 0.8F;
-      serverLevel.playSound(null, worldPosition, SoundEvents.NOTE_BLOCK_BIT.get(), SoundSource.BLOCKS, 1.0F, pitch);
+      serverLevel.playSound(null, worldPosition, SoundEvents.NOTE_BLOCK_BIT.value(), SoundSource.BLOCKS, 1.0F, pitch);
     }
     setChanged();
   }
@@ -70,7 +70,7 @@ public class BlockEntityNuke extends BlockEntity {
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    fuse = tag.contains("fuse") ? tag.getInt("fuse") : -1;
-    total = Math.max(1, tag.getInt("total"));
+    fuse = tag.contains("fuse") ? tag.getIntOr("fuse", 0) : -1;
+    total = Math.max(1, tag.getIntOr("total", 0));
   }
 }

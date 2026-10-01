@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "s": "faktocraft:small_power_unit",
+    "w": "faktocraft:wrench"
+  },
+  "pattern": [
+    "w ",
+    "s "
+  ],
+  "result": {
+    "id": "faktocraft:electric_wrench"
+  }
+}

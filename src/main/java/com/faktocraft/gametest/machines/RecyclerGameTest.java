@@ -1,19 +1,14 @@
 package com.faktocraft.gametest.machines;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.machines.recycler.BlockEntityRecycler;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.registries.machines.M2Registry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestAssertException;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class RecyclerGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -21,8 +16,8 @@ public class RecyclerGameTest {
 
   private static BlockEntityRecycler place(GameTestHelper helper) {
     helper.setBlock(POS, M2Registry.RECYCLER.defaultBlockState());
-    if (!(helper.getBlockEntity(POS) instanceof BlockEntityRecycler recycler)) {
-      throw new GameTestAssertException("no recycler block entity");
+    if (!(TestUtil.blockEntity(helper, POS) instanceof BlockEntityRecycler recycler)) {
+      throw TestUtil.assertion(helper, "no recycler block entity");
     }
     recycler.setRedstoneOnly(false);
     recycler.getBatteryStackHandler().setStackInSlot(0, new ItemStack(ModItems.BASIC_CAPACITOR));

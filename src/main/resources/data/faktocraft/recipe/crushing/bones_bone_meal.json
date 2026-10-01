@@ -1,0 +1,14 @@
+{
+  "type": "faktocraft:crushing",
+  "duration": 180,
+  "experience": 0.1,
+  "ingredient": {
+    "count": 1,
+    "tag": "c:bones"
+  },
+  "power_cost": 8,
+  "result": {
+    "count": 14,
+    "item": "minecraft:bone_meal"
+  }
+}

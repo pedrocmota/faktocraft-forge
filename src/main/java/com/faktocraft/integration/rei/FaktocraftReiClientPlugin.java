@@ -67,27 +67,8 @@ import com.faktocraft.common.block.impl.machines.scanner.ScreenScanner;
 import com.faktocraft.common.block.impl.machines.thermal_centrifuge.ScreenThermalCentrifuge;
 import com.faktocraft.common.block.impl.pipe.ScreenExtractorPipe;
 import com.faktocraft.common.block.impl.quarry.ScreenQuarry;
-import com.faktocraft.common.recipe.impl.AlloySmeltingRecipe;
-import com.faktocraft.common.recipe.impl.CircuitAssemblingRecipe;
-import com.faktocraft.common.recipe.impl.CompressingRecipe;
-import com.faktocraft.common.recipe.impl.CrushingRecipe;
-import com.faktocraft.common.recipe.impl.CuttingRecipe;
-import com.faktocraft.common.recipe.impl.ExtractingRecipe;
-import com.faktocraft.common.recipe.impl.ExtrudingRecipe;
-import com.faktocraft.common.recipe.impl.FluidEnrichingRecipe;
-import com.faktocraft.common.recipe.impl.FluidExtrudingRecipe;
-import com.faktocraft.common.recipe.impl.OreWashingRecipe;
-import com.faktocraft.common.recipe.impl.PolymerizingRecipe;
-import com.faktocraft.common.recipe.impl.RecyclingRecipe;
-import com.faktocraft.common.recipe.impl.RollingRecipe;
-import com.faktocraft.common.recipe.impl.SawingRecipe;
-import com.faktocraft.common.recipe.impl.ScannerRecipe;
-import com.faktocraft.common.recipe.impl.ScrapBoxRecipe;
-import com.faktocraft.common.recipe.impl.ThermalCentrifugingRecipe;
-import com.faktocraft.common.recipe.impl.UraniumCentrifugingRecipe;
 import com.faktocraft.common.registries.ModCreativeTab;
 import com.faktocraft.common.registries.ModItems;
-import com.faktocraft.common.registries.ModRecipeType;
 import com.faktocraft.common.registries.machines.M2Registry;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.registries.machines.M4Registry;
@@ -116,7 +97,11 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import net.minecraft.world.level.Level;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -163,43 +148,8 @@ public class FaktocraftReiClientPlugin implements REIClientPlugin {
 
   @Override
   public void registerDisplays(DisplayRegistry registry) {
-    registry.registerRecipeFiller(CrushingRecipe.class, ModRecipeType.CRUSHING, ReiDisplays::crushing);
-    registry.registerRecipeFiller(CompressingRecipe.class, ModRecipeType.COMPRESSING, ReiDisplays::compressing);
-    registry.registerRecipeFiller(ExtractingRecipe.class, ModRecipeType.EXTRACTING, ReiDisplays::extracting);
-    registry.registerRecipeFiller(FluidExtrudingRecipe.class, ModRecipeType.FLUID_EXTRUDING,
-        ReiDisplays::fluidExtruding);
-    registry.registerRecipeFiller(SawingRecipe.class, ModRecipeType.SAWING, ReiDisplays::sawing);
-    registry.registerRecipeFiller(AlloySmeltingRecipe.class, ModRecipeType.ALLOY_SMELTING,
-        ReiDisplays::alloySmelting);
-    registry.registerRecipeFiller(CircuitAssemblingRecipe.class, ModRecipeType.CIRCUIT_ASSEMBLING,
-        ReiDisplays::circuitAssembling);
-    registry.registerRecipeFiller(RecyclingRecipe.class, ModRecipeType.RECYCLING, ReiDisplays::recycling);
-    registry.registerRecipeFiller(FluidEnrichingRecipe.class, ModRecipeType.FLUID_ENRICHING,
-        ReiDisplays::fluidEnriching);
-    registry.registerRecipeFiller(OreWashingRecipe.class, ModRecipeType.ORE_WASHING, ReiDisplays::oreWashing);
-    registry.registerRecipeFiller(PolymerizingRecipe.class, ModRecipeType.POLYMERIZING, ReiDisplays::polymerizing);
-    registry.registerRecipeFiller(ThermalCentrifugingRecipe.class, ModRecipeType.THERMAL_CENTRIFUGING,
-        ReiDisplays::thermalCentrifuging);
-    registry.registerRecipeFiller(UraniumCentrifugingRecipe.class, ModRecipeType.URANIUM_CENTRIFUGING,
-        ReiDisplays::uraniumCentrifuging);
-    registry.registerRecipeFiller(ScannerRecipe.class, ModRecipeType.SCANNER, ReiDisplays::scanner);
-    registry.registerRecipeFiller(RollingRecipe.class, ModRecipeType.ROLLING, ReiDisplays::rolling);
-    registry.registerRecipeFiller(CuttingRecipe.class, ModRecipeType.CUTTING, ReiDisplays::cutting);
-    registry.registerRecipeFiller(ExtrudingRecipe.class, ModRecipeType.EXTRUDING, ReiDisplays::extruding);
-
-    List<ScrapBoxRecipe> scrapBoxRecipes = registry.getRecipeManager().getAllRecipesFor(ModRecipeType.SCRAP_BOX);
-    float totalWeight = ScrapBoxRecipe.getTotalWeight(scrapBoxRecipes);
-    registry.registerRecipeFiller(ScrapBoxRecipe.class, ModRecipeType.SCRAP_BOX,
-        recipe -> ReiDisplays.scrapBox(recipe, totalWeight));
-
-    registry.add(ReiDisplays.fermenting());
-    registry.add(ReiDisplays.distilling());
-    for (MachineDisplay display : ReiDisplays.matterFabricating()) {
-      registry.add(display);
-    }
-
     BuiltinClientPlugin.getInstance().registerInformation(EntryStacks.of(ModItems.FERTILIZER),
-        ModItems.FERTILIZER.getDescription(), lines -> {
+        Component.translatable(ModItems.FERTILIZER.getDescriptionId()), lines -> {
           lines.add(Component.translatable("jei." + Faktocraft.MODID + ".fertilizer.info",
               BlockEntityFermenter.WASTE_EVERY_TICKS / 20));
           return lines;
@@ -219,6 +169,17 @@ public class FaktocraftReiClientPlugin implements REIClientPlugin {
     registry.<C, T>registerContainerClickArea(new Rectangle(x, y, w, h), screen, categories);
   }
 
+  private static ItemStack resultOf(CraftingRecipe recipe, Level level) {
+    ContextMap context = SlotDisplayContext.fromLevel(level);
+    for (RecipeDisplay display : recipe.display()) {
+      ItemStack stack = display.result().resolveForFirstStack(context);
+      if (!stack.isEmpty()) {
+        return stack;
+      }
+    }
+    return ItemStack.EMPTY;
+  }
+
   private static ClickArea.Result openRecipe(Supplier<CraftingRecipe> current) {
     return ClickArea.Result.success().category(BuiltinPlugin.CRAFTING).executor(() -> {
       CraftingRecipe recipe = current.get();
@@ -226,7 +187,11 @@ public class FaktocraftReiClientPlugin implements REIClientPlugin {
       if (recipe == null || level == null) {
         return false;
       }
-      return ViewSearchBuilder.builder().addRecipesFor(EntryStacks.of(recipe.getResultItem(level.registryAccess())))
+      ItemStack result = resultOf(recipe, level);
+      if (result.isEmpty()) {
+        return false;
+      }
+      return ViewSearchBuilder.builder().addRecipesFor(EntryStacks.of(result))
           .filterCategory(BuiltinPlugin.CRAFTING).open();
     });
   }
@@ -245,7 +210,7 @@ public class FaktocraftReiClientPlugin implements REIClientPlugin {
   private static boolean hovering(ClickArea.ClickAreaContext<? extends AbstractContainerScreen<?>> context, int x,
       int y, int w, int h) {
     AbstractContainerScreen<?> screen = context.getScreen();
-    Rectangle rect = new Rectangle(screen.getGuiLeft() + x, screen.getGuiTop() + y, w, h);
+    Rectangle rect = new Rectangle(screen.getLeftPos() + x, screen.getTopPos() + y, w, h);
     return rect.contains(context.getMousePosition());
   }
 

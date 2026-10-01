@@ -1,71 +1,70 @@
 {
- "parent": "minecraft:block/block",
- "render_type": "minecraft:cutout",
- "textures": {
-  "bottom": "faktocraft:block/machines/basic/recycler_bottom",
-  "top": "faktocraft:block/machines/basic/recycler_top",
-  "side": "faktocraft:block/machines/basic/recycler_side",
-  "front": "faktocraft:block/machines/basic/fueling_station_front",
-  "gauge": "faktocraft:block/machines/basic/fueling_station_gauge_0",
-  "particle": "faktocraft:block/machines/basic/recycler_side"
- },
- "elements": [
-  {
-   "from": [
-    0,
-    0,
-    0
-   ],
-   "to": [
-    16,
-    16,
-    16
-   ],
-   "faces": {
-    "down": {
-     "texture": "#bottom",
-     "cullface": "down"
-    },
-    "up": {
-     "texture": "#top",
-     "cullface": "up"
-    },
-    "north": {
-     "texture": "#front",
-     "cullface": "north"
-    },
-    "south": {
-     "texture": "#side",
-     "cullface": "south"
-    },
-    "west": {
-     "texture": "#side",
-     "cullface": "west"
-    },
-    "east": {
-     "texture": "#side",
-     "cullface": "east"
-    }
-   }
+  "parent": "minecraft:block/block",
+  "textures": {
+    "bottom": "faktocraft:block/machines/basic/recycler_bottom",
+    "top": "faktocraft:block/machines/basic/recycler_top",
+    "side": "faktocraft:block/machines/basic/recycler_side",
+    "front": "faktocraft:block/machines/basic/fueling_station_front",
+    "gauge": "faktocraft:block/machines/basic/fueling_station_gauge_0",
+    "particle": "faktocraft:block/machines/basic/recycler_side"
   },
-  {
-   "from": [
-    0,
-    0,
-    0
-   ],
-   "to": [
-    16,
-    16,
-    16
-   ],
-   "faces": {
-    "north": {
-     "texture": "#gauge",
-     "tintindex": 1,
-     "cullface": "north"
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#bottom",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#top",
+          "cullface": "up"
+        },
+        "north": {
+          "texture": "#front",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#side",
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#side",
+          "cullface": "west"
+        },
+        "east": {
+          "texture": "#side",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#gauge",
+          "tintindex": 1,
+          "cullface": "north"
+        }
+      }
     }
-   }
-  }
- ]
+  ]
 }

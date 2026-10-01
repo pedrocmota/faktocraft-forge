@@ -109,21 +109,20 @@ public class BlockDistillery extends BlockElectricMachine implements IHasMenu {
   }
 
   @Override
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.is(newState.getBlock()) && !level.isClientSide()) {
-      for (int i = 1; i <= TOWER_HEIGHT + 1; i++) {
-        BlockPos towerPos = pos.above(i);
-        if (level.getBlockState(towerPos).is(DistilleryRegistry.DISTILLERY_TOWER)) {
-          level.removeBlock(towerPos, false);
-        }
-      }
-      for (BlockPos guardPos : guardPositions(pos)) {
-        if (level.getBlockState(guardPos).is(DistilleryRegistry.DISTILLERY_GUARD)) {
-          level.removeBlock(guardPos, false);
-        }
+  protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level,
+      BlockPos pos, boolean movedByPiston) {
+    for (int i = 1; i <= TOWER_HEIGHT + 1; i++) {
+      BlockPos towerPos = pos.above(i);
+      if (level.getBlockState(towerPos).is(DistilleryRegistry.DISTILLERY_TOWER)) {
+        level.removeBlock(towerPos, false);
       }
     }
-    super.onRemove(state, level, pos, newState, isMoving);
+    for (BlockPos guardPos : guardPositions(pos)) {
+      if (level.getBlockState(guardPos).is(DistilleryRegistry.DISTILLERY_GUARD)) {
+        level.removeBlock(guardPos, false);
+      }
+    }
+    super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
   }
 
   static boolean isLit(BlockState state) {

@@ -7,30 +7,37 @@ import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexSorting;
+import com.mojang.renderpearl.api.GpuFormat;
+import com.mojang.renderpearl.api.textures.AddressMode;
+import com.mojang.renderpearl.api.textures.FilterMode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.render.GuiRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.WindowRenderState;
+import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderHighlightEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -38,32 +45,34 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mod.EventBusSubscriber(modid = Faktocraft.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = Faktocraft.MODID, value = Dist.CLIENT)
 public final class StatusMonitorTextures {
-
-  public static final int SCALE = 2;
+  public static final int SCALE = 4;
   private static final int TEXTURE_W = StatusMonitorContent.PANEL_W * SCALE;
   private static final int TEXTURE_H = StatusMonitorContent.PANEL_H * SCALE;
   private static final int IDLE_FRAMES = 200;
-  private static final float GUI_NEAR = 1000.0F;
-  private static final float GUI_FAR = 21000.0F;
-  private static final float GUI_Z = -11000.0F;
+  private static final int NO_MOUSE = -10000;
+  private static final int OUTLINE_COLOR = ARGB.black(102);
   private static final Map<GlobalPos, Entry> ENTRIES = new HashMap<>();
   private static final Map<GlobalPos, BlockEntityStatusMonitor> PENDING = new LinkedHashMap<>();
   private static final BitSet SLOTS = new BitSet();
   private static long frame;
   private static boolean reported;
+  @Nullable
+  private static GuiRenderState renderState;
+  @Nullable
+  private static GuiRenderer guiRenderer;
 
   private StatusMonitorTextures() {
   }
 
   private static final class Entry {
     private final int slot;
-    private final ResourceLocation location;
+    private final Identifier location;
     private final TextureTarget target;
     private long lastSeen;
 
-    private Entry(int slot, ResourceLocation location, TextureTarget target) {
+    private Entry(int slot, Identifier location, TextureTarget target) {
       this.slot = slot;
       this.location = location;
       this.target = target;
@@ -71,24 +80,36 @@ public final class StatusMonitorTextures {
   }
 
   private static final class TargetTexture extends AbstractTexture {
-    private final RenderTarget target;
-
     private TargetTexture(RenderTarget target) {
-      this.target = target;
+      this.texture = target.getColorTexture();
+      this.textureView = target.getColorTextureView();
+      this.sampler = RenderSystem.getSamplerCache().getSampler(AddressMode.CLAMP_TO_EDGE, AddressMode.CLAMP_TO_EDGE,
+          FilterMode.LINEAR, FilterMode.LINEAR, false);
     }
 
     @Override
-    public int getId() {
-      return target.getColorTextureId();
+    protected void releaseTextures() {
+      texture = null;
+      textureView = null;
+    }
+  }
+
+  private static final class PanelExtractor extends GuiGraphicsExtractor {
+    private PanelExtractor(Minecraft mc, GuiRenderState state) {
+      super(mc, state, NO_MOUSE, NO_MOUSE);
     }
 
     @Override
-    public void load(ResourceManager manager) {
+    public void enableScissor(int x0, int y0, int x1, int y1) {
+    }
+
+    @Override
+    public void disableScissor() {
     }
   }
 
   @Nullable
-  public static ResourceLocation request(BlockEntityStatusMonitor monitor, boolean refresh) {
+  public static Identifier request(BlockEntityStatusMonitor monitor, boolean refresh) {
     Level level = monitor.getLevel();
     if (level == null) {
       return null;
@@ -106,10 +127,7 @@ public final class StatusMonitorTextures {
   }
 
   @SubscribeEvent
-  public static void onRenderTick(TickEvent.RenderTickEvent event) {
-    if (event.phase != TickEvent.Phase.START) {
-      return;
-    }
+  public static void onRenderFrame(RenderFrameEvent.Pre event) {
     frame++;
     Minecraft mc = Minecraft.getInstance();
     if (mc.level == null) {
@@ -124,53 +142,64 @@ public final class StatusMonitorTextures {
   }
 
   private static void update(Minecraft mc) {
-    Matrix4f projection = new Matrix4f(RenderSystem.getProjectionMatrix());
-    VertexSorting sorting = RenderSystem.getVertexSorting();
-    PoseStack modelView = RenderSystem.getModelViewStack();
-    modelView.pushPose();
-    modelView.setIdentity();
-    modelView.translate(0.0F, 0.0F, GUI_Z);
-    RenderSystem.applyModelViewMatrix();
-    RenderSystem.setProjectionMatrix(new Matrix4f().setOrtho(0.0F, StatusMonitorContent.PANEL_W,
-        StatusMonitorContent.PANEL_H, 0.0F, GUI_NEAR, GUI_FAR), VertexSorting.ORTHOGRAPHIC_Z);
-    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    RenderSystem.enableBlend();
-    RenderSystem.defaultBlendFunc();
-    for (Map.Entry<GlobalPos, BlockEntityStatusMonitor> pending : PENDING.entrySet()) {
-      BlockEntityStatusMonitor monitor = pending.getValue();
-      if (monitor.isRemoved()) {
-        continue;
-      }
-      Entry entry = ENTRIES.computeIfAbsent(pending.getKey(), key -> create(mc));
-      entry.lastSeen = frame;
-      entry.target.clear(Minecraft.ON_OSX);
-      entry.target.bindWrite(true);
-      GuiGraphics graphics = new GuiGraphics(mc, mc.renderBuffers().bufferSource());
-      try {
-        StatusMonitorContent.draw(graphics, monitor);
-      } catch (RuntimeException e) {
-        if (!reported) {
-          reported = true;
-          Faktocraft.LOGGER.warn("Status monitor content failed to render", e);
-        }
-      } finally {
-        graphics.flush();
-      }
+    if (!StatusMonitorTarget.mixinApplied) {
+      PENDING.clear();
+      return;
     }
-    PENDING.clear();
-    mc.getMainRenderTarget().bindWrite(true);
-    modelView.popPose();
-    RenderSystem.applyModelViewMatrix();
-    RenderSystem.setProjectionMatrix(projection, sorting);
+    WindowRenderState window = mc.gameRenderer.gameRenderState().windowRenderState;
+    if (window.width <= 0 || window.height <= 0 || window.guiScale <= 0) {
+      return;
+    }
+    float scaleX = window.width / (float) window.guiScale / StatusMonitorContent.PANEL_W;
+    float scaleY = window.height / (float) window.guiScale / StatusMonitorContent.PANEL_H;
+    if (guiRenderer == null || renderState == null) {
+      renderState = new GuiRenderState();
+      guiRenderer = new GuiRenderer(renderState, mc.gameRenderer.featureRenderDispatcher(), List.of());
+    }
+    RenderSystem.backupProjectionMatrix();
+    try {
+      for (Map.Entry<GlobalPos, BlockEntityStatusMonitor> pending : PENDING.entrySet()) {
+        BlockEntityStatusMonitor monitor = pending.getValue();
+        if (monitor.isRemoved()) {
+          continue;
+        }
+        Entry entry = ENTRIES.computeIfAbsent(pending.getKey(), key -> create(mc));
+        entry.lastSeen = frame;
+        RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(entry.target.getColorTexture(),
+            GuiRenderer.CLEAR_COLOR, entry.target.getDepthTexture(), 0.0);
+        GuiGraphicsExtractor graphics = new PanelExtractor(mc, renderState);
+        graphics.pose().pushMatrix();
+        graphics.pose().scale(scaleX, scaleY);
+        try {
+          StatusMonitorContent.draw(graphics, monitor);
+        } catch (RuntimeException e) {
+          if (!reported) {
+            reported = true;
+            Faktocraft.LOGGER.warn("Status monitor content failed to render", e);
+          }
+        } finally {
+          graphics.pose().popMatrix();
+        }
+        StatusMonitorTarget.override = entry.target;
+        try {
+          guiRenderer.render();
+          guiRenderer.endFrame();
+        } finally {
+          StatusMonitorTarget.override = null;
+        }
+      }
+      PENDING.clear();
+    } finally {
+      RenderSystem.restoreProjectionMatrix();
+    }
   }
 
   private static Entry create(Minecraft mc) {
     int slot = SLOTS.nextClearBit(0);
     SLOTS.set(slot);
-    TextureTarget target = new TextureTarget(TEXTURE_W, TEXTURE_H, true, Minecraft.ON_OSX);
-    target.setClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-    target.setFilterMode(GL11.GL_LINEAR);
-    ResourceLocation location = new ResourceLocation(Faktocraft.MODID, "status_monitor/" + slot);
+    TextureTarget target = new TextureTarget("Faktocraft status monitor " + slot, TEXTURE_W, TEXTURE_H,
+        GpuFormat.RGBA8_UNORM, GpuFormat.D32_FLOAT);
+    Identifier location = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "status_monitor/" + slot);
     mc.getTextureManager().register(location, new TargetTexture(target));
     return new Entry(slot, location, target);
   }
@@ -201,17 +230,13 @@ public final class StatusMonitorTextures {
   }
 
   @SubscribeEvent
-  public static void onHighlight(RenderHighlightEvent.Block event) {
-    Level level = Minecraft.getInstance().level;
-    if (level == null) {
-      return;
-    }
-    BlockPos pos = event.getTarget().getBlockPos();
-    BlockState state = level.getBlockState(pos);
+  public static void onBlockOutline(ExtractBlockOutlineRenderStateEvent event) {
+    Level level = event.getLevel();
+    BlockPos pos = event.getBlockPos();
+    BlockState state = event.getBlockState();
     if (!(state.getBlock() instanceof BlockStatusMonitor)) {
       return;
     }
-    event.setCanceled(true);
     BlockPos master = BlockStatusMonitor.masterPos(state, pos);
     Direction right = BlockStatusMonitor.rightOf(BlockStatusMonitor.facingOf(state));
     AABB box = null;
@@ -229,9 +254,20 @@ public final class StatusMonitorTextures {
     if (box == null) {
       return;
     }
-    Vec3 camera = event.getCamera().getPosition();
-    VertexConsumer consumer = event.getMultiBufferSource().getBuffer(RenderType.lines());
-    LevelRenderer.renderLineBox(event.getPoseStack(), consumer, box.move(-camera.x, -camera.y, -camera.z), 0.0F,
-        0.0F, 0.0F, 0.4F);
+    AABB combined = box;
+    event.addCustomRenderer((BlockOutlineRenderState outline, SubmitNodeCollector collector, PoseStack poseStack,
+        LevelRenderState levelState) -> {
+      Vec3 camera = levelState.cameraRenderState.pos;
+      Minecraft mc = Minecraft.getInstance();
+      RenderType type = mc.gameRenderer.useImprovedTransparency() ? RenderTypes.linesTranslucentNoDepthWrite()
+          : RenderTypes.linesTranslucent();
+      VoxelShape shape = Shapes.create(combined.move(-combined.minX, -combined.minY, -combined.minZ));
+      poseStack.pushPose();
+      poseStack.translate(combined.minX - camera.x, combined.minY - camera.y, combined.minZ - camera.z);
+      collector.submitShapeOutline(poseStack, shape, type, OUTLINE_COLOR,
+          mc.gameRenderer.gameRenderState().windowRenderState.appropriateLineWidth, outline.isTranslucent());
+      poseStack.popPose();
+      return true;
+    });
   }
 }

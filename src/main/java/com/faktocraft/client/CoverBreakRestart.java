@@ -2,8 +2,8 @@ package com.faktocraft.client;
 
 import com.faktocraft.common.cover.DrillOps;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.minecraft.util.TriState;
 
 public final class CoverBreakRestart {
 
@@ -20,7 +20,7 @@ public final class CoverBreakRestart {
         || !DrillOps.isBored(event.getLevel().getBlockState(event.getPos()))) {
       return;
     }
-    event.setUseItem(Event.Result.DENY);
+    event.setUseItem(TriState.FALSE);
     minecraft.gameMode.startDestroyBlock(event.getPos(), event.getFace());
   }
 }

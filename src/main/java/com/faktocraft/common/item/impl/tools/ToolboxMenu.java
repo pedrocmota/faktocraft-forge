@@ -1,15 +1,17 @@
 package com.faktocraft.common.item.impl.tools;
 
 import com.faktocraft.common.registries.machines.M1Registry;
+import com.faktocraft.common.util.NbtBridge;
+import com.faktocraft.common.util.transfer.LegacyItemStackHandler;
+import com.faktocraft.common.util.transfer.SlotItemHandler;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
 
 public class ToolboxMenu extends AbstractContainerMenu {
 
@@ -17,7 +19,7 @@ public class ToolboxMenu extends AbstractContainerMenu {
   private static final String TAG_ITEMS = "Items";
 
   private final ItemStack toolboxStack;
-  private final ItemStackHandler handler;
+  private final LegacyItemStackHandler handler;
 
   public ToolboxMenu(int windowId, Inventory playerInventory, BlockPos ignoredPos) {
     super(M1Registry.TOOLBOX_MENU, windowId);
@@ -25,7 +27,7 @@ public class ToolboxMenu extends AbstractContainerMenu {
     ItemStack main = player.getMainHandItem();
     this.toolboxStack = main.getItem() instanceof ToolboxItem ? main : player.getOffhandItem();
 
-    this.handler = new ItemStackHandler(SIZE) {
+    this.handler = new LegacyItemStackHandler(SIZE) {
       @Override
       public boolean isItemValid(int slot, ItemStack stack) {
         return ToolboxItem.isTool(stack);
@@ -33,11 +35,12 @@ public class ToolboxMenu extends AbstractContainerMenu {
 
       @Override
       protected void onContentsChanged(int slot) {
-        toolboxStack.getOrCreateTag().put(TAG_ITEMS, serializeNBT());
+        NbtBridge.updateCustomData(toolboxStack, tag -> tag.put(TAG_ITEMS, serializeNBT()));
       }
     };
-    if (toolboxStack.hasTag() && toolboxStack.getTag().contains(TAG_ITEMS)) {
-      handler.deserializeNBT(toolboxStack.getTag().getCompound(TAG_ITEMS));
+    CompoundTag tag = NbtBridge.customData(toolboxStack);
+    if (tag != null && tag.contains(TAG_ITEMS)) {
+      handler.deserializeNBT(tag.getCompoundOrEmpty(TAG_ITEMS));
     }
 
     for (int i = 0; i < SIZE; i++) {
@@ -54,12 +57,12 @@ public class ToolboxMenu extends AbstractContainerMenu {
   }
 
   @Override
-  public void clicked(int slotId, int button, ClickType clickType, Player player) {
+  public void clicked(int slotId, int button, ContainerInput clickType, Player player) {
     if (slotId >= 0 && slotId < slots.size() && slots.get(slotId).getItem() == toolboxStack) {
       return;
     }
-    if (clickType == ClickType.SWAP) {
-      ItemStack swap = button == 40 ? player.getInventory().offhand.get(0)
+    if (clickType == ContainerInput.SWAP) {
+      ItemStack swap = button == 40 ? player.getInventory().getItem(Inventory.SLOT_OFFHAND)
           : player.getInventory().getItem(button);
       if (swap == toolboxStack) {
         return;

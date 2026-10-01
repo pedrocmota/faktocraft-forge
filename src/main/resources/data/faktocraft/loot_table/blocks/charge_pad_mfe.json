@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "name": "charge_pad_mfe",
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:mfe"
+        }
+      ]
+    }
+  ]
+}

@@ -85,8 +85,7 @@ public class BlockFluidExtractorPipe extends BlockFluidPipe
         return InteractionResult.SUCCESS;
       }
       if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
-        net.minecraftforge.network.NetworkHooks.openScreen(serverPlayer,
-            new com.faktocraft.common.container.FaktocraftMenuProvider(this, level, pos, getName()),
+        serverPlayer.openMenu(new com.faktocraft.common.container.FaktocraftMenuProvider(this, level, pos, getName()),
             buf -> buf.writeBlockPos(pos));
       }
       return InteractionResult.SUCCESS;
@@ -114,12 +113,11 @@ public class BlockFluidExtractorPipe extends BlockFluidPipe
   }
 
   @Override
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.is(newState.getBlock())
-        && level.getBlockEntity(pos) instanceof BlockEntityFluidExtractorPipe pipe) {
+  public void preRemoveSideEffects(BlockState state, Level level, BlockPos pos, BlockEntity blockEntity) {
+    if (blockEntity instanceof BlockEntityFluidExtractorPipe pipe) {
       pipe.onBroken(pos);
     }
-    super.onRemove(state, level, pos, newState, isMoving);
+    super.preRemoveSideEffects(state, level, pos, blockEntity);
   }
 
   @Nullable

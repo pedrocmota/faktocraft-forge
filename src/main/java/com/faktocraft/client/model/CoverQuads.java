@@ -2,35 +2,25 @@ package com.faktocraft.client.model;
 
 import com.faktocraft.common.cover.CoverSupport;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockElementFace;
-import net.minecraft.client.renderer.block.model.BlockFaceUV;
-import net.minecraft.client.renderer.block.model.FaceBakery;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.ForgeFaceData;
-import net.minecraftforge.client.model.data.ModelData;
-import org.joml.Vector3f;
+import net.neoforged.neoforge.client.model.quad.MutableQuad;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class CoverQuads {
-
-  private static final ResourceLocation NAME = new ResourceLocation("faktocraft", "cover");
-  private static final FaceBakery BAKERY = new FaceBakery();
-  private static final Map<Key, List<BakedQuad>> CACHE = new ConcurrentHashMap<>();
+  private static final Map<Key, QuadCollection> CACHE = new ConcurrentHashMap<>();
   private static final float MIN = CoverSupport.HOLE_MIN;
   private static final float MAX = CoverSupport.HOLE_MAX;
-  private static final ForgeFaceData NO_AO = new ForgeFaceData(0xFFFFFFFF, 0, 0, false);
   private static final float NUDGE = 1.0E-4F;
   private static final float EDGE_EPSILON = 1.0E-5F;
   private static final float INTERIOR_SHADE = 0.7F;
@@ -39,10 +29,10 @@ public final class CoverQuads {
   private static final int CELLS = 4;
   private static final float CELL = 16F / CELLS;
 
-  private record Key(BlockState cover, int holes, int closed, @Nullable Direction side, @Nullable RenderType type) {
+  private record Key(BlockState cover, int holes, int closed) {
   }
 
-  private record Face(TextureAtlasSprite sprite, int tint) {
+  private record Face(BakedQuad.MaterialInfo material) {
   }
 
   private CoverQuads() {
@@ -52,68 +42,79 @@ public final class CoverQuads {
     CACHE.clear();
   }
 
-  public static List<BakedQuad> get(BlockState cover, int holes, int closed, @Nullable Direction side,
-      @Nullable RenderType type, RandomSource rand) {
-    return CACHE.computeIfAbsent(new Key(cover, holes, closed, side, type), key -> build(key, rand));
+  public static QuadCollection get(BlockState cover, int holes, int closed, RandomSource rand) {
+    return CACHE.computeIfAbsent(new Key(cover, holes, closed), key -> build(key, rand));
+  }
+
+  public static BlockStateModel coverModel(BlockState cover) {
+    return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(cover);
   }
 
   @Nullable
-  private static Face face(BlockState cover, Direction direction, @Nullable RenderType type, RandomSource rand) {
-    BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getBlockModel(cover);
+  @SuppressWarnings("deprecation")
+  private static Face face(BlockState cover, Direction direction, RandomSource rand) {
+    BlockStateModel model = coverModel(cover);
     rand.setSeed(42L);
-    List<BakedQuad> quads = model.getQuads(cover, direction, rand, ModelData.EMPTY, type);
-    if (quads.isEmpty()) {
-      rand.setSeed(42L);
-      quads = model.getQuads(cover, null, rand, ModelData.EMPTY, type);
-      quads = quads.stream().filter(quad -> quad.getDirection() == direction).toList();
+    List<BlockStateModelPart> parts = new ArrayList<>();
+    model.collectParts(rand, parts);
+    for (BlockStateModelPart part : parts) {
+      List<BakedQuad> quads = part.getQuads(direction);
+      if (!quads.isEmpty()) {
+        return new Face(quads.get(0).materialInfo());
+      }
     }
-    if (quads.isEmpty()) {
-      return null;
+    for (BlockStateModelPart part : parts) {
+      for (BakedQuad quad : part.getQuads(null)) {
+        if (quad.direction() == direction) {
+          return new Face(quad.materialInfo());
+        }
+      }
     }
-    BakedQuad quad = quads.get(0);
-    return new Face(quad.getSprite(), quad.getTintIndex());
+    return null;
   }
 
   private static boolean hasHole(int holes, Direction direction) {
     return (holes & (1 << direction.get3DDataValue())) != 0;
   }
 
-  private static List<BakedQuad> build(Key key, RandomSource rand) {
-    List<BakedQuad> quads = new ArrayList<>();
-    if (key.side() != null) {
-      Face face = face(key.cover(), key.side(), key.type(), rand);
-      if (face != null) {
-        outerFace(quads, key.side(), hasHole(key.holes(), key.side()), face);
-      }
-      return quads;
-    }
+  private static QuadCollection build(Key key, RandomSource rand) {
+    QuadCollection.Builder builder = new QuadCollection.Builder();
     Face[] faces = new Face[Direction.values().length];
     for (Direction direction : Direction.values()) {
-      faces[direction.get3DDataValue()] = face(key.cover(), direction, key.type(), rand);
+      faces[direction.get3DDataValue()] = face(key.cover(), direction, rand);
     }
-    cavityWalls(quads, key.holes(), faces);
+    for (Direction side : Direction.values()) {
+      Face face = faces[side.get3DDataValue()];
+      if (face != null) {
+        outerFace(builder, side, hasHole(key.holes(), side), face);
+      }
+    }
+    List<BakedQuad> unculled = new ArrayList<>();
+    cavityWalls(unculled, key.holes(), faces);
     for (Direction direction : Direction.values()) {
       Face face = faces[direction.get3DDataValue()];
       if (face != null && hasHole(key.holes(), direction) && hasHole(key.closed(), direction)) {
-        endCap(quads, direction, face);
+        endCap(unculled, direction, face);
       }
     }
-    return quads;
+    for (BakedQuad quad : unculled) {
+      builder.addUnculledFace(quad);
+    }
+    return builder.build();
   }
 
-  private static void outerFace(List<BakedQuad> quads, Direction side, boolean hole, Face face) {
+  private static void outerFace(QuadCollection.Builder builder, Direction side, boolean hole, Face face) {
     if (!hole) {
-      quads.add(rect(side, 0, 0, 16, 16, face, side));
+      builder.addCulledFace(side, rect(side, 0, 0, 16, 16, face));
       return;
     }
-    quads.add(rect(side, 0, MAX, 16, 16, face, side));
-    quads.add(rect(side, 0, 0, 16, MIN, face, side));
-    quads.add(rect(side, 0, MIN, MIN, MAX, face, side));
-    quads.add(rect(side, MAX, MIN, 16, MAX, face, side));
+    builder.addCulledFace(side, rect(side, 0, MAX, 16, 16, face));
+    builder.addCulledFace(side, rect(side, 0, 0, 16, MIN, face));
+    builder.addCulledFace(side, rect(side, 0, MIN, MIN, MAX, face));
+    builder.addCulledFace(side, rect(side, MAX, MIN, 16, MAX, face));
   }
 
-  private static BakedQuad rect(Direction side, float u0, float v0, float u1, float v1, Face face,
-      @Nullable Direction cull) {
+  private static BakedQuad rect(Direction side, float u0, float v0, float u1, float v1, Face face) {
     float plane = side.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 16F : 0F;
     Vector3f from;
     Vector3f to;
@@ -131,7 +132,7 @@ public final class CoverQuads {
         to = new Vector3f(u1, v1, plane);
       }
     }
-    return bake(from, to, side, face, cull, true);
+    return bake(from, to, side, face, true);
   }
 
   private static int[] cell(Direction.Axis axis, int along, int first, int second) {
@@ -194,7 +195,7 @@ public final class CoverQuads {
         : from.get(normal.getAxis().ordinal());
     set(from, normal.getAxis(), plane);
     set(to, normal.getAxis(), plane);
-    return bake(from, to, normal.getOpposite(), face, null, false);
+    return bake(from, to, normal.getOpposite(), face, false);
   }
 
   private static int shade(int color, float shade) {
@@ -213,20 +214,20 @@ public final class CoverQuads {
   }
 
   private static BakedQuad interior(BakedQuad quad, float shade) {
-    int[] vertices = quad.getVertices().clone();
-    Direction facing = quad.getDirection();
+    MutableQuad mutable = new MutableQuad().setFrom(quad);
+    Direction facing = quad.direction();
     int index = facing.getAxis().ordinal();
     float step = facing.getAxis().choose(facing.getStepX(), facing.getStepY(), facing.getStepZ());
     for (int vertex = 0; vertex < 4; vertex++) {
-      int offset = vertex * 8;
-      float x = Float.intBitsToFloat(vertices[offset]);
-      float y = Float.intBitsToFloat(vertices[offset + 1]);
-      float z = Float.intBitsToFloat(vertices[offset + 2]);
+      float x = mutable.x(vertex);
+      float y = mutable.y(vertex);
+      float z = mutable.z(vertex);
       float lift = onBlockEdge(x) || onBlockEdge(y) || onBlockEdge(z) ? 0F : step * NUDGE * (x + y + z);
-      vertices[offset + index] = Float.floatToRawIntBits(Float.intBitsToFloat(vertices[offset + index]) + lift);
-      vertices[offset + 3] = shade(vertices[offset + 3], shade);
+      mutable.setPositionComponent(vertex, index, mutable.positionComponent(vertex, index) + lift);
+      mutable.setColor(vertex, shade(mutable.color(vertex), shade));
     }
-    return new BakedQuad(vertices, quad.getTintIndex(), facing, quad.getSprite(), quad.isShade(), false);
+    mutable.setAmbientOcclusion(false);
+    return mutable.toBakedQuad();
   }
 
   private static void endCap(List<BakedQuad> quads, Direction hole, Face face) {
@@ -235,7 +236,7 @@ public final class CoverQuads {
     Vector3f to = new Vector3f(MAX, MAX, MAX);
     set(from, hole.getAxis(), plane);
     set(to, hole.getAxis(), plane);
-    quads.add(interior(bake(from, to, hole.getOpposite(), face, null, false), END_SHADE));
+    quads.add(interior(bake(from, to, hole.getOpposite(), face, false), END_SHADE));
   }
 
   private static void set(Vector3f vector, Direction.Axis axis, float value) {
@@ -246,21 +247,18 @@ public final class CoverQuads {
     }
   }
 
-  private static float[] uv(Direction facing, Vector3f from, Vector3f to) {
-    return switch (facing) {
-      case DOWN -> new float[] { from.x, 16F - to.z, to.x, 16F - from.z };
-      case UP -> new float[] { from.x, from.z, to.x, to.z };
-      case NORTH -> new float[] { 16F - to.x, 16F - to.y, 16F - from.x, 16F - from.y };
-      case SOUTH -> new float[] { from.x, 16F - to.y, to.x, 16F - from.y };
-      case WEST -> new float[] { from.z, 16F - to.y, to.z, 16F - from.y };
-      case EAST -> new float[] { 16F - to.z, 16F - to.y, 16F - from.z, 16F - from.y };
-    };
-  }
-
-  private static BakedQuad bake(Vector3f from, Vector3f to, Direction facing, Face face, @Nullable Direction cull,
-      boolean ambientOcclusion) {
-    BlockElementFace element = new BlockElementFace(cull, face.tint(), "#cover",
-        new BlockFaceUV(uv(facing, from, to), 0), ambientOcclusion ? ForgeFaceData.DEFAULT : NO_AO);
-    return BAKERY.bakeQuad(from, to, element, face.sprite(), facing, BlockModelRotation.X0_Y0, null, true, NAME);
+  private static BakedQuad bake(Vector3f from, Vector3f to, Direction facing, Face face, boolean ambientOcclusion) {
+    BakedQuad.MaterialInfo material = face.material();
+    MutableQuad quad = new MutableQuad()
+        .setSprite(material.sprite(), material.layer(), material.itemRenderType(), material.itemGlintRenderType(),
+            material.itemGlintSpecialRenderType())
+        .setCubeFace(facing, from.x / 16F, from.y / 16F, from.z / 16F, to.x / 16F, to.y / 16F, to.z / 16F)
+        .bakeUvsFromPosition()
+        .setTintIndex(material.tintIndex())
+        .setShadeOverride(null)
+        .setLightEmission(0)
+        .setAmbientOcclusion(ambientOcclusion)
+        .setColor(0xFFFFFFFF);
+    return quad.toBakedQuad();
   }
 }

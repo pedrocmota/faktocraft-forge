@@ -6,8 +6,8 @@
       "predicate": {
         "type": "minecraft:would_survive",
         "state": {
-          "Name": "faktocraft:rubber_sapling",
-          "Properties": {
+          "id": "faktocraft:rubber_sapling",
+          "properties": {
             "stage": "0"
           }
         }

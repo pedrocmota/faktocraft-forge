@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "i": "#c:ingots/iron",
+    "f": "minecraft:furnace",
+    "b": "minecraft:bricks"
+  },
+  "pattern": [
+    "iii",
+    "fbf",
+    "iii"
+  ],
+  "result": {
+    "id": "faktocraft:coal_alloy_smelter"
+  }
+}

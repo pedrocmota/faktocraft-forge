@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "B": "faktocraft:battery",
+    "C": "faktocraft:copper_cable_insulated",
+    "p": "#minecraft:planks"
+  },
+  "pattern": [
+    "pCp",
+    "BBB",
+    "ppp"
+  ],
+  "result": {
+    "id": "faktocraft:battery_box"
+  }
+}

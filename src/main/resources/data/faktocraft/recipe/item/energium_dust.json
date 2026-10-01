@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "d": "#c:dusts/diamond",
+    "r": "#c:dusts/redstone"
+  },
+  "pattern": [
+    "rdr",
+    "drd",
+    "rdr"
+  ],
+  "result": {
+    "id": "faktocraft:energium_dust",
+    "count": 9
+  }
+}

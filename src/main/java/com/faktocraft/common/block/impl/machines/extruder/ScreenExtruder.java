@@ -10,7 +10,7 @@ import com.faktocraft.common.screen.button.GuiForwardButton;
 import com.faktocraft.common.screen.progress.GuiProgressExtracting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenExtruder extends BetterScreen<MenuExtruder> {
@@ -38,7 +38,7 @@ public class ScreenExtruder extends BetterScreen<MenuExtruder> {
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/extruder.png");
+  public Identifier getGuiLocation() {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, "textures/gui/container/extruder.png");
   }
 }

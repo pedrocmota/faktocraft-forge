@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:combustion_alloy_smelter"
+        }
+      ],
+      "name": "combustion_alloy_smelter",
+      "rolls": 1
+    }
+  ]
+}

@@ -1,18 +1,19 @@
 package com.faktocraft.common.block.impl.quarry;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.GuiUtil;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
     implements com.faktocraft.common.interfaces.screen.IGuiWrapper {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "textures/gui/container/quarry.png");
 
   private static final String[] STATUS_KEYS = {
@@ -25,9 +26,7 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
       new net.minecraft.client.gui.components.Button[3];
 
   public ScreenQuarry(MenuQuarry menu, Inventory inventory, Component title) {
-    super(menu, inventory, title);
-    this.imageWidth = 176;
-    this.imageHeight = 223;
+    super(menu, inventory, title, 176, 223);
     this.inventoryLabelY = 223 - 94;
   }
 
@@ -37,7 +36,17 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
+  public int getGuiLeft() {
+    return this.leftPos;
+  }
+
+  @Override
+  public int getGuiTop() {
+    return this.topPos;
+  }
+
+  @Override
+  public Identifier getGuiLocation() {
     return BACKGROUND;
   }
 
@@ -77,10 +86,8 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    renderBackground(graphics);
-    super.render(graphics, mouseX, mouseY, partialTick);
-    renderTooltip(graphics, mouseX, mouseY);
+  public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    super.extractRenderState(graphics, mouseX, mouseY, partialTick);
     renderEmptySlotTooltip(graphics, mouseX, mouseY);
     if (energyBar != null) {
       energyBar.renderWidgetToolTip(this, graphics, mouseX, mouseY);
@@ -90,7 +97,7 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
     }
   }
 
-  private void renderEmptySlotTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+  private void renderEmptySlotTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (hoveredSlot == null || hoveredSlot.hasItem() || hoveredSlot.index >= MenuQuarry.DOCK_SLOTS) {
       return;
     }
@@ -101,26 +108,34 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
             : hoveredSlot.index < 7
                 ? "gui." + Faktocraft.MODID + ".extractor.upgrade"
                 : "gui." + Faktocraft.MODID + ".slot.dock_battery";
-    graphics.renderTooltip(GuiUtil.getFont(), Component.translatable(key), mouseX, mouseY);
+    graphics.setTooltipForNextFrame(GuiUtil.getFont(), Component.translatable(key), mouseX, mouseY);
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+  public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    renderBg(graphics, partialTick, mouseX, mouseY);
+    super.extractContents(graphics, mouseX, mouseY, partialTick);
+  }
+
+  protected void renderBg(GuiGraphicsExtractor graphics, float partialTick, int mouseX, int mouseY) {
     int left = (this.width - this.imageWidth) / 2;
     int top = (this.height - this.imageHeight) / 2;
-    graphics.blit(BACKGROUND, left, top, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, left, top, 0, 0, this.imageWidth, this.imageHeight, 256,
+        256);
 
-    graphics.blit(Constants.COMMON, left - 23, top + 4, 0, 134, 24, 80, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.COMMON, left - 23, top + 4, 0, 134, 24, 80, 256, 256);
     for (int i = 0; i < 4; i++) {
-      graphics.blit(Constants.PROCESS, left - 21, top + 8 + i * 18, 103, 46, 18, 18, 256, 256);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, left - 21, top + 8 + i * 18, 103, 46, 18, 18, 256,
+          256);
     }
-    graphics.blit(Constants.PROCESS, left - 20, top + 9, 110, 0, 16, 16, 256, 256);
-    graphics.blit(Constants.PROCESS, left - 20, top + 27, 110, 0, 16, 16, 256, 256);
-    graphics.blit(Constants.PROCESS, left - 20, top + 45, 84, 46, 16, 16, 256, 256);
-    graphics.blit(Constants.PROCESS, left - 20, top + 63, 104, 28, 16, 16, 256, 256);
-    graphics.blit(Constants.COMMON, left + 175, top + 4, 0, 134, 24, 80, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, left - 20, top + 9, 110, 0, 16, 16, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, left - 20, top + 27, 110, 0, 16, 16, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, left - 20, top + 45, 84, 46, 16, 16, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, left - 20, top + 63, 104, 28, 16, 16, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.COMMON, left + 175, top + 4, 0, 134, 24, 80, 256, 256);
     for (int i = 0; i < 4; i++) {
-      graphics.blit(Constants.PROCESS, left + 177, top + 8 + i * 18, 103, 46, 18, 18, 256, 256);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, left + 177, top + 8 + i * 18, 103, 46, 18, 18, 256,
+          256);
     }
   }
 
@@ -133,10 +148,10 @@ public class ScreenQuarry extends AbstractContainerScreen<MenuQuarry>
   }
 
   @Override
-  protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+  protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     GuiUtil.renderScaledToFit(graphics, this.title.getString(), this.titleLabelX, this.titleLabelY, 88, 4210752);
-    graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
-        4210752, false);
+    graphics.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
+        GuiUtil.opaque(4210752), false);
     int code = Math.max(0, Math.min(menu.getStatus(), STATUS_KEYS.length - 1));
     int color = switch (code) {
       case BlockEntityQuarry.STATUS_CLEARING, BlockEntityQuarry.STATUS_FRAMING -> 0x2E7D32;

@@ -19,7 +19,7 @@ import com.faktocraft.common.util.EnergyCosts;
 import com.faktocraft.common.util.StackHandlerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.SimpleContainer;
+import com.faktocraft.common.recipe.MachineRecipeInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -84,7 +84,7 @@ public abstract class BlockEntityStandardMachine extends FaktocraftBlockEntity
 
   protected ItemStack getRecipeResult(ItemStack input) {
     return cachedRecipe != null && level != null
-        ? cachedRecipe.assemble(new SimpleContainer(input), level.registryAccess())
+        ? cachedRecipe.assemble(MachineRecipeInput.of(input))
         : ItemStack.EMPTY;
   }
 
@@ -97,7 +97,7 @@ public abstract class BlockEntityStandardMachine extends FaktocraftBlockEntity
 
     ItemStack inputStack = itemStackHandler.getStackInSlot(INPUT_SLOT);
 
-    boolean inputChanged = !ItemStack.isSameItemSameTags(cachedInputItem, inputStack);
+    boolean inputChanged = !ItemStack.isSameItemSameComponents(cachedInputItem, inputStack);
     if (inputChanged || !recipeResolved) {
       boolean hadInput = !cachedInputItem.isEmpty();
       IChanceRecipe oldRecipe = cachedRecipe;
@@ -130,10 +130,10 @@ public abstract class BlockEntityStandardMachine extends FaktocraftBlockEntity
       ItemStack bonusStack = itemStackHandler.getStackInSlot(BONUS_SLOT);
 
       boolean outputFits = cachedResult.isEmpty() || outputStack.isEmpty()
-          || (ItemStack.isSameItemSameTags(outputStack, cachedResult)
+          || (ItemStack.isSameItemSameComponents(outputStack, cachedResult)
               && outputStack.getCount() + cachedResult.getCount() <= outputStack.getMaxStackSize());
       boolean bonusFits = rolledChance.isEmpty() || bonusStack.isEmpty()
-          || (ItemStack.isSameItemSameTags(bonusStack, rolledChance)
+          || (ItemStack.isSameItemSameComponents(bonusStack, rolledChance)
               && bonusStack.getCount() + rolledChance.getCount() <= bonusStack.getMaxStackSize());
       boolean enoughInput = inputStack.getCount() >= recipe.getIngredientCount();
 
@@ -201,9 +201,9 @@ public abstract class BlockEntityStandardMachine extends FaktocraftBlockEntity
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    activeState = tag.contains("active") ? tag.getBoolean("active") : false;
+    activeState = tag.contains("active") ? tag.getBooleanOr("active", false) : false;
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
   }
 }

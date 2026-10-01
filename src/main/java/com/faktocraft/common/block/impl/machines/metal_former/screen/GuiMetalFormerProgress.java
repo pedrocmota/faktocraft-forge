@@ -5,7 +5,7 @@ import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.progress.GuiProgress;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class GuiMetalFormerProgress extends GuiProgress {
 
@@ -17,7 +17,7 @@ public class GuiMetalFormerProgress extends GuiProgress {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     setProgressType(entity.getMode().getSprite());
     super.renderBg(graphics, minecraft, mouseX, mouseY);
   }

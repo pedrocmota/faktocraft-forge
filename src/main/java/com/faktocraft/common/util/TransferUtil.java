@@ -2,12 +2,13 @@ package com.faktocraft.common.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandler;
+import com.faktocraft.common.util.transfer.CapabilityBridge;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.IFluidHandler;
+import com.faktocraft.common.util.transfer.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
 public final class TransferUtil {
@@ -21,7 +22,7 @@ public final class TransferUtil {
     if (be == null) {
       return null;
     }
-    return be.getCapability(ForgeCapabilities.ITEM_HANDLER, side).orElse(null);
+    return CapabilityBridge.get(be, ForgeCapabilities.ITEM_HANDLER, side);
   }
 
   @Nullable
@@ -30,7 +31,7 @@ public final class TransferUtil {
     if (be == null) {
       return null;
     }
-    return be.getCapability(ForgeCapabilities.FLUID_HANDLER, side).orElse(null);
+    return CapabilityBridge.get(be, ForgeCapabilities.FLUID_HANDLER, side);
   }
 
   public static int moveFluid(IFluidHandler from, IFluidHandler to, int maxMb) {
@@ -43,14 +44,14 @@ public final class TransferUtil {
       return 0;
     }
 
-    FluidStack moved = from.drain(new FluidStack(drained, fillable), IFluidHandler.FluidAction.EXECUTE);
+    FluidStack moved = from.drain(drained.copyWithAmount(fillable), IFluidHandler.FluidAction.EXECUTE);
     if (moved.isEmpty()) {
       return 0;
     }
     int filled = to.fill(moved, IFluidHandler.FluidAction.EXECUTE);
 
     if (filled < moved.getAmount()) {
-      from.fill(new FluidStack(moved, moved.getAmount() - filled), IFluidHandler.FluidAction.EXECUTE);
+      from.fill(moved.copyWithAmount(moved.getAmount() - filled), IFluidHandler.FluidAction.EXECUTE);
     }
     return filled;
   }

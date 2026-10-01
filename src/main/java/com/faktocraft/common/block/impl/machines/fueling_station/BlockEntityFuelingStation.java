@@ -16,12 +16,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.InvWrapper;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
+import com.faktocraft.common.util.transfer.IFluidHandlerItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class BlockEntityFuelingStation extends FaktocraftBlockEntity implements 
 
   @Override
   public boolean isItemValidForSlot(int slot, ItemStack stack) {
-    return slot == ITEM_SLOT && stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
+    return slot == ITEM_SLOT && com.faktocraft.common.util.transfer.CapabilityBridge.fluidHandlerItem(stack) != null;
   }
 
   @Override
@@ -71,7 +72,7 @@ public class BlockEntityFuelingStation extends FaktocraftBlockEntity implements 
     return slot == ITEM_SLOT ? 1 : super.getCustomSlotLimit(slot);
   }
 
-  private LazyOptional<net.minecraftforge.items.IItemHandler> finishedCellCap = LazyOptional.empty();
+  private LazyOptional<com.faktocraft.common.util.transfer.IItemHandler> finishedCellCap = LazyOptional.empty();
 
   private boolean isFinished(ItemStack stack) {
     if (stack.isEmpty()) {
@@ -80,7 +81,8 @@ public class BlockEntityFuelingStation extends FaktocraftBlockEntity implements 
     if (tank.getFluidAmount() <= 0) {
       return true;
     }
-    IFluidHandlerItem handler = stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM)
+    IFluidHandlerItem handler = com.faktocraft.common.util.transfer.LazyOptional
+        .of(() -> com.faktocraft.common.util.transfer.CapabilityBridge.fluidHandlerItem(stack))
         .resolve().orElse(null);
     if (handler == null) {
       return true;
@@ -99,7 +101,8 @@ public class BlockEntityFuelingStation extends FaktocraftBlockEntity implements 
     boolean active = false;
     ItemStack target = getItemStackHandler().getStackInSlot(ITEM_SLOT);
     if (!target.isEmpty() && tank.getFluidAmount() > 0) {
-      IFluidHandlerItem handler = target.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM)
+      IFluidHandlerItem handler = com.faktocraft.common.util.transfer.LazyOptional
+          .of(() -> com.faktocraft.common.util.transfer.CapabilityBridge.fluidHandlerItem(target))
           .resolve().orElse(null);
       if (handler != null) {
         FluidStack offer = new FluidStack(tank.getFluidStack().getFluid(),
@@ -201,7 +204,7 @@ public class BlockEntityFuelingStation extends FaktocraftBlockEntity implements 
         return LazyOptional.empty();
       }
       if (!finishedCellCap.isPresent()) {
-        finishedCellCap = LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(getItemStackHandler()) {
+        finishedCellCap = LazyOptional.of(() -> new InvWrapper(getItemStackHandler()) {
           @NotNull
           @Override
           public ItemStack extractItem(int slot, int amount, boolean simulate) {
@@ -240,9 +243,9 @@ public class BlockEntityFuelingStation extends FaktocraftBlockEntity implements 
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    activeState = tag.getBoolean("active");
+    activeState = tag.getBooleanOr("active", false);
     if (tag.contains("tank")) {
-      tank.load(tag.getCompound("tank"));
+      tank.load(tag.getCompoundOrEmpty("tank"));
     }
   }
 

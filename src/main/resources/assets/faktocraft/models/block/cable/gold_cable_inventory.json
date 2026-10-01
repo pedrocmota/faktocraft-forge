@@ -1,7 +1,7 @@
 {
-	"parent": "faktocraft:block/base/cable/cable_inventory",
-	"textures": {
-		"wall": "faktocraft:block/cable/gold_cable",
-		"side": "faktocraft:block/cable/gold_cable"
-	}
+  "parent": "faktocraft:block/base/cable/cable_inventory",
+  "textures": {
+    "wall": "faktocraft:block/cable/gold_cable",
+    "side": "faktocraft:block/cable/gold_cable"
+  }
 }

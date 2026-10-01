@@ -1,9 +1,14 @@
 package com.faktocraft.common.block.impl.quarry;
 
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
+import com.faktocraft.common.block.IBlockHoverText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -12,8 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
@@ -23,9 +28,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
-public class BlockLandmark extends Block implements EntityBlock {
+public class BlockLandmark extends Block implements EntityBlock, IBlockHoverText {
 
   public static final int MAX_SPAN = BlockEntityQuarry.MAX_FRAME_SPAN;
   public static final int MIN_SPAN = BlockEntityQuarry.MIN_FRAME_SPAN;
@@ -53,8 +57,8 @@ public class BlockLandmark extends Block implements EntityBlock {
   }
 
   @Override
-  public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
-      LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+  public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos,
+      Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
     if (direction == Direction.DOWN && !canSurvive(state, level, pos)) {
       return Blocks.AIR.defaultBlockState();
     }
@@ -62,8 +66,8 @@ public class BlockLandmark extends Block implements EntityBlock {
   }
 
   @Override
-  public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
-      BlockHitResult hitResult) {
+  protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+      InteractionHand hand, BlockHitResult hitResult) {
     if (level.isClientSide()) {
       return InteractionResult.SUCCESS;
     }
@@ -205,10 +209,9 @@ public class BlockLandmark extends Block implements EntityBlock {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-      TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip.faktocraft.landmark").withStyle(ChatFormatting.GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("tooltip.faktocraft.landmark").withStyle(ChatFormatting.GRAY));
   }
 
   @Override

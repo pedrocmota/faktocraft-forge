@@ -5,7 +5,7 @@ import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.bar.GuiFluidBarVertical;
 import com.faktocraft.common.screen.bar.GuiHeatBar;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenNuclearReactor extends BetterScreen<MenuNuclearReactor> {
@@ -25,7 +25,7 @@ public class ScreenNuclearReactor extends BetterScreen<MenuNuclearReactor> {
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/nuclear_reactor.png");
+  public Identifier getGuiLocation() {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, "textures/gui/container/nuclear_reactor.png");
   }
 }

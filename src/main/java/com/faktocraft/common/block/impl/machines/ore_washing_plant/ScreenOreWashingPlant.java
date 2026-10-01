@@ -5,7 +5,7 @@ import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.bar.GuiFluidBarVertical;
 import com.faktocraft.common.screen.progress.GuiProgressOreWashing;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenOreWashingPlant extends BetterScreen<MenuOreWashingPlant> {
@@ -28,7 +28,7 @@ public class ScreenOreWashingPlant extends BetterScreen<MenuOreWashingPlant> {
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/ore_washing_plant.png");
+  public Identifier getGuiLocation() {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, "textures/gui/container/ore_washing_plant.png");
   }
 }

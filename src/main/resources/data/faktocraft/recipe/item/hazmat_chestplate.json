@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "r": "#c:rubber",
+    "p": "faktocraft:plastic"
+  },
+  "pattern": [
+    "r r",
+    "rpr",
+    "rpr"
+  ],
+  "result": {
+    "id": "faktocraft:hazmat_chestplate"
+  }
+}

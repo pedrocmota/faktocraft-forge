@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:electronic_circuit",
+    "#c:dusts/redstone",
+    "minecraft:sugar"
+  ],
+  "result": {
+    "id": "faktocraft:logistics_throughput_upgrade",
+    "count": 1
+  }
+}

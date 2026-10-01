@@ -5,7 +5,7 @@ import com.faktocraft.common.screen.button.GuiExpButton;
 import com.faktocraft.common.screen.button.GuiInfoButton;
 import com.faktocraft.common.screen.widgets.GuiElement;
 import com.faktocraft.common.screen.widgets.GuiUpgrades;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -54,8 +54,8 @@ public class PanelScreen<T extends FaktocraftMenu> extends BaseScreen<T> {
   }
 
   @Override
-  protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
-    super.renderTooltip(graphics, mouseX, mouseY);
+  protected void extractTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    super.extractTooltip(graphics, mouseX, mouseY);
     for (AbstractWidget widget : component) {
       if (widget instanceof GuiElement guiElement) {
         guiElement.renderWidgetToolTip(this, graphics, mouseX, mouseY);

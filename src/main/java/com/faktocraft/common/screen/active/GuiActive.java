@@ -5,8 +5,8 @@ import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.widgets.GuiElement;
 import com.faktocraft.common.util.Constants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import java.util.function.BooleanSupplier;
 
 public class GuiActive extends GuiElement {
@@ -25,7 +25,7 @@ public class GuiActive extends GuiElement {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     if (active.getAsBoolean()) {
       blit(graphics, getLeftOffset(), getTopOffset(), progressType.getActiveOffsetLeft(),
           progressType.getActiveOffsetTop(), progressType.getActiveWidth(), progressType.getActiveHeight());
@@ -38,7 +38,7 @@ public class GuiActive extends GuiElement {
   }
 
   @Override
-  public ResourceLocation getResourceLocation() {
+  public Identifier getResourceLocation() {
     return Constants.PROCESS;
   }
 }

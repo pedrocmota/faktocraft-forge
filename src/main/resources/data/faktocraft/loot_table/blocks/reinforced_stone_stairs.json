@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:reinforced_stone_stairs"
+        }
+      ],
+      "name": "reinforced_stone_stairs",
+      "rolls": 1
+    }
+  ]
+}

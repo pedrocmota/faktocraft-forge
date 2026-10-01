@@ -1,5 +1,11 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.faktocraft.common.block.impl.cable.BlockBreaker;
 import com.faktocraft.common.block.impl.cable.BlockEntityBreaker;
 import com.faktocraft.common.block.impl.pipe.IValveHolder;
@@ -7,10 +13,18 @@ import com.faktocraft.common.network.ModNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
-import java.util.function.Supplier;
 
-public record PacketRedstoneControl(BlockPos blockPos, boolean redstoneOnly) {
+public record PacketRedstoneControl(BlockPos blockPos, boolean redstoneOnly) implements CustomPacketPayload {
+
+  public static final Type<PacketRedstoneControl> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_redstone_control"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketRedstoneControl> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketRedstoneControl::decode);
+
+  @Override
+  public Type<PacketRedstoneControl> type() {
+    return TYPE;
+  }
 
   public static void encode(PacketRedstoneControl msg, FriendlyByteBuf buf) {
     buf.writeBlockPos(msg.blockPos);
@@ -21,9 +35,9 @@ public record PacketRedstoneControl(BlockPos blockPos, boolean redstoneOnly) {
     return new PacketRedstoneControl(buf.readBlockPos(), buf.readBoolean());
   }
 
-  public static void handle(PacketRedstoneControl msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> {
-      ServerPlayer sender = ctx.get().getSender();
+  public static void handle(PacketRedstoneControl msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> {
+      ServerPlayer sender = ctx.getSender();
       if (sender == null) {
         return;
       }
@@ -47,6 +61,6 @@ public record PacketRedstoneControl(BlockPos blockPos, boolean redstoneOnly) {
         }
       });
     });
-    ctx.get().setPacketHandled(true);
+    ctx.setPacketHandled(true);
   }
 }

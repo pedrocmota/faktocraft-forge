@@ -8,7 +8,7 @@ import com.faktocraft.common.screen.bar.GuiFluidBarVertical;
 import com.faktocraft.common.screen.progress.GuiProgressArrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenCanningMachine extends BetterScreen<MenuCanningMachine> {
@@ -33,7 +33,7 @@ public class ScreenCanningMachine extends BetterScreen<MenuCanningMachine> {
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/canning_machine.png");
+  public Identifier getGuiLocation() {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, "textures/gui/container/canning_machine.png");
   }
 }

@@ -21,6 +21,7 @@ import com.faktocraft.common.network.packet.PacketExperience;
 import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.recipe.impl.ThermalCentrifugingRecipe;
 import com.faktocraft.common.registries.ModRecipeType;
+import com.faktocraft.common.util.RecipeUtil;
 import com.faktocraft.common.registries.ModSounds;
 import com.faktocraft.common.registries.machines.M3Registry;
 import com.faktocraft.common.util.EnergyCosts;
@@ -61,11 +62,10 @@ public class BlockEntityThermalCentrifuge extends FaktocraftBlockEntity
   }
 
   protected Optional<ThermalCentrifugingRecipe> getRecipe(ItemStack input) {
-    if (!(level instanceof ServerLevel serverLevel)) {
+    if (!(level instanceof ServerLevel)) {
       return Optional.empty();
     }
-    return serverLevel.getRecipeManager().getRecipeFor(ModRecipeType.THERMAL_CENTRIFUGING,
-        MachineRecipeInput.of(input), level);
+    return RecipeUtil.findRecipe(level, ModRecipeType.THERMAL_CENTRIFUGING, MachineRecipeInput.of(input));
   }
 
   @Override
@@ -261,12 +261,12 @@ public class BlockEntityThermalCentrifuge extends FaktocraftBlockEntity
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    this.activeState = tag.getBoolean("active");
+    this.activeState = tag.getBooleanOr("active", false);
     if (tag.contains("progress")) {
-      progress.load(tag.getCompound("progress"));
+      progress.load(tag.getCompoundOrEmpty("progress"));
     }
     if (tag.contains("tempLevel")) {
-      tempLevel.load(tag.getCompound("tempLevel"));
+      tempLevel.load(tag.getCompoundOrEmpty("tempLevel"));
     }
   }
 

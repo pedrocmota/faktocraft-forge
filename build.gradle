@@ -1,9 +1,14 @@
 plugins {
+    id 'java-library'
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
     id 'checkstyle'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'net.neoforged.moddev' version '2.0.147'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
 }
 
 version = "${minecraft_version}-${mod_version}"
@@ -13,56 +18,69 @@ base {
     archivesName = mod_id
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
-minecraft {
-    mappings channel: mapping_channel, version: mapping_version
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+    exclude 'src/generated/**/.cache'
+}
 
-    copyIdeResources = true
+if (project.hasProperty('buildRoot')) {
+    layout.buildDirectory = file(project.property('buildRoot').toString())
+}
+
+neoForge {
+    version = project.neo_version
 
     runs {
         configureEach {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
         }
 
         client {
-            property 'forge.enabledGameTestNamespaces', mod_id
+            client()
+            gameDirectory = project.file('run')
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            if (project.hasProperty('quickPlay')) {
+                programArguments.addAll '--quickPlaySingleplayer', project.quickPlay.toString()
+            }
         }
 
         server {
-            property 'forge.enabledGameTestNamespaces', mod_id
-            args '--nogui'
+            server()
+            gameDirectory = project.file('run')
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         gameTestServer {
-            workingDirectory project.file('run-gametest')
-            property 'forge.enabledGameTestNamespaces', mod_id
-            property 'faktocraft.energyAudit', (project.findProperty('energyAudit') ?: 'false')
-            property 'faktocraft.testFilter', (project.findProperty('tests') ?: '')
+            type = 'gameTestServer'
+            gameDirectory = project.file('run-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'faktocraft.energyAudit', (project.findProperty('energyAudit') ?: 'false').toString()
+            systemProperty 'faktocraft.testFilter', (project.findProperty('tests') ?: '').toString()
+            systemProperty 'faktocraft.legacyFixture', (project.findProperty('legacyFixture') ?: '').toString()
         }
 
         data {
-            workingDirectory project.file('run-data')
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            clientData()
+            gameDirectory = project.file('run-data')
+            programArguments.addAll '--mod', project.mod_id, '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
         }
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-tasks.matching { it.name == 'prepareRuns' }.configureEach { dependsOn 'createSrgToMcp' }
-
 checkstyle {
-    toolVersion = '10.12.4'
+    toolVersion = '11.1.0'
     configFile = file('config/checkstyle/checkstyle.xml')
     ignoreFailures = true
 }
@@ -78,14 +96,14 @@ repositories {
     }
     maven {
         name = 'Modrinth'
-        url 'https://api.modrinth.com/maven'
+        url = 'https://api.modrinth.com/maven'
         content {
             includeGroup 'maven.modrinth'
         }
     }
     maven {
         name = 'Shedaniel'
-        url 'https://maven.shedaniel.me/'
+        url = 'https://maven.shedaniel.me/'
         content {
             includeGroup 'me.shedaniel'
             includeGroup 'me.shedaniel.cloth'
@@ -93,38 +111,27 @@ repositories {
     }
     maven {
         name = 'Architectury'
-        url 'https://maven.architectury.dev/'
+        url = 'https://maven.architectury.dev/'
         content {
             includeGroup 'dev.architectury'
-        }
-    }
-    maven {
-        name = 'WTHIT'
-        url 'https://maven2.bai.lol'
-        content {
-            includeGroup 'mcp.mobius.waila'
-            includeGroup 'lol.bai'
         }
     }
 }
 
 def modProfiles = [
     default    : ['jei', 'jade'],
-    alternative: ['rei', 'wthit'],
-    production : ['embeddium', 'distanthorizons', 'jei', 'jade', 'oculus'],
+    alternative: ['rei', 'architectury', 'clothconfig', 'jade'],
+    production : ['sodium', 'distanthorizons', 'jei', 'jade'],
 ]
 
 def modRuntimeDeps = [
-    jei            : ["mezz.jei:jei-1.20.1-forge:${jei_version}"],
+    jei            : ["mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"],
     jade           : ["maven.modrinth:jade:${jade_version}"],
-    rei            : ["me.shedaniel:RoughlyEnoughItems-forge:${rei_version}",
-                      "dev.architectury:architectury-forge:${architectury_version}",
-                      "me.shedaniel.cloth:cloth-config-forge:${cloth_config_version}"],
-    wthit          : ["mcp.mobius.waila:wthit:forge-${wthit_version}",
-                      "lol.bai:badpackets:forge-${badpackets_version}"],
-    embeddium      : ["maven.modrinth:embeddium:${embeddium_version}"],
+    rei            : ["maven.modrinth:rei:${rei_version}+neoforge"],
+    architectury   : ["maven.modrinth:architectury-api:${architectury_version}"],
+    clothconfig    : ["maven.modrinth:cloth-config:${cloth_config_version}"],
+    sodium         : ["maven.modrinth:sodium:${sodium_version}"],
     distanthorizons: ["maven.modrinth:distanthorizons:${distant_horizons_version}"],
-    oculus         : ["maven.modrinth:oculus:${oculus_version}"],
 ]
 
 def modProfile = (project.findProperty('profile') ?: 'default').toString()
@@ -133,32 +140,30 @@ if (!modProfiles.containsKey(modProfile)) {
 }
 logger.lifecycle("Mod profile: ${modProfile} -> ${modProfiles[modProfile].join(', ')}")
 
-dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
 
-    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-common-api:${jei_version}"))
-    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-forge-api:${jei_version}"))
-    compileOnly(fg.deobf("maven.modrinth:jade:${jade_version}"))
+dependencies {
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    compileOnly "maven.modrinth:jade:${jade_version}"
+    compileOnly "me.shedaniel:RoughlyEnoughItems-api-neoforge:${rei_version}"
+    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-neoforge:${rei_version}"
 
     modProfiles[modProfile].each { mod ->
         modRuntimeDeps[mod].each { coordinate ->
-            runtimeOnly(fg.deobf(coordinate)) { transitive = false }
+            localRuntime(coordinate) { transitive = false }
         }
     }
-
-    compileOnly(fg.deobf("me.shedaniel:RoughlyEnoughItems-api-forge:${rei_version}"))
-    compileOnly(fg.deobf("me.shedaniel:RoughlyEnoughItems-default-plugin-forge:${rei_version}"))
-    compileOnly(fg.deobf("dev.architectury:architectury-forge:${architectury_version}"))
-    compileOnly("me.shedaniel.cloth:basic-math:0.6.1")
-    compileOnly(fg.deobf("mcp.mobius.waila:wthit-api:forge-${wthit_version}"))
 }
 
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
-            forge_version          : forge_version,
-            forge_version_range    : forge_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
             loader_version_range   : loader_version_range,
             mod_id                 : mod_id,
             mod_name               : mod_name,
@@ -169,7 +174,7 @@ tasks.named('processResources', ProcessResources).configure {
     ]
     inputs.properties replaceProperties
 
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+    filesMatching(['META-INF/neoforge.mods.toml']) {
         expand replaceProperties + [project: project]
     }
 }
@@ -186,9 +191,16 @@ tasks.named('jar', Jar).configure {
         ])
     }
     from('LICENSE')
-    finalizedBy 'reobfJar'
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.compilerArgs.addAll(['-Xmaxerrs', '5000', '-Xmaxwarns', '10'])
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
 }

@@ -1,5 +1,11 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.faktocraft.common.item.impl.tools.Prospector;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.scan.ScanChannel;
@@ -8,10 +14,18 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
-import java.util.function.Supplier;
 
-public record PacketProspectorPoll(int knownCode, int knownRevision) {
+public record PacketProspectorPoll(int knownCode, int knownRevision) implements CustomPacketPayload {
+
+  public static final Type<PacketProspectorPoll> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_prospector_poll"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketProspectorPoll> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketProspectorPoll::decode);
+
+  @Override
+  public Type<PacketProspectorPoll> type() {
+    return TYPE;
+  }
 
   public static void encode(PacketProspectorPoll msg, FriendlyByteBuf buf) {
     buf.writeVarInt(msg.knownCode);
@@ -22,9 +36,9 @@ public record PacketProspectorPoll(int knownCode, int knownRevision) {
     return new PacketProspectorPoll(buf.readVarInt(), buf.readInt());
   }
 
-  public static void handle(PacketProspectorPoll msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> {
-      ServerPlayer player = ctx.get().getSender();
+  public static void handle(PacketProspectorPoll msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> {
+      ServerPlayer player = ctx.getSender();
       if (player == null || !(player.level() instanceof ServerLevel level)) {
         return;
       }
@@ -40,6 +54,6 @@ public record PacketProspectorPoll(int knownCode, int knownRevision) {
       ModNetworking.sendToPlayer(player,
           new PacketProspectorState(code, channel.revision(), channel.collectDimension(level)));
     });
-    ctx.get().setPacketHandled(true);
+    ctx.setPacketHandled(true);
   }
 }

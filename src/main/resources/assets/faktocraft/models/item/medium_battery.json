@@ -1,29 +1,3 @@
 {
-  "parent": "faktocraft:item/battery/medium_battery_0",
-  "overrides": [
-    {
-      "predicate": {
-        "faktocraft:charge_ratio": 0.001
-      },
-      "model": "faktocraft:item/battery/medium_battery_1"
-    },
-    {
-      "predicate": {
-        "faktocraft:charge_ratio": 0.5
-      },
-      "model": "faktocraft:item/battery/medium_battery_2"
-    },
-    {
-      "predicate": {
-        "faktocraft:charge_ratio": 0.75
-      },
-      "model": "faktocraft:item/battery/medium_battery_3"
-    },
-    {
-      "predicate": {
-        "faktocraft:charge_ratio": 0.999
-      },
-      "model": "faktocraft:item/battery/medium_battery_4"
-    }
-  ]
+  "parent": "faktocraft:item/battery/medium_battery_0"
 }

@@ -7,7 +7,7 @@ import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.widgets.GuiElement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import java.util.List;
@@ -26,7 +26,7 @@ public class GuiHeatBar extends GuiElement {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     int x = getX();
     int y = getY();
     graphics.fill(x, y, x + WIDTH, y + HEIGHT, 0xFF1E1E1E);
@@ -73,7 +73,7 @@ public class GuiHeatBar extends GuiElement {
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (!isMouseOver(mouseX, mouseY)) {
       return;
     }
@@ -89,6 +89,6 @@ public class GuiHeatBar extends GuiElement {
         Component.translatable(prefix + "heating", reactor.getHeatingPerTick())
             .withStyle(ChatFormatting.RED),
         Component.translatable(prefix + "cooling", reactor.getCoolingPerTick()).withStyle(ChatFormatting.AQUA));
-    graphics.renderComponentTooltip(Minecraft.getInstance().font, lines, mouseX, mouseY);
+    graphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, lines, mouseX, mouseY);
   }
 }

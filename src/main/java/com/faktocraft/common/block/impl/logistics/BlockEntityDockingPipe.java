@@ -1,5 +1,7 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.util.PlayerMessages;
+import com.faktocraft.common.util.LegacyNbtBlockEntity;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.config.ModConfig;
 import net.minecraft.core.BlockPos;
@@ -10,14 +12,14 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BlockEntityDockingPipe extends BlockEntity implements com.faktocraft.common.cover.ICoverHost {
+public abstract class BlockEntityDockingPipe extends LegacyNbtBlockEntity
+    implements com.faktocraft.common.cover.ICoverHost {
 
   @org.jetbrains.annotations.Nullable
   private BlockState cover;
@@ -42,16 +44,16 @@ public abstract class BlockEntityDockingPipe extends BlockEntity implements com.
   }
 
   @Override
-  public net.minecraftforge.client.model.data.ModelData getModelData() {
+  public net.neoforged.neoforge.model.data.ModelData getModelData() {
     return com.faktocraft.common.cover.CoverSupport.modelData(cover, coverHoles);
   }
 
   @Override
   public void onDataPacket(net.minecraft.network.Connection connection,
-      net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket packet) {
+      net.minecraft.world.level.storage.ValueInput input) {
     BlockState previousCover = cover;
     int previousHoles = coverHoles;
-    super.onDataPacket(connection, packet);
+    super.onDataPacket(connection, input);
     if (previousCover != cover || previousHoles != coverHoles) {
       com.faktocraft.common.cover.CoverSupport.refreshClientModel(this);
     }
@@ -141,7 +143,7 @@ public abstract class BlockEntityDockingPipe extends BlockEntity implements com.
     List<Direction> candidates = inventoryDirections();
     if (candidates.size() < 2) {
       if (player != null) {
-        player.displayClientMessage(Component.translatable("logistics." + Faktocraft.MODID
+        PlayerMessages.display(player, Component.translatable("logistics." + Faktocraft.MODID
             + (candidates.isEmpty() ? ".chassis.inventory_none" : ".chassis.inventory_single")), true);
       }
       return false;
@@ -153,7 +155,7 @@ public abstract class BlockEntityDockingPipe extends BlockEntity implements com.
     LogisticsCores.markDirtyNear(level, worldPosition);
     if (player != null) {
       BlockPos target = worldPosition.relative(selectedInventory);
-      player.displayClientMessage(Component.translatable("logistics." + Faktocraft.MODID
+      PlayerMessages.display(player, Component.translatable("logistics." + Faktocraft.MODID
           + ".chassis.inventory_selected",
           level.getBlockState(target).getBlock().getName(), selectedInventory.getName()), true);
     }
@@ -188,14 +190,14 @@ public abstract class BlockEntityDockingPipe extends BlockEntity implements com.
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    timeoutTicks = tag.contains("timeout") ? tag.getInt("timeout") : -1;
-    selectedInventory = tag.contains("invDir") ? Direction.from3DDataValue(tag.getInt("invDir")) : null;
+    timeoutTicks = tag.contains("timeout") ? tag.getIntOr("timeout", 0) : -1;
+    selectedInventory = tag.contains("invDir") ? Direction.from3DDataValue(tag.getIntOr("invDir", 0)) : null;
     cover = com.faktocraft.common.cover.CoverSupport.load(tag);
     coverHoles = com.faktocraft.common.cover.CoverSupport.loadHoles(tag);
   }
 
   public CompoundTag copyConfig() {
-    CompoundTag tag = saveWithoutMetadata();
+    CompoundTag tag = saveWithoutMetadata(com.faktocraft.common.util.NbtBridge.registries());
     tag.remove("invDir");
     tag.remove("cover");
     tag.remove("coverHoles");

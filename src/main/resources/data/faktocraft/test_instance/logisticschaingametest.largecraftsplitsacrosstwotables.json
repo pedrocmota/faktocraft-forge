@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:function",
+  "function": "faktocraft:logisticschaingametest.largecraftsplitsacrosstwotables",
+  "environment": "minecraft:default",
+  "structure": "faktocraft:gametest_platform",
+  "max_ticks": 3600,
+  "sky_access": true
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft_pipes",
+  "ingredients": [
+    "faktocraft:chassis_pipe_1",
+    "faktocraft:advanced_circuit"
+  ],
+  "result": {
+    "id": "faktocraft:chassis_pipe_2",
+    "count": 1
+  }
+}

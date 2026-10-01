@@ -1,5 +1,7 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import net.minecraft.world.phys.Vec3;
+import com.faktocraft.common.util.PlayerMessages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
@@ -138,7 +140,7 @@ public abstract class MenuPipeRecipes extends AbstractContainerMenu {
       }
       case ACTION_COPY_CONFIG -> {
         ConfigClipboard.put(player, clipboardKind(), pipe.copyConfig());
-        player.displayClientMessage(
+        PlayerMessages.display(player,
             net.minecraft.network.chat.Component.translatable("chat.faktocraft.config_copied"), true);
       }
       case ACTION_COPY_ENTRY -> {
@@ -149,25 +151,25 @@ public abstract class MenuPipeRecipes extends AbstractContainerMenu {
         CompoundTag payload = new CompoundTag();
         payload.put("entry", entry);
         ConfigClipboard.put(player, clipboardKind(), payload);
-        player.displayClientMessage(
+        PlayerMessages.display(player,
             net.minecraft.network.chat.Component.translatable("chat.faktocraft.recipe_copied"), true);
       }
       case ACTION_PASTE_CONFIG -> {
         CompoundTag payload = ConfigClipboard.get(player, clipboardKind());
         if (payload == null) {
-          player.displayClientMessage(
+          PlayerMessages.display(player,
               net.minecraft.network.chat.Component.translatable("chat.faktocraft.config_paste_empty"), true);
           return true;
         }
         if (payload.contains("entry")) {
-          boolean pasted = pasteEntry(payload.getCompound("entry"));
-          player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+          boolean pasted = pasteEntry(payload.getCompoundOrEmpty("entry"));
+          PlayerMessages.display(player, net.minecraft.network.chat.Component.translatable(
               pasted ? "chat.faktocraft.recipe_pasted" : "chat.faktocraft.recipe_paste_full"), true);
           return true;
         }
         pipe.pasteConfig(payload);
         editIndex = -1;
-        player.displayClientMessage(
+        PlayerMessages.display(player,
             net.minecraft.network.chat.Component.translatable("chat.faktocraft.config_pasted"), true);
       }
       default -> {
@@ -185,6 +187,6 @@ public abstract class MenuPipeRecipes extends AbstractContainerMenu {
   @Override
   public boolean stillValid(Player player) {
     return pipe != null && !pipe.isRemoved()
-        && player.distanceToSqr(pipe.getBlockPos().getCenter()) <= 64.0;
+        && player.distanceToSqr(Vec3.atCenterOf(pipe.getBlockPos())) <= 64.0;
   }
 }

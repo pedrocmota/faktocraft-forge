@@ -1,5 +1,10 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.network.ModNetworking;
 import com.faktocraft.common.network.packet.PacketMenuAction;
@@ -7,7 +12,7 @@ import com.faktocraft.common.screen.button.GuiCopyPasteButton;
 import com.faktocraft.common.screen.button.GuiHelpButton;
 import com.faktocraft.common.util.Constants;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -17,8 +22,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import org.lwjgl.glfw.GLFW;
+import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -33,7 +37,7 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
   private static final int INV_HEIGHT = 82;
   private static final int CONTENT_GAP = 14;
   private static final int HELP_MAX_H = 150;
-  private static final String SLOT_Y_FIELD = "f_40221_";
+  private static final String SLOT_Y_FIELD = "y";
 
   private static final int TOP_BAND = 120;
   private static final int BOTTOM_BAND = 100;
@@ -92,6 +96,7 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
   private boolean draggingHelpBar;
   private double helpBarGrab;
   private int invY;
+  private int dynamicHeight = MAX_HEIGHT;
 
   private int listScroll;
 
@@ -115,9 +120,7 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
   private double dragY;
 
   protected ScreenPipeRecipes(M menu, Inventory inventory, Component title, int width) {
-    super(menu, inventory, title);
-    this.imageWidth = width;
-    this.imageHeight = MAX_HEIGHT;
+    super(menu, inventory, title, width, MAX_HEIGHT);
     this.invY = menu.playerInvY();
     this.inventoryLabelX = MenuPipeRecipes.PLAYER_INV_X - 1;
     this.inventoryLabelY = invY - 11;
@@ -143,11 +146,11 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
 
   protected abstract void buildDetailWidgets(int left, int top);
 
-  protected abstract void renderDetailBg(GuiGraphics graphics);
+  protected abstract void renderDetailBg(GuiGraphicsExtractor graphics);
 
-  protected abstract void renderDetailLabels(GuiGraphics graphics);
+  protected abstract void renderDetailLabels(GuiGraphicsExtractor graphics);
 
-  protected abstract void renderDetailHover(GuiGraphics graphics, int mouseX, int mouseY);
+  protected abstract void renderDetailHover(GuiGraphicsExtractor graphics, int mouseX, int mouseY);
 
   protected abstract boolean detailMouseClicked(double mouseX, double mouseY, int button);
 
@@ -201,11 +204,11 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
     if (addButton != null) {
       addButton.setY(newTop + addButtonY());
     }
-    if (newInvY == invY && newHeight == this.imageHeight && shift == 0) {
+    if (newInvY == invY && newHeight == getImageHeight() && shift == 0) {
       return;
     }
     invY = newInvY;
-    this.imageHeight = newHeight;
+    dynamicHeight = newHeight;
     this.topPos = newTop;
     this.inventoryLabelY = invY - 11;
     for (Slot slot : this.menu.slots) {
@@ -225,6 +228,17 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
         }
       }
     }
+  }
+
+  @Override
+  public int getImageHeight() {
+    return dynamicHeight;
+  }
+
+  @Override
+  protected boolean hasClickedOutside(double mouseX, double mouseY, int guiLeft, int guiTop) {
+    return mouseX < guiLeft || mouseY < guiTop || mouseX >= guiLeft + this.imageWidth
+        || mouseY >= guiTop + getImageHeight();
   }
 
   public boolean isEditing() {
@@ -279,7 +293,7 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
           Component.empty());
       search.setBordered(false);
       search.setMaxLength(48);
-      search.setTextColor(0xFFFFFF);
+      search.setTextColor(0xFFFFFFFF);
       search.setValue(query);
       search.setHint(Component.translatable(key("search_hint")).withStyle(ChatFormatting.GRAY));
       search.setResponder(text -> {
@@ -395,7 +409,7 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
         && mouseY >= this.topPos + HELP_Y - 3 && mouseY < this.topPos + helpBottom() + 3;
   }
 
-  private void renderHelp(GuiGraphics graphics) {
+  private void renderHelp(GuiGraphicsExtractor graphics) {
     int bottom = helpBottom();
     frame(graphics, LIST_X, HELP_Y - 3, LIST_W, bottom - HELP_Y + 6);
     graphics.fill(LIST_X + 1, HELP_Y - 2, LIST_X + LIST_W - 1, bottom + 2, CARD_FILL);
@@ -406,7 +420,7 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
         break;
       }
       if (line.text() != null) {
-        graphics.drawString(this.font, line.text(), HELP_X, y, line.color(), false);
+        graphics.text(this.font, line.text(), HELP_X, y, GuiUtil.opaque(line.color()), false);
       }
       y += line.height();
     }
@@ -514,7 +528,7 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
 
   private int rowAt(double mouseX, double mouseY) {
     int left = (this.width - this.imageWidth) / 2;
-    int top = (this.height - this.imageHeight) / 2;
+    int top = (this.height - getImageHeight()) / 2;
     double relX = mouseX - left - LIST_X;
     double relY = mouseY - top - LIST_Y;
     if (relX < 0 || relX >= LIST_W || relY < 0 || relY >= visibleRows() * ROW_H
@@ -540,14 +554,17 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
   }
 
   private int dropRow(double mouseY) {
-    int top = (this.height - this.imageHeight) / 2;
+    int top = (this.height - getImageHeight()) / 2;
     double relY = mouseY - top - LIST_Y;
     int row = listScroll + (int) Math.round(relY / ROW_H);
     return Math.max(0, Math.min(visible.size(), row));
   }
 
   @Override
-  public boolean mouseClicked(double mouseX, double mouseY, int button) {
+  public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int button = GuiUtil.legacyButton(event);
     if (help) {
       if (button == 0 && overHelpBar(mouseX, mouseY)) {
         draggingHelpBar = true;
@@ -557,13 +574,13 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
         dragHelpBarTo(mouseY);
         return true;
       }
-      return super.mouseClicked(mouseX, mouseY, button);
+      return super.mouseClicked(event, doubleClick);
     }
     if (isEditing()) {
       if (detailMouseClicked(mouseX, mouseY, button)) {
         return true;
       }
-      return super.mouseClicked(mouseX, mouseY, button);
+      return super.mouseClicked(event, doubleClick);
     }
     int relX = (int) (mouseX - this.leftPos);
     if (hasScrollBar() && button == 0 && relX >= BAR_X && relX < BAR_X + 5
@@ -595,11 +612,12 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
       return true;
     }
     cancelDrag();
-    return super.mouseClicked(mouseX, mouseY, button);
+    return super.mouseClicked(event, doubleClick);
   }
 
   @Override
-  public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY0) {
+  public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY0) {
+    double mouseY = event.y();
     if (draggingHelpBar) {
       dragHelpBarTo(mouseY);
       return true;
@@ -615,11 +633,13 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
       }
       return true;
     }
-    return super.mouseDragged(mouseX, mouseY, button, dragX, dragY0);
+    return super.mouseDragged(event, dragX, dragY0);
   }
 
   @Override
-  public boolean mouseReleased(double mouseX, double mouseY, int button) {
+  public boolean mouseReleased(MouseButtonEvent event) {
+    double mouseY = event.y();
+    int button = GuiUtil.legacyButton(event);
     if (draggingHelpBar && button == 0) {
       draggingHelpBar = false;
       return true;
@@ -648,35 +668,36 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
       }
       return true;
     }
-    return super.mouseReleased(mouseX, mouseY, button);
+    return super.mouseReleased(event);
   }
 
   @Override
-  public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+  public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double delta) {
     if (help) {
       if (overHelp(mouseX, mouseY)) {
         helpScroll = Math.max(0, Math.min(helpMaxScroll(), helpScroll - (int) Math.signum(delta)));
         return true;
       }
-      return super.mouseScrolled(mouseX, mouseY, delta);
+      return super.mouseScrolled(mouseX, mouseY, scrollX, delta);
     }
     if (isEditing()) {
       if (detailMouseScrolled(mouseX, mouseY, delta)) {
         return true;
       }
-      return super.mouseScrolled(mouseX, mouseY, delta);
+      return super.mouseScrolled(mouseX, mouseY, scrollX, delta);
     }
     int maxScroll = Math.max(0, visible.size() - visibleRows());
     if (maxScroll > 0) {
       listScroll = Math.max(0, Math.min(maxScroll, listScroll - (int) Math.signum(delta)));
       return true;
     }
-    return super.mouseScrolled(mouseX, mouseY, delta);
+    return super.mouseScrolled(mouseX, mouseY, scrollX, delta);
   }
 
   @Override
-  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-    if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+  public boolean keyPressed(KeyEvent event) {
+    int keyCode = event.key();
+    if (keyCode == InputConstants.KEY_ESCAPE) {
       if (help) {
         toggleHelp(false);
         return true;
@@ -687,44 +708,47 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
       }
     }
     if (search != null && search.isFocused()) {
-      if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+      if (keyCode == InputConstants.KEY_ESCAPE) {
         search.setFocused(false);
         return true;
       }
-      if (search.keyPressed(keyCode, scanCode, modifiers)) {
+      if (search.keyPressed(event)) {
         return true;
       }
 
-      return keyCode != GLFW.GLFW_KEY_TAB;
+      return keyCode != InputConstants.KEY_TAB;
     }
-    return super.keyPressed(keyCode, scanCode, modifiers);
+    return super.keyPressed(event);
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    renderBackground(graphics);
-    super.render(graphics, mouseX, mouseY, partialTick);
-    renderTooltip(graphics, mouseX, mouseY);
+  public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    super.extractRenderState(graphics, mouseX, mouseY, partialTick);
     if (help) {
       return;
     }
     if (isEditing()) {
       renderDetailHover(graphics, mouseX, mouseY);
     } else if (copyIconRow(mouseX, mouseY) >= 0) {
-      graphics.renderTooltip(this.font, Component.translatable(key("recipes.copy_one")), mouseX, mouseY);
+      graphics.setTooltipForNextFrame(this.font, Component.translatable(key("recipes.copy_one")), mouseX, mouseY);
     }
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+  public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    renderBg(graphics, partialTick, mouseX, mouseY);
+    super.extractContents(graphics, mouseX, mouseY, partialTick);
+  }
+
+  protected void renderBg(GuiGraphicsExtractor graphics, float partialTick, int mouseX, int mouseY) {
 
     int band = (this.imageWidth + 1) / 2;
     int rightU = 176 - band;
     int rightX = this.leftPos + this.imageWidth - band;
     int texH = textureHeight();
-    int topBand = Math.min(TOP_BAND, this.imageHeight - BOTTOM_BAND);
+    int topBand = Math.min(TOP_BAND, getImageHeight() - BOTTOM_BAND);
     blitBand(graphics, band, rightU, rightX, this.topPos, 0, topBand);
-    int bottomY = this.topPos + this.imageHeight - BOTTOM_BAND;
+    int bottomY = this.topPos + getImageHeight() - BOTTOM_BAND;
     blitBand(graphics, band, rightU, rightX, bottomY, texH - BOTTOM_BAND, BOTTOM_BAND);
     for (int y = this.topPos + topBand; y < bottomY; y += STRIP_H) {
       blitBand(graphics, band, rightU, rightX, y, STRIP_V, Math.min(STRIP_H, bottomY - y));
@@ -744,7 +768,7 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
     graphics.fill(left + 1, top + 1, left + LIST_W - 1, top + 13, SEARCH_FILL);
   }
 
-  private void renderPlayerInventory(GuiGraphics graphics) {
+  private void renderPlayerInventory(GuiGraphicsExtractor graphics) {
     graphics.fill(this.leftPos + 3, this.topPos + invY - 1, this.leftPos + this.imageWidth - 3,
         this.topPos + invY + 76, 0xFFC6C6C6);
     for (int i = 0; i < 27; i++) {
@@ -755,24 +779,25 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
     }
   }
 
-  private void blitBand(GuiGraphics graphics, int band, int rightU, int rightX, int y, int v, int height) {
-    graphics.blit(getGuiTexture(), this.leftPos, y, 0, v, band, height, 256, 256);
-    graphics.blit(getGuiTexture(), rightX, y, rightU, v, band, height, 256, 256);
+  private void blitBand(GuiGraphicsExtractor graphics, int band, int rightU, int rightX, int y, int v, int height) {
+    graphics.blit(RenderPipelines.GUI_TEXTURED, getGuiTexture(), this.leftPos, y, 0, v, band, height, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, getGuiTexture(), rightX, y, rightU, v, band, height, 256, 256);
   }
 
-  protected abstract net.minecraft.resources.ResourceLocation getGuiTexture();
+  protected abstract net.minecraft.resources.Identifier getGuiTexture();
 
   protected abstract int textureHeight();
 
-  protected void slotFrame(GuiGraphics graphics, int x, int y) {
-    graphics.blit(Constants.PROCESS, this.leftPos + x - 1, this.topPos + y - 1, SLOT_U, SLOT_V, 18, 18, 256, 256);
+  protected void slotFrame(GuiGraphicsExtractor graphics, int x, int y) {
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, this.leftPos + x - 1, this.topPos + y - 1, SLOT_U,
+        SLOT_V, 18, 18, 256, 256);
   }
 
   @Override
-  protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-    graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
-    graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
-        0x404040, false);
+  protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    graphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY, GuiUtil.opaque(0x404040), false);
+    graphics.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
+        GuiUtil.opaque(0x404040), false);
     if (help) {
       renderHelp(graphics);
       return;
@@ -784,22 +809,22 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
     renderList(graphics, mouseX - this.leftPos, mouseY - this.topPos);
   }
 
-  private void renderList(GuiGraphics graphics, int relX, int relY) {
+  private void renderList(GuiGraphicsExtractor graphics, int relX, int relY) {
     int rows = visibleRows();
     int frameBottom = listFrameBottom() - 1;
     frame(graphics, LIST_X, LIST_Y - 2, LIST_W, frameBottom - LIST_Y + 3);
 
     int warningY = frameBottom + 5;
     for (FormattedCharSequence line : warningLines()) {
-      graphics.drawString(this.font, line, LIST_X + (LIST_W - this.font.width(line)) / 2, warningY, 0x404040,
+      graphics.text(this.font, line, LIST_X + (LIST_W - this.font.width(line)) / 2, warningY, GuiUtil.opaque(0x404040),
           false);
       warningY += 10;
     }
     if (visible.isEmpty()) {
       Component empty = Component.translatable(key(
           this.menu.entryCount() == 0 ? "recipes.empty" : "recipes.no_match"));
-      graphics.drawString(this.font, empty, LIST_X + (LIST_W - this.font.width(empty)) / 2,
-          LIST_Y + (rows * ROW_H - 8) / 2, TEXT_DIM, false);
+      graphics.text(this.font, empty, LIST_X + (LIST_W - this.font.width(empty)) / 2,
+          LIST_Y + (rows * ROW_H - 8) / 2, GuiUtil.opaque(TEXT_DIM), false);
       return;
     }
     for (int i = 0; i < rows; i++) {
@@ -829,7 +854,7 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
     }
   }
 
-  private void frame(GuiGraphics graphics, int x, int y, int width, int height) {
+  private void frame(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
     graphics.fill(x, y, x + width, y + height, FRAME_FILL);
     graphics.fill(x, y, x + width, y + 1, FRAME_DARK);
     graphics.fill(x, y, x + 1, y + height, FRAME_DARK);
@@ -837,7 +862,7 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
     graphics.fill(x + width - 1, y, x + width, y + height, FRAME_LIGHT);
   }
 
-  private void drawRow(GuiGraphics graphics, int index, int x, int y, int fill, int border, int copyState) {
+  private void drawRow(GuiGraphicsExtractor graphics, int index, int x, int y, int fill, int border, int copyState) {
     int bottom = y + ROW_H - 2;
     graphics.fill(x, y, x + CARD_W, bottom, fill);
     graphics.fill(x, y, x + CARD_W, y + 1, border);
@@ -846,23 +871,23 @@ public abstract class ScreenPipeRecipes<M extends MenuPipeRecipes> extends Abstr
     graphics.fill(x + CARD_W - 1, y, x + CARD_W, bottom, border);
     ItemStack icon = entryIcon(index);
     if (!icon.isEmpty()) {
-      graphics.renderItem(icon, x + 2, y + 1);
+      graphics.item(icon, x + 2, y + 1);
     }
-    graphics.drawString(this.font,
+    graphics.text(this.font,
         net.minecraft.locale.Language.getInstance().getVisualOrder(
             this.font.substrByWidth(entryLabel(index), CARD_W - 40)),
-        x + 22, y + 5, TEXT, false);
+        x + 22, y + 5, GuiUtil.opaque(TEXT), false);
     if (copyState > 0) {
       GuiCopyPasteButton.drawIcon(graphics, x + CARD_W - 15, y + 2, false, copyState == 2);
     }
   }
 
-  private void renderDrag(GuiGraphics graphics) {
+  private void renderDrag(GuiGraphicsExtractor graphics) {
     int rows = visibleRows();
     int gap = dropRow(dragY) - listScroll;
     int markY = LIST_Y + Math.max(0, Math.min(rows, gap)) * ROW_H - 1;
     graphics.fill(CARD_X, markY, CARD_X + CARD_W, markY + 2, DROP_MARK);
-    int y = (int) Math.round(dragY - (this.height - this.imageHeight) / 2.0) - ROW_H / 2;
+    int y = (int) Math.round(dragY - (this.height - getImageHeight()) / 2.0) - ROW_H / 2;
     y = Math.max(LIST_Y - ROW_H, Math.min(LIST_Y + rows * ROW_H, y));
     drawRow(graphics, visible.get(grabbedRow), CARD_X + 2, y, CARD_HELD_FILL, CARD_HOVER_BORDER, 0);
   }

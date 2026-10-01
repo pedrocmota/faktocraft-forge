@@ -1,12 +1,13 @@
 package com.faktocraft.common.registries;
 
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.faktocraft.common.block.FaktocraftEntityBlock;
 import com.faktocraft.common.block.impl.battery_box.BlockBatteryBox;
 import com.faktocraft.common.block.impl.cable.BlockCable;
 import com.faktocraft.common.block.impl.charge_pad.BlockChargePad;
 import com.faktocraft.common.block.impl.transformer.BlockTransformer;
 import com.faktocraft.common.config.BasicConfig;
+import com.faktocraft.common.item.base.BaseArmor;
 import com.faktocraft.common.item.base.ElectricItem;
 import com.faktocraft.common.item.base.EnergyStorageItem;
 import com.faktocraft.common.item.base.MaterialItem;
@@ -20,14 +21,13 @@ import com.faktocraft.common.item.impl.upgrade.ItemUpgrade;
 import com.faktocraft.common.registries.machines.M1Registry;
 import com.faktocraft.common.registries.machines.M2Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.core.component.DataComponents;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class ModCreativeTab {
-
   private static final Set<String> STORAGE_BLOCKS = Set.of(
       "tin_block", "bronze_block", "silver_block", "steel_block", "lead_block", "plastic_block", "rubber_block");
   private static final Set<String> RUBBER_NATURE = Set.of(
@@ -131,7 +130,7 @@ public class ModCreativeTab {
         .title(Component.translatable("itemGroup.faktocraft." + name))
         .icon(icon);
     if (previousTab != null) {
-      builder.withTabsBefore(new net.minecraft.resources.ResourceLocation("faktocraft", previousTab));
+      builder.withTabsBefore(Identifier.fromNamespaceAndPath("faktocraft", previousTab));
     }
 
     RegistrationHandler.creativeTab(name,
@@ -172,7 +171,7 @@ public class ModCreativeTab {
 
   private static void addFilledFluidCells(CreativeModeTab.Output output) {
     int capacity = com.faktocraft.common.config.ModConfig.server().fluid_cell_capacity;
-    for (net.minecraft.world.level.material.Fluid fluid : net.minecraftforge.registries.ForgeRegistries.FLUIDS) {
+    for (net.minecraft.world.level.material.Fluid fluid : net.minecraft.core.registries.BuiltInRegistries.FLUID) {
       if (fluid == net.minecraft.world.level.material.Fluids.EMPTY
           || !fluid.isSource(fluid.defaultFluidState())) {
         continue;
@@ -221,7 +220,7 @@ public class ModCreativeTab {
   }
 
   private static String idOf(Item item) {
-    ResourceLocation id = ForgeRegistries.ITEMS.getKey(item);
+    Identifier id = BuiltInRegistries.ITEM.getKey(item);
     return id == null ? "" : id.getPath();
   }
 
@@ -273,7 +272,7 @@ public class ModCreativeTab {
       }
       return Group.MISC;
     }
-    if (item instanceof ArmorItem || item instanceof TieredItem || item instanceof ToolItem
+    if (item instanceof BaseArmor || item.components().has(DataComponents.TOOL) || item instanceof ToolItem
         || item instanceof com.faktocraft.common.item.base.DiggerElectricItem
         || item instanceof SwordElectricItem) {
       return Group.EQUIPMENT;

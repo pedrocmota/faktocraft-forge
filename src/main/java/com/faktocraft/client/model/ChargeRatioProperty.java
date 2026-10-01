@@ -2,33 +2,26 @@ package com.faktocraft.client.model;
 
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.item.base.ElectricItem;
-import com.faktocraft.common.registries.ModItems;
-import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.ItemOwner;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
-public class ChargeRatioProperty {
+public class ChargeRatioProperty implements RangeSelectItemModelProperty {
+  public static final Identifier ID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "charge_ratio");
+  public static final ChargeRatioProperty INSTANCE = new ChargeRatioProperty();
+  public static final MapCodec<ChargeRatioProperty> MAP_CODEC = MapCodec.unit(INSTANCE);
 
-  public static final ResourceLocation ID = new ResourceLocation(Faktocraft.MODID, "charge_ratio");
+  @Override
+  public float get(ItemStack stack, @Nullable ClientLevel level, @Nullable ItemOwner owner, int seed) {
+    return ElectricItem.getChargeRatio(stack);
+  }
 
-  public static void register() {
-    ClampedItemPropertyFunction function = (stack, level, entity, seed) -> ElectricItem.getChargeRatio(stack);
-    for (Item item : new Item[] {
-        ModItems.BATTERY,
-        ModItems.ADVANCED_BATTERY,
-        ModItems.MEDIUM_BATTERY,
-        ModItems.ADVANCED_MEDIUM_BATTERY,
-        ModItems.ENERGY_CRYSTAL,
-        ModItems.LAPOTRON_CRYSTAL,
-        ModItems.ADVANCED_ENERGY_CRYSTAL,
-        ModItems.ADVANCED_LAPOTRON_CRYSTAL,
-        ModItems.IRIDIUM_CRYSTAL,
-        ModItems.CHARGING_BATTERY,
-        ModItems.ADVANCED_CHARGING_BATTERY,
-        ModItems.CHARGING_ENERGY_CRYSTAL,
-        ModItems.CHARGING_LAPOTRON_CRYSTAL }) {
-      ItemProperties.register(item, ID, function);
-    }
+  @Override
+  public MapCodec<? extends RangeSelectItemModelProperty> type() {
+    return MAP_CODEC;
   }
 }

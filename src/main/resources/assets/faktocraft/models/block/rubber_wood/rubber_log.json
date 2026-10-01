@@ -1,7 +1,7 @@
 {
-    "parent": "block/cube_column",
-    "textures": {
-        "end": "faktocraft:block/rubber_wood/rubber_log_top",
-        "side": "faktocraft:block/rubber_wood/rubber_log"
-    }
+  "parent": "block/cube_column",
+  "textures": {
+    "end": "faktocraft:block/rubber_wood/rubber_log_top",
+    "side": "faktocraft:block/rubber_wood/rubber_log"
+  }
 }

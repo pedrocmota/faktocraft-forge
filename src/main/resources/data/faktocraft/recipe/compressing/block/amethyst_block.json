@@ -1,0 +1,13 @@
+{
+  "duration": 180,
+  "experience": 0.0,
+  "ingredient": {
+    "count": 4,
+    "tag": "c:gems/amethyst"
+  },
+  "power_cost": 12,
+  "result": {
+    "item": "minecraft:amethyst_block"
+  },
+  "type": "faktocraft:compressing"
+}

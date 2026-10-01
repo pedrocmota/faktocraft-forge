@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "r": "faktocraft:reinforced_stone"
+  },
+  "pattern": [
+    "rrr"
+  ],
+  "result": {
+    "id": "faktocraft:reinforced_stone_slab",
+    "count": 6
+  }
+}

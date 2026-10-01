@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "a": "faktocraft:advanced_circuit",
+    "c": "faktocraft:advanced_machine_casing",
+    "g": "faktocraft:reinforced_glass",
+    "i": "#c:plates/iron",
+    "l": "faktocraft:luminator",
+    "m": "faktocraft:electric_motor"
+  },
+  "pattern": [
+    "igi",
+    "mlm",
+    "cac"
+  ],
+  "result": {
+    "id": "faktocraft:scanner"
+  }
+}

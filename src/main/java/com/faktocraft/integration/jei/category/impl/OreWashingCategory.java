@@ -8,24 +8,23 @@ import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import static com.faktocraft.common.util.Constants.JEI_LARGE_2;
 import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class OreWashingCategory extends AbstractRecipeCategory<OreWashingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "ore_washing");
-  public static final RecipeType<OreWashingRecipe> TYPE = new RecipeType<>(UID, OreWashingRecipe.class);
+  public static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "ore_washing");
+  public static final IRecipeType<OreWashingRecipe> TYPE = IRecipeType.create(UID, OreWashingRecipe.class);
 
   private final LoadingCache<Integer, IDrawableAnimated> progress;
   private final IDrawableAnimated energy;
@@ -36,7 +35,7 @@ public class OreWashingCategory extends AbstractRecipeCategory<OreWashingRecipe>
         "ore_washing",
         guiHelper,
         guiHelper.createDrawable(JEI_LARGE_2, 0, 0, 152, 54),
-        guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M3Registry.ORE_WASHING_PLANT)));
+        guiHelper.createDrawableItemStack(new ItemStack(M3Registry.ORE_WASHING_PLANT)));
     this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
         (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 20, 102, 19, 19).buildAnimated(duration,
             IDrawableAnimated.StartDirection.LEFT, false)));
@@ -50,11 +49,11 @@ public class OreWashingCategory extends AbstractRecipeCategory<OreWashingRecipe>
 
     builder.addSlot(RecipeIngredientRole.INPUT, 11, 12)
         .setFluidRenderer(recipe.getFluidInput().amountMb(), false, 8, 29)
-        .addFluidStack(recipe.getFluidInput().getFluid(), recipe.getFluidInput().amountMb());
+        .add(recipe.getFluidInput().getFluid(), recipe.getFluidInput().amountMb());
 
     recipe.getAcidInput().ifPresent(acid -> builder.addSlot(RecipeIngredientRole.INPUT, 28, 12)
         .setFluidRenderer(acid.amountMb(), false, 8, 29)
-        .addFluidStack(acid.getFluid(), acid.amountMb()));
+        .add(acid.getFluid(), acid.amountMb()));
 
     int resultSize = 0;
     for (ItemStack stack : recipe.getResults()) {
@@ -66,14 +65,14 @@ public class OreWashingCategory extends AbstractRecipeCategory<OreWashingRecipe>
     int i = 0;
     for (ItemStack stack : recipe.getResults()) {
       if (!stack.isEmpty()) {
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 103, (i * 16 + (i == 0 ? 0 : 1)) + startPos).addItemStack(stack);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 103, (i * 16 + (i == 0 ? 0 : 1)) + startPos).add(stack);
         i++;
       }
     }
   }
 
   @Override
-  public void draw(OreWashingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics,
+  public void draw(OreWashingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor graphics,
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 

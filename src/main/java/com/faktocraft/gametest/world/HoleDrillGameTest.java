@@ -1,6 +1,6 @@
 package com.faktocraft.gametest.world;
 
-import com.faktocraft.Faktocraft;
+import com.faktocraft.common.util.NbtBridge;
 import com.faktocraft.common.block.impl.cable.BlockEntityCable;
 import com.faktocraft.common.block.impl.logistics.LogisticsRegistry;
 import com.faktocraft.common.cover.CoverSupport;
@@ -9,7 +9,8 @@ import com.faktocraft.common.cover.ICoverHost;
 import com.faktocraft.common.registries.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -19,18 +20,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class HoleDrillGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
   private static final BlockPos TARGET = new BlockPos(3, 2, 3);
 
   private static BlockState cover(GameTestHelper helper, BlockPos rel) {
-    return helper.getBlockEntity(rel) instanceof ICoverHost host ? host.getCover() : null;
+    return TestUtil.blockEntity(helper, rel) instanceof ICoverHost host ? host.getCover() : null;
   }
 
   private static void drillStone(GameTestHelper helper) {
@@ -132,20 +129,21 @@ public class HoleDrillGameTest {
     helper.assertTrue(state.is(ModBlocks.COPPER_CABLE), "drilled block was not replaced by the cable");
     helper.assertTrue(CoverSupport.isCovered(state), "cable is not flagged as covered");
     helper.assertTrue(Blocks.STONE.defaultBlockState().equals(cover(helper, TARGET)), "cable lost the cover");
-    helper.assertTrue(((ICoverHost) helper.getBlockEntity(TARGET)).getCoverHoles()
+    helper.assertTrue(((ICoverHost) TestUtil.blockEntity(helper, TARGET)).getCoverHoles()
         == (CoverSupport.bit(Direction.NORTH) | CoverSupport.bit(Direction.SOUTH)),
         "cable did not inherit the open sides");
     helper.assertTrue(state.isCollisionShapeFullBlock(level, abs), "covered cable should collide as a full block");
-    helper.assertTrue(state.getLightBlock(level, abs) == CoverSupport.HOLE_LIGHT_BLOCK,
+    helper.assertTrue(state.getLightDampening() == CoverSupport.HOLE_LIGHT_BLOCK,
         "covered cable should let light through the hole");
 
-    CompoundTag saved = helper.getBlockEntity(TARGET).saveWithoutMetadata();
+    CompoundTag saved = TestUtil.blockEntity(helper, TARGET).saveWithoutMetadata(NbtBridge.registries());
     BlockEntityCable reloaded = new BlockEntityCable(abs, state);
     reloaded.load(saved);
     helper.assertTrue(Blocks.STONE.defaultBlockState().equals(reloaded.getCover()), "cover lost after save/load");
 
-    Player player = helper.makeMockSurvivalPlayer();
-    boolean removed = state.onDestroyedByPlayer(level, abs, player, true, state.getFluidState());
+    Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+    boolean removed = state.onDestroyedByPlayer(level, abs, player, player.getMainHandItem(), true,
+        state.getFluidState());
     helper.assertTrue(!removed, "covered cable should handle its own removal");
     helper.assertTrue(helper.getBlockState(TARGET).is(ModBlocks.DRILLED_BLOCK),
         "breaking the cable should leave the drilled block");
@@ -164,7 +162,8 @@ public class HoleDrillGameTest {
     BlockState state = helper.getBlockState(TARGET);
     helper.assertTrue(state.is(LogisticsRegistry.STONE_PIPE) && CoverSupport.isCovered(state),
         "stone pipe not placed as covered");
-    helper.assertTrue(helper.getBlockEntity(TARGET) instanceof ICoverHost, "covered stone pipe has no cover holder");
+    helper.assertTrue(TestUtil.blockEntity(helper, TARGET) instanceof ICoverHost,
+        "covered stone pipe has no cover holder");
     helper.assertTrue(Blocks.STONE.defaultBlockState().equals(cover(helper, TARGET)), "stone pipe lost the cover");
 
     helper.setBlock(TARGET.east(), Blocks.STONE.defaultBlockState());

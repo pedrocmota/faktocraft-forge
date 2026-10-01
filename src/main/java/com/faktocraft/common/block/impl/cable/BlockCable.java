@@ -4,22 +4,29 @@ import com.faktocraft.common.block.VoxelBlock;
 import com.faktocraft.common.energy.EnergyLookup;
 import com.faktocraft.common.energy.provider.EnergyCore;
 import com.faktocraft.common.tier.CableTier;
+import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.wrench.WrenchHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.Nullable;
+import java.util.function.Consumer;
 
 public class BlockCable extends VoxelBlock implements EntityBlock {
-
   private final CableTier cableTier;
 
   public BlockCable(float apothem, CableTier cableTier, Properties properties) {
@@ -92,11 +99,11 @@ public class BlockCable extends VoxelBlock implements EntityBlock {
     boolean shocked = false;
     for (LivingEntity victim : victims) {
       var data = victim.getPersistentData();
-      if (now - data.getLong("faktocraftShockTick") < SHOCK_INTERVAL_TICKS) {
+      if (now - data.getLongOr("faktocraftShockTick", 0L) < SHOCK_INTERVAL_TICKS) {
         continue;
       }
       data.putLong("faktocraftShockTick", now);
-      victim.hurt(level.damageSources().lightningBolt(), shockDamage());
+      victim.hurtServer(level, level.damageSources().lightningBolt(), shockDamage());
       level.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
           victim.getX(), victim.getY(0.5), victim.getZ(), 8, 0.2, 0.4, 0.2, 0.1);
       shocked = true;
@@ -108,21 +115,20 @@ public class BlockCable extends VoxelBlock implements EntityBlock {
   }
 
   @Override
-  public void appendHoverText(net.minecraft.world.item.ItemStack stack,
-      @Nullable net.minecraft.world.level.BlockGetter blockGetter,
-      java.util.List<net.minecraft.network.chat.Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
     var tier = cableTier.getEnergyTier();
-    tooltip.add(net.minecraft.network.chat.Component.translatable("tooltip.faktocraft.max_voltage",
+    tooltip.accept(Component.translatable("tooltip.faktocraft.max_voltage",
         tier.getLang().getTranslationComponent().withStyle(tier.getColor()))
         .withStyle(net.minecraft.ChatFormatting.GRAY)
-        .append(net.minecraft.network.chat.Component.literal(
+        .append(Component.literal(
             " (" + com.faktocraft.common.util.TextComponentUtil.getFormattedLong(tier.getBasicTransfer()) + " IE/t)")
             .withStyle(net.minecraft.ChatFormatting.DARK_GRAY)));
-    super.appendHoverText(stack, blockGetter, tooltip, flag);
+    super.appendHoverText(stack, context, display, tooltip, flag);
   }
 
   @Override
-  protected boolean canConnect(LevelAccessor level, BlockPos pos, Direction direction) {
+  protected boolean canConnect(LevelReader level, BlockPos pos, Direction direction) {
     BlockPos relative = pos.relative(direction);
     BlockState state = level.getBlockState(relative);
     if (state.getBlock() instanceof BlockCable) {
@@ -139,8 +145,8 @@ public class BlockCable extends VoxelBlock implements EntityBlock {
   }
 
   @Override
-  public void entityInside(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.Entity entity) {
-
+  public void entityInside(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.Entity entity,
+      InsideBlockEffectApplier effectApplier, boolean isPrecise) {
     boolean ultra = cableTier == CableTier.GLASS_FIBRE_CABLE;
     if (level.isClientSide() || (cableTier.isInsulated() && !ultra) || !(entity instanceof LivingEntity living)) {
       return;
@@ -160,10 +166,12 @@ public class BlockCable extends VoxelBlock implements EntityBlock {
       return;
     }
     if (current == com.faktocraft.common.enums.EnergyTier.ULTRA) {
-      living.hurt(com.faktocraft.common.registries.ModDamageTypes.ultraShock(level), 10000.0F);
+      living.hurtServer((ServerLevel) level, com.faktocraft.common.registries.ModDamageTypes.ultraShock(level),
+          10000.0F);
       return;
     }
-    living.hurt(com.faktocraft.common.registries.ModDamageTypes.electricShock(level), shockDamage(current));
+    living.hurtServer((ServerLevel) level, com.faktocraft.common.registries.ModDamageTypes.electricShock(level),
+        shockDamage(current));
   }
 
   public static float shockDamage(com.faktocraft.common.enums.EnergyTier flowing) {
@@ -190,13 +198,14 @@ public class BlockCable extends VoxelBlock implements EntityBlock {
     EnergyCore.get(level).getNetworks().onRemove(pos);
   }
 
-  @SuppressWarnings("deprecation")
   @Override
-  public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos fromPos,
-      boolean movedByPiston) {
-    super.neighborChanged(state, level, pos, neighborBlock, fromPos, movedByPiston);
+  public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
+      @Nullable Orientation orientation, boolean movedByPiston) {
+    super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
     if (!level.isClientSide()) {
-      EnergyCore.get(level).getNetworks().neighborChanged(pos, fromPos);
+      for (Direction direction : Constants.DIRECTIONS) {
+        EnergyCore.get(level).getNetworks().neighborChanged(pos, pos.relative(direction));
+      }
     }
   }
 

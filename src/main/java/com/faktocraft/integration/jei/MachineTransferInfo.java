@@ -1,7 +1,7 @@
 package com.faktocraft.integration.jei;
 
 import com.faktocraft.common.container.FaktocraftMenu;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferInfo;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -13,11 +13,11 @@ public class MachineTransferInfo<C extends FaktocraftMenu, R> implements IRecipe
 
   private final Class<? extends C> containerClass;
   private final MenuType<C> menuType;
-  private final RecipeType<R> recipeType;
+  private final IRecipeType<R> recipeType;
   private final int inputStart;
   private final int inputCount;
 
-  public MachineTransferInfo(Class<? extends C> containerClass, MenuType<C> menuType, RecipeType<R> recipeType,
+  public MachineTransferInfo(Class<? extends C> containerClass, MenuType<C> menuType, IRecipeType<R> recipeType,
       int inputStart, int inputCount) {
     this.containerClass = containerClass;
     this.menuType = menuType;
@@ -37,7 +37,7 @@ public class MachineTransferInfo<C extends FaktocraftMenu, R> implements IRecipe
   }
 
   @Override
-  public RecipeType<R> getRecipeType() {
+  public IRecipeType<R> getRecipeType() {
     return recipeType;
   }
 

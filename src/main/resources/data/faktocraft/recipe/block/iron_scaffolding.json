@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "f": "faktocraft:iron_fence",
+    "p": "#c:plates/iron",
+    "t": "#c:rods/iron"
+  },
+  "pattern": [
+    "ppp",
+    "ftf",
+    "ppp"
+  ],
+  "result": {
+    "id": "faktocraft:iron_scaffolding",
+    "count": 6
+  }
+}

@@ -6,7 +6,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.items.IItemHandler;
+import com.faktocraft.common.util.transfer.IItemHandler;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

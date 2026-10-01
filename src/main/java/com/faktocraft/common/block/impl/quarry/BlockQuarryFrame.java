@@ -2,11 +2,13 @@ package com.faktocraft.common.block.impl.quarry;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -73,7 +75,7 @@ public class BlockQuarryFrame extends Block {
 
   public BlockQuarryFrame(Properties properties) {
     super(properties.strength(-1.0F, 3600000.0F).noLootTable()
-        .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK));
+        .pushReaction(net.minecraft.world.level.material.PushReaction.IMMOVEABLE));
     BlockState state = getStateDefinition().any();
     for (Direction direction : Direction.values()) {
       state = state.setValue(CONNECTIONS.get(direction), false);
@@ -112,12 +114,12 @@ public class BlockQuarryFrame extends Block {
 
   @Override
   public boolean onDestroyedByPlayer(BlockState state, net.minecraft.world.level.Level level, BlockPos pos,
-      net.minecraft.world.entity.player.Player player, boolean willHarvest,
-      net.minecraft.world.level.material.FluidState fluid) {
+      net.minecraft.world.entity.player.Player player, net.minecraft.world.item.ItemStack toolStack,
+      boolean willHarvest, net.minecraft.world.level.material.FluidState fluid) {
     return false;
   }
 
-  public static BlockState connectedState(BlockState state, LevelAccessor level, BlockPos pos) {
+  public static BlockState connectedState(BlockState state, LevelReader level, BlockPos pos) {
     Connector connector = Connector.NONE;
     for (Direction direction : Direction.values()) {
       BlockState neighbor = level.getBlockState(pos.relative(direction));
@@ -131,11 +133,11 @@ public class BlockQuarryFrame extends Block {
     return withFoot(state, level, pos, level.getBlockState(pos.below()));
   }
 
-  private static BlockState withFoot(BlockState state, LevelAccessor level, BlockPos pos, BlockState ground) {
+  private static BlockState withFoot(BlockState state, LevelReader level, BlockPos pos, BlockState ground) {
     return state.setValue(FOOT, hasGround(level, pos.below(), ground) && wantsFoot(state));
   }
 
-  private static boolean hasGround(LevelAccessor level, BlockPos below, BlockState ground) {
+  private static boolean hasGround(LevelReader level, BlockPos below, BlockState ground) {
     if (ground.isAir() || ground.hasBlockEntity() || ground.getBlock() instanceof BlockQuarryFrame) {
       return false;
     }
@@ -160,8 +162,8 @@ public class BlockQuarryFrame extends Block {
   }
 
   @Override
-  public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
-      LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+  public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos,
+      Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
     boolean linked = neighborState.is(state.getBlock()) || IGantryHost.isHost(neighborState);
     state = state.setValue(CONNECTIONS.get(direction), linked);
     if (IGantryHost.isHost(neighborState)) {

@@ -1,17 +1,33 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.util.BufUtil;
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.faktocraft.common.block.impl.logistics.BlockEntityRecipePipe;
 import com.faktocraft.common.block.impl.logistics.MenuRecipePipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
-public record PacketRecipePipeFill(BlockPos pipePos, List<ItemStack> inputs, List<ItemStack> outputs) {
+public record PacketRecipePipeFill(BlockPos pipePos, List<ItemStack> inputs, List<ItemStack> outputs)
+    implements CustomPacketPayload {
+
+  public static final Type<PacketRecipePipeFill> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_recipe_pipe_fill"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketRecipePipeFill> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketRecipePipeFill::decode);
+
+  @Override
+  public Type<PacketRecipePipeFill> type() {
+    return TYPE;
+  }
 
   public static void encode(PacketRecipePipeFill msg, FriendlyByteBuf buf) {
     buf.writeBlockPos(msg.pipePos);
@@ -23,7 +39,7 @@ public record PacketRecipePipeFill(BlockPos pipePos, List<ItemStack> inputs, Lis
     int size = Math.min(stacks.size(), max);
     buf.writeVarInt(size);
     for (int i = 0; i < size; i++) {
-      buf.writeItem(stacks.get(i));
+      BufUtil.writeItem(buf, stacks.get(i));
     }
   }
 
@@ -31,7 +47,7 @@ public record PacketRecipePipeFill(BlockPos pipePos, List<ItemStack> inputs, Lis
     int size = Math.min(buf.readVarInt(), max);
     List<ItemStack> stacks = new ArrayList<>(size);
     for (int i = 0; i < size; i++) {
-      stacks.add(buf.readItem());
+      stacks.add(BufUtil.readItem(buf));
     }
     return stacks;
   }
@@ -42,9 +58,9 @@ public record PacketRecipePipeFill(BlockPos pipePos, List<ItemStack> inputs, Lis
         read(buf, BlockEntityRecipePipe.MAX_OUTPUTS));
   }
 
-  public static void handle(PacketRecipePipeFill msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> {
-      ServerPlayer player = ctx.get().getSender();
+  public static void handle(PacketRecipePipeFill msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> {
+      ServerPlayer player = ctx.getSender();
       if (player == null || !(player.containerMenu instanceof MenuRecipePipe menu)
           || !menu.getPipePos().equals(msg.pipePos)) {
         return;
@@ -71,7 +87,7 @@ public record PacketRecipePipeFill(BlockPos pipePos, List<ItemStack> inputs, Lis
       }
       menu.broadcastChanges();
     });
-    ctx.get().setPacketHandled(true);
+    ctx.setPacketHandled(true);
   }
 
   private static void set(BlockEntityRecipePipe pipe, int index, int ioId, ItemStack stack) {

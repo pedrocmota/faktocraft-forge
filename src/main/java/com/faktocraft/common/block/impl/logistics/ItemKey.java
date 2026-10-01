@@ -1,12 +1,13 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.util.NbtBridge;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public final class ItemKey {
-
   public static final ItemKey EMPTY = new ItemKey(ItemStack.EMPTY);
 
   private final ItemStack prototype;
@@ -14,7 +15,7 @@ public final class ItemKey {
 
   private ItemKey(ItemStack prototype) {
     this.prototype = prototype;
-    CompoundTag tag = normalized(prototype.getTag());
+    DataComponentPatch tag = normalized(prototype.getComponentsPatch());
     this.hash = prototype.getItem().hashCode() * 31 + (tag == null ? 0 : tag.hashCode());
   }
 
@@ -27,13 +28,13 @@ public final class ItemKey {
   }
 
   @Nullable
-  private static CompoundTag normalized(@Nullable CompoundTag tag) {
+  private static DataComponentPatch normalized(@Nullable DataComponentPatch tag) {
     return tag == null || tag.isEmpty() ? null : tag;
   }
 
-  private static boolean sameTags(@Nullable CompoundTag left, @Nullable CompoundTag right) {
-    CompoundTag a = normalized(left);
-    CompoundTag b = normalized(right);
+  private static boolean sameTags(@Nullable DataComponentPatch left, @Nullable DataComponentPatch right) {
+    DataComponentPatch a = normalized(left);
+    DataComponentPatch b = normalized(right);
     return a == null ? b == null : a.equals(b);
   }
 
@@ -59,15 +60,15 @@ public final class ItemKey {
 
   public boolean matches(ItemStack stack) {
     return !stack.isEmpty() && stack.is(prototype.getItem())
-        && sameTags(prototype.getTag(), stack.getTag());
+        && sameTags(prototype.getComponentsPatch(), stack.getComponentsPatch());
   }
 
   public CompoundTag save() {
-    return prototype.save(new CompoundTag());
+    return NbtBridge.saveStack(prototype);
   }
 
   public static ItemKey load(CompoundTag tag) {
-    return of(ItemStack.of(tag));
+    return of(NbtBridge.loadStack(tag));
   }
 
   @Override
@@ -76,7 +77,7 @@ public final class ItemKey {
       return true;
     }
     return other instanceof ItemKey key && key.prototype.is(prototype.getItem())
-        && sameTags(prototype.getTag(), key.prototype.getTag());
+        && sameTags(prototype.getComponentsPatch(), key.prototype.getComponentsPatch());
   }
 
   @Override
@@ -86,8 +87,8 @@ public final class ItemKey {
 
   @Override
   public String toString() {
-    CompoundTag tag = normalized(prototype.getTag());
-    return net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(prototype.getItem())
+    DataComponentPatch tag = normalized(prototype.getComponentsPatch());
+    return net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(prototype.getItem())
         + (tag == null ? "" : tag.toString());
   }
 }

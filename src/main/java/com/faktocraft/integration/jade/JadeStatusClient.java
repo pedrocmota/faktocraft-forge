@@ -5,40 +5,59 @@ import com.faktocraft.client.render.StatusClientBridge;
 import com.faktocraft.client.render.StatusMonitorContent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.Nullable;
+import snownee.jade.api.Accessor;
 import snownee.jade.api.BlockAccessor;
-import snownee.jade.api.IBlockComponentProvider;
+import snownee.jade.api.IComponentProvider;
+import snownee.jade.api.JadeIds;
+import snownee.jade.api.config.IPluginConfig;
+import snownee.jade.api.config.IWailaConfig;
+import snownee.jade.api.ui.BoxStyle;
 import snownee.jade.api.ui.Element;
-import snownee.jade.api.ui.IElement;
-import snownee.jade.api.ui.IElementHelper;
+import snownee.jade.api.ui.JadeUI;
+import snownee.jade.api.ui.ResizeableElement;
+import snownee.jade.api.ui.TextElement;
+import snownee.jade.api.ui.TooltipAnimation;
+import snownee.jade.gui.JadeLinearLayout;
 import snownee.jade.impl.BlockAccessorImpl;
 import snownee.jade.impl.Tooltip;
 import snownee.jade.impl.WailaClientRegistration;
-import snownee.jade.impl.config.PluginConfig;
+import snownee.jade.impl.ui.BoxElementImpl;
+import snownee.jade.impl.ui.JadeUIInternal;
 import snownee.jade.impl.ui.ProgressElement;
-import snownee.jade.impl.ui.TextElement;
+import snownee.jade.impl.ui.TextElementImpl;
 import snownee.jade.overlay.OverlayRenderer;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 public final class JadeStatusClient implements StatusClientBridge {
-
   private static final int ICON_GAP = 4;
-  private static final int BOX_MARGIN = 2;
+  private static final int NO_MOUSE = -10000;
   private static final Set<String> REPORTED = new HashSet<>();
+  @Nullable
+  private static final Field TEXT_FIELD = textField();
 
   private JadeStatusClient() {
   }
@@ -47,53 +66,103 @@ public final class JadeStatusClient implements StatusClientBridge {
     return new JadeStatusClient();
   }
 
-  private record Built(Tooltip tooltip, @Nullable IElement icon) {
+  private record Built(BoxElementImpl box, @Nullable Element icon) {
   }
 
-  private static final class TrackedElement extends Element {
-    private final IElement inner;
+  private static final class TrackedElement extends ResizeableElement {
+    private final ResizeableElement inner;
 
-    private TrackedElement(IElement inner) {
+    private TrackedElement(ResizeableElement inner) {
       this.inner = inner;
+      width = inner.getWidth();
+      height = inner.getHeight();
+      setFlexGrow(inner.getFlexGrow());
     }
 
     @Override
-    public Vec2 getSize() {
-      return inner.getSize();
-    }
-
-    @Override
-    public Vec2 getCachedSize() {
-      return inner.getCachedSize();
-    }
-
-    @Override
-    public Vec2 getTranslation() {
-      return inner.getTranslation();
-    }
-
-    @Override
-    public IElement.Align getAlignment() {
-      return inner.getAlignment();
-    }
-
-    @Override
-    public ResourceLocation getTag() {
+    public Identifier getTag() {
       return inner.getTag();
     }
 
     @Override
-    public String getMessage() {
-      return inner.getMessage();
+    public UnaryOperator<LayoutSettings> getSettings() {
+      return inner.getSettings();
     }
 
     @Override
-    public void render(GuiGraphics graphics, float x, float y, float maxX, float maxY) {
-      Vec2 size = inner.getCachedSize();
-      graphics.fill(Math.round(x), Math.round(y), Math.round(maxX), Math.round(y + size.y - BOX_MARGIN),
-          StatusMonitorContent.TRACK_COLOR);
-      inner.render(graphics, x, y, maxX, maxY);
+    public JadeLinearLayout.Align getAlignSelf() {
+      return inner.getAlignSelf();
     }
+
+    @Override
+    public void setX(int x) {
+      super.setX(x);
+      inner.setX(x);
+    }
+
+    @Override
+    public void setY(int y) {
+      super.setY(y);
+      inner.setY(y);
+    }
+
+    @Override
+    public void setFreeSpace(int freeWidth, int freeHeight) {
+      inner.setFreeSpace(freeWidth, freeHeight);
+      width = inner.getWidth();
+      height = inner.getHeight();
+    }
+
+    @Override
+    public void updateSize() {
+      inner.updateSize();
+      width = inner.getWidth();
+      height = inner.getHeight();
+    }
+
+    @Override
+    public Component getNarration() {
+      return inner.getNarration();
+    }
+
+    @Override
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+      graphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), StatusMonitorContent.TRACK_COLOR);
+      inner.extractRenderState(graphics, mouseX, mouseY, partialTick);
+    }
+  }
+
+  @Nullable
+  private static Field textField() {
+    try {
+      Field field = TextElementImpl.class.getDeclaredField("text");
+      field.setAccessible(true);
+      return field;
+    } catch (ReflectiveOperationException | RuntimeException e) {
+      Faktocraft.LOGGER.warn("Status monitor cannot wrap Jade text lines: {}", e.toString());
+      return null;
+    }
+  }
+
+  @Nullable
+  private static Component textOf(TextElementImpl element) {
+    if (TEXT_FIELD == null) {
+      return null;
+    }
+    try {
+      return (Component) TEXT_FIELD.get(element);
+    } catch (ReflectiveOperationException | RuntimeException e) {
+      return null;
+    }
+  }
+
+  private static Component toComponent(FormattedText text) {
+    MutableComponent result = Component.empty();
+    text.visit((style, string) -> {
+      result.append(Component.literal(string).withStyle(style));
+      return Optional.empty();
+    }, Style.EMPTY);
+    return result;
   }
 
   private static void report(String uid, RuntimeException e) {
@@ -105,38 +174,96 @@ public final class JadeStatusClient implements StatusClientBridge {
   private static void wrapText(Tooltip tooltip, int available) {
     Font font = Minecraft.getInstance().font;
     for (int i = 0; i < tooltip.lines.size(); i++) {
-      Tooltip.Line line = tooltip.lines.get(i);
-      List<IElement> left = line.getAlignedElements(IElement.Align.LEFT);
-      if (left.size() != 1 || !line.getAlignedElements(IElement.Align.RIGHT).isEmpty()
-          || !(left.get(0) instanceof TextElement text) || text.getSize().x <= available) {
+      List<LayoutElement> elements = tooltip.lines.get(i).elements();
+      if (elements.size() != 1 || !(elements.get(0) instanceof TextElementImpl text)
+          || text.getWidth() <= available) {
         continue;
       }
-      List<FormattedText> pieces = font.getSplitter().splitLines(text.text, available, Style.EMPTY);
+      Component component = textOf(text);
+      if (component == null) {
+        continue;
+      }
+      List<FormattedText> pieces = font.getSplitter().splitLines(component, available, Style.EMPTY);
       if (pieces.size() <= 1) {
         continue;
       }
       tooltip.lines.remove(i);
       for (int j = 0; j < pieces.size(); j++) {
-        tooltip.add(i + j, new TextElement(pieces.get(j)));
+        tooltip.add(i + j, JadeUI.text(toComponent(pieces.get(j))));
       }
       i += pieces.size() - 1;
     }
   }
 
+  private static void retagBars(Tooltip tooltip, BlockPos pos) {
+    String prefix = "monitor/" + Long.toUnsignedString(pos.asLong(), 36) + "/";
+    for (Tooltip.Line line : tooltip.lines) {
+      for (LayoutElement element : line.elements()) {
+        if (element instanceof ProgressElement bar) {
+          Identifier tag = bar.getTag();
+          String path = tag == null ? "bar" : tag.getNamespace() + "/" + tag.getPath();
+          bar.tag(Identifier.fromNamespaceAndPath(Faktocraft.MODID, prefix + path));
+        }
+      }
+    }
+  }
+
   private static void trackBars(Tooltip tooltip) {
     for (Tooltip.Line line : tooltip.lines) {
-      for (IElement.Align align : IElement.Align.values()) {
-        List<IElement> elements = line.getAlignedElements(align);
-        for (int i = 0; i < elements.size(); i++) {
-          if (elements.get(i) instanceof ProgressElement) {
-            try {
-              elements.set(i, new TrackedElement(elements.get(i)));
-            } catch (UnsupportedOperationException ignored) {
-              return;
-            }
+      List<LayoutElement> elements = line.elements();
+      for (int i = 0; i < elements.size(); i++) {
+        if (elements.get(i) instanceof ProgressElement bar) {
+          try {
+            elements.set(i, new TrackedElement(bar));
+          } catch (UnsupportedOperationException ignored) {
+            return;
           }
         }
       }
+    }
+  }
+
+  private static void fitWidth(BoxElementImpl box, Tooltip tooltip, int available) {
+    boolean changed = false;
+    for (Tooltip.Line line : tooltip.lines) {
+      List<LayoutElement> elements = line.elements();
+      if (elements.isEmpty()) {
+        continue;
+      }
+      int minX = Integer.MAX_VALUE;
+      int maxX = Integer.MIN_VALUE;
+      int textWidth = 0;
+      List<TextElement> texts = new ArrayList<>();
+      for (LayoutElement element : elements) {
+        minX = Math.min(minX, element.getX());
+        maxX = Math.max(maxX, element.getX() + element.getWidth());
+        if (element instanceof TextElement text) {
+          texts.add(text);
+          textWidth += element.getWidth();
+        }
+      }
+      int lineWidth = maxX - minX;
+      if (lineWidth <= available || texts.isEmpty() || textWidth <= 0) {
+        continue;
+      }
+      float scale = (available - (lineWidth - textWidth)) / (float) textWidth;
+      if (scale <= 0.0F || scale >= 1.0F) {
+        continue;
+      }
+      for (TextElement text : texts) {
+        text.scale(scale);
+      }
+      changed = true;
+    }
+    if (changed) {
+      box.updateSize();
+    }
+  }
+
+  private static void fitHeight(BoxElementImpl box, Tooltip tooltip, int height) {
+    while (box.getHeight() > height && !tooltip.lines.isEmpty()) {
+      tooltip.lines.remove(tooltip.lines.size() - 1);
+      box.updateSize();
     }
   }
 
@@ -151,72 +278,79 @@ public final class JadeStatusClient implements StatusClientBridge {
     BlockAccessor accessor = new BlockAccessorImpl.Builder().level(level).player(player).serverData(data)
         .serverConnected(true).showDetails(false).hit(JadeStatusBridge.hit(pos)).blockState(state)
         .blockEntity(() -> blockEntity).build();
+    IPluginConfig config = IWailaConfig.get().plugin();
+    boolean accessibility = IWailaConfig.get().accessibility().getEnableAccessibilityPlugin();
+    Predicate<IComponentProvider<? extends Accessor<?>>> enabled =
+        provider -> (accessibility || !JadeIds.isAccess(provider.getUid())) && config.get(provider);
     Tooltip tooltip = new Tooltip();
-    List<IBlockComponentProvider> providers = WailaClientRegistration.INSTANCE
-        .getBlockProviders(state.getBlock(), provider -> PluginConfig.INSTANCE.get(provider));
-    for (IBlockComponentProvider provider : providers) {
+    List<IComponentProvider<BlockAccessor>> providers = WailaClientRegistration.instance()
+        .getBlockProviders(state.getBlock(), enabled);
+    for (IComponentProvider<BlockAccessor> provider : providers) {
       try {
-        provider.appendTooltip(tooltip, accessor, PluginConfig.INSTANCE);
+        JadeUIInternal.setContextUid(provider.getUid());
+        provider.appendTooltip(tooltip, accessor, config);
       } catch (RuntimeException e) {
         report(String.valueOf(provider.getUid()), e);
+      } finally {
+        JadeUIInternal.setContextUid(null);
       }
     }
-    if (tooltip.lines.isEmpty()) {
+    if (tooltip.isEmpty()) {
       return null;
     }
-    trackBars(tooltip);
-    IElement icon = IElementHelper.get().item(new ItemStack(state.getBlock()));
-    for (IBlockComponentProvider provider : WailaClientRegistration.INSTANCE
-        .getBlockIconProviders(state.getBlock(), provider -> PluginConfig.INSTANCE.get(provider))) {
+    Element icon = JadeUI.item(new ItemStack(state.getBlock()));
+    for (IComponentProvider<BlockAccessor> provider : WailaClientRegistration.instance()
+        .getBlockIconProviders(state.getBlock(), enabled)) {
       try {
-        IElement custom = provider.getIcon(accessor, PluginConfig.INSTANCE, icon);
-        if (custom != null) {
+        Element custom = provider.getIcon(accessor, config, icon);
+        if (custom != null && !JadeUI.isEmptyElement(custom)) {
           icon = custom;
         }
       } catch (RuntimeException e) {
         report(String.valueOf(provider.getUid()), e);
       }
     }
-    float iconWidth = icon != null ? icon.getSize().x + ICON_GAP : 0.0F;
-    wrapText(tooltip, Math.round(StatusMonitorContent.CONTENT_W - iconWidth));
-    return new Built(tooltip, icon);
+    if (JadeUI.isEmptyElement(icon)) {
+      icon = null;
+    }
+    int iconWidth = icon != null ? icon.getWidth() + ICON_GAP : 0;
+    int available = StatusMonitorContent.CONTENT_W - iconWidth;
+    wrapText(tooltip, available);
+    retagBars(tooltip, pos);
+    trackBars(tooltip);
+    BoxStyle style = BoxStyle.transparent().copy();
+    Arrays.fill(style.padding, 0);
+    style.borderWidth = 0;
+    BoxElementImpl box = new BoxElementImpl(tooltip, style);
+    fitWidth(box, tooltip, available);
+    fitHeight(box, tooltip, StatusMonitorContent.CONTENT_H);
+    box.setFreeSpace(available, box.getHeight());
+    box.setX(iconWidth);
+    box.setY(0);
+    return new Built(box, icon);
   }
 
   @Override
-  public boolean render(Object built, GuiGraphics graphics, int width, int height) {
+  public boolean render(Object built, GuiGraphicsExtractor graphics, int width, int height) {
     if (!(built instanceof Built entry)) {
       return false;
     }
-    float alpha = OverlayRenderer.alpha;
-    OverlayRenderer.alpha = 1.0F;
+    TooltipAnimation animation = OverlayRenderer.animation;
+    float alpha = animation.alpha;
+    float showHideAlpha = animation.showHideAlpha;
+    animation.alpha = 1.0F;
+    animation.showHideAlpha = 1.0F;
     try {
-      float x = 0.0F;
-      if (entry.icon() != null) {
-        Vec2 iconSize = entry.icon().getSize();
-        entry.icon().render(graphics, 0.0F, 0.0F, iconSize.x, iconSize.y);
-        x = iconSize.x + ICON_GAP;
+      Element icon = entry.icon();
+      if (icon != null) {
+        icon.setX(0);
+        icon.setY(0);
+        icon.extractRenderState(graphics, NO_MOUSE, NO_MOUSE, 1.0F);
       }
-      float y = 0.0F;
-      for (Tooltip.Line line : entry.tooltip().lines) {
-        Vec2 size = line.getSize();
-        float available = width - x;
-        float scale = size.x > available && size.x > 0.0F ? available / size.x : 1.0F;
-        if (y + size.y * scale > height) {
-          break;
-        }
-        if (scale < 1.0F) {
-          graphics.pose().pushPose();
-          graphics.pose().translate(x, y, 0.0F);
-          graphics.pose().scale(scale, scale, 1.0F);
-          line.render(graphics, 0.0F, 0.0F, size.x, size.y);
-          graphics.pose().popPose();
-        } else {
-          line.render(graphics, x, y, width, y + size.y);
-        }
-        y += size.y * scale;
-      }
+      entry.box().extractRenderState(graphics, NO_MOUSE, NO_MOUSE, 1.0F);
     } finally {
-      OverlayRenderer.alpha = alpha;
+      animation.alpha = alpha;
+      animation.showHideAlpha = showHideAlpha;
     }
     return true;
   }

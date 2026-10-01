@@ -18,10 +18,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -125,10 +125,10 @@ public class BlockEntityGeoGenerator extends FaktocraftBlockEntity implements IC
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("fluidStorage")) {
-      fluidStorage.load(tag.getCompound("fluidStorage"));
+      fluidStorage.load(tag.getCompoundOrEmpty("fluidStorage"));
     }
-    activeState = tag.getBoolean("active");
-    refilling = tag.getBoolean("refilling");
+    activeState = tag.getBooleanOr("active", false);
+    refilling = tag.getBooleanOr("refilling", false);
   }
 
   @Override

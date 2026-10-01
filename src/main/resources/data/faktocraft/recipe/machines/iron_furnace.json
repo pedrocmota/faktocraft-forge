@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "f": "minecraft:furnace",
+    "i": "#c:ingots/iron"
+  },
+  "pattern": [
+    "iii",
+    "ifi",
+    "iii"
+  ],
+  "result": {
+    "id": "faktocraft:iron_furnace"
+  }
+}

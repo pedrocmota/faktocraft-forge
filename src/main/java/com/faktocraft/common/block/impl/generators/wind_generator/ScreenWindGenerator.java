@@ -5,7 +5,7 @@ import com.faktocraft.common.screen.BetterScreen;
 import com.faktocraft.common.screen.text.GuiTextSolar;
 import com.faktocraft.common.screen.text.GuiTextWind;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenWindGenerator extends BetterScreen<MenuWindGenerator> {
@@ -42,7 +42,7 @@ public class ScreenWindGenerator extends BetterScreen<MenuWindGenerator> {
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
-    return new ResourceLocation(Faktocraft.MODID, "textures/gui/container/wind_generator.png");
+  public Identifier getGuiLocation() {
+    return Identifier.fromNamespaceAndPath(Faktocraft.MODID, "textures/gui/container/wind_generator.png");
   }
 }

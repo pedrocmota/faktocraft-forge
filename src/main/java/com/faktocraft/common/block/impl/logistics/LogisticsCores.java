@@ -3,7 +3,7 @@ package com.faktocraft.common.block.impl.logistics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Set;

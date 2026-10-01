@@ -1,38 +1,4 @@
 {
-  "loader": "forge:separate_transforms",
-  "gui_light": "front",
-  "base": {
-    "parent": "faktocraft:item/tool/electric/geiger_counter_base"
-  },
-  "perspectives": {
-    "gui": {
-      "parent": "faktocraft:item/tool/electric/geiger_counter_icon"
-    }
-  },
-  "overrides": [
-    {
-      "predicate": {
-        "faktocraft:dose": 0.25
-      },
-      "model": "faktocraft:item/tool/electric/geiger_counter_1"
-    },
-    {
-      "predicate": {
-        "faktocraft:dose": 0.5
-      },
-      "model": "faktocraft:item/tool/electric/geiger_counter_2"
-    },
-    {
-      "predicate": {
-        "faktocraft:dose": 0.75
-      },
-      "model": "faktocraft:item/tool/electric/geiger_counter_3"
-    },
-    {
-      "predicate": {
-        "faktocraft:dose": 1.0
-      },
-      "model": "faktocraft:item/tool/electric/geiger_counter_4"
-    }
-  ]
+  "parent": "faktocraft:item/tool/electric/geiger_counter_base",
+  "gui_light": "front"
 }

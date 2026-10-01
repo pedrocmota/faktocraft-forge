@@ -1,10 +1,12 @@
 package com.faktocraft.common.block.impl.nuke;
 
+import com.faktocraft.common.util.LegacySavedData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -12,12 +14,13 @@ import java.util.List;
 
 public class NukeBlasts extends SavedData {
 
-  private static final String DATA_NAME = "faktocraft_nuke_blasts";
+  private static final SavedDataType<NukeBlasts> TYPE = LegacySavedData.type("nuke_blasts",
+      NukeBlasts::new, NukeBlasts::load, data -> data.save(new CompoundTag()));
 
   private final List<NukeBlast> active = new ArrayList<>();
 
   public static NukeBlasts get(ServerLevel level) {
-    return level.getDataStorage().computeIfAbsent(NukeBlasts::load, NukeBlasts::new, DATA_NAME);
+    return LegacySavedData.get(level, TYPE, NukeBlasts::load);
   }
 
   public boolean isEmpty() {
@@ -50,7 +53,7 @@ public class NukeBlasts extends SavedData {
 
   public static NukeBlasts load(CompoundTag tag) {
     NukeBlasts data = new NukeBlasts();
-    for (Tag entry : tag.getList("blasts", Tag.TAG_COMPOUND)) {
+    for (Tag entry : tag.getListOrEmpty("blasts")) {
       NukeBlast blast = NukeBlast.load((CompoundTag) entry);
       if (!blast.done()) {
         data.active.add(blast);
@@ -59,7 +62,6 @@ public class NukeBlasts extends SavedData {
     return data;
   }
 
-  @Override
   public CompoundTag save(CompoundTag tag) {
     ListTag list = new ListTag();
     for (NukeBlast blast : active) {

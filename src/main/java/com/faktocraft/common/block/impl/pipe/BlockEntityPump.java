@@ -17,11 +17,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayDeque;
@@ -30,7 +30,6 @@ import java.util.Set;
 
 public class BlockEntityPump extends FaktocraftBlockEntity
     implements IEnergyBlock, com.faktocraft.common.interfaces.entity.ITileSound {
-
   @org.jetbrains.annotations.Nullable
   @Override
   public net.minecraft.sounds.SoundEvent getSoundEvent() {
@@ -433,7 +432,6 @@ public class BlockEntityPump extends FaktocraftBlockEntity
     }
   }
 
-  @Override
   public net.minecraft.world.phys.AABB getRenderBoundingBox() {
     return new net.minecraft.world.phys.AABB(getBlockPos()).expandTowards(0, -(tubeDepth + 2), 0);
   }
@@ -457,16 +455,16 @@ public class BlockEntityPump extends FaktocraftBlockEntity
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    activeState = tag.getBoolean("active");
-    progress = tag.contains("progress") ? tag.getInt("progress") : 0;
-    tubeDepth = tag.getFloat("tubeDepth");
-    tubeTarget = tag.getFloat("tubeTarget");
+    activeState = tag.getBooleanOr("active", false);
+    progress = tag.contains("progress") ? tag.getIntOr("progress", 0) : 0;
+    tubeDepth = tag.getFloatOr("tubeDepth", 0.0F);
+    tubeTarget = tag.getFloatOr("tubeTarget", 0.0F);
     if (tag.contains("upgrades")) {
-      upgrades.load(tag.getCompound("upgrades"));
+      upgrades.load(tag.getCompoundOrEmpty("upgrades"));
     }
-    runMode = tag.contains("runMode") ? tag.getInt("runMode") : PipeExtractor.RUN_ALWAYS;
+    runMode = tag.contains("runMode") ? tag.getIntOr("runMode", 0) : PipeExtractor.RUN_ALWAYS;
     if (tag.contains("tank")) {
-      tank.load(tag.getCompound("tank"));
+      tank.load(tag.getCompoundOrEmpty("tank"));
     }
   }
 

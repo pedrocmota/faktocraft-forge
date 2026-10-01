@@ -1,6 +1,5 @@
 package com.faktocraft.gametest.world;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.forester.BlockEntityForester;
 import com.faktocraft.common.block.impl.forester.ForesterRegistry;
 import com.faktocraft.common.block.impl.quarry.QuarryRegistry;
@@ -13,7 +12,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.features.TreeFeatures;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -24,14 +24,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.level.SaplingGrowTreeEvent;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.BlockGrowFeatureEvent;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class ForesterGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -59,14 +55,14 @@ public class ForesterGameTest {
   }
 
   private static BlockEntityForester forester(GameTestHelper helper) {
-    if (helper.getBlockEntity(FORESTER) instanceof BlockEntityForester be) {
+    if (TestUtil.blockEntity(helper, FORESTER) instanceof BlockEntityForester be) {
       return be;
     }
     throw new IllegalStateException("no forester block entity");
   }
 
   private static void fillEnergy(GameTestHelper helper) {
-    if (helper.getBlockEntity(FORESTER) instanceof FaktocraftBlockEntity be) {
+    if (TestUtil.blockEntity(helper, FORESTER) instanceof FaktocraftBlockEntity be) {
       if (be.getBatteryStackHandler().getStackInSlot(0).isEmpty()) {
         be.getBatteryStackHandler().setStackInSlot(0, new ItemStack(ModItems.INTERMEDIATE_CAPACITOR));
       }
@@ -237,17 +233,17 @@ public class ForesterGameTest {
         })
         .thenExecute(() -> {
           ServerLevel level = helper.getLevel();
-          Registry<ConfiguredFeature<?, ?>> registry = level.registryAccess()
-              .registryOrThrow(Registries.CONFIGURED_FEATURE);
-          Holder<ConfiguredFeature<?, ?>> fancy = registry.getHolderOrThrow(TreeFeatures.FANCY_OAK);
-          SaplingGrowTreeEvent inside = new SaplingGrowTreeEvent(level, level.getRandom(),
+          Registry<Feature> registry = level.registryAccess()
+              .lookupOrThrow(Registries.FEATURE);
+          Holder<Feature> fancy = registry.getOrThrow(TreeFeatures.FANCY_OAK);
+          BlockGrowFeatureEvent inside = new BlockGrowFeatureEvent(level, level.getRandom(),
               helper.absolutePos(TREE_BASE), fancy);
-          MinecraftForge.EVENT_BUS.post(inside);
+          NeoForge.EVENT_BUS.post(inside);
           helper.assertTrue(inside.getFeature() != null && inside.getFeature().is(TreeFeatures.OAK),
               "fancy oak was not replaced inside the area");
-          SaplingGrowTreeEvent outside = new SaplingGrowTreeEvent(level, level.getRandom(),
+          BlockGrowFeatureEvent outside = new BlockGrowFeatureEvent(level, level.getRandom(),
               helper.absolutePos(new BlockPos(0, 2, 8)), fancy);
-          MinecraftForge.EVENT_BUS.post(outside);
+          NeoForge.EVENT_BUS.post(outside);
           helper.assertTrue(outside.getFeature() != null && outside.getFeature().is(TreeFeatures.FANCY_OAK),
               "fancy oak was replaced outside the area");
         })

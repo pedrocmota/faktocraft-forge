@@ -1,5 +1,9 @@
 package com.faktocraft.common.item.impl.tools;
 
+import com.faktocraft.common.util.PlayerMessages;
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.cover.CoverSupport;
 import com.faktocraft.common.cover.DrillOps;
@@ -17,19 +21,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class HoleDrill extends ElectricItem {
 
@@ -59,61 +62,47 @@ public class HoleDrill extends ElectricItem {
   }
 
   @Override
-  public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+  public InteractionResult use(Level level, Player player, InteractionHand hand) {
     ItemStack stack = player.getItemInHand(hand);
     BlockHitResult hit = target(level, player);
     if (hit == null) {
-      return InteractionResultHolder.pass(stack);
+      return InteractionResult.PASS;
     }
     BlockPos pos = hit.getBlockPos();
     if (!level.mayInteract(player, pos) || !player.mayUseItemAt(pos, hit.getDirection(), stack)) {
-      return InteractionResultHolder.fail(stack);
+      return InteractionResult.FAIL;
     }
     BlockState state = level.getBlockState(pos);
     if (DrillOps.drillFace(level, pos, state, player, hit.getDirection()) == null) {
       if (DrillOps.isBored(state)) {
-        return InteractionResultHolder.pass(stack);
+        return InteractionResult.PASS;
       }
       if (!level.isClientSide()) {
-        player.displayClientMessage(Component.translatable("chat.faktocraft.drill_invalid")
+        PlayerMessages.display(player, Component.translatable("chat.faktocraft.drill_invalid")
             .withStyle(ChatFormatting.RED), true);
       }
-      return InteractionResultHolder.fail(stack);
+      return InteractionResult.FAIL;
     }
     if (!hasEnergy(stack)) {
       if (!level.isClientSide()) {
-        player.displayClientMessage(Component.translatable("chat.faktocraft.drill_no_energy")
+        PlayerMessages.display(player, Component.translatable("chat.faktocraft.drill_no_energy")
             .withStyle(ChatFormatting.RED), true);
       }
-      return InteractionResultHolder.fail(stack);
+      return InteractionResult.FAIL;
     }
     player.getPersistentData().putLong(TARGET_KEY, pos.asLong());
     player.startUsingItem(hand);
-    return InteractionResultHolder.consume(stack);
+    return InteractionResult.CONSUME;
   }
 
   @Override
-  public int getUseDuration(ItemStack stack) {
+  public int getUseDuration(ItemStack stack, LivingEntity entity) {
     return drillTicks();
   }
 
   @Override
-  public UseAnim getUseAnimation(ItemStack stack) {
-    return UseAnim.NONE;
-  }
-
-  @Override
-  public void initializeClient(
-      java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
-    consumer.accept(new net.minecraftforge.client.extensions.common.IClientItemExtensions() {
-      @Override
-      public boolean applyForgeHandTransform(com.mojang.blaze3d.vertex.PoseStack poseStack,
-          net.minecraft.client.player.LocalPlayer player, net.minecraft.world.entity.HumanoidArm arm,
-          ItemStack itemInHand, float partialTick, float equipProcess, float swingProcess) {
-        return com.faktocraft.client.render.DrillHandAnimation.apply(poseStack, player, arm, itemInHand,
-            partialTick, equipProcess);
-      }
-    });
+  public ItemUseAnimation getUseAnimation(ItemStack stack) {
+    return ItemUseAnimation.NONE;
   }
 
   @Nullable
@@ -123,7 +112,7 @@ public class HoleDrill extends ElectricItem {
     }
     BlockHitResult hit = target(level, player);
     if (hit == null || !player.getPersistentData().contains(TARGET_KEY)
-        || hit.getBlockPos().asLong() != player.getPersistentData().getLong(TARGET_KEY)) {
+        || hit.getBlockPos().asLong() != player.getPersistentData().getLongOr(TARGET_KEY, 0L)) {
       return null;
     }
     BlockPos pos = hit.getBlockPos();
@@ -163,8 +152,9 @@ public class HoleDrill extends ElectricItem {
   }
 
   @Override
-  public void releaseUsing(ItemStack stack, Level level, LivingEntity living, int remaining) {
+  public boolean releaseUsing(ItemStack stack, Level level, LivingEntity living, int remaining) {
     clearProgress(level, living);
+    return false;
   }
 
   @Override
@@ -191,8 +181,9 @@ public class HoleDrill extends ElectricItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("tooltip.faktocraft.hole_drill").withStyle(ChatFormatting.GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("tooltip.faktocraft.hole_drill").withStyle(ChatFormatting.GRAY));
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 }

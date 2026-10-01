@@ -1,60 +1,59 @@
 {
- "parent": "minecraft:block/block",
- "render_type": "minecraft:cutout",
- "textures": {
-  "pipe": "faktocraft:block/pipe/chassis_pipe_1",
-  "particle": "faktocraft:block/pipe/chassis_pipe_1"
- },
- "elements": [
-  {
-   "from": [
-    4,
-    4,
-    0
-   ],
-   "to": [
-    12,
-    12,
-    4
-   ],
-   "faces": {
-    "up": {
-     "texture": "#pipe",
-     "uv": [
-      4,
-      0,
-      12,
-      4
-     ]
-    },
-    "down": {
-     "texture": "#pipe",
-     "uv": [
-      4,
-      12,
-      12,
-      16
-     ]
-    },
-    "east": {
-     "texture": "#pipe",
-     "uv": [
-      0,
-      4,
-      4,
-      12
-     ]
-    },
-    "west": {
-     "texture": "#pipe",
-     "uv": [
-      12,
-      4,
-      16,
-      12
-     ]
+  "parent": "minecraft:block/block",
+  "textures": {
+    "pipe": "faktocraft:block/pipe/chassis_pipe_1",
+    "particle": "faktocraft:block/pipe/chassis_pipe_1"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        4,
+        0
+      ],
+      "to": [
+        12,
+        12,
+        4
+      ],
+      "faces": {
+        "up": {
+          "texture": "#pipe",
+          "uv": [
+            4,
+            0,
+            12,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#pipe",
+          "uv": [
+            4,
+            12,
+            12,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#pipe",
+          "uv": [
+            0,
+            4,
+            4,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#pipe",
+          "uv": [
+            12,
+            4,
+            16,
+            12
+          ]
+        }
+      }
     }
-   }
-  }
- ]
+  ]
 }

@@ -6,17 +6,20 @@ import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.recipe.RecipeType;
-import net.minecraft.client.gui.GuiGraphics;
+import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import java.util.Arrays;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import java.util.ArrayList;
 import java.util.List;
 import static com.faktocraft.common.util.Constants.JEI;
 
 public abstract class AbstractRecipeCategory<T> extends mezz.jei.api.recipe.category.AbstractRecipeCategory<T> {
-
   protected final IGuiHelper guiHelper;
   protected final IDrawableStatic background;
 
@@ -26,7 +29,7 @@ public abstract class AbstractRecipeCategory<T> extends mezz.jei.api.recipe.cate
     return "jei." + Faktocraft.MODID + "." + name;
   }
 
-  protected AbstractRecipeCategory(RecipeType<T> recipeType, String unlocalizedName, IGuiHelper guiHelper,
+  protected AbstractRecipeCategory(IRecipeType<T> recipeType, String unlocalizedName, IGuiHelper guiHelper,
       IDrawableStatic background, IDrawable icon) {
     super(recipeType, Component.translatable(key(unlocalizedName)), icon, background.getWidth(),
         background.getHeight());
@@ -36,7 +39,7 @@ public abstract class AbstractRecipeCategory<T> extends mezz.jei.api.recipe.cate
   }
 
   @Override
-  public void draw(T recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX,
+  public void draw(T recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor graphics, double mouseX,
       double mouseY) {
     background.draw(graphics);
   }
@@ -46,6 +49,18 @@ public abstract class AbstractRecipeCategory<T> extends mezz.jei.api.recipe.cate
   }
 
   protected static List<ItemStack> stacks(Ingredient ingredient, int count) {
-    return Arrays.stream(ingredient.getItems()).map(stack -> new ItemStack(stack.getItem(), count)).toList();
+    List<ItemStack> result = new ArrayList<>();
+    for (ItemStack stack : ingredient.display().resolveForStacks(displayContext())) {
+      if (!stack.isEmpty()) {
+        result.add(stack.copyWithCount(count));
+      }
+    }
+    return result;
+  }
+
+  private static ContextMap displayContext() {
+    ClientLevel level = Minecraft.getInstance().level;
+    return level != null ? SlotDisplayContext.fromLevel(level)
+        : ContextMap.builder().buildAndValidate(SlotDisplayContext.CONTEXT);
   }
 }

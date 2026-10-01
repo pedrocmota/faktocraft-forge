@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "name": "battery_box",
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:basic_machine_casing"
+        }
+      ]
+    }
+  ]
+}

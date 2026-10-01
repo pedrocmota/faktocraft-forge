@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:smelting",
+  "cookingtime": 200,
+  "experience": 0.8,
+  "ingredient": "faktocraft:tin_ore",
+  "result": "faktocraft:tin_ingot"
+}

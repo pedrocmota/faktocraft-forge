@@ -1,12 +1,13 @@
 package com.faktocraft.common.interfaces.receipe;
 
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.Container;
+import com.faktocraft.common.registries.ModRecipeType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeBookCategory;
+import net.minecraft.world.item.crafting.RecipeInput;
 
-public interface IBaseRecipe<T extends Container> extends Recipe<T> {
-
+public interface IBaseRecipe<T extends RecipeInput> extends Recipe<T> {
   float getExperience();
 
   int getDuration();
@@ -15,16 +16,6 @@ public interface IBaseRecipe<T extends Container> extends Recipe<T> {
 
   default ItemStack getResultItem() {
     return ItemStack.EMPTY;
-  }
-
-  @Override
-  default ItemStack getResultItem(RegistryAccess registryAccess) {
-    return getResultItem();
-  }
-
-  @Override
-  default boolean canCraftInDimensions(int width, int height) {
-    return true;
   }
 
   @Override
@@ -38,7 +29,17 @@ public interface IBaseRecipe<T extends Container> extends Recipe<T> {
   }
 
   @Override
-  default String getGroup() {
+  default String group() {
     return "";
+  }
+
+  @Override
+  default PlacementInfo placementInfo() {
+    return PlacementInfo.NOT_PLACEABLE;
+  }
+
+  @Override
+  default RecipeBookCategory recipeBookCategory() {
+    return ModRecipeType.MACHINE_BOOK_CATEGORY;
   }
 }

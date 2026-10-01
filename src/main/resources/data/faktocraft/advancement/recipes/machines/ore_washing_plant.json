@@ -1,0 +1,76 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_ingredient_0": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "faktocraft:basic_machine_casing"
+          }
+        ]
+      }
+    },
+    "has_ingredient_1": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:bucket"
+          }
+        ]
+      }
+    },
+    "has_ingredient_2": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "faktocraft:electronic_circuit"
+          }
+        ]
+      }
+    },
+    "has_ingredient_3": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "faktocraft:electric_motor"
+          }
+        ]
+      }
+    },
+    "has_ingredient_4": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:plates/iron"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipes": "faktocraft:machines/ore_washing_plant"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ingredient_0",
+      "has_ingredient_1",
+      "has_ingredient_2",
+      "has_ingredient_3",
+      "has_ingredient_4",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "faktocraft:machines/ore_washing_plant"
+    ]
+  }
+}

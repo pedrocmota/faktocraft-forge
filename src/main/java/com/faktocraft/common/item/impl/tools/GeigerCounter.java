@@ -1,5 +1,9 @@
 package com.faktocraft.common.item.impl.tools;
 
+import com.faktocraft.common.util.PlayerMessages;
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.item.base.BaseItem;
 import com.faktocraft.common.radiation.RadiationManager;
@@ -8,13 +12,15 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import com.faktocraft.common.util.NbtBridge;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
 import java.util.Locale;
 
 public class GeigerCounter extends BaseItem {
@@ -32,9 +38,11 @@ public class GeigerCounter extends BaseItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable("geiger." + Faktocraft.MODID + ".desc").withStyle(ChatFormatting.GRAY));
-    super.appendHoverText(stack, level, tooltip, flag);
+  @SuppressWarnings("deprecation")
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable("geiger." + Faktocraft.MODID + ".desc").withStyle(ChatFormatting.GRAY));
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 
   @Override
@@ -47,7 +55,8 @@ public class GeigerCounter extends BaseItem {
   }
 
   public static float dose(ItemStack stack) {
-    return stack.hasTag() ? stack.getTag().getFloat(TAG_DOSE) : 0.0F;
+    CompoundTag tag = NbtBridge.customData(stack);
+    return tag != null ? tag.getFloatOr(TAG_DOSE, 0.0F) : 0.0F;
   }
 
   public static float doseLevel(ItemStack stack) {
@@ -65,21 +74,23 @@ public class GeigerCounter extends BaseItem {
   }
 
   @Override
-  public void inventoryTick(ItemStack stack, Level level, Entity owner, int slot, boolean selected) {
-    if (!(level instanceof ServerLevel serverLevel) || !(owner instanceof Player player) || !held(player, stack)) {
+  public void inventoryTick(ItemStack stack, ServerLevel serverLevel, Entity owner, @Nullable EquipmentSlot slot) {
+    Level level = serverLevel;
+    if (!(owner instanceof Player player) || !held(player, stack)) {
       return;
     }
     float dose = dose(stack);
     if (level.getGameTime() % MEASURE_INTERVAL == 0) {
       RadiationManager.Reading reading = RadiationManager.measure(serverLevel, player);
       dose = reading.total();
-      stack.getOrCreateTag().putFloat(TAG_DOSE, dose);
-      player.displayClientMessage(readingLine(dose), true);
+      float measured = dose;
+      NbtBridge.updateCustomData(stack, tag -> tag.putFloat(TAG_DOSE, measured));
+      PlayerMessages.display(player, readingLine(dose), true);
     }
     boolean quiet = dose < SILENT_BELOW;
     float rate = quiet ? BACKGROUND_RATE : Math.min(MAX_RATE, BASE_RATE + dose * RATE_PER_RAD);
-    if (level.random.nextFloat() < rate) {
-      float pitch = 0.9F + level.random.nextFloat() * 0.2F;
+    if (level.getRandom().nextFloat() < rate) {
+      float pitch = 0.9F + level.getRandom().nextFloat() * 0.2F;
       level.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.GEIGER_CLICK,
           SoundSource.PLAYERS, quiet ? 0.25F : 0.45F, pitch);
     }

@@ -9,7 +9,7 @@ import net.minecraft.world.level.material.MapColor;
 public class BlockReinforcedStoneStairs extends StairBlock {
 
   public BlockReinforcedStoneStairs(Properties properties) {
-    super(() -> ModBlocks.REINFORCED_STONE.defaultBlockState(), properties);
+    super(ModBlocks.REINFORCED_STONE.defaultBlockState(), properties);
   }
 
   public static BlockBehaviour.Properties reinforcedStoneStairsProperties() {

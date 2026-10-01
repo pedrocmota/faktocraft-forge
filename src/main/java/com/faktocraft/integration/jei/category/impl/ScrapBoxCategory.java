@@ -5,22 +5,21 @@ import com.faktocraft.common.recipe.impl.ScrapBoxRecipe;
 import com.faktocraft.common.registries.ModItems;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import static com.faktocraft.common.util.Constants.JEI;
 
 public class ScrapBoxCategory extends AbstractRecipeCategory<ScrapBoxRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "scrap_box");
-  public static final RecipeType<ScrapBoxRecipe> TYPE = new RecipeType<>(UID, ScrapBoxRecipe.class);
+  public static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "scrap_box");
+  public static final IRecipeType<ScrapBoxRecipe> TYPE = IRecipeType.create(UID, ScrapBoxRecipe.class);
 
   private static volatile float totalWeight = 0.0F;
 
@@ -34,17 +33,17 @@ public class ScrapBoxCategory extends AbstractRecipeCategory<ScrapBoxRecipe> {
         "scrap_box",
         guiHelper,
         guiHelper.createDrawable(JEI, 0, 220, 92, 28),
-        guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModItems.SCRAP_BOX)));
+        guiHelper.createDrawableItemStack(new ItemStack(ModItems.SCRAP_BOX)));
   }
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, ScrapBoxRecipe recipe, IFocusGroup focuses) {
-    builder.addSlot(RecipeIngredientRole.INPUT, 9, 6).addItemStack(new ItemStack(ModItems.SCRAP_BOX));
-    builder.addSlot(RecipeIngredientRole.OUTPUT, 65, 6).addItemStack(recipe.getResultItem());
+    builder.addSlot(RecipeIngredientRole.INPUT, 9, 6).add(new ItemStack(ModItems.SCRAP_BOX));
+    builder.addSlot(RecipeIngredientRole.OUTPUT, 65, 6).add(recipe.getResultItem());
   }
 
   @Override
-  public void draw(ScrapBoxRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics,
+  public void draw(ScrapBoxRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor graphics,
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 

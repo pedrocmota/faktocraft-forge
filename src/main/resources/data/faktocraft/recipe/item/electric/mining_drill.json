@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "i": "#c:plates/iron",
+    "p": "faktocraft:power_unit"
+  },
+  "pattern": [
+    " i ",
+    "iii",
+    "ipi"
+  ],
+  "result": {
+    "id": "faktocraft:mining_drill"
+  }
+}

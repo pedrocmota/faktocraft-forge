@@ -1,33 +1,32 @@
 {
- "parent": "minecraft:block/block",
- "render_type": "minecraft:cutout",
- "textures": {
-  "pipe": "faktocraft:block/pipe/fluid_gold_pipe",
-  "particle": "faktocraft:block/pipe/fluid_gold_pipe"
- },
- "elements": [
-  {
-   "from": [
-    4,
-    4,
-    4
-   ],
-   "to": [
-    12,
-    12,
-    4
-   ],
-   "faces": {
-    "north": {
-     "texture": "#pipe",
-     "uv": [
-      4,
-      4,
-      12,
-      12
-     ]
+  "parent": "minecraft:block/block",
+  "textures": {
+    "pipe": "faktocraft:block/pipe/fluid_gold_pipe",
+    "particle": "faktocraft:block/pipe/fluid_gold_pipe"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        4,
+        4
+      ],
+      "to": [
+        12,
+        12,
+        4
+      ],
+      "faces": {
+        "north": {
+          "texture": "#pipe",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        }
+      }
     }
-   }
-  }
- ]
+  ]
 }

@@ -1,7 +1,7 @@
 {
-	"parent": "faktocraft:block/base/cable/insulated_cable_side",
-	"textures": {
-		"wall": "faktocraft:block/cable/gold_cable_insulated_side",
-		"particle": "#wall"
-	}
+  "parent": "faktocraft:block/base/cable/insulated_cable_side",
+  "textures": {
+    "wall": "faktocraft:block/cable/gold_cable_insulated_side",
+    "particle": "#wall"
+  }
 }

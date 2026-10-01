@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:electronic_circuit",
+    "#c:ender_pearls",
+    "faktocraft:steel_plate"
+  ],
+  "result": {
+    "id": "faktocraft:remote_requester",
+    "count": 1
+  }
+}

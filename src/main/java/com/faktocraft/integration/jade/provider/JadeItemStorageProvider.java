@@ -1,13 +1,12 @@
 package com.faktocraft.integration.jade.provider;
 
 import com.faktocraft.Faktocraft;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import com.faktocraft.common.util.transfer.CapabilityBridge;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.IItemHandler;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 import snownee.jade.api.Accessor;
 import snownee.jade.api.view.ClientViewGroup;
@@ -19,15 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JadeItemStorageProvider
-    implements IServerExtensionProvider<Object, ItemStack>, IClientExtensionProvider<ItemStack, ItemView> {
+    implements IServerExtensionProvider<ItemStack>, IClientExtensionProvider<ItemStack, ItemView> {
 
   public static final JadeItemStorageProvider INSTANCE = new JadeItemStorageProvider();
 
-  private static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "item_storage");
+  private static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "item_storage");
   private static final int PRIORITY = 900;
 
   @Override
-  public ResourceLocation getUid() {
+  public Identifier getUid() {
     return UID;
   }
 
@@ -38,12 +37,11 @@ public class JadeItemStorageProvider
 
   @Override
   @Nullable
-  public List<ViewGroup<ItemStack>> getGroups(ServerPlayer player, ServerLevel level, Object target,
-      boolean showDetails) {
-    if (!(target instanceof BlockEntity blockEntity)) {
+  public List<ViewGroup<ItemStack>> getGroups(Accessor<?> accessor) {
+    if (!(accessor.getTarget() instanceof BlockEntity blockEntity)) {
       return null;
     }
-    IItemHandler handler = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().orElse(null);
+    IItemHandler handler = CapabilityBridge.get(blockEntity, ForgeCapabilities.ITEM_HANDLER, null);
     if (handler == null) {
       return null;
     }

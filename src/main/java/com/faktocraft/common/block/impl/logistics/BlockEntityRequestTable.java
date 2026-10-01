@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.util.NbtBridge;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.entity.slot.FaktocraftSlot;
@@ -12,9 +13,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -206,7 +207,7 @@ public class BlockEntityRequestTable extends FaktocraftBlockEntity {
   protected void saveAdditional(CompoundTag tag) {
     super.saveAdditional(tag);
     if (!ghostTarget.isEmpty()) {
-      tag.put("ghostTarget", ghostTarget.save(new CompoundTag()));
+      tag.put("ghostTarget", NbtBridge.saveStack(ghostTarget));
     }
     CompoundTag matrixTag = new CompoundTag();
     craftMatrix.save(matrixTag);
@@ -217,10 +218,11 @@ public class BlockEntityRequestTable extends FaktocraftBlockEntity {
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    ghostTarget = tag.contains("ghostTarget") ? ItemStack.of(tag.getCompound("ghostTarget")) : ItemStack.EMPTY;
+    ghostTarget = tag.contains("ghostTarget")
+        ? NbtBridge.loadStack(tag.getCompoundOrEmpty("ghostTarget")) : ItemStack.EMPTY;
     if (tag.contains("craftMatrix")) {
-      craftMatrix.load(tag.getCompound("craftMatrix"));
+      craftMatrix.load(tag.getCompoundOrEmpty("craftMatrix"));
     }
-    autoExtract = tag.getBoolean("autoExtract");
+    autoExtract = tag.getBooleanOr("autoExtract", false);
   }
 }

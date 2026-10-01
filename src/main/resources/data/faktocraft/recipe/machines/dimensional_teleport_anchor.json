@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "a": "faktocraft:teleport_anchor",
+    "c": "faktocraft:advanced_circuit",
+    "e": "minecraft:ender_eye",
+    "i": "#c:plates/iridium",
+    "u": "#c:raw_materials/uranium"
+  },
+  "pattern": [
+    "ueu",
+    "cac",
+    "uiu"
+  ],
+  "result": {
+    "id": "faktocraft:dimensional_teleport_anchor"
+  }
+}

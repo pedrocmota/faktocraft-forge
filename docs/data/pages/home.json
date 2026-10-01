@@ -6,13 +6,14 @@
     },
     {
       "type": "p",
-      "en": "**Faktocraft** is a modern port of several classic tech mods - **Industrial Reborn**, **IndustrialCraft 2**, **BuildCraft** and **Logistics Pipes** - rebuilt as a single, coherent mod: electrical machines, tiered power grids, item and fluid logistics, and automated mining.",
-      "pt": "O **Faktocraft** é um port moderno de vários mods técnicos clássicos - **Industrial Reborn**, **IndustrialCraft 2**, **BuildCraft** e **Logistics Pipes** - reconstruídos como um único mod coerente: máquinas elétricas, redes de energia com tensões, logística de itens e fluidos e mineração automatizada."
+      "en": "**Faktocraft** is a modern successor to several classic tech mods - **Industrial Reborn**, **IndustrialCraft 2**, **BuildCraft** and **Logistics Pipes** - rebuilt as a single, coherent mod: electrical machines, tiered power grids, item and fluid logistics, and automated mining.",
+      "pt": "O **Faktocraft** é um sucessor moderno de vários mods técnicos clássicos - **Industrial Reborn**, **IndustrialCraft 2**, **BuildCraft** e **Logistics Pipes** - reconstruídos como um único mod coerente: máquinas elétricas, redes de energia com tensões, logística de itens e fluidos e mineração automatizada."
     },
     {
       "type": "callout",
-      "en": "Faktocraft is in **beta**: every system is in place and playable, but balance is still being tuned. Found a bug? Please report it on [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues)!",
-      "pt": "O Faktocraft está em **beta**: todos os sistemas estão prontos e jogáveis, mas o balanceamento ainda está sendo ajustado. Achou um bug? Reporte no [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues)!"
+      "style": "warning",
+      "en": "The **Minecraft 26.3 / NeoForge** version is an **alpha**: it is a work-in-progress port of the 1.20.1 mod. Expect missing features, visual glitches and bugs, and back up your worlds before opening them here. The **1.20.1 Forge** version is the stable one. Found a problem? Report it on [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues).",
+      "pt": "A versão para **Minecraft 26.3 / NeoForge** é um **alpha**: é um port em andamento do mod da 1.20.1. Espere funcionalidades faltando, falhas visuais e bugs, e faça backup dos seus mundos antes de abri-los aqui. A versão **1.20.1 Forge** é a estável. Achou um problema? Reporte no [GitHub](https://github.com/pedrocmota/faktocraft-forge/issues)."
     },
     {
       "type": "callout",
@@ -208,14 +209,14 @@
     {
       "type": "list",
       "en": [
-        "**Minecraft 1.20.1 with Forge** is the only supported version.",
-        "The mod will move to newer Minecraft versions once Minecraft stabilizes its Vulkan support.",
-        "A **Fabric** port is unlikely - the mod is deeply tied to Forge internals."
+        "**Minecraft 26.3 with NeoForge** (26.3.0 beta or newer) is the version under development and is still in **alpha**; the **1.20.1 Forge** version on the `main` branch is the stable release and only receives fixes.",
+        "Old 1.20.1 worlds open on 26.3: machines, tanks, pipes, logistics and saved data are migrated on load; the removed sulfur ore turns into stone (deepslate ore into deepslate). While the alpha lasts, keep a backup of the 1.20.1 world.",
+        "A **Fabric** port is unlikely - the mod is deeply tied to NeoForge internals."
       ],
       "pt": [
-        "**Minecraft 1.20.1 com Forge** é a única versão suportada.",
-        "O mod será atualizado para versões mais novas quando o Minecraft estabilizar o suporte a Vulkan.",
-        "Um port para **Fabric** é improvável - o mod é profundamente ligado aos internals do Forge."
+        "**Minecraft 26.3 com NeoForge** (26.3.0 beta ou mais novo) é a versão em desenvolvimento e ainda está em **alpha**; a versão **1.20.1 Forge**, na branch `main`, é a estável e só recebe correções.",
+        "Mundos antigos da 1.20.1 abrem na 26.3: máquinas, tanques, tubos, logística e dados salvos são migrados ao carregar; o minério de enxofre removido vira pedra (o de ardósia vira ardósia). Enquanto durar o alpha, guarde um backup do mundo da 1.20.1.",
+        "Um port para **Fabric** é improvável - o mod é profundamente ligado aos internals do NeoForge."
       ]
     }
   ]

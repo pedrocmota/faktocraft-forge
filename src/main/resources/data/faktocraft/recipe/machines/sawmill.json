@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "A": "minecraft:iron_axe",
+    "C": "faktocraft:basic_machine_casing",
+    "P": "#minecraft:planks",
+    "x": "faktocraft:electronic_circuit"
+  },
+  "pattern": [
+    " A ",
+    "PCP",
+    "PxP"
+  ],
+  "result": {
+    "id": "faktocraft:sawmill"
+  }
+}

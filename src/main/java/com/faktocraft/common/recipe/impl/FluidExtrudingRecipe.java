@@ -2,23 +2,50 @@ package com.faktocraft.common.recipe.impl;
 
 import com.faktocraft.common.interfaces.receipe.IBaseRecipe;
 import com.faktocraft.common.item.crafting.CountedIngredient;
+import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.registries.ModRecipeType;
-import com.google.gson.JsonObject;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.faktocraft.common.util.RecipeUtil;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
-public class FluidExtrudingRecipe implements IBaseRecipe<Container> {
+public class FluidExtrudingRecipe implements IBaseRecipe<MachineRecipeInput> {
+  public static final MapCodec<FluidExtrudingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+      CountedIngredient.CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
+      Codec.INT.optionalFieldOf("water_cost", 0).forGetter(recipe -> recipe.waterCost),
+      Codec.INT.optionalFieldOf("lava_cost", 0).forGetter(recipe -> recipe.lavaCost),
+      Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(recipe -> recipe.experience),
+      Codec.INT.optionalFieldOf("duration", 180).forGetter(recipe -> recipe.duration),
+      Codec.INT.optionalFieldOf("power_cost", 8).forGetter(recipe -> recipe.powerCost))
+      .apply(i, FluidExtrudingRecipe::new));
 
-  public static final RecipeSerializer<FluidExtrudingRecipe> SERIALIZER = new Serializer();
+  public static final StreamCodec<RegistryFriendlyByteBuf, FluidExtrudingRecipe> STREAM_CODEC = StreamCodec.of(
+      (buf, recipe) -> {
+        recipe.result.toNetwork(buf);
+        buf.writeVarInt(recipe.waterCost);
+        buf.writeVarInt(recipe.lavaCost);
+        buf.writeFloat(recipe.experience);
+        buf.writeVarInt(recipe.duration);
+        buf.writeVarInt(recipe.powerCost);
+      }, buf -> {
+        CountedIngredient result = CountedIngredient.fromNetwork(buf);
+        int waterCost = buf.readVarInt();
+        int lavaCost = buf.readVarInt();
+        float experience = buf.readFloat();
+        int duration = buf.readVarInt();
+        int powerCost = buf.readVarInt();
+        return new FluidExtrudingRecipe(result, waterCost, lavaCost, experience, duration, powerCost);
+      });
 
-  private final ResourceLocation id;
+  public static final RecipeSerializer<FluidExtrudingRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC,
+      STREAM_CODEC);
+
   private final CountedIngredient result;
   private final int waterCost;
   private final int lavaCost;
@@ -26,9 +53,8 @@ public class FluidExtrudingRecipe implements IBaseRecipe<Container> {
   private final int duration;
   private final int powerCost;
 
-  public FluidExtrudingRecipe(ResourceLocation id, CountedIngredient result, int waterCost, int lavaCost,
-      float experience, int duration, int powerCost) {
-    this.id = id;
+  public FluidExtrudingRecipe(CountedIngredient result, int waterCost, int lavaCost, float experience, int duration,
+      int powerCost) {
     this.result = result;
     this.waterCost = waterCost;
     this.lavaCost = lavaCost;
@@ -38,19 +64,20 @@ public class FluidExtrudingRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public boolean matches(Container container, Level level) {
-    return result.testType(container.getItem(0));
+  public boolean matches(MachineRecipeInput input, Level level) {
+    return result.testType(input.getItem(0));
   }
 
   @Override
-  public ItemStack assemble(Container container, RegistryAccess registryAccess) {
+  public ItemStack assemble(MachineRecipeInput input) {
     return getResultItem();
   }
 
   @Override
   public ItemStack getResultItem() {
-    ItemStack[] items = result.ingredient().getItems();
-    return items.length == 0 ? ItemStack.EMPTY : new ItemStack(items[0].getItem());
+    return RecipeUtil.ingredientItems(result.ingredient()).findFirst()
+        .map(holder -> new ItemStack(holder.value()))
+        .orElse(ItemStack.EMPTY);
   }
 
   public int getWaterCost() {
@@ -77,11 +104,6 @@ public class FluidExtrudingRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public ResourceLocation getId() {
-    return id;
-  }
-
-  @Override
   public RecipeSerializer<FluidExtrudingRecipe> getSerializer() {
     return SERIALIZER;
   }
@@ -89,40 +111,5 @@ public class FluidExtrudingRecipe implements IBaseRecipe<Container> {
   @Override
   public RecipeType<FluidExtrudingRecipe> getType() {
     return ModRecipeType.FLUID_EXTRUDING;
-  }
-
-  public static class Serializer implements RecipeSerializer<FluidExtrudingRecipe> {
-
-    @Override
-    public FluidExtrudingRecipe fromJson(ResourceLocation id, JsonObject json) {
-      CountedIngredient result = CountedIngredient.fromJson(json.get("result"));
-      int waterCost = GsonHelper.getAsInt(json, "water_cost", 0);
-      int lavaCost = GsonHelper.getAsInt(json, "lava_cost", 0);
-      float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
-      int duration = GsonHelper.getAsInt(json, "duration", 180);
-      int powerCost = GsonHelper.getAsInt(json, "power_cost", 8);
-      return new FluidExtrudingRecipe(id, result, waterCost, lavaCost, experience, duration, powerCost);
-    }
-
-    @Override
-    public FluidExtrudingRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-      CountedIngredient result = CountedIngredient.fromNetwork(buf);
-      int waterCost = buf.readVarInt();
-      int lavaCost = buf.readVarInt();
-      float experience = buf.readFloat();
-      int duration = buf.readVarInt();
-      int powerCost = buf.readVarInt();
-      return new FluidExtrudingRecipe(id, result, waterCost, lavaCost, experience, duration, powerCost);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buf, FluidExtrudingRecipe recipe) {
-      recipe.result.toNetwork(buf);
-      buf.writeVarInt(recipe.waterCost);
-      buf.writeVarInt(recipe.lavaCost);
-      buf.writeFloat(recipe.experience);
-      buf.writeVarInt(recipe.duration);
-      buf.writeVarInt(recipe.powerCost);
-    }
   }
 }

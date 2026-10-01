@@ -369,7 +369,7 @@ public class BlockEntityLogisticsController extends FaktocraftBlockEntity implem
       if (recipe == null) {
         continue;
       }
-      ItemStack result = recipe.getResultItem(level.registryAccess());
+      ItemStack result = pipe.patternResult(index);
       List<LogisticsPlanner.ItemChoice> counts = pipe.patternIngredients(index);
       List<Endpoint> ends = new ArrayList<>();
       Endpoint input = Endpoint.assemblyIn(assembly.getBlockPos());
@@ -451,9 +451,9 @@ public class BlockEntityLogisticsController extends FaktocraftBlockEntity implem
     if (level == null || !level.isLoaded(docked)) {
       return null;
     }
-    String blockId = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(level.getBlockState(docked).getBlock())
-        .toString();
-    net.minecraftforge.items.IItemHandler handler = Endpoint.resolveHandler(level, docked, dockedSide);
+    String blockId = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+        .getKey(level.getBlockState(docked).getBlock()).toString();
+    com.faktocraft.common.util.transfer.IItemHandler handler = Endpoint.resolveHandler(level, docked, dockedSide);
     if (!blockId.equals(io.bindBlock) || handler == null || handler.getSlots() != io.bindSlots
         || io.lastSlot() >= handler.getSlots()) {
       configErrors.add("invalid_bind:" + posText(docked));
@@ -528,7 +528,7 @@ public class BlockEntityLogisticsController extends FaktocraftBlockEntity implem
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("ledger")) {
-      ledger.load(tag.getCompound("ledger"));
+      ledger.load(tag.getCompoundOrEmpty("ledger"));
     }
   }
 }

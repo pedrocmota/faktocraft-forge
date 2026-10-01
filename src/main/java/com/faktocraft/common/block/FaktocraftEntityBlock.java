@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class FaktocraftEntityBlock extends FaktocraftBlock implements EntityBlock {
-
   public FaktocraftEntityBlock(Properties properties) {
     super(properties);
   }
@@ -38,15 +37,5 @@ public class FaktocraftEntityBlock extends FaktocraftBlock implements EntityBloc
         faktocraftBlockEntity.tickServer(blockState);
       }
     };
-  }
-
-  @Override
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.is(newState.getBlock())) {
-      if (level.getBlockEntity(pos) instanceof FaktocraftBlockEntity blockEntity) {
-        blockEntity.preRemoveSideEffects(pos, state);
-      }
-    }
-    super.onRemove(state, level, pos, newState, isMoving);
   }
 }

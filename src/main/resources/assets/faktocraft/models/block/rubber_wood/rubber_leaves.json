@@ -1,7 +1,6 @@
 {
-    "parent": "block/leaves",
-    "textures": {
-        "all": "faktocraft:block/rubber_wood/rubber_leaves"
-    },
-    "render_type": "cutout"
+  "parent": "block/leaves",
+  "textures": {
+    "all": "faktocraft:block/rubber_wood/rubber_leaves"
+  }
 }

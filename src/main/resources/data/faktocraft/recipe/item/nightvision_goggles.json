@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_armour",
+  "key": {
+    "a": "faktocraft:advanced_circuit",
+    "b": "faktocraft:advanced_battery",
+    "g": "faktocraft:reinforced_glass",
+    "l": "faktocraft:luminator",
+    "r": "#c:rubber"
+  },
+  "pattern": [
+    " b ",
+    "lgl",
+    "rar"
+  ],
+  "result": {
+    "id": "faktocraft:nightvision_goggles"
+  }
+}

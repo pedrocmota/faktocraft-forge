@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "l": "#c:plates/lapis",
+    "a": "faktocraft:advanced_circuit",
+    "d": "faktocraft:energium_dust",
+    "p": "faktocraft:lapotron_crystal"
+  },
+  "pattern": [
+    "lal",
+    "dpd",
+    "lal"
+  ],
+  "result": {
+    "id": "faktocraft:advanced_lapotron_crystal"
+  }
+}

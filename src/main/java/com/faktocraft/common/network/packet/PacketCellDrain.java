@@ -1,5 +1,11 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.faktocraft.common.entity.block.FluidStorage;
 import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
 import com.faktocraft.common.item.base.FluidItem;
@@ -12,10 +18,18 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.network.NetworkEvent;
-import java.util.function.Supplier;
 
-public record PacketCellDrain(BlockPos blockPos, int tankIndex, boolean all) {
+public record PacketCellDrain(BlockPos blockPos, int tankIndex, boolean all) implements CustomPacketPayload {
+
+  public static final Type<PacketCellDrain> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_cell_drain"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketCellDrain> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketCellDrain::decode);
+
+  @Override
+  public Type<PacketCellDrain> type() {
+    return TYPE;
+  }
 
   public static void encode(PacketCellDrain msg, FriendlyByteBuf buf) {
     buf.writeBlockPos(msg.blockPos);
@@ -27,9 +41,9 @@ public record PacketCellDrain(BlockPos blockPos, int tankIndex, boolean all) {
     return new PacketCellDrain(buf.readBlockPos(), buf.readVarInt(), buf.readBoolean());
   }
 
-  public static void handle(PacketCellDrain msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> {
-      ServerPlayer sender = ctx.get().getSender();
+  public static void handle(PacketCellDrain msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> {
+      ServerPlayer sender = ctx.getSender();
       if (sender == null) {
         return;
       }
@@ -72,12 +86,12 @@ public record PacketCellDrain(BlockPos blockPos, int tankIndex, boolean all) {
           player.containerMenu.setCarried(filled);
         } else {
           carried.shrink(cells);
-          player.getInventory().placeItemBackInInventory(filled);
+          player.getInventory().placeItemBackInInventory(filled, net.minecraft.util.Prediction.SERVER_ONLY);
         }
         player.level().playSound(null, msg.blockPos(), SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
         player.containerMenu.broadcastChanges();
       });
     });
-    ctx.get().setPacketHandled(true);
+    ctx.setPacketHandled(true);
   }
 }

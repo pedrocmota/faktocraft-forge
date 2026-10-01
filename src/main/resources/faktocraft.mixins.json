@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.faktocraft.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "LivingEntityInvoker"
+  ],
+  "client": [
+    "client.GuiRendererMixin",
+    "client.RegisterFluidModelsEventAccessor"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

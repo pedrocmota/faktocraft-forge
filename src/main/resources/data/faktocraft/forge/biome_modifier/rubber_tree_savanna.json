@@ -1,6 +1,0 @@
-{
-  "type": "forge:add_features",
-  "biomes": "#minecraft:is_savanna",
-  "features": "faktocraft:rubber_tree_scattered_placed",
-  "step": "vegetal_decoration"
-}

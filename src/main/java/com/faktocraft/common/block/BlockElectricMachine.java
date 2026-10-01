@@ -3,6 +3,14 @@ package com.faktocraft.common.block;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.interfaces.block.IElectricMachine;
 import com.faktocraft.common.util.wrench.WrenchHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class BlockElectricMachine extends BlockMachine implements IElectricMachine {
 
@@ -21,13 +29,14 @@ public class BlockElectricMachine extends BlockMachine implements IElectricMachi
   }
 
   @Override
-  public void appendHoverText(net.minecraft.world.item.ItemStack stack,
-      @org.jetbrains.annotations.Nullable net.minecraft.world.level.BlockGetter level,
-      java.util.List<net.minecraft.network.chat.Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
-    tooltip.add(IElectricMachine.tierTooltip(getEnergyTiers()));
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(IElectricMachine.tierTooltip(getEnergyTiers()));
     if (this instanceof com.faktocraft.common.interfaces.block.IGenerationInfo info) {
-      info.appendGenerationInfo(tooltip);
+      List<Component> lines = new ArrayList<>();
+      info.appendGenerationInfo(lines);
+      lines.forEach(tooltip);
     }
-    super.appendHoverText(stack, level, tooltip, flag);
+    super.appendHoverText(stack, context, display, tooltip, flag);
   }
 }

@@ -1,5 +1,8 @@
 package com.faktocraft.common.screen.bar;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.input.MouseButtonEvent;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.GuiSprite;
@@ -8,10 +11,10 @@ import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.progress.GuiProgress;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.TextComponentUtil;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class GuiElectricBarHorizontal extends GuiProgress {
 
@@ -33,7 +36,8 @@ public class GuiElectricBarHorizontal extends GuiProgress {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, net.minecraft.client.Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, net.minecraft.client.Minecraft minecraft, int mouseX,
+      int mouseY) {
     if (hidden()) {
       return;
     }
@@ -59,23 +63,24 @@ public class GuiElectricBarHorizontal extends GuiProgress {
   }
 
   @Override
-  public ResourceLocation getResourceLocation() {
+  public Identifier getResourceLocation() {
     return Constants.COMMON;
   }
 
   @Override
-  protected boolean isValidClickButton(int button) {
-    return button == 1 && blockEntity != null && blockEntity.hasBatteryDock();
+  protected boolean isValidClickButton(MouseButtonInfo button) {
+    return button.button() == InputConstants.MOUSE_BUTTON_RIGHT && blockEntity != null
+        && blockEntity.hasBatteryDock();
   }
 
   @Override
-  public void onClick(double mouseX, double mouseY) {
+  public void onClick(MouseButtonEvent event, boolean doubleClick) {
     com.faktocraft.common.network.ModNetworking.sendToServer(
         new com.faktocraft.common.network.packet.PacketToggleDischarge(blockEntity.getBlockPos()));
   }
 
   @Override
-  public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+  public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (hidden()) {
       return;
     }
@@ -88,7 +93,7 @@ public class GuiElectricBarHorizontal extends GuiProgress {
         lines.add(Component.translatable("gui." + Faktocraft.MODID + ".undervoltage")
             .withStyle(net.minecraft.ChatFormatting.YELLOW));
       }
-      graphics.renderComponentTooltip(GuiUtil.getFont(), lines, mouseX, mouseY);
+      graphics.setComponentTooltipForNextFrame(GuiUtil.getFont(), lines, mouseX, mouseY);
     }
   }
 }

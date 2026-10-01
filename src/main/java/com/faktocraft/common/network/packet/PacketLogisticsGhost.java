@@ -1,26 +1,41 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.util.BufUtil;
+import com.faktocraft.common.network.ClientPacketDispatch;
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.faktocraft.common.network.ModNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
-public record PacketLogisticsGhost(List<BlockPos> path, ItemStack stack, int durationTicks, int[] hopTicks) {
+public record PacketLogisticsGhost(List<BlockPos> path, ItemStack stack, int durationTicks, int[] hopTicks)
+    implements CustomPacketPayload {
+
+  public static final Type<PacketLogisticsGhost> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_logistics_ghost"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketLogisticsGhost> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketLogisticsGhost::decode);
+
+  @Override
+  public Type<PacketLogisticsGhost> type() {
+    return TYPE;
+  }
 
   public static void encode(PacketLogisticsGhost msg, FriendlyByteBuf buf) {
     buf.writeVarInt(msg.path.size());
     for (BlockPos pos : msg.path) {
       buf.writeBlockPos(pos);
     }
-    buf.writeItem(msg.stack);
+    BufUtil.writeItem(buf, msg.stack);
     buf.writeVarInt(msg.durationTicks);
     buf.writeVarInt(msg.hopTicks.length);
     for (int ticks : msg.hopTicks) {
@@ -34,7 +49,7 @@ public record PacketLogisticsGhost(List<BlockPos> path, ItemStack stack, int dur
     for (int i = 0; i < size; i++) {
       path.add(buf.readBlockPos());
     }
-    ItemStack stack = buf.readItem();
+    ItemStack stack = BufUtil.readItem(buf);
     int duration = buf.readVarInt();
     int[] hopTicks = new int[buf.readVarInt()];
     for (int i = 0; i < hopTicks.length; i++) {
@@ -43,10 +58,9 @@ public record PacketLogisticsGhost(List<BlockPos> path, ItemStack stack, int dur
     return new PacketLogisticsGhost(path, stack, duration, hopTicks);
   }
 
-  public static void handle(PacketLogisticsGhost msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-        () -> () -> com.faktocraft.client.LogisticsGhosts.add(msg)));
-    ctx.get().setPacketHandled(true);
+  public static void handle(PacketLogisticsGhost msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> ClientPacketDispatch.dispatch(msg));
+    ctx.setPacketHandled(true);
   }
 
   public static void send(ServerLevel level, List<BlockPos> path, ItemStack stack, int durationTicks,

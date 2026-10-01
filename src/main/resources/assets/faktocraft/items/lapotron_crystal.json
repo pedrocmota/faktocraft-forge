@@ -1,0 +1,40 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "faktocraft:charge_ratio",
+    "entries": [
+      {
+        "threshold": 0.001,
+        "model": {
+          "type": "minecraft:model",
+          "model": "faktocraft:item/battery/lapotron_crystal_1"
+        }
+      },
+      {
+        "threshold": 0.5,
+        "model": {
+          "type": "minecraft:model",
+          "model": "faktocraft:item/battery/lapotron_crystal_2"
+        }
+      },
+      {
+        "threshold": 0.75,
+        "model": {
+          "type": "minecraft:model",
+          "model": "faktocraft:item/battery/lapotron_crystal_3"
+        }
+      },
+      {
+        "threshold": 0.999,
+        "model": {
+          "type": "minecraft:model",
+          "model": "faktocraft:item/battery/lapotron_crystal_4"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "faktocraft:item/lapotron_crystal"
+    }
+  }
+}

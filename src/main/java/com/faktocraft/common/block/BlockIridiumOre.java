@@ -20,7 +20,7 @@ public class BlockIridiumOre extends BlockOre {
     }
     Direction direction = Direction.getRandom(random);
     BlockPos neighborPos = pos.relative(direction);
-    if (level.getBlockState(neighborPos).isSolidRender(level, neighborPos)) {
+    if (level.getBlockState(neighborPos).isSolidRender()) {
       return;
     }
     double x = pos.getX() + 0.5 + (direction.getStepX() == 0

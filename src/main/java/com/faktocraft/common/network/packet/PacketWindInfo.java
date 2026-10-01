@@ -1,12 +1,25 @@
 package com.faktocraft.common.network.packet;
 
+import com.faktocraft.common.network.ClientPacketDispatch;
+import com.faktocraft.common.network.PacketContext;
+import com.faktocraft.Faktocraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
-import java.util.function.Supplier;
 
-public record PacketWindInfo(int windPercent, int y, int estimate) {
+public record PacketWindInfo(int windPercent, int y, int estimate) implements CustomPacketPayload {
+
+  public static final Type<PacketWindInfo> TYPE = new Type<>(
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "packet_wind_info"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, PacketWindInfo> STREAM_CODEC = StreamCodec.of(
+      (buf, msg) -> encode(msg, buf), PacketWindInfo::decode);
+
+  @Override
+  public Type<PacketWindInfo> type() {
+    return TYPE;
+  }
 
   public static void encode(PacketWindInfo msg, FriendlyByteBuf buf) {
     buf.writeInt(msg.windPercent);
@@ -18,9 +31,8 @@ public record PacketWindInfo(int windPercent, int y, int estimate) {
     return new PacketWindInfo(buf.readInt(), buf.readInt(), buf.readInt());
   }
 
-  public static void handle(PacketWindInfo msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-        () -> () -> com.faktocraft.client.ClientPacketHandlers.handleWindInfo(msg)));
-    ctx.get().setPacketHandled(true);
+  public static void handle(PacketWindInfo msg, PacketContext ctx) {
+    ctx.enqueueWork(() -> ClientPacketDispatch.dispatch(msg));
+    ctx.setPacketHandled(true);
   }
 }

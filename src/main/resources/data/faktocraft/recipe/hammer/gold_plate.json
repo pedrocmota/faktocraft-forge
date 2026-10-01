@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:hammer",
+    "#c:ingots/gold"
+  ],
+  "result": {
+    "id": "faktocraft:gold_plate"
+  }
+}

@@ -1,31 +1,50 @@
 package com.faktocraft.client.render;
 
+import com.faktocraft.common.util.SpriteUtil;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.pipe.BlockEntityPump;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
-public class PumpRenderer implements BlockEntityRenderer<BlockEntityPump> {
-
+public class PumpRenderer implements BlockEntityRenderer<BlockEntityPump, PumpRenderer.State> {
   private static final float R0 = 6.5f / 16.0f;
   private static final float R1 = 9.5f / 16.0f;
   private static final float CHASE_SPEED = 0.2f;
-  private static final ResourceLocation TUBE_SPRITE = new ResourceLocation(Faktocraft.MODID, "block/pipe/pump_tube");
+  private static final Identifier TUBE_SPRITE = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
+      "block/pipe/pump_tube");
+
+  public static class State extends BlockEntityRenderState {
+    @Nullable
+    TextureAtlasSprite sprite;
+    float depth;
+    int[] segmentLight = new int[0];
+    int capLight;
+  }
 
   @Override
-  public void render(BlockEntityPump pump, float partialTick, PoseStack poseStack, MultiBufferSource buffer,
-      int packedLight, int packedOverlay) {
+  public State createRenderState() {
+    return new State();
+  }
+
+  @Override
+  public void extractRenderState(BlockEntityPump pump, State state, float partialTick, Vec3 cameraPos,
+      ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    BlockEntityRenderer.super.extractRenderState(pump, state, partialTick, cameraPos, breakProgress);
+    state.sprite = null;
     Level level = pump.getLevel();
     if (level == null) {
       return;
@@ -47,16 +66,34 @@ public class PumpRenderer implements BlockEntityRenderer<BlockEntityPump> {
     if (depth <= 0.02f) {
       return;
     }
+    state.sprite = FluidSprites.block(TUBE_SPRITE);
+    state.depth = depth;
+    int fullSegments = Mth.floor(depth);
+    if (state.segmentLight.length < fullSegments + 1) {
+      state.segmentLight = new int[fullSegments + 1];
+    }
+    for (int i = 0; i <= fullSegments; i++) {
+      state.segmentLight[i] = LightCoordsUtil.getLightCoords(level, pump.getBlockPos().below(i + 1));
+    }
+    state.capLight = LightCoordsUtil.getLightCoords(level, pump.getBlockPos().below(fullSegments + 1));
+  }
 
-    TextureAtlasSprite sprite = Minecraft.getInstance()
-        .getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(TUBE_SPRITE);
+  @Override
+  public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    TextureAtlasSprite sprite = state.sprite;
     if (sprite == null) {
       return;
     }
-    VertexConsumer vc = buffer.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS));
-    PoseStack.Pose pose = poseStack.last();
-    int white = 0xFFFFFFFF;
+    float depth = state.depth;
+    int[] segmentLight = state.segmentLight;
+    int capLight = state.capLight;
+    collector.submitCustomGeometry(poseStack, RenderTypes.entityCutout(SpriteUtil.blockAtlas()),
+        (pose, vc) -> draw(pose, vc, sprite, depth, segmentLight, capLight));
+  }
 
+  private static void draw(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite sprite, float depth,
+      int[] segmentLight, int capLight) {
+    int white = 0xFFFFFFFF;
     int fullSegments = Mth.floor(depth);
     for (int i = 0; i <= fullSegments; i++) {
       float yTop = -i;
@@ -65,11 +102,11 @@ public class PumpRenderer implements BlockEntityRenderer<BlockEntityPump> {
       if (height <= 0.001f) {
         continue;
       }
-      int light = LevelRenderer.getLightColor(level, pump.getBlockPos().below(i + 1));
+      int light = segmentLight[i];
       float u0 = sprite.getU0();
-      float u1 = sprite.getU(16.0f * height);
+      float u1 = SpriteUtil.getU(sprite, 16.0f * height);
       float v0 = sprite.getV0();
-      float vMid = sprite.getV(8.0f);
+      float vMid = SpriteUtil.getV(sprite, 8.0f);
       sideZ(pose, vc, R0, yTop, yBottom, u0, u1, v0, vMid, white, light, -1);
       sideZ(pose, vc, R1, yTop, yBottom, u0, u1, v0, vMid, white, light, 1);
       sideX(pose, vc, R0, yTop, yBottom, u0, u1, v0, vMid, white, light, -1);
@@ -77,10 +114,9 @@ public class PumpRenderer implements BlockEntityRenderer<BlockEntityPump> {
     }
 
     float yCap = -depth;
-    int capLight = LevelRenderer.getLightColor(level, pump.getBlockPos().below(fullSegments + 1));
     float cu0 = sprite.getU0();
-    float cu1 = sprite.getU(8.0f);
-    float cv0 = sprite.getV(8.0f);
+    float cu1 = SpriteUtil.getU(sprite, 8.0f);
+    float cv0 = SpriteUtil.getV(sprite, 8.0f);
     float cv1 = sprite.getV1();
     CuboidRenderer.vertex(pose, vc, R0, yCap, R0, cu0, cv0, white, capLight, 0, -1, 0);
     CuboidRenderer.vertex(pose, vc, R1, yCap, R0, cu1, cv0, white, capLight, 0, -1, 0);
@@ -105,7 +141,7 @@ public class PumpRenderer implements BlockEntityRenderer<BlockEntityPump> {
   }
 
   @Override
-  public boolean shouldRenderOffScreen(BlockEntityPump pump) {
+  public boolean shouldRenderOffScreen() {
     return true;
   }
 
@@ -113,5 +149,10 @@ public class PumpRenderer implements BlockEntityRenderer<BlockEntityPump> {
   public boolean shouldRender(BlockEntityPump pump, Vec3 cameraPos) {
     double d = getViewDistance();
     return pump.getRenderBoundingBox().distanceToSqr(cameraPos) < d * d;
+  }
+
+  @Override
+  public AABB getRenderBoundingBox(BlockEntityPump pump) {
+    return pump.getRenderBoundingBox();
   }
 }

@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.forester;
 
+import net.minecraft.world.phys.Vec3;
 import com.faktocraft.common.block.impl.pipe.PipeExtractor;
 import com.faktocraft.common.block.impl.quarry.BlockEntityGantry;
 import com.faktocraft.common.entity.block.FaktocraftBlockEntity;
@@ -246,6 +247,6 @@ public class MenuForester extends AbstractContainerMenu {
   @Override
   public boolean stillValid(Player player) {
     return forester != null && !forester.isRemoved()
-        && player.distanceToSqr(forester.getBlockPos().getCenter()) <= 64.0;
+        && player.distanceToSqr(Vec3.atCenterOf(forester.getBlockPos())) <= 64.0;
   }
 }

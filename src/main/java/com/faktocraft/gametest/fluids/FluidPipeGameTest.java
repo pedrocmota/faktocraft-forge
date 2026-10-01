@@ -1,6 +1,5 @@
 package com.faktocraft.gametest.fluids;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.VoxelBlock;
 import com.faktocraft.common.block.impl.pipe.BlockEntityFluidPipe;
 import com.faktocraft.common.block.impl.pipe.BlockEntityTank;
@@ -8,14 +7,13 @@ import com.faktocraft.common.block.impl.pipe.PipeValve;
 import com.faktocraft.common.registries.PipeRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
-@net.minecraftforge.gametest.GameTestHolder(Faktocraft.MODID)
-@net.minecraftforge.gametest.PrefixGameTestTemplate(false)
 public class FluidPipeGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -29,7 +27,7 @@ public class FluidPipeGameTest {
   }
 
   private static void prefill(GameTestHelper helper, BlockPos rel, int mb) {
-    if (helper.getBlockEntity(rel) instanceof BlockEntityFluidPipe pipe) {
+    if (TestUtil.blockEntity(helper, rel) instanceof BlockEntityFluidPipe pipe) {
       pipe.tank.fillFluid(new FluidStack(Fluids.WATER, mb), mb, false);
     }
   }
@@ -38,13 +36,13 @@ public class FluidPipeGameTest {
       BlockPos... pipes) {
     helper.succeedWhen(() -> {
       StringBuilder status = new StringBuilder();
-      int tankAmount = helper.getBlockEntity(tankPos) instanceof BlockEntityTank tank
+      int tankAmount = TestUtil.blockEntity(helper, tankPos) instanceof BlockEntityTank tank
           ? tank.tank.getFluidAmount()
           : -1;
       status.append("tank=").append(tankAmount).append('/').append(expected);
       boolean pipesEmpty = true;
       for (BlockPos pipePos : pipes) {
-        int left = helper.getBlockEntity(pipePos) instanceof BlockEntityFluidPipe pipe
+        int left = TestUtil.blockEntity(helper, pipePos) instanceof BlockEntityFluidPipe pipe
             ? pipe.tank.getFluidAmount()
             : -1;
         if (left != 0) {
@@ -108,16 +106,16 @@ public class FluidPipeGameTest {
     placePipe(helper, middle, Direction.WEST, Direction.EAST);
     helper.setBlock(tankPos, PipeRegistry.TANK.defaultBlockState());
     prefill(helper, valvePos, 200);
-    BlockEntityFluidPipe valvePipe = (BlockEntityFluidPipe) helper.getBlockEntity(valvePos);
+    BlockEntityFluidPipe valvePipe = (BlockEntityFluidPipe) TestUtil.blockEntity(helper, valvePos);
     valvePipe.setValve(PipeValve.of(Direction.NORTH, false));
     java.util.concurrent.atomic.AtomicBoolean middleSeen = new java.util.concurrent.atomic.AtomicBoolean();
     helper.runAfterDelay(5, () -> valvePipe.setValve(PipeValve.of(Direction.NORTH, true)));
     helper.succeedWhen(() -> {
-      if (helper.getBlockEntity(middle) instanceof BlockEntityFluidPipe pipe
+      if (TestUtil.blockEntity(helper, middle) instanceof BlockEntityFluidPipe pipe
           && pipe.tank.getFluidAmount() > 0) {
         middleSeen.set(true);
       }
-      int tankAmount = helper.getBlockEntity(tankPos) instanceof BlockEntityTank tank
+      int tankAmount = TestUtil.blockEntity(helper, tankPos) instanceof BlockEntityTank tank
           ? tank.tank.getFluidAmount()
           : -1;
       if (tankAmount != 200) {
@@ -130,7 +128,7 @@ public class FluidPipeGameTest {
   }
 
   private static int pipeAmount(GameTestHelper helper, BlockPos rel) {
-    return helper.getBlockEntity(rel) instanceof BlockEntityFluidPipe pipe ? pipe.tank.getFluidAmount() : -1;
+    return TestUtil.blockEntity(helper, rel) instanceof BlockEntityFluidPipe pipe ? pipe.tank.getFluidAmount() : -1;
   }
 
   @GameTest(template = TEMPLATE, timeoutTicks = 200)
@@ -142,11 +140,11 @@ public class FluidPipeGameTest {
     placePipe(helper, b, Direction.WEST, Direction.EAST);
     helper.setBlock(tankPos, PipeRegistry.TANK.defaultBlockState());
     prefill(helper, a, 200);
-    ((BlockEntityFluidPipe) helper.getBlockEntity(b)).setValve(PipeValve.of(Direction.NORTH, false));
+    ((BlockEntityFluidPipe) TestUtil.blockEntity(helper, b)).setValve(PipeValve.of(Direction.NORTH, false));
     helper.runAfterDelay(40, () -> {
       int inA = pipeAmount(helper, a);
       int inB = pipeAmount(helper, b);
-      int inTank = helper.getBlockEntity(tankPos) instanceof BlockEntityTank tank
+      int inTank = TestUtil.blockEntity(helper, tankPos) instanceof BlockEntityTank tank
           ? tank.tank.getFluidAmount()
           : -1;
       if (inA != 200 || inB != 0 || inTank != 0) {

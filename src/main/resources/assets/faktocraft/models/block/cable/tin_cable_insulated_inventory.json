@@ -1,7 +1,7 @@
 {
-	"parent": "faktocraft:block/base/cable/insulated_cable_inventory",
-	"textures": {
-		"wall": "faktocraft:block/cable/tin_cable_insulated",
-		"side": "faktocraft:block/cable/tin_cable_insulated_side"
-	}
+  "parent": "faktocraft:block/base/cable/insulated_cable_inventory",
+  "textures": {
+    "wall": "faktocraft:block/cable/tin_cable_insulated",
+    "side": "faktocraft:block/cable/tin_cable_insulated_side"
+  }
 }

@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": "faktocraft:copper_cable_insulated",
+    "l": "#c:dusts/lithium",
+    "s": "#c:dusts/silver",
+    "m": "faktocraft:medium_battery",
+    "a": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "items": "faktocraft:fluid_cell",
+      "components": {
+        "faktocraft:fluid": {
+          "fluid": "faktocraft:sulfuric_acid",
+          "amount": 1000
+        }
+      }
+    }
+  },
+  "pattern": [
+    "lsl",
+    "cmc",
+    "lal"
+  ],
+  "result": {
+    "id": "faktocraft:advanced_medium_battery"
+  }
+}

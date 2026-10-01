@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "a": "faktocraft:advanced_battery",
+    "c": "faktocraft:mining_drill",
+    "d": "#c:gems/diamond"
+  },
+  "pattern": [
+    " d ",
+    "dcd",
+    " a "
+  ],
+  "result": {
+    "id": "faktocraft:diamond_drill"
+  }
+}

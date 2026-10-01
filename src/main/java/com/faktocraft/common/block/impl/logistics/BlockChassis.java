@@ -5,11 +5,14 @@ import com.faktocraft.common.interfaces.block.IHasMenu;
 import com.faktocraft.common.util.TransferUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -41,7 +44,7 @@ public class BlockChassis extends VoxelBlock implements EntityBlock, IHasMenu {
     return tier;
   }
 
-  static java.util.List<Direction> inventoryDirections(LevelAccessor level, BlockPos pos) {
+  static java.util.List<Direction> inventoryDirections(LevelReader level, BlockPos pos) {
     java.util.List<Direction> result = new java.util.ArrayList<>();
     for (Direction direction : Direction.values()) {
       BlockPos relative = pos.relative(direction);
@@ -62,7 +65,7 @@ public class BlockChassis extends VoxelBlock implements EntityBlock, IHasMenu {
   }
 
   @Nullable
-  static Direction selectedInventoryDirection(LevelAccessor level, BlockPos pos) {
+  static Direction selectedInventoryDirection(LevelReader level, BlockPos pos) {
     if (level.getBlockEntity(pos) instanceof BlockEntityChassis chassis) {
       return chassis.selectedInventoryDirection();
     }
@@ -81,12 +84,12 @@ public class BlockChassis extends VoxelBlock implements EntityBlock, IHasMenu {
     return null;
   }
 
-  public boolean connects(LevelAccessor level, BlockPos pos, Direction direction) {
+  public boolean connects(LevelReader level, BlockPos pos, Direction direction) {
     return canConnect(level, pos, direction);
   }
 
   @Override
-  protected boolean canConnect(LevelAccessor level, BlockPos pos, Direction direction) {
+  protected boolean canConnect(LevelReader level, BlockPos pos, Direction direction) {
     BlockState state = level.getBlockState(pos.relative(direction));
     if (LogisticsGraph.isNetworkMember(state) && !(state.getBlock() instanceof BlockAssemblyTable)) {
       return true;
@@ -95,9 +98,9 @@ public class BlockChassis extends VoxelBlock implements EntityBlock, IHasMenu {
   }
 
   @Override
-  public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
-      LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-    state = super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+  public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos,
+      Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+    state = super.updateShape(state, level, ticks, pos, direction, neighborPos, neighborState, random);
     return withConnections(state, level, pos);
   }
 
@@ -141,7 +144,6 @@ public class BlockChassis extends VoxelBlock implements EntityBlock, IHasMenu {
     };
   }
 
-  @SuppressWarnings("deprecation")
   @Override
   public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
     super.onPlace(state, level, pos, oldState, isMoving);
@@ -151,15 +153,17 @@ public class BlockChassis extends VoxelBlock implements EntityBlock, IHasMenu {
   }
 
   @Override
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.is(newState.getBlock())) {
-      if (level.getBlockEntity(pos) instanceof BlockEntityChassis chassis) {
-        chassis.dropContents();
-      }
-      if (!level.isClientSide()) {
-        LogisticsCores.markDirtyNear(level, pos);
-      }
+  public void preRemoveSideEffects(BlockState state, Level level, BlockPos pos, BlockEntity blockEntity) {
+    if (blockEntity instanceof BlockEntityChassis chassis) {
+      chassis.dropContents();
     }
-    super.onRemove(state, level, pos, newState, isMoving);
+    super.preRemoveSideEffects(state, level, pos, blockEntity);
+  }
+
+  @Override
+  protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos,
+      boolean movedByPiston) {
+    LogisticsCores.markDirtyNear(level, pos);
+    super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
   }
 }

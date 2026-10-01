@@ -3,6 +3,7 @@ package com.faktocraft.common.registries;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.recipe.impl.AdvancedShapedRecipe;
 import com.faktocraft.common.recipe.impl.AlloySmeltingRecipe;
+import com.faktocraft.common.recipe.impl.CircuitAssemblingRecipe;
 import com.faktocraft.common.recipe.impl.CompressingRecipe;
 import com.faktocraft.common.recipe.impl.CrushingRecipe;
 import com.faktocraft.common.recipe.impl.CuttingRecipe;
@@ -19,20 +20,20 @@ import com.faktocraft.common.recipe.impl.ScannerRecipe;
 import com.faktocraft.common.recipe.impl.ScrapBoxRecipe;
 import com.faktocraft.common.recipe.impl.ThermalCentrifugingRecipe;
 import com.faktocraft.common.recipe.impl.UraniumCentrifugingRecipe;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeType;
+import java.util.List;
 
 public final class ModRecipeType {
-
   public static final RecipeType<CrushingRecipe> CRUSHING = registerType("crushing");
   public static final RecipeType<CompressingRecipe> COMPRESSING = registerType("compressing");
   public static final RecipeType<ExtractingRecipe> EXTRACTING = registerType("extracting");
   public static final RecipeType<SawingRecipe> SAWING = registerType("sawing");
   public static final RecipeType<FluidExtrudingRecipe> FLUID_EXTRUDING = registerType("fluid_extruding");
   public static final RecipeType<AlloySmeltingRecipe> ALLOY_SMELTING = registerType("alloy_smelting");
-  public static final RecipeType<com.faktocraft.common.recipe.impl.CircuitAssemblingRecipe> CIRCUIT_ASSEMBLING =
-      registerType(
-          "circuit_assembling");
+  public static final RecipeType<CircuitAssemblingRecipe> CIRCUIT_ASSEMBLING = registerType("circuit_assembling");
   public static final RecipeType<RecyclingRecipe> RECYCLING = registerType("recycling");
   public static final RecipeType<FluidEnrichingRecipe> FLUID_ENRICHING = registerType("fluid_enriching");
   public static final RecipeType<OreWashingRecipe> ORE_WASHING = registerType("ore_washing");
@@ -46,6 +47,13 @@ public final class ModRecipeType {
   public static final RecipeType<ExtrudingRecipe> EXTRUDING = registerType("extruding");
 
   public static final RecipeType<AdvancedShapedRecipe> ADVANCED_SHAPED = registerType("advanced_shaped");
+
+  public static final List<RecipeType<?>> ALL = List.of(CRUSHING, COMPRESSING, EXTRACTING, SAWING, FLUID_EXTRUDING,
+      ALLOY_SMELTING, CIRCUIT_ASSEMBLING, RECYCLING, FLUID_ENRICHING, ORE_WASHING, POLYMERIZING, SCRAP_BOX,
+      THERMAL_CENTRIFUGING, URANIUM_CENTRIFUGING, SCANNER, ROLLING, CUTTING, EXTRUDING, ADVANCED_SHAPED);
+
+  public static final RecipeBookCategory MACHINE_BOOK_CATEGORY = RegistrationHandler.enqueue(
+      Registries.RECIPE_BOOK_CATEGORY, "machine", new RecipeBookCategory());
 
   private static <T extends Recipe<?>> RecipeType<T> registerType(String key) {
     return RegistrationHandler.recipeType(key, new RecipeType<T>() {

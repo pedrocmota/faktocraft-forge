@@ -5,26 +5,131 @@
   },
   "elements": [
     {
-      "from": [3, 3, 3],
-      "to": [13, 13, 13],
+      "from": [
+        3,
+        3,
+        3
+      ],
+      "to": [
+        13,
+        13,
+        13
+      ],
       "faces": {
-        "north": { "texture": "#joint", "uv": [3, 3, 13, 13] },
-        "south": { "texture": "#joint", "uv": [3, 3, 13, 13] },
-        "east": { "texture": "#joint", "uv": [3, 3, 13, 13] },
-        "west": { "texture": "#joint", "uv": [3, 3, 13, 13] },
-        "up": { "texture": "#joint", "uv": [3, 3, 13, 13] },
-        "down": { "texture": "#joint", "uv": [3, 3, 13, 13] }
+        "north": {
+          "texture": "#joint",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#joint",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#joint",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#joint",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#joint",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "down": {
+          "texture": "#joint",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        }
       }
     },
     {
-      "from": [4, 4, 0],
-      "to": [12, 12, 3],
+      "from": [
+        4,
+        4,
+        0
+      ],
+      "to": [
+        12,
+        12,
+        3
+      ],
       "faces": {
-        "north": { "texture": "#joint", "uv": [4, 4, 12, 12], "cullface": "north" },
-        "up": { "texture": "#joint", "uv": [4, 0, 12, 3] },
-        "down": { "texture": "#joint", "uv": [4, 13, 12, 16] },
-        "east": { "texture": "#joint", "uv": [0, 4, 3, 12] },
-        "west": { "texture": "#joint", "uv": [13, 4, 16, 12] }
+        "north": {
+          "texture": "#joint",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "cullface": "north"
+        },
+        "up": {
+          "texture": "#joint",
+          "uv": [
+            4,
+            0,
+            12,
+            3
+          ]
+        },
+        "down": {
+          "texture": "#joint",
+          "uv": [
+            4,
+            13,
+            12,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#joint",
+          "uv": [
+            0,
+            4,
+            3,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#joint",
+          "uv": [
+            13,
+            4,
+            16,
+            12
+          ]
+        }
       }
     }
   ]

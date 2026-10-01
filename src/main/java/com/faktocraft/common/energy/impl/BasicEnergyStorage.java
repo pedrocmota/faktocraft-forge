@@ -237,11 +237,11 @@ public class BasicEnergyStorage implements IEnergy, IProgress {
   }
 
   public void deserializeNBT(CompoundTag tag) {
-    this.energyStored = tag.contains("energyStored") ? tag.getInt("energyStored") : 0;
-    this.maxEnergy = tag.contains("maxEnergy") ? tag.getInt("maxEnergy") : this.maxEnergy;
-    this.lastGenerated = tag.contains("lastGenerated") ? tag.getInt("lastGenerated") : 0;
-    this.totalGenerated = tag.contains("totalGenerated") ? tag.getInt("totalGenerated") : 0;
-    this.lastConsumed = tag.contains("lastConsumed") ? tag.getInt("lastConsumed") : 0;
-    this.totalConsumed = tag.contains("totalConsumed") ? tag.getInt("totalConsumed") : 0;
+    this.energyStored = tag.contains("energyStored") ? tag.getIntOr("energyStored", 0) : 0;
+    this.maxEnergy = tag.contains("maxEnergy") ? tag.getIntOr("maxEnergy", 0) : this.maxEnergy;
+    this.lastGenerated = tag.contains("lastGenerated") ? tag.getIntOr("lastGenerated", 0) : 0;
+    this.totalGenerated = tag.contains("totalGenerated") ? tag.getIntOr("totalGenerated", 0) : 0;
+    this.lastConsumed = tag.contains("lastConsumed") ? tag.getIntOr("lastConsumed", 0) : 0;
+    this.totalConsumed = tag.contains("totalConsumed") ? tag.getIntOr("totalConsumed", 0) : 0;
   }
 }

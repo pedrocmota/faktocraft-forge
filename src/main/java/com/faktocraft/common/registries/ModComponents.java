@@ -1,16 +1,16 @@
 package com.faktocraft.common.registries;
 
+import com.faktocraft.common.util.NbtBridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public final class ModComponents {
-
   private static final String KEY_ENERGY = "energy";
   private static final String KEY_ACTIVE = "active";
   private static final String KEY_DIRECTION = "direction";
@@ -21,47 +21,55 @@ public final class ModComponents {
   }
 
   public static int getEnergy(ItemStack stack, int def) {
-    CompoundTag tag = stack.getTag();
-    return tag != null && tag.contains(KEY_ENERGY) ? tag.getInt(KEY_ENERGY) : def;
+    Integer energy = stack.get(ModDataComponents.ENERGY);
+    if (energy != null) {
+      return energy;
+    }
+    CompoundTag tag = NbtBridge.customData(stack);
+    return tag != null && tag.contains(KEY_ENERGY) ? tag.getIntOr(KEY_ENERGY, def) : def;
   }
 
   public static void setEnergy(ItemStack stack, int value) {
-    stack.getOrCreateTag().putInt(KEY_ENERGY, value);
+    stack.set(ModDataComponents.ENERGY, value);
+    dropLegacyKey(stack, KEY_ENERGY);
   }
 
   public static boolean hasEnergy(ItemStack stack) {
-    CompoundTag tag = stack.getTag();
+    if (stack.has(ModDataComponents.ENERGY)) {
+      return true;
+    }
+    CompoundTag tag = NbtBridge.customData(stack);
     return tag != null && tag.contains(KEY_ENERGY);
   }
 
   public static boolean getActive(ItemStack stack, boolean def) {
-    CompoundTag tag = stack.getTag();
-    return tag != null && tag.contains(KEY_ACTIVE) ? tag.getBoolean(KEY_ACTIVE) : def;
+    CompoundTag tag = NbtBridge.customData(stack);
+    return tag != null && tag.contains(KEY_ACTIVE) ? tag.getBooleanOr(KEY_ACTIVE, def) : def;
   }
 
   public static void setActive(ItemStack stack, boolean value) {
-    stack.getOrCreateTag().putBoolean(KEY_ACTIVE, value);
+    NbtBridge.updateCustomData(stack, tag -> tag.putBoolean(KEY_ACTIVE, value));
   }
 
   public static boolean hasActive(ItemStack stack) {
-    CompoundTag tag = stack.getTag();
+    CompoundTag tag = NbtBridge.customData(stack);
     return tag != null && tag.contains(KEY_ACTIVE);
   }
 
   public static int getDirection(ItemStack stack, int def) {
-    CompoundTag tag = stack.getTag();
-    return tag != null && tag.contains(KEY_DIRECTION) ? tag.getInt(KEY_DIRECTION) : def;
+    CompoundTag tag = NbtBridge.customData(stack);
+    return tag != null && tag.contains(KEY_DIRECTION) ? tag.getIntOr(KEY_DIRECTION, def) : def;
   }
 
   public static void setDirection(ItemStack stack, int value) {
-    stack.getOrCreateTag().putInt(KEY_DIRECTION, value);
+    NbtBridge.updateCustomData(stack, tag -> tag.putInt(KEY_DIRECTION, value));
   }
 
   @Nullable
   public static BlockPos getTeleportTarget(ItemStack stack) {
-    CompoundTag tag = stack.getTag();
+    CompoundTag tag = NbtBridge.customData(stack);
     if (tag != null && tag.contains(KEY_TELEPORT_TARGET)) {
-      return BlockPos.of(tag.getLong(KEY_TELEPORT_TARGET));
+      return BlockPos.of(tag.getLongOr(KEY_TELEPORT_TARGET, 0L));
     }
     return null;
   }
@@ -69,32 +77,31 @@ public final class ModComponents {
   @Nullable
   public static ResourceKey<Level> getTeleportTargetDimension(ItemStack stack,
       @Nullable ResourceKey<Level> fallback) {
-    CompoundTag tag = stack.getTag();
+    CompoundTag tag = NbtBridge.customData(stack);
     if (tag != null && tag.contains(KEY_TELEPORT_DIMENSION)) {
-      return ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString(KEY_TELEPORT_DIMENSION)));
+      return ResourceKey.create(Registries.DIMENSION, Identifier.parse(tag.getStringOr(KEY_TELEPORT_DIMENSION, "")));
     }
     return fallback;
   }
 
   public static void setTeleportTarget(ItemStack stack, BlockPos pos, ResourceKey<Level> dimension) {
-    CompoundTag tag = stack.getOrCreateTag();
-    tag.putLong(KEY_TELEPORT_TARGET, pos.asLong());
-    tag.putString(KEY_TELEPORT_DIMENSION, dimension.location().toString());
+    NbtBridge.updateCustomData(stack, tag -> {
+      tag.putLong(KEY_TELEPORT_TARGET, pos.asLong());
+      tag.putString(KEY_TELEPORT_DIMENSION, dimension.identifier().toString());
+    });
   }
 
   public static void removeTeleportTarget(ItemStack stack) {
-    CompoundTag tag = stack.getTag();
-    if (tag != null) {
-      tag.remove(KEY_TELEPORT_TARGET);
-      tag.remove(KEY_TELEPORT_DIMENSION);
-      clearTagIfEmpty(stack, tag);
-    }
+    dropLegacyKey(stack, KEY_TELEPORT_TARGET);
+    dropLegacyKey(stack, KEY_TELEPORT_DIMENSION);
   }
 
-  private static void clearTagIfEmpty(ItemStack stack, CompoundTag tag) {
-    if (tag.isEmpty()) {
-      stack.setTag(null);
+  static void dropLegacyKey(ItemStack stack, String key) {
+    CompoundTag tag = NbtBridge.customData(stack);
+    if (tag == null || !tag.contains(key)) {
+      return;
     }
+    tag.remove(key);
+    NbtBridge.setCustomData(stack, tag);
   }
-
 }

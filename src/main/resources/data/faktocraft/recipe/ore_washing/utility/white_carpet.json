@@ -1,0 +1,19 @@
+{
+  "duration": 200,
+  "experience": 0.0,
+  "fluid_ingredient": {
+    "amount": 150,
+    "fluid": "minecraft:water"
+  },
+  "ingredient": {
+    "base": "#minecraft:wool_carpets",
+    "count": 1,
+    "subtracted": "minecraft:white_carpet",
+    "type": "neoforge:difference"
+  },
+  "power_cost": 16,
+  "result_1": {
+    "item": "minecraft:white_carpet"
+  },
+  "type": "faktocraft:ore_washing"
+}

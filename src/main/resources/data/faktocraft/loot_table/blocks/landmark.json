@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "name": "landmark",
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "faktocraft:landmark"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,5 @@
 {
   "parent": "minecraft:block/block",
-  "render_type": "minecraft:cutout",
   "textures": {
     "pipe": "faktocraft:block/pipe/recipe_pipe",
     "flange": "faktocraft:block/pipe/pipe_flange",

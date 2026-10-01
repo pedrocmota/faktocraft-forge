@@ -18,7 +18,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -28,8 +28,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,8 +49,8 @@ public class BlockEntityTeleportAnchor extends FaktocraftBlockEntity implements 
 
   private static final Map<UUID, Long> LAST_PLAYER_TELEPORT = new HashMap<>();
   private static final double MOVE_TOLERANCE_SQ = 0.01;
-  private static final Vector3f NORMAL_PARTICLE = new Vector3f(0.18F, 0.85F, 0.91F);
-  private static final Vector3f DIMENSIONAL_PARTICLE = new Vector3f(0.54F, 0.25F, 0.90F);
+  private static final int NORMAL_PARTICLE = 0xFF2ED9E8;
+  private static final int DIMENSIONAL_PARTICLE = 0xFF8A40E6;
 
   private final Map<UUID, Charge> charges = new HashMap<>();
 
@@ -68,12 +66,12 @@ public class BlockEntityTeleportAnchor extends FaktocraftBlockEntity implements 
   }
 
   @Nullable
-  private static TicketType<BlockPos> preloadTicket;
+  private static TicketType preloadTicket;
 
-  private static TicketType<BlockPos> preloadTicket() {
+  private static TicketType preloadTicket() {
     if (preloadTicket == null) {
-      preloadTicket = TicketType.create("faktocraft_teleport_preload", Comparator.comparingLong(BlockPos::asLong),
-          Math.max(1, ModConfig.server().teleport_anchor_preload_ticks));
+      preloadTicket = new TicketType(Math.max(1, ModConfig.server().teleport_anchor_preload_ticks),
+          TicketType.FLAG_LOADING | TicketType.FLAG_SIMULATION);
     }
     return preloadTicket;
   }
@@ -239,7 +237,7 @@ public class BlockEntityTeleportAnchor extends FaktocraftBlockEntity implements 
     if (target == null || destination == null || radius <= 0) {
       return;
     }
-    target.getChunkSource().addRegionTicket(preloadTicket(), new ChunkPos(destination), radius, destination);
+    target.getChunkSource().addTicketWithRadius(preloadTicket(), ChunkPos.containing(destination), radius);
   }
 
   private List<ServerPlayer> playersOnTop() {
@@ -392,7 +390,8 @@ public class BlockEntityTeleportAnchor extends FaktocraftBlockEntity implements 
         0.1);
     LAST_PLAYER_TELEPORT.put(player.getUUID(), serverLevel.getGameTime());
     ModNetworking.sendToPlayer(player, new PacketTeleportFx(isInterdimensional()));
-    player.teleportTo(targetLevel, target.x, target.y, target.z, player.getYRot(), player.getXRot());
+    player.teleportTo(targetLevel, target.x, target.y, target.z, java.util.Set.of(), player.getYRot(), player.getXRot(),
+        true);
     targetLevel.playSound(null, destination, SoundEvents.ENDERMAN_TELEPORT, SoundSource.BLOCKS, 1F, 1F);
     targetLevel.sendParticles(ParticleTypes.PORTAL, target.x, target.y + 1, target.z, 32, 0.5, 1, 0.5, 0.1);
     targetLevel.sendParticles(chargeParticle(), target.x, target.y + height * 0.5, target.z, 40, 0.4, height * 0.4, 0.4,
@@ -409,7 +408,7 @@ public class BlockEntityTeleportAnchor extends FaktocraftBlockEntity implements 
       tag.putLong("destination", destination.asLong());
     }
     if (destinationDimension != null) {
-      tag.putString("destinationDimension", destinationDimension.location().toString());
+      tag.putString("destinationDimension", destinationDimension.identifier().toString());
     }
     tag.putInt("teleportCooldown", teleportCooldown);
     tag.putInt("bufferCapacity", bufferCapacity);
@@ -418,15 +417,15 @@ public class BlockEntityTeleportAnchor extends FaktocraftBlockEntity implements 
   @Override
   public void load(CompoundTag tag) {
     if (tag.contains("bufferCapacity")) {
-      this.bufferCapacity = clampBuffer(tag.getInt("bufferCapacity"));
+      this.bufferCapacity = clampBuffer(tag.getIntOr("bufferCapacity", 0));
       getEnergyStorage().setMaxEnergy(bufferCapacity);
     }
     super.load(tag);
-    this.destination = tag.contains("destination") ? BlockPos.of(tag.getLong("destination")) : null;
+    this.destination = tag.contains("destination") ? BlockPos.of(tag.getLongOr("destination", 0L)) : null;
     this.destinationDimension = tag.contains("destinationDimension")
         ? ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION,
-            new ResourceLocation(tag.getString("destinationDimension")))
+            Identifier.parse(tag.getStringOr("destinationDimension", "")))
         : null;
-    this.teleportCooldown = tag.contains("teleportCooldown") ? tag.getInt("teleportCooldown") : 0;
+    this.teleportCooldown = tag.contains("teleportCooldown") ? tag.getIntOr("teleportCooldown", 0) : 0;
   }
 }

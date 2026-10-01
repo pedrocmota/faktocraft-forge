@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.pipe;
 
+import com.faktocraft.common.util.transfer.CapabilityBlockEntity;
 import com.faktocraft.common.entity.block.FluidStorage;
 import com.faktocraft.common.registries.PipeRegistry;
 import net.minecraft.core.BlockPos;
@@ -9,18 +10,17 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.faktocraft.common.util.transfer.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
-public class BlockEntityEnderTank extends BlockEntity {
+public class BlockEntityEnderTank extends CapabilityBlockEntity {
 
   private static final int SYNC_INTERVAL = 5;
 
@@ -78,7 +78,7 @@ public class BlockEntityEnderTank extends BlockEntity {
     }
     FluidStorage channel = channel();
     FluidStack current = channel != null ? channel.getFluidStack() : FluidStack.EMPTY;
-    if (!force && current.isFluidStackIdentical(view.getFluidStack())) {
+    if (!force && FluidStack.matches(current, view.getFluidStack())) {
       return;
     }
     view.setFluid(current, current.getAmount());
@@ -112,9 +112,9 @@ public class BlockEntityEnderTank extends BlockEntity {
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    code = tag.contains("code") ? tag.getInt("code") : EnderTankChannels.CODE_NONE;
+    code = tag.contains("code") ? tag.getIntOr("code", 0) : EnderTankChannels.CODE_NONE;
     if (tag.contains("view")) {
-      view.load(tag.getCompound("view"));
+      view.load(tag.getCompoundOrEmpty("view"));
     }
   }
 

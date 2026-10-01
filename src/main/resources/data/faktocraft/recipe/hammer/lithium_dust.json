@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:hammer",
+    "#c:raw_materials/lithium"
+  ],
+  "result": {
+    "id": "faktocraft:lithium_dust"
+  }
+}

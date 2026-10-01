@@ -2,37 +2,27 @@ package com.faktocraft.common.item.impl.armor;
 
 import com.faktocraft.common.enums.ModArmorMaterials;
 import com.faktocraft.common.item.base.BaseArmor;
+import com.faktocraft.common.registries.ModItems;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
 
-public class HazmatArmorItem extends BaseArmor implements DyeableLeatherItem {
-
+public class HazmatArmorItem extends BaseArmor {
   public static final int DEFAULT_COLOR = 0xE8C43A;
 
-  public HazmatArmorItem(ArmorItem.Type armorType, Properties properties) {
-    super(ModArmorMaterials.HAZMAT, armorType, properties);
+  public HazmatArmorItem(ArmorType armorType, Properties properties) {
+    super(ModArmorMaterials.HAZMAT, armorType, properties, HazmatArmorItem::hazmatComponents);
   }
 
-  @Override
+  private static Properties hazmatComponents(Properties properties, ArmorMaterial material, ArmorType armorType) {
+    return properties.humanoidArmor(material, armorType).repairable(ModItems.RUBBER);
+  }
+
   public int getColor(ItemStack stack) {
-    var tag = stack.getTagElement("display");
-    return tag != null && tag.contains("color", 99) ? tag.getInt("color") : DEFAULT_COLOR;
-  }
-
-  @Override
-  public void initializeClient(
-      java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
-    consumer.accept(new net.minecraftforge.client.extensions.common.IClientItemExtensions() {
-      @Override
-      public net.minecraft.client.model.HumanoidModel<?> getHumanoidArmorModel(
-          LivingEntity living, ItemStack stack, EquipmentSlot slot,
-          net.minecraft.client.model.HumanoidModel<?> original) {
-        return slot == EquipmentSlot.LEGS ? original : com.faktocraft.client.model.HazmatModel.get(slot);
-      }
-    });
+    return DyedItemColor.getOrDefault(stack, DEFAULT_COLOR) & 0xFFFFFF;
   }
 
   public static boolean hasBoots(LivingEntity living) {
@@ -54,7 +44,7 @@ public class HazmatArmorItem extends BaseArmor implements DyeableLeatherItem {
         EquipmentSlot.FEET }) {
       ItemStack piece = living.getItemBySlot(slot);
       if (piece.getItem() instanceof HazmatArmorItem) {
-        piece.hurtAndBreak(amount, living, entity -> entity.broadcastBreakEvent(slot));
+        piece.hurtAndBreak(amount, living, slot);
       }
     }
   }

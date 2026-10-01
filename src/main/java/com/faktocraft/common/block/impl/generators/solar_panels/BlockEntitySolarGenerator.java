@@ -46,7 +46,7 @@ public class BlockEntitySolarGenerator extends FaktocraftBlockEntity
     if (level != null
         && level.dimensionType().hasSkyLight() && !level.dimensionType().hasCeiling()
         && level.canSeeSky(getBlockPos().above())) {
-      if (level.isDay()) {
+      if (level.isBrightOutside()) {
         amount = level.isThundering() || level.isRaining()
             ? tier.getNightGenerate()
             : tier.getDayGenerate();
@@ -86,9 +86,9 @@ public class BlockEntitySolarGenerator extends FaktocraftBlockEntity
   @Override
   public void load(CompoundTag tag) {
     super.load(tag);
-    activeState = tag.getBoolean("active");
-    amount = tag.contains("amount") ? tag.getInt("amount") : 0;
-    lastAmount = tag.contains("lastAmount") ? tag.getInt("lastAmount") : 0;
+    activeState = tag.getBooleanOr("active", false);
+    amount = tag.contains("amount") ? tag.getIntOr("amount", 0) : 0;
+    lastAmount = tag.contains("lastAmount") ? tag.getIntOr("lastAmount", 0) : 0;
   }
 
   @Override

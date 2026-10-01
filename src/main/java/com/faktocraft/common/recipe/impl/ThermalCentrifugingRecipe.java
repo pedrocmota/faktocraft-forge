@@ -2,15 +2,16 @@ package com.faktocraft.common.recipe.impl;
 
 import com.faktocraft.common.interfaces.receipe.IBaseRecipe;
 import com.faktocraft.common.item.crafting.CountedIngredient;
+import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.recipe.RecipeJsonHelper;
 import com.faktocraft.common.registries.ModRecipeType;
-import com.google.gson.JsonObject;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -18,23 +19,51 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 import java.util.Optional;
 
-public class ThermalCentrifugingRecipe implements IBaseRecipe<Container> {
+public class ThermalCentrifugingRecipe implements IBaseRecipe<MachineRecipeInput> {
+  public static final MapCodec<ThermalCentrifugingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+      CountedIngredient.CODEC.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
+      RecipeJsonHelper.RESULT.optionalFieldOf("result_1").forGetter(recipe -> recipe.result1),
+      RecipeJsonHelper.RESULT.optionalFieldOf("result_2").forGetter(recipe -> recipe.result2),
+      Codec.INT.optionalFieldOf("temperature", 0).forGetter(recipe -> recipe.temperature),
+      Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(recipe -> recipe.experience),
+      Codec.INT.optionalFieldOf("duration", 500).forGetter(recipe -> recipe.duration),
+      Codec.INT.optionalFieldOf("power_cost", 48).forGetter(recipe -> recipe.powerCost))
+      .apply(i, ThermalCentrifugingRecipe::new));
 
-  public static final RecipeSerializer<ThermalCentrifugingRecipe> SERIALIZER = new Serializer();
+  public static final StreamCodec<RegistryFriendlyByteBuf, ThermalCentrifugingRecipe> STREAM_CODEC = StreamCodec.of(
+      (buf, recipe) -> {
+        recipe.ingredient.toNetwork(buf);
+        RecipeJsonHelper.OPTIONAL_RESULT_STREAM_CODEC.encode(buf, recipe.result1);
+        RecipeJsonHelper.OPTIONAL_RESULT_STREAM_CODEC.encode(buf, recipe.result2);
+        buf.writeVarInt(recipe.temperature);
+        buf.writeFloat(recipe.experience);
+        buf.writeVarInt(recipe.duration);
+        buf.writeVarInt(recipe.powerCost);
+      }, buf -> {
+        CountedIngredient ingredient = CountedIngredient.fromNetwork(buf);
+        Optional<ItemStackTemplate> result1 = RecipeJsonHelper.OPTIONAL_RESULT_STREAM_CODEC.decode(buf);
+        Optional<ItemStackTemplate> result2 = RecipeJsonHelper.OPTIONAL_RESULT_STREAM_CODEC.decode(buf);
+        int temperature = buf.readVarInt();
+        float experience = buf.readFloat();
+        int duration = buf.readVarInt();
+        int powerCost = buf.readVarInt();
+        return new ThermalCentrifugingRecipe(ingredient, result1, result2, temperature, experience, duration,
+            powerCost);
+      });
 
-  private final ResourceLocation id;
+  public static final RecipeSerializer<ThermalCentrifugingRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC,
+      STREAM_CODEC);
+
   private final CountedIngredient ingredient;
-  private final Optional<ItemStack> result1;
-  private final Optional<ItemStack> result2;
+  private final Optional<ItemStackTemplate> result1;
+  private final Optional<ItemStackTemplate> result2;
   private final int temperature;
   private final float experience;
   private final int duration;
   private final int powerCost;
 
-  public ThermalCentrifugingRecipe(ResourceLocation id, CountedIngredient ingredient,
-      Optional<ItemStack> result1, Optional<ItemStack> result2,
-      int temperature, float experience, int duration, int powerCost) {
-    this.id = id;
+  public ThermalCentrifugingRecipe(CountedIngredient ingredient, Optional<ItemStackTemplate> result1,
+      Optional<ItemStackTemplate> result2, int temperature, float experience, int duration, int powerCost) {
     this.ingredient = ingredient;
     this.result1 = result1;
     this.result2 = result2;
@@ -45,19 +74,19 @@ public class ThermalCentrifugingRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public boolean matches(Container container, Level level) {
-    return ingredient.testType(container.getItem(0));
+  public boolean matches(MachineRecipeInput input, Level level) {
+    return ingredient.testType(input.getItem(0));
   }
 
   @Override
-  public ItemStack assemble(Container container, RegistryAccess registryAccess) {
+  public ItemStack assemble(MachineRecipeInput input) {
     return ItemStack.EMPTY;
   }
 
   public List<ItemStack> getResults() {
     return List.of(
-        result1.map(ItemStack::copy).orElse(ItemStack.EMPTY),
-        result2.map(ItemStack::copy).orElse(ItemStack.EMPTY));
+        result1.map(ItemStackTemplate::create).orElse(ItemStack.EMPTY),
+        result2.map(ItemStackTemplate::create).orElse(ItemStack.EMPTY));
   }
 
   public int getTemperature() {
@@ -88,11 +117,6 @@ public class ThermalCentrifugingRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public ResourceLocation getId() {
-    return id;
-  }
-
-  @Override
   public RecipeSerializer<ThermalCentrifugingRecipe> getSerializer() {
     return SERIALIZER;
   }
@@ -100,49 +124,5 @@ public class ThermalCentrifugingRecipe implements IBaseRecipe<Container> {
   @Override
   public RecipeType<ThermalCentrifugingRecipe> getType() {
     return ModRecipeType.THERMAL_CENTRIFUGING;
-  }
-
-  public static class Serializer implements RecipeSerializer<ThermalCentrifugingRecipe> {
-
-    @Override
-    public ThermalCentrifugingRecipe fromJson(ResourceLocation id, JsonObject json) {
-      CountedIngredient ingredient = CountedIngredient.fromJson(json.get("ingredient"));
-      Optional<ItemStack> result1 = json.has("result_1")
-          ? Optional.of(RecipeJsonHelper.result(json.get("result_1")))
-          : Optional.empty();
-      Optional<ItemStack> result2 = json.has("result_2")
-          ? Optional.of(RecipeJsonHelper.result(json.get("result_2")))
-          : Optional.empty();
-      int temperature = GsonHelper.getAsInt(json, "temperature", 0);
-      float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
-      int duration = GsonHelper.getAsInt(json, "duration", 500);
-      int powerCost = GsonHelper.getAsInt(json, "power_cost", 48);
-      return new ThermalCentrifugingRecipe(id, ingredient, result1, result2, temperature, experience, duration,
-          powerCost);
-    }
-
-    @Override
-    public ThermalCentrifugingRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-      CountedIngredient ingredient = CountedIngredient.fromNetwork(buf);
-      Optional<ItemStack> result1 = buf.readOptional(FriendlyByteBuf::readItem);
-      Optional<ItemStack> result2 = buf.readOptional(FriendlyByteBuf::readItem);
-      int temperature = buf.readVarInt();
-      float experience = buf.readFloat();
-      int duration = buf.readVarInt();
-      int powerCost = buf.readVarInt();
-      return new ThermalCentrifugingRecipe(id, ingredient, result1, result2, temperature, experience, duration,
-          powerCost);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buf, ThermalCentrifugingRecipe recipe) {
-      recipe.ingredient.toNetwork(buf);
-      buf.writeOptional(recipe.result1, FriendlyByteBuf::writeItem);
-      buf.writeOptional(recipe.result2, FriendlyByteBuf::writeItem);
-      buf.writeVarInt(recipe.temperature);
-      buf.writeFloat(recipe.experience);
-      buf.writeVarInt(recipe.duration);
-      buf.writeVarInt(recipe.powerCost);
-    }
   }
 }

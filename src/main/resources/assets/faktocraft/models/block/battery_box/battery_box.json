@@ -1,12 +1,12 @@
 {
-	"parent": "block/cube",
-	"textures": {
-		"down": "faktocraft:block/battery_box/battery_box_bottom",
-		"up": "faktocraft:block/battery_box/battery_box_top",
-		"north": "faktocraft:block/battery_box/battery_box_front",
-		"east": "faktocraft:block/battery_box/battery_box_leftright",
-		"south": "faktocraft:block/battery_box/battery_box_back",
-		"west": "faktocraft:block/battery_box/battery_box_leftright",
-		"particle": "faktocraft:block/battery_box/battery_box_leftright"
-	}
+  "parent": "block/cube",
+  "textures": {
+    "down": "faktocraft:block/battery_box/battery_box_bottom",
+    "up": "faktocraft:block/battery_box/battery_box_top",
+    "north": "faktocraft:block/battery_box/battery_box_front",
+    "east": "faktocraft:block/battery_box/battery_box_leftright",
+    "south": "faktocraft:block/battery_box/battery_box_back",
+    "west": "faktocraft:block/battery_box/battery_box_leftright",
+    "particle": "faktocraft:block/battery_box/battery_box_leftright"
+  }
 }

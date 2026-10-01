@@ -5,44 +5,76 @@ import com.faktocraft.common.block.impl.cable.BlockCable;
 import com.faktocraft.common.block.impl.machines.uranium_centrifuge.BlockEntityUraniumCentrifuge;
 import com.faktocraft.common.util.BlockStateHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
+import org.jetbrains.annotations.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UraniumCentrifugeRenderer implements BlockEntityRenderer<BlockEntityUraniumCentrifuge> {
+public class UraniumCentrifugeRenderer
+    implements BlockEntityRenderer<BlockEntityUraniumCentrifuge, UraniumCentrifugeRenderer.State> {
 
-  public static final ResourceLocation DRUM_MODEL = new ResourceLocation(Faktocraft.MODID,
+  public static final Identifier DRUM_MODEL = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "block/uranium_centrifuge_drum");
-  public static final ResourceLocation DRUM_ACTIVE_MODEL = new ResourceLocation(Faktocraft.MODID,
+  public static final Identifier DRUM_ACTIVE_MODEL = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "block/uranium_centrifuge_drum_active");
-  public static final ResourceLocation SOCKET_CABLE_MODEL = new ResourceLocation(Faktocraft.MODID,
+  public static final Identifier SOCKET_CABLE_MODEL = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "block/uranium_centrifuge_socket_cable");
+  public static final StandaloneModelKey<BlockStateModelPart> DRUM_KEY = new StandaloneModelKey<>(
+      () -> DRUM_MODEL.toString());
+  public static final StandaloneModelKey<BlockStateModelPart> DRUM_ACTIVE_KEY = new StandaloneModelKey<>(
+      () -> DRUM_ACTIVE_MODEL.toString());
+  public static final StandaloneModelKey<BlockStateModelPart> SOCKET_CABLE_KEY = new StandaloneModelKey<>(
+      () -> SOCKET_CABLE_MODEL.toString());
 
   private static final float TOP_SPEED = 18.0F;
   private static final float SPIN_UP = 0.35F;
   private static final float SPIN_DOWN = 0.2F;
 
+  public static class State extends BlockEntityRenderState {
+    boolean valid;
+    @Nullable
+    BlockStateModelPart drum;
+    @Nullable
+    BlockStateModelPart socketCable;
+    float angle;
+    final List<Direction> cables = new ArrayList<>(4);
+  }
+
   @Override
-  public void render(BlockEntityUraniumCentrifuge centrifuge, float partialTick, PoseStack poseStack,
-      MultiBufferSource buffer, int packedLight, int packedOverlay) {
+  public State createRenderState() {
+    return new State();
+  }
+
+  @Override
+  public void extractRenderState(BlockEntityUraniumCentrifuge centrifuge, State state, float partialTick,
+      Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    BlockEntityRenderer.super.extractRenderState(centrifuge, state, partialTick, cameraPos, breakProgress);
+    state.valid = false;
+    state.cables.clear();
     Level level = centrifuge.getLevel();
     if (level == null) {
       return;
     }
-    BlockState state = centrifuge.getBlockState();
-    boolean active = state.hasProperty(BlockStateHelper.activeProperty)
-        && state.getValue(BlockStateHelper.activeProperty);
+    BlockState blockState = centrifuge.getBlockState();
+    boolean active = blockState.hasProperty(BlockStateHelper.activeProperty)
+        && blockState.getValue(BlockStateHelper.activeProperty);
 
     double now = level.getGameTime() + partialTick;
     if (!Double.isNaN(centrifuge.drumLastTime)) {
@@ -54,42 +86,52 @@ public class UraniumCentrifugeRenderer implements BlockEntityRenderer<BlockEntit
     }
     centrifuge.drumLastTime = now;
 
-    VertexConsumer consumer = buffer.getBuffer(RenderType.cutout());
     var modelManager = Minecraft.getInstance().getModelManager();
+    state.drum = modelManager.getStandaloneModel(active ? DRUM_ACTIVE_KEY : DRUM_KEY);
+    state.socketCable = modelManager.getStandaloneModel(SOCKET_CABLE_KEY);
+    state.angle = centrifuge.drumAngle;
+    for (Direction direction : Direction.Plane.HORIZONTAL) {
+      Block neighbor = level.getBlockState(centrifuge.getBlockPos().relative(direction)).getBlock();
+      if (neighbor instanceof BlockCable) {
+        state.cables.add(direction);
+      }
+    }
+    state.valid = true;
+  }
+
+  @Override
+  public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    if (!state.valid) {
+      return;
+    }
+    int light = state.lightCoords;
+    int overlay = OverlayTexture.NO_OVERLAY;
 
     poseStack.pushPose();
     poseStack.translate(0.5, 0.0, 0.5);
-    poseStack.mulPose(Axis.YP.rotationDegrees(centrifuge.drumAngle));
+    poseStack.rotateDegrees(Axis.YP, state.angle);
     poseStack.translate(-0.5, 0.0, -0.5);
-    tesselate(level, modelManager.getModel(active ? DRUM_ACTIVE_MODEL : DRUM_MODEL), centrifuge, poseStack,
-        consumer, packedOverlay);
+    RenderStates.submitPart(collector, poseStack, state.drum, light, overlay);
     poseStack.popPose();
 
-    for (Direction direction : Direction.Plane.HORIZONTAL) {
-      Block neighbor = level.getBlockState(centrifuge.getBlockPos().relative(direction)).getBlock();
-      if (!(neighbor instanceof BlockCable)) {
-        continue;
-      }
+    for (Direction direction : state.cables) {
       poseStack.pushPose();
       poseStack.translate(0.5, 0.5, 0.5);
       switch (direction) {
-        case EAST -> poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
-        case SOUTH -> poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-        case WEST -> poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+        case EAST -> poseStack.rotateDegrees(Axis.YP, -90.0F);
+        case SOUTH -> poseStack.rotateDegrees(Axis.YP, 180.0F);
+        case WEST -> poseStack.rotateDegrees(Axis.YP, 90.0F);
         default -> {
         }
       }
       poseStack.translate(-0.5, -0.5, -0.5);
-      tesselate(level, modelManager.getModel(SOCKET_CABLE_MODEL), centrifuge, poseStack, consumer, packedOverlay);
+      RenderStates.submitPart(collector, poseStack, state.socketCable, light, overlay);
       poseStack.popPose();
     }
   }
 
-  private static void tesselate(Level level, BakedModel model, BlockEntityUraniumCentrifuge centrifuge,
-      PoseStack poseStack, VertexConsumer consumer, int packedOverlay) {
-    BlockState state = centrifuge.getBlockState();
-    Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(
-        level, model, state, centrifuge.getBlockPos(), poseStack, consumer, false, level.random,
-        state.getSeed(centrifuge.getBlockPos()), packedOverlay, ModelData.EMPTY, RenderType.cutout());
+  @Override
+  public AABB getRenderBoundingBox(BlockEntityUraniumCentrifuge centrifuge) {
+    return centrifuge.getRenderBoundingBox();
   }
 }

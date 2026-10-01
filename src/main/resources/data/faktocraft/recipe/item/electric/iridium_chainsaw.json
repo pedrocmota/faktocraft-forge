@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_item_electric",
+  "key": {
+    "c": "faktocraft:diamond_chainsaw",
+    "e": "faktocraft:energy_crystal",
+    "i": "#c:plates/iridium"
+  },
+  "pattern": [
+    " ii",
+    " ci",
+    "e  "
+  ],
+  "result": {
+    "id": "faktocraft:iridium_chainsaw"
+  }
+}

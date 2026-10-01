@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "p": "#c:plates/iron",
+    "c": "#c:chests/wooden"
+  },
+  "pattern": [
+    "p p",
+    "pcp",
+    "ppp"
+  ],
+  "result": {
+    "id": "faktocraft:toolbox"
+  }
+}

@@ -1,12 +1,14 @@
 package com.faktocraft.common.screen.button;
 
+import net.minecraft.client.input.MouseButtonEvent;
+import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.enums.GuiSprite;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.widgets.GuiElement;
 import com.faktocraft.common.util.Constants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public class GuiButton extends GuiElement {
@@ -25,7 +27,10 @@ public class GuiButton extends GuiElement {
   }
 
   @Override
-  public boolean mouseClicked(double mouseX, double mouseY, int button) {
+  public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int button = GuiUtil.legacyButton(event);
     if (this.active && this.visible && clicked(mouseX, mouseY)) {
       if (button == 0) {
         return onLeftClick();
@@ -36,7 +41,6 @@ public class GuiButton extends GuiElement {
     return false;
   }
 
-  @Override
   protected boolean clicked(double mouseX, double mouseY) {
     return mouseX >= getX() && mouseY >= getY() && mouseX < getX() + this.width && mouseY < getY() + this.height;
   }
@@ -61,7 +65,7 @@ public class GuiButton extends GuiElement {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     if (this.isHovered) {
       blit(graphics, getLeftOffset(), getTopOffset(), buttonSprite.getActiveOffsetLeft(),
           buttonSprite.getActiveOffsetTop(), buttonSprite.getActiveWidth(), buttonSprite.getActiveHeight());
@@ -74,7 +78,7 @@ public class GuiButton extends GuiElement {
   }
 
   @Override
-  public ResourceLocation getResourceLocation() {
+  public Identifier getResourceLocation() {
     return Constants.BUTTONS;
   }
 }

@@ -1,6 +1,5 @@
 {
   "parent": "minecraft:block/door_top_right",
-  "render_type": "minecraft:cutout",
   "textures": {
     "bottom": "faktocraft:block/reinforced_stone_door_bottom",
     "top": "faktocraft:block/reinforced_stone_door_top"

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "a": "faktocraft:advanced_machine_casing",
+    "c": "faktocraft:advanced_circuit",
+    "d": "#c:gems/diamond",
+    "e": "minecraft:ender_eye",
+    "g": "faktocraft:glass_fibre_cable"
+  },
+  "pattern": [
+    "cec",
+    "gag",
+    "cdc"
+  ],
+  "result": {
+    "id": "faktocraft:chunk_loader"
+  }
+}

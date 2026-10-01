@@ -2,17 +2,19 @@ package com.faktocraft.common.block.impl.logistics;
 
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.util.ItemStackHandler;
+import com.faktocraft.common.util.RecipeUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.entity.player.StackedItemContents;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -24,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
-
   public static final int PATTERN_SIZE = 9;
   public static final int MAX_RECIPES = 256;
 
@@ -42,7 +43,6 @@ public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
   }
 
   private final class Pattern {
-
     final ItemStackHandler slots = new ItemStackHandler(PATTERN_SIZE) {
       @Override
       protected void onContentsChanged(int slot) {
@@ -105,7 +105,7 @@ public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
   private Pattern loadPattern(CompoundTag tag) {
     Pattern pattern = new Pattern();
     pattern.slots.load(tag);
-    pattern.strict = tag.getBoolean("strict");
+    pattern.strict = tag.getBooleanOr("strict", false);
     pattern.invalidate();
     return pattern;
   }
@@ -176,7 +176,6 @@ public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
   }
 
   private static final class PatternView implements CraftingContainer {
-
     private final ItemStackHandler slots;
 
     PatternView(ItemStackHandler slots) {
@@ -245,7 +244,7 @@ public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
     }
 
     @Override
-    public void fillStackedContents(StackedContents contents) {
+    public void fillStackedContents(StackedItemContents contents) {
       for (int i = 0; i < PATTERN_SIZE; i++) {
         contents.accountSimpleStack(slots.getStackInSlot(i));
       }
@@ -270,11 +269,19 @@ public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
     Pattern pattern = recipes.get(recipe);
     if (!pattern.recipeResolved) {
       pattern.cachedRecipe = pattern.isEmpty() ? null
-          : level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, new PatternView(pattern.slots), level)
+          : RecipeUtil.findRecipe(level, RecipeType.CRAFTING, new PatternView(pattern.slots).asCraftInput())
               .orElse(null);
       pattern.recipeResolved = true;
     }
     return pattern.cachedRecipe;
+  }
+
+  public ItemStack patternResult(int recipe) {
+    CraftingRecipe craftingRecipe = patternRecipe(recipe);
+    if (craftingRecipe == null) {
+      return ItemStack.EMPTY;
+    }
+    return craftingRecipe.assemble(new PatternView(recipes.get(recipe).slots).asCraftInput());
   }
 
   public List<LogisticsPlanner.ItemChoice> patternIngredients(int recipe) {
@@ -331,7 +338,7 @@ public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
     if (pool.size() <= 1) {
       return options;
     }
-    ItemStack result = recipe.getResultItem(level.registryAccess());
+    ItemStack result = patternResult(index);
     ItemStackHandler probe = new ItemStackHandler(PATTERN_SIZE);
     for (int i = 0; i < PATTERN_SIZE; i++) {
       probe.setStackInSlot(i, pattern.slots.getStackInSlot(i).copy());
@@ -349,8 +356,9 @@ public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
           continue;
         }
         probe.setStackInSlot(i, new ItemStack(candidate));
-        if (recipe.matches(view, level)) {
-          ItemStack made = recipe.assemble(view, level.registryAccess());
+        CraftingInput probeInput = view.asCraftInput();
+        if (recipe.matches(probeInput, level)) {
+          ItemStack made = recipe.assemble(probeInput);
           if (ItemStack.isSameItem(made, result) && made.getCount() == result.getCount()) {
             accepted.add(candidate);
           }
@@ -364,10 +372,11 @@ public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
 
   private static List<Item> candidatePool(CraftingRecipe recipe) {
     List<Item> pool = new ArrayList<>();
-    for (Ingredient ingredient : recipe.getIngredients()) {
-      for (ItemStack stack : ingredient.getItems()) {
-        if (!stack.isEmpty() && !pool.contains(stack.getItem())) {
-          pool.add(stack.getItem());
+    for (Ingredient ingredient : recipe.placementInfo().ingredients()) {
+      for (Holder<Item> holder : RecipeUtil.ingredientItems(ingredient).toList()) {
+        Item item = holder.value();
+        if (!pool.contains(item)) {
+          pool.add(item);
           if (pool.size() >= MAX_CANDIDATES) {
             return pool;
           }
@@ -476,14 +485,14 @@ public class BlockEntityCraftPipe extends BlockEntityDockingPipe {
   public void load(CompoundTag tag) {
     super.load(tag);
     recipes.clear();
-    ListTag list = tag.getList("recipes", Tag.TAG_COMPOUND);
+    ListTag list = tag.getListOrEmpty("recipes");
     for (int i = 0; i < Math.min(list.size(), MAX_RECIPES); i++) {
-      recipes.add(loadPattern(list.getCompound(i)));
+      recipes.add(loadPattern(list.getCompoundOrEmpty(i)));
     }
 
     if (recipes.isEmpty() && tag.contains("pattern")) {
       Pattern pattern = new Pattern();
-      pattern.slots.load(tag.getCompound("pattern"));
+      pattern.slots.load(tag.getCompoundOrEmpty("pattern"));
       if (!pattern.isEmpty()) {
         recipes.add(pattern);
       }

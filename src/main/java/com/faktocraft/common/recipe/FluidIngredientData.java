@@ -1,36 +1,35 @@
 package com.faktocraft.common.recipe;
 
-import net.minecraftforge.registries.ForgeRegistries;
-import com.google.gson.JsonObject;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.serialization.Codec;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
+import java.util.Optional;
 
-public record FluidIngredientData(ResourceLocation fluidId, int amountMb) {
+public record FluidIngredientData(Identifier fluidId, int amountMb) {
 
-  public static FluidIngredientData fromJson(JsonObject json) {
-    JsonObject obj = json;
-    if (!json.has("amount")) {
-      obj = json.deepCopy();
-      obj.addProperty("amount", 1);
-    }
-    FluidStack stack = RecipeJsonHelper.fluid(obj);
-    return new FluidIngredientData(ForgeRegistries.FLUIDS.getKey(stack.getFluid()), stack.getAmount());
+  public static final Codec<FluidIngredientData> CODEC = RecipeJsonHelper.FLUID;
+
+  public static final StreamCodec<RegistryFriendlyByteBuf, FluidIngredientData> STREAM_CODEC = StreamCodec.composite(
+      Identifier.STREAM_CODEC, FluidIngredientData::fluidId,
+      ByteBufCodecs.VAR_INT, FluidIngredientData::amountMb,
+      FluidIngredientData::new);
+
+  public static final StreamCodec<RegistryFriendlyByteBuf, Optional<FluidIngredientData>> OPTIONAL_STREAM_CODEC =
+      ByteBufCodecs.optional(STREAM_CODEC);
+
+  public static FluidIngredientData fromNetwork(RegistryFriendlyByteBuf buf) {
+    return STREAM_CODEC.decode(buf);
   }
 
-  public static FluidIngredientData fromNetwork(FriendlyByteBuf buf) {
-    ResourceLocation fluidId = buf.readResourceLocation();
-    int amountMb = buf.readVarInt();
-    return new FluidIngredientData(fluidId, amountMb);
-  }
-
-  public void toNetwork(FriendlyByteBuf buf) {
-    buf.writeResourceLocation(fluidId);
-    buf.writeVarInt(amountMb);
+  public void toNetwork(RegistryFriendlyByteBuf buf) {
+    STREAM_CODEC.encode(buf, this);
   }
 
   public Fluid getFluid() {
-    return ForgeRegistries.FLUIDS.getValue(fluidId);
+    return BuiltInRegistries.FLUID.getValue(fluidId);
   }
 }

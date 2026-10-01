@@ -1,22 +1,23 @@
 package com.faktocraft.common.block.impl.pipe;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import com.faktocraft.Faktocraft;
 import com.faktocraft.common.enums.GuiSlotType;
 import com.faktocraft.common.util.Constants;
 import com.faktocraft.common.util.GuiUtil;
 import com.faktocraft.common.util.TextComponentUtil;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPipe>
     implements com.faktocraft.common.interfaces.screen.IGuiWrapper {
 
-  private static final ResourceLocation BACKGROUND = new ResourceLocation(Faktocraft.MODID,
+  private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(Faktocraft.MODID,
       "textures/gui/container/pipe_machine.png");
 
   private static final int PANEL_W = 24;
@@ -34,9 +35,7 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
   private EnergyBar energyBar;
 
   public ScreenExtractorPipe(MenuExtractorPipe menu, Inventory inventory, Component title) {
-    super(menu, inventory, title);
-    this.imageWidth = 176;
-    this.imageHeight = 190;
+    super(menu, inventory, title, 176, 190);
     this.inventoryLabelY = 190 - 94;
   }
 
@@ -46,7 +45,17 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
   }
 
   @Override
-  public ResourceLocation getGuiLocation() {
+  public int getGuiLeft() {
+    return this.leftPos;
+  }
+
+  @Override
+  public int getGuiTop() {
+    return this.topPos;
+  }
+
+  @Override
+  public Identifier getGuiLocation() {
     return BACKGROUND;
   }
 
@@ -96,15 +105,13 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
   }
 
   @Override
-  public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    renderBackground(graphics);
-    super.render(graphics, mouseX, mouseY, partialTick);
+  public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    super.extractRenderState(graphics, mouseX, mouseY, partialTick);
     renderCapacitorWarning(graphics);
-    renderTooltip(graphics, mouseX, mouseY);
     renderEmptySlotTooltip(graphics, mouseX, mouseY);
     if (energyBar != null) {
       if (missingCapacitor() && energyBar.isMouseOver(mouseX, mouseY)) {
-        graphics.renderTooltip(GuiUtil.getFont(),
+        graphics.setTooltipForNextFrame(GuiUtil.getFont(),
             Component.translatable("gui." + Faktocraft.MODID + ".capacitor_required")
                 .withStyle(net.minecraft.ChatFormatting.RED),
             mouseX, mouseY);
@@ -114,7 +121,7 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
     }
   }
 
-  private void renderCapacitorWarning(GuiGraphics graphics) {
+  private void renderCapacitorWarning(GuiGraphicsExtractor graphics) {
     if (!missingCapacitor() || energyBar == null) {
       return;
     }
@@ -132,7 +139,7 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
     }
   }
 
-  private void renderEmptySlotTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+  private void renderEmptySlotTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     if (hoveredSlot == null || hoveredSlot.hasItem() || hoveredSlot.index >= MenuExtractorPipe.MACHINE_SLOTS) {
       return;
     }
@@ -141,14 +148,20 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
         : dockSlot == PipeExtractor.DOCK_TENSION_SLOT ? "gui." + Faktocraft.MODID + ".slot.tension"
             : dockSlot == PipeExtractor.DOCK_BATTERY_SLOT ? "gui." + Faktocraft.MODID + ".slot.dock_battery"
                 : "gui." + Faktocraft.MODID + ".slot.capacitor";
-    graphics.renderTooltip(GuiUtil.getFont(), Component.translatable(key), mouseX, mouseY);
+    graphics.setTooltipForNextFrame(GuiUtil.getFont(), Component.translatable(key), mouseX, mouseY);
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+  public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    renderBg(graphics, partialTick, mouseX, mouseY);
+    super.extractContents(graphics, mouseX, mouseY, partialTick);
+  }
+
+  protected void renderBg(GuiGraphicsExtractor graphics, float partialTick, int mouseX, int mouseY) {
     int left = (this.width - this.imageWidth) / 2;
     int top = (this.height - this.imageHeight) / 2;
-    graphics.blit(BACKGROUND, left, top, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, left, top, 0, 0, this.imageWidth, this.imageHeight, 256,
+        256);
     panel(graphics, left + RIGHT_PANEL_X, top + PANEL_Y, PipeExtractor.UPGRADE_SLOTS);
     panel(graphics, left + LEFT_PANEL_X, top + PANEL_Y, PipeExtractor.DOCK_SLOTS);
     for (int i = 0; i < PipeExtractor.UPGRADE_SLOTS; i++) {
@@ -161,33 +174,35 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
       int y = top + MenuExtractorPipe.DOCK_Y + i * 18;
       slotFrame(graphics, GuiSlotType.BATTERY_DOCK, x - 1, y - 1);
       if (i == PipeExtractor.DOCK_TENSION_SLOT) {
-        graphics.blit(Constants.PROCESS, x, y, 84, 46, 16, 16, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, x, y, 84, 46, 16, 16, 256, 256);
       } else if (i == PipeExtractor.DOCK_BATTERY_SLOT) {
-        graphics.blit(Constants.PROCESS, x, y, 104, 28, 16, 16, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, x, y, 104, 28, 16, 16, 256, 256);
       } else {
-        graphics.blit(Constants.PROCESS, x, y, 110, 0, 16, 16, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, x, y, 110, 0, 16, 16, 256, 256);
       }
     }
   }
 
-  private void panel(GuiGraphics graphics, int x, int y, int slots) {
+  private void panel(GuiGraphicsExtractor graphics, int x, int y, int slots) {
     int body = slots * 18;
-    graphics.blit(Constants.COMMON, x, y, 0, PANEL_V, PANEL_W, PANEL_CAP, 256, 256);
-    graphics.blit(Constants.COMMON, x, y + PANEL_CAP, 0, PANEL_V + PANEL_CAP, PANEL_W, body, 256, 256);
-    graphics.blit(Constants.COMMON, x, y + PANEL_CAP + body, 0, PANEL_V + 76, PANEL_W, PANEL_CAP, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.COMMON, x, y, 0, PANEL_V, PANEL_W, PANEL_CAP, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.COMMON, x, y + PANEL_CAP, 0, PANEL_V + PANEL_CAP, PANEL_W,
+        body, 256, 256);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.COMMON, x, y + PANEL_CAP + body, 0, PANEL_V + 76, PANEL_W,
+        PANEL_CAP, 256, 256);
   }
 
-  private void slotFrame(GuiGraphics graphics, GuiSlotType type, int x, int y) {
-    graphics.blit(Constants.PROCESS, x, y, type.getOffsetLeft(), type.getOffsetTop(), type.getWidth(),
-        type.getHeight(), 256, 256);
+  private void slotFrame(GuiGraphicsExtractor graphics, GuiSlotType type, int x, int y) {
+    graphics.blit(RenderPipelines.GUI_TEXTURED, Constants.PROCESS, x, y, type.getOffsetLeft(), type.getOffsetTop(),
+        type.getWidth(), type.getHeight(), 256, 256);
   }
 
   @Override
-  protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+  protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     GuiUtil.renderScaledToFit(graphics, this.title.getString(), this.titleLabelX, this.titleLabelY,
         this.imageWidth - this.titleLabelX - 8, 4210752);
-    graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
-        4210752, false);
+    graphics.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
+        GuiUtil.opaque(4210752), false);
   }
 
   private static final class EnergyBar extends com.faktocraft.common.screen.progress.GuiProgress {
@@ -199,14 +214,14 @@ public class ScreenExtractorPipe extends AbstractContainerScreen<MenuExtractorPi
     }
 
     @Override
-    public ResourceLocation getResourceLocation() {
+    public Identifier getResourceLocation() {
       return Constants.COMMON;
     }
 
     @Override
-    public void renderWidgetToolTip(Screen screen, GuiGraphics graphics, int mouseX, int mouseY) {
+    public void renderWidgetToolTip(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
       if (isMouseOver(mouseX, mouseY)) {
-        graphics.renderTooltip(GuiUtil.getFont(),
+        graphics.setTooltipForNextFrame(GuiUtil.getFont(),
             Component.translatable("gui." + Faktocraft.MODID + ".energy",
                 TextComponentUtil.getFormattedEnergyUnit(getProgress().getProgress()),
                 TextComponentUtil.getFormattedEnergyUnit(getProgress().getProgressMax())),

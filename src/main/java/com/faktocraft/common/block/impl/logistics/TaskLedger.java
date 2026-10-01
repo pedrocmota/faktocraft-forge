@@ -1,5 +1,6 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.util.NbtBridge;
 import com.faktocraft.common.config.ModConfig;
 import com.faktocraft.common.network.packet.PacketLogisticsGhost;
 import net.minecraft.core.BlockPos;
@@ -7,7 +8,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
@@ -92,14 +93,14 @@ public final class TaskLedger {
     CompoundTag save() {
       CompoundTag tag = new CompoundTag();
       tag.putString("kind", kind);
-      tag.put("item", item.save(new CompoundTag()));
+      tag.put("item", NbtBridge.saveStack(item));
       tag.putInt("count", count);
       tag.putString("state", stateKey);
       tag.putInt("done", done);
       tag.putInt("inDone", inputsDone);
       tag.putInt("inTotal", inputsTotal);
       if (leftoverCount > 0) {
-        tag.put("leftItem", leftoverItem.save(new CompoundTag()));
+        tag.put("leftItem", NbtBridge.saveStack(leftoverItem));
         tag.putInt("leftCount", leftoverCount);
         tag.putString("where", where);
         tag.putString("whereDetail", whereDetail);
@@ -110,19 +111,19 @@ public final class TaskLedger {
 
     static SubRecord load(CompoundTag tag) {
       SubRecord sub = new SubRecord();
-      sub.kind = tag.getString("kind");
-      sub.item = ItemStack.of(tag.getCompound("item"));
-      sub.count = tag.getInt("count");
-      sub.stateKey = tag.getString("state");
-      sub.done = tag.getInt("done");
-      sub.inputsDone = tag.getInt("inDone");
-      sub.inputsTotal = tag.getInt("inTotal");
+      sub.kind = tag.getStringOr("kind", "");
+      sub.item = NbtBridge.loadStack(tag.getCompoundOrEmpty("item"));
+      sub.count = tag.getIntOr("count", 0);
+      sub.stateKey = tag.getStringOr("state", "");
+      sub.done = tag.getIntOr("done", 0);
+      sub.inputsDone = tag.getIntOr("inDone", 0);
+      sub.inputsTotal = tag.getIntOr("inTotal", 0);
       if (tag.contains("leftCount")) {
-        sub.leftoverItem = ItemStack.of(tag.getCompound("leftItem"));
-        sub.leftoverCount = tag.getInt("leftCount");
-        sub.where = tag.getString("where");
-        sub.whereDetail = tag.getString("whereDetail");
-        sub.leftoverPos = tag.getLong("leftPos");
+        sub.leftoverItem = NbtBridge.loadStack(tag.getCompoundOrEmpty("leftItem"));
+        sub.leftoverCount = tag.getIntOr("leftCount", 0);
+        sub.where = tag.getStringOr("where", "");
+        sub.whereDetail = tag.getStringOr("whereDetail", "");
+        sub.leftoverPos = tag.getLongOr("leftPos", 0L);
       }
       return sub;
     }
@@ -183,7 +184,7 @@ public final class TaskLedger {
     CompoundTag save() {
       CompoundTag tag = new CompoundTag();
       tag.putLong("id", id);
-      tag.put("stack", stack.save(new CompoundTag()));
+      tag.put("stack", NbtBridge.saveStack(stack));
       tag.putInt("count", count);
       tag.putString("state", stateKey);
       tag.putString("detail", detail);
@@ -201,16 +202,16 @@ public final class TaskLedger {
 
     static HistoryRecord load(CompoundTag tag) {
       HistoryRecord record = new HistoryRecord();
-      record.id = tag.getLong("id");
-      record.stack = ItemStack.of(tag.getCompound("stack"));
-      record.count = tag.getInt("count");
-      record.stateKey = tag.getString("state");
-      record.detail = tag.getString("detail");
-      record.system = tag.getBoolean("system");
-      record.originPos = tag.getLong("origin");
-      record.originLabel = tag.getString("originLabel");
-      record.delivered = tag.getInt("delivered");
-      for (Tag element : tag.getList("subs", Tag.TAG_COMPOUND)) {
+      record.id = tag.getLongOr("id", 0L);
+      record.stack = NbtBridge.loadStack(tag.getCompoundOrEmpty("stack"));
+      record.count = tag.getIntOr("count", 0);
+      record.stateKey = tag.getStringOr("state", "");
+      record.detail = tag.getStringOr("detail", "");
+      record.system = tag.getBooleanOr("system", false);
+      record.originPos = tag.getLongOr("origin", 0L);
+      record.originLabel = tag.getStringOr("originLabel", "");
+      record.delivered = tag.getIntOr("delivered", 0);
+      for (Tag element : tag.getListOrEmpty("subs")) {
         record.subs.add(SubRecord.load((CompoundTag) element));
       }
       return record;
@@ -263,7 +264,7 @@ public final class TaskLedger {
       CompoundTag tag = new CompoundTag();
       tag.putLong("id", id);
 
-      tag.put("stack", stack.copyWithCount(Math.min(1, stack.getCount())).save(new CompoundTag()));
+      tag.put("stack", NbtBridge.saveStack(stack.copyWithCount(Math.min(1, stack.getCount()))));
       tag.putInt("stackCount", stack.getCount());
       tag.put("from", from.save());
       tag.put("to", to.save());
@@ -287,26 +288,26 @@ public final class TaskLedger {
 
     static DeliveryTask load(CompoundTag tag) {
       DeliveryTask task = new DeliveryTask();
-      task.id = tag.getLong("id");
-      task.stack = ItemStack.of(tag.getCompound("stack"));
+      task.id = tag.getLongOr("id", 0L);
+      task.stack = NbtBridge.loadStack(tag.getCompoundOrEmpty("stack"));
       if (tag.contains("stackCount") && !task.stack.isEmpty()) {
-        task.stack.setCount(Math.max(1, tag.getInt("stackCount")));
+        task.stack.setCount(Math.max(1, tag.getIntOr("stackCount", 0)));
       }
-      task.from = Endpoint.load(tag.getCompound("from"));
-      task.to = Endpoint.load(tag.getCompound("to"));
+      task.from = Endpoint.load(tag.getCompoundOrEmpty("from"));
+      task.to = Endpoint.load(tag.getCompoundOrEmpty("to"));
       List<BlockPos> route = new ArrayList<>();
-      for (Tag element : tag.getList("route", Tag.TAG_COMPOUND)) {
-        route.add(BlockPos.of(((CompoundTag) element).getLong("p")));
+      for (Tag element : tag.getListOrEmpty("route")) {
+        route.add(BlockPos.of(((CompoundTag) element).getLongOr("p", 0L)));
       }
       task.route = route;
-      task.travelTicks = Math.max(2, tag.getInt("travel"));
-      task.progress = tag.getInt("progress");
-      task.retries = tag.getInt("retries");
-      task.jobId = tag.getLong("job");
-      task.delivering = tag.getBoolean("delivering");
-      task.stockPart = tag.getBoolean("stockPart");
-      task.leftover = tag.getBoolean("leftover");
-      task.originPos = tag.getLong("origin");
+      task.travelTicks = Math.max(2, tag.getIntOr("travel", 0));
+      task.progress = tag.getIntOr("progress", 0);
+      task.retries = tag.getIntOr("retries", 0);
+      task.jobId = tag.getLongOr("job", 0L);
+      task.delivering = tag.getBooleanOr("delivering", false);
+      task.stockPart = tag.getBooleanOr("stockPart", false);
+      task.leftover = tag.getBooleanOr("leftover", false);
+      task.originPos = tag.getLongOr("origin", 0L);
       task.sliceRoute();
       return task;
     }
@@ -414,7 +415,7 @@ public final class TaskLedger {
 
     CompoundTag save() {
       CompoundTag tag = new CompoundTag();
-      tag.put("result", result.save(new CompoundTag()));
+      tag.put("result", NbtBridge.saveStack(result));
       tag.putInt("rc", resultCount);
       tag.putInt("times", times);
       tag.putInt("surplus", surplus);
@@ -472,71 +473,72 @@ public final class TaskLedger {
 
     static StepData load(CompoundTag tag) {
       StepData step = new StepData();
-      step.result = ItemStack.of(tag.getCompound("result"));
-      step.resultCount = Math.max(1, tag.getInt("rc"));
-      step.times = Math.max(1, tag.getInt("times"));
-      step.surplus = tag.getInt("surplus");
-      step.timeout = tag.getInt("timeout");
+      step.result = NbtBridge.loadStack(tag.getCompoundOrEmpty("result"));
+      step.resultCount = Math.max(1, tag.getIntOr("rc", 0));
+      step.times = Math.max(1, tag.getIntOr("times", 0));
+      step.surplus = tag.getIntOr("surplus", 0);
+      step.timeout = tag.getIntOr("timeout", 0);
       List<LogisticsPlanner.ItemCount> ingredients = new ArrayList<>();
       List<Endpoint> legacyEnds = new ArrayList<>();
-      for (Tag element : tag.getList("ings", Tag.TAG_COMPOUND)) {
+      for (Tag element : tag.getListOrEmpty("ings")) {
         CompoundTag entry = (CompoundTag) element;
 
         ItemKey key = entry.contains("key")
-            ? ItemKey.load(entry.getCompound("key"))
-            : ItemKey.of(net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(new ResourceLocation(
-                entry.getString("item"))));
-        ingredients.add(new LogisticsPlanner.ItemCount(key, entry.getInt("count")));
+            ? ItemKey.load(entry.getCompoundOrEmpty("key"))
+            : ItemKey.of(net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(Identifier.parse(
+                entry.getStringOr("item", ""))));
+        ingredients.add(new LogisticsPlanner.ItemCount(key, entry.getIntOr("count", 0)));
         if (entry.contains("end")) {
-          legacyEnds.add(Endpoint.load(entry.getCompound("end")));
+          legacyEnds.add(Endpoint.load(entry.getCompoundOrEmpty("end")));
         }
       }
       step.ingredients = ingredients;
-      List<LogisticsPlanner.Maintain> legacyMaintains = loadMaintains(tag.getList("maintains", Tag.TAG_COMPOUND));
+      List<LogisticsPlanner.Maintain> legacyMaintains = loadMaintains(tag.getListOrEmpty("maintains"));
       List<LogisticsPlanner.StationChoice> stations = new ArrayList<>();
-      for (Tag element : tag.getList("stations", Tag.TAG_COMPOUND)) {
+      for (Tag element : tag.getListOrEmpty("stations")) {
         CompoundTag entry = (CompoundTag) element;
         List<Endpoint> ends = new ArrayList<>();
-        for (Tag endTag : entry.getList("ends", Tag.TAG_COMPOUND)) {
+        for (Tag endTag : entry.getListOrEmpty("ends")) {
           ends.add(Endpoint.load((CompoundTag) endTag));
         }
         List<Endpoint> maintainEnds = new ArrayList<>();
-        for (Tag endTag : entry.getList("mends", Tag.TAG_COMPOUND)) {
+        for (Tag endTag : entry.getListOrEmpty("mends")) {
           maintainEnds.add(Endpoint.load((CompoundTag) endTag));
         }
         List<LogisticsPlanner.Maintain> maintains = entry.contains("maint")
-            ? loadMaintains(entry.getList("maint", Tag.TAG_COMPOUND)) : legacyMaintains;
-        stations.add(new LogisticsPlanner.StationChoice(BlockPos.of(entry.getLong("node")),
-            Endpoint.load(entry.getCompound("out")), ends, maintains, maintainEnds, !entry.getBoolean("solo")));
+            ? loadMaintains(entry.getListOrEmpty("maint")) : legacyMaintains;
+        stations.add(new LogisticsPlanner.StationChoice(BlockPos.of(entry.getLongOr("node", 0L)),
+            Endpoint.load(entry.getCompoundOrEmpty("out")), ends, maintains, maintainEnds,
+            !entry.getBooleanOr("solo", false)));
       }
       if (stations.isEmpty() && tag.contains("out")) {
 
-        stations.add(new LogisticsPlanner.StationChoice(BlockPos.of(tag.getLong("chassis")),
-            Endpoint.load(tag.getCompound("out")), legacyEnds));
+        stations.add(new LogisticsPlanner.StationChoice(BlockPos.of(tag.getLongOr("chassis", 0L)),
+            Endpoint.load(tag.getCompoundOrEmpty("out")), legacyEnds));
       }
       step.stations = stations;
-      step.chosen = tag.getInt("chosen");
-      step.machine = tag.getBoolean("machine");
+      step.chosen = tag.getIntOr("chosen", 0);
+      step.machine = tag.getBooleanOr("machine", false);
       if (tag.contains("batch")) {
-        step.batchSize = Math.max(1, tag.getInt("batch"));
-        step.unitCounts = tag.getIntArray("unitCounts");
-        step.modes = tag.getByteArray("modes");
-        step.origins = tag.getIntArray("origins");
+        step.batchSize = Math.max(1, tag.getIntOr("batch", 0));
+        step.unitCounts = tag.getIntArray("unitCounts").orElse(new int[0]);
+        step.modes = tag.getByteArray("modes").orElse(new byte[0]);
+        step.origins = tag.getIntArray("origins").orElse(new int[0]);
       }
       step.prepare();
-      if (tag.contains("rem") && tag.getIntArray("rem").length == step.remaining.length) {
-        step.remaining = tag.getIntArray("rem");
+      if (tag.contains("rem") && tag.getIntArray("rem").orElse(new int[0]).length == step.remaining.length) {
+        step.remaining = tag.getIntArray("rem").orElse(new int[0]);
       }
-      if (tag.contains("need") && tag.getIntArray("need").length == step.need.length) {
-        step.need = tag.getIntArray("need");
+      if (tag.contains("need") && tag.getIntArray("need").orElse(new int[0]).length == step.need.length) {
+        step.need = tag.getIntArray("need").orElse(new int[0]);
       }
-      step.done = tag.getBoolean("done");
-      step.unitsStarted = tag.getInt("started");
-      step.batchUnits = tag.getInt("bUnits");
-      step.drained = tag.getInt("drained");
-      step.batchProduced = tag.getInt("bProd");
-      step.outputBaseline = tag.contains("baseline") ? tag.getInt("baseline") : Integer.MIN_VALUE;
-      step.wait = tag.getInt("wait");
+      step.done = tag.getBooleanOr("done", false);
+      step.unitsStarted = tag.getIntOr("started", 0);
+      step.batchUnits = tag.getIntOr("bUnits", 0);
+      step.drained = tag.getIntOr("drained", 0);
+      step.batchProduced = tag.getIntOr("bProd", 0);
+      step.outputBaseline = tag.contains("baseline") ? tag.getIntOr("baseline", 0) : Integer.MIN_VALUE;
+      step.wait = tag.getIntOr("wait", 0);
       step.delivered = loadKeyMap(tag, "deliv");
       return step;
     }
@@ -557,9 +559,9 @@ public final class TaskLedger {
 
     static Parked load(CompoundTag tag) {
       Parked parked = new Parked();
-      parked.item = ItemKey.load(tag.getCompound("k"));
-      parked.count = tag.getInt("n");
-      parked.step = tag.getInt("s");
+      parked.item = ItemKey.load(tag.getCompoundOrEmpty("k"));
+      parked.count = tag.getIntOr("n", 0);
+      parked.step = tag.getIntOr("s", 0);
       return parked;
     }
   }
@@ -640,7 +642,7 @@ public final class TaskLedger {
       CompoundTag tag = new CompoundTag();
       tag.putInt("v", 2);
       tag.putLong("id", id);
-      tag.put("target", target.save(new CompoundTag()));
+      tag.put("target", NbtBridge.saveStack(target));
       tag.putInt("qty", quantity);
       tag.putBoolean("system", system);
       tag.putLong("origin", originPos);
@@ -680,35 +682,35 @@ public final class TaskLedger {
 
     static RequestJob load(CompoundTag tag) {
       RequestJob job = new RequestJob();
-      job.id = tag.getLong("id");
-      job.target = ItemStack.of(tag.getCompound("target"));
-      job.quantity = tag.getInt("qty");
-      job.system = tag.getBoolean("system");
-      job.originPos = tag.getLong("origin");
-      job.originLabel = tag.getString("originLabel");
-      job.directQuantity = tag.getInt("direct");
+      job.id = tag.getLongOr("id", 0L);
+      job.target = NbtBridge.loadStack(tag.getCompoundOrEmpty("target"));
+      job.quantity = tag.getIntOr("qty", 0);
+      job.system = tag.getBooleanOr("system", false);
+      job.originPos = tag.getLongOr("origin", 0L);
+      job.originLabel = tag.getStringOr("originLabel", "");
+      job.directQuantity = tag.getIntOr("direct", 0);
       job.stockToDeliver = loadKeyMap(tag, "stockDeliver");
-      job.dest = Endpoint.load(tag.getCompound("dest"));
-      job.destNode = BlockPos.of(tag.getLong("destNode"));
+      job.dest = Endpoint.load(tag.getCompoundOrEmpty("dest"));
+      job.destNode = BlockPos.of(tag.getLongOr("destNode", 0L));
       job.withdrawalsRemaining = loadKeyMap(tag, "withdraw");
-      for (Tag element : tag.getList("steps", Tag.TAG_COMPOUND)) {
+      for (Tag element : tag.getListOrEmpty("steps")) {
         job.steps.add(StepData.load((CompoundTag) element));
       }
-      job.delivered = tag.getInt("delivered");
-      job.dispatchWait = tag.getInt("dispatch");
-      for (long packed : tag.getLongArray("stations")) {
+      job.delivered = tag.getIntOr("delivered", 0);
+      job.dispatchWait = tag.getIntOr("dispatch", 0);
+      for (long packed : tag.getLongArray("stations").orElse(new long[0])) {
         job.stations.add(BlockPos.of(packed));
       }
-      job.error = tag.contains("error") ? tag.getString("error") : null;
-      job.split = tag.getBoolean("split");
-      for (Tag element : tag.getList("parked", Tag.TAG_COMPOUND)) {
+      job.error = tag.contains("error") ? tag.getStringOr("error", "") : null;
+      job.split = tag.getBooleanOr("split", false);
+      for (Tag element : tag.getListOrEmpty("parked")) {
         Parked entry = Parked.load((CompoundTag) element);
         if (!entry.item.isEmpty() && entry.count > 0) {
           job.parked.add(entry);
         }
       }
-      if (tag.getInt("v") < 2) {
-        int legacyStage = tag.getBoolean("final") ? job.steps.size() : tag.getInt("stage");
+      if (tag.getIntOr("v", 0) < 2) {
+        int legacyStage = tag.getBooleanOr("final", false) ? job.steps.size() : tag.getIntOr("stage", 0);
         for (int i = 0; i < job.steps.size(); i++) {
           StepData step = job.steps.get(i);
           step.done = i < legacyStage;
@@ -741,21 +743,21 @@ public final class TaskLedger {
 
   private static Map<ItemKey, Integer> loadKeyMap(CompoundTag owner, String name) {
     Map<ItemKey, Integer> map = new HashMap<>();
-    if (owner.contains(name, Tag.TAG_LIST)) {
-      for (Tag element : owner.getList(name, Tag.TAG_COMPOUND)) {
+    if (owner.contains(name)) {
+      for (Tag element : owner.getListOrEmpty(name)) {
         CompoundTag entry = (CompoundTag) element;
-        ItemKey key = ItemKey.load(entry.getCompound("k"));
+        ItemKey key = ItemKey.load(entry.getCompoundOrEmpty("k"));
         if (!key.isEmpty()) {
-          map.put(key, entry.getInt("n"));
+          map.put(key, entry.getIntOr("n", 0));
         }
       }
       return map;
     }
-    CompoundTag legacy = owner.getCompound(name);
-    for (String id : legacy.getAllKeys()) {
-      ItemKey key = ItemKey.of(net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(new ResourceLocation(id)));
+    CompoundTag legacy = owner.getCompoundOrEmpty(name);
+    for (String id : legacy.keySet()) {
+      ItemKey key = ItemKey.of(net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(Identifier.parse(id)));
       if (!key.isEmpty()) {
-        map.put(key, legacy.getInt(id));
+        map.put(key, legacy.getIntOr(id, 0));
       }
     }
     return map;
@@ -1642,9 +1644,9 @@ public final class TaskLedger {
     List<LogisticsPlanner.Maintain> maintains = new ArrayList<>();
     for (Tag element : list) {
       CompoundTag entry = (CompoundTag) element;
-      ItemKey key = ItemKey.load(entry.getCompound("key"));
+      ItemKey key = ItemKey.load(entry.getCompoundOrEmpty("key"));
       if (!key.isEmpty()) {
-        maintains.add(new LogisticsPlanner.Maintain(key, Math.max(1, entry.getInt("count"))));
+        maintains.add(new LogisticsPlanner.Maintain(key, Math.max(1, entry.getIntOr("count", 0))));
       }
     }
     return maintains;
@@ -1917,14 +1919,14 @@ public final class TaskLedger {
     deliveries.clear();
     jobs.clear();
     reserved.clear();
-    nextId = Math.max(1, tag.getLong("nextId"));
-    for (Tag element : tag.getList("deliveries", Tag.TAG_COMPOUND)) {
+    nextId = Math.max(1, tag.getLongOr("nextId", 0L));
+    for (Tag element : tag.getListOrEmpty("deliveries")) {
       DeliveryTask task = DeliveryTask.load((CompoundTag) element);
       if (!task.stack.isEmpty()) {
         deliveries.add(task);
       }
     }
-    for (Tag element : tag.getList("jobs", Tag.TAG_COMPOUND)) {
+    for (Tag element : tag.getListOrEmpty("jobs")) {
       jobs.add(RequestJob.load((CompoundTag) element));
     }
     reserved.putAll(loadKeyMap(tag, "reserved"));
@@ -1932,7 +1934,7 @@ public final class TaskLedger {
     systemHistory.clear();
 
     for (String key : new String[] { "historyUser", "historySystem", "history" }) {
-      for (Tag element : tag.getList(key, Tag.TAG_COMPOUND)) {
+      for (Tag element : tag.getListOrEmpty(key)) {
         HistoryRecord record = HistoryRecord.load((CompoundTag) element);
         List<HistoryRecord> list = record.system ? systemHistory : userHistory;
         if (!record.stack.isEmpty() && list.size() < HISTORY_LIMIT) {

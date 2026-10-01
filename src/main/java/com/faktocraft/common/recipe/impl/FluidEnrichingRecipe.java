@@ -3,27 +3,69 @@ package com.faktocraft.common.recipe.impl;
 import com.faktocraft.common.interfaces.receipe.IBaseRecipe;
 import com.faktocraft.common.item.crafting.CountedIngredient;
 import com.faktocraft.common.recipe.FluidIngredientData;
+import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.registries.ModRecipeType;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
-public class FluidEnrichingRecipe implements IBaseRecipe<Container> {
+public class FluidEnrichingRecipe implements IBaseRecipe<MachineRecipeInput> {
+  public static final MapCodec<FluidEnrichingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+      CountedIngredient.CODEC.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
+      CountedIngredient.CODEC.optionalFieldOf("ingredient_2").forGetter(FluidEnrichingRecipe::getCountedIngredient2),
+      FluidIngredientData.CODEC.fieldOf("fluid_ingredient").forGetter(recipe -> recipe.fluidInput),
+      FluidIngredientData.CODEC.optionalFieldOf("fluid_ingredient_2").forGetter(FluidEnrichingRecipe::getFluidInput2),
+      FluidIngredientData.CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
+      Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(recipe -> recipe.experience),
+      Codec.INT.optionalFieldOf("duration", 180).forGetter(recipe -> recipe.duration),
+      Codec.INT.optionalFieldOf("power_cost", 8).forGetter(recipe -> recipe.powerCost))
+      .apply(i, (ingredient, ingredient2, fluidInput, fluidInput2, result, experience, duration,
+          powerCost) -> new FluidEnrichingRecipe(ingredient, ingredient2.orElse(null), fluidInput,
+              fluidInput2.orElse(null), result, experience, duration, powerCost)));
 
-  public static final RecipeSerializer<FluidEnrichingRecipe> SERIALIZER = new Serializer();
+  public static final StreamCodec<RegistryFriendlyByteBuf, FluidEnrichingRecipe> STREAM_CODEC = StreamCodec.of(
+      (buf, recipe) -> {
+        recipe.ingredient.toNetwork(buf);
+        buf.writeBoolean(recipe.ingredient2 != null);
+        if (recipe.ingredient2 != null) {
+          recipe.ingredient2.toNetwork(buf);
+        }
+        recipe.fluidInput.toNetwork(buf);
+        buf.writeBoolean(recipe.fluidInput2 != null);
+        if (recipe.fluidInput2 != null) {
+          recipe.fluidInput2.toNetwork(buf);
+        }
+        recipe.result.toNetwork(buf);
+        buf.writeFloat(recipe.experience);
+        buf.writeVarInt(recipe.duration);
+        buf.writeVarInt(recipe.powerCost);
+      }, buf -> {
+        CountedIngredient ingredient = CountedIngredient.fromNetwork(buf);
+        CountedIngredient ingredient2 = buf.readBoolean() ? CountedIngredient.fromNetwork(buf) : null;
+        FluidIngredientData fluidInput = FluidIngredientData.fromNetwork(buf);
+        FluidIngredientData fluidInput2 = buf.readBoolean() ? FluidIngredientData.fromNetwork(buf) : null;
+        FluidIngredientData result = FluidIngredientData.fromNetwork(buf);
+        float experience = buf.readFloat();
+        int duration = buf.readVarInt();
+        int powerCost = buf.readVarInt();
+        return new FluidEnrichingRecipe(ingredient, ingredient2, fluidInput, fluidInput2, result, experience,
+            duration, powerCost);
+      });
 
-  private final ResourceLocation id;
+  public static final RecipeSerializer<FluidEnrichingRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC,
+      STREAM_CODEC);
+
   private final CountedIngredient ingredient;
   @Nullable
   private final CountedIngredient ingredient2;
@@ -34,12 +76,12 @@ public class FluidEnrichingRecipe implements IBaseRecipe<Container> {
   private final float experience;
   private final int duration;
   private final int powerCost;
+  @Nullable
+  private PlacementInfo placementInfo;
 
-  public FluidEnrichingRecipe(ResourceLocation id, CountedIngredient ingredient,
-      @Nullable CountedIngredient ingredient2, FluidIngredientData fluidInput,
-      @Nullable FluidIngredientData fluidInput2, FluidIngredientData result,
+  public FluidEnrichingRecipe(CountedIngredient ingredient, @Nullable CountedIngredient ingredient2,
+      FluidIngredientData fluidInput, @Nullable FluidIngredientData fluidInput2, FluidIngredientData result,
       float experience, int duration, int powerCost) {
-    this.id = id;
     this.ingredient = ingredient;
     this.ingredient2 = ingredient2;
     this.fluidInput = fluidInput;
@@ -51,13 +93,13 @@ public class FluidEnrichingRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public boolean matches(Container container, Level level) {
-    ItemStack stack = container.getItem(0);
+  public boolean matches(MachineRecipeInput input, Level level) {
+    ItemStack stack = input.getItem(0);
     return ingredient.testType(stack) || (ingredient2 != null && ingredient2.testType(stack));
   }
 
   @Override
-  public ItemStack assemble(Container container, RegistryAccess registryAccess) {
+  public ItemStack assemble(MachineRecipeInput input) {
     return ItemStack.EMPTY;
   }
 
@@ -89,7 +131,6 @@ public class FluidEnrichingRecipe implements IBaseRecipe<Container> {
     return ingredient.count();
   }
 
-  @Override
   public NonNullList<Ingredient> getIngredients() {
     NonNullList<Ingredient> list = NonNullList.create();
     list.add(ingredient.ingredient());
@@ -97,6 +138,14 @@ public class FluidEnrichingRecipe implements IBaseRecipe<Container> {
       list.add(ingredient2.ingredient());
     }
     return list;
+  }
+
+  @Override
+  public PlacementInfo placementInfo() {
+    if (placementInfo == null) {
+      placementInfo = PlacementInfo.create(getIngredients());
+    }
+    return placementInfo;
   }
 
   @Override
@@ -115,11 +164,6 @@ public class FluidEnrichingRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public ResourceLocation getId() {
-    return id;
-  }
-
-  @Override
   public RecipeSerializer<FluidEnrichingRecipe> getSerializer() {
     return SERIALIZER;
   }
@@ -127,59 +171,5 @@ public class FluidEnrichingRecipe implements IBaseRecipe<Container> {
   @Override
   public RecipeType<FluidEnrichingRecipe> getType() {
     return ModRecipeType.FLUID_ENRICHING;
-  }
-
-  public static class Serializer implements RecipeSerializer<FluidEnrichingRecipe> {
-
-    @Override
-    public FluidEnrichingRecipe fromJson(ResourceLocation id, JsonObject json) {
-      CountedIngredient ingredient = CountedIngredient.fromJson(json.get("ingredient"));
-      CountedIngredient ingredient2 = json.has("ingredient_2")
-          ? CountedIngredient.fromJson(json.get("ingredient_2"))
-          : null;
-      FluidIngredientData fluidInput = FluidIngredientData.fromJson(GsonHelper.getAsJsonObject(json,
-          "fluid_ingredient"));
-      FluidIngredientData fluidInput2 = json.has("fluid_ingredient_2")
-          ? FluidIngredientData.fromJson(GsonHelper.getAsJsonObject(json, "fluid_ingredient_2"))
-          : null;
-      FluidIngredientData result = FluidIngredientData.fromJson(GsonHelper.getAsJsonObject(json, "result"));
-      float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
-      int duration = GsonHelper.getAsInt(json, "duration", 180);
-      int powerCost = GsonHelper.getAsInt(json, "power_cost", 8);
-      return new FluidEnrichingRecipe(id, ingredient, ingredient2, fluidInput, fluidInput2, result, experience,
-          duration, powerCost);
-    }
-
-    @Override
-    public FluidEnrichingRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-      CountedIngredient ingredient = CountedIngredient.fromNetwork(buf);
-      CountedIngredient ingredient2 = buf.readBoolean() ? CountedIngredient.fromNetwork(buf) : null;
-      FluidIngredientData fluidInput = FluidIngredientData.fromNetwork(buf);
-      FluidIngredientData fluidInput2 = buf.readBoolean() ? FluidIngredientData.fromNetwork(buf) : null;
-      FluidIngredientData result = FluidIngredientData.fromNetwork(buf);
-      float experience = buf.readFloat();
-      int duration = buf.readVarInt();
-      int powerCost = buf.readVarInt();
-      return new FluidEnrichingRecipe(id, ingredient, ingredient2, fluidInput, fluidInput2, result, experience,
-          duration, powerCost);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buf, FluidEnrichingRecipe recipe) {
-      recipe.ingredient.toNetwork(buf);
-      buf.writeBoolean(recipe.ingredient2 != null);
-      if (recipe.ingredient2 != null) {
-        recipe.ingredient2.toNetwork(buf);
-      }
-      recipe.fluidInput.toNetwork(buf);
-      buf.writeBoolean(recipe.fluidInput2 != null);
-      if (recipe.fluidInput2 != null) {
-        recipe.fluidInput2.toNetwork(buf);
-      }
-      recipe.result.toNetwork(buf);
-      buf.writeFloat(recipe.experience);
-      buf.writeVarInt(recipe.duration);
-      buf.writeVarInt(recipe.powerCost);
-    }
   }
 }

@@ -1,5 +1,8 @@
 .gradle/
 build/
+build-*/
+.gradle-*/
+.eclipse
 !gradle/wrapper/gradle-wrapper.jar
 gradle-app.setting
 local.properties

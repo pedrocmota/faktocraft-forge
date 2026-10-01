@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft_machines",
+  "key": {
+    "c": "faktocraft:crude_circuit",
+    "M": "faktocraft:basic_machine_casing",
+    "r": "#c:dusts/redstone"
+  },
+  "pattern": [
+    "rcr",
+    "cMc",
+    "rcr"
+  ],
+  "result": {
+    "id": "faktocraft:circuit_assembler"
+  }
+}

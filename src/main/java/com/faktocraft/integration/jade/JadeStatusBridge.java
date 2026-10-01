@@ -3,14 +3,14 @@ package com.faktocraft.integration.jade;
 import com.faktocraft.common.block.impl.monitor.StatusBridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import org.jetbrains.annotations.Nullable;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IServerDataProvider;
@@ -30,7 +30,7 @@ public final class JadeStatusBridge implements StatusBridge {
   private static final String TAG_JADE = "jade";
 
   static boolean collectedBy(CompoundTag data) {
-    return data.getBoolean(TAG_JADE);
+    return data.getBooleanOr(TAG_JADE, false);
   }
 
   static BlockHitResult hit(BlockPos pos) {
@@ -47,9 +47,9 @@ public final class JadeStatusBridge implements StatusBridge {
     if (blockEntity == null) {
       return;
     }
-    out.putString("id", String.valueOf(ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(blockEntity.getType())));
-    List<IServerDataProvider<BlockAccessor>> providers = WailaCommonRegistration.INSTANCE
-        .getBlockNBTProviders(blockEntity);
+    out.putString("id", String.valueOf(BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntity.getType())));
+    List<IServerDataProvider<BlockAccessor>> providers = WailaCommonRegistration.instance()
+        .blockDataProvidersOf(state, blockEntity, false);
     if (providers.isEmpty()) {
       return;
     }

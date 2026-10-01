@@ -1,6 +1,5 @@
 package com.faktocraft.gametest.nuclear;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.item.impl.armor.HazmatArmorItem;
 import com.faktocraft.common.radiation.RadiationExposure;
 import com.faktocraft.common.radiation.RadiationManager;
@@ -8,25 +7,22 @@ import com.faktocraft.common.registries.ModBlocks;
 import com.faktocraft.common.registries.ModEffects;
 import com.faktocraft.common.registries.ModItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestAssertException;
+import net.minecraft.core.registries.BuiltInRegistries;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class RadiationGameTest {
-
   private static final String TEMPLATE = "gametest_platform";
   private static final BlockPos CHEST = new BlockPos(1, 1, 1);
   private static final BlockPos PIG = new BlockPos(5, 1, 1);
@@ -34,21 +30,21 @@ public class RadiationGameTest {
 
   private static void placeHotChest(GameTestHelper helper) {
     placeChest(helper, new ItemStack(ModItems.ENRICHED_URANIUM_DUST, 64));
-    if (helper.getBlockEntity(CHEST) instanceof ChestBlockEntity chest) {
+    if (TestUtil.blockEntity(helper, CHEST) instanceof ChestBlockEntity chest) {
       chest.setItem(1, new ItemStack(ModItems.ENRICHED_URANIUM_DUST, 64));
     }
   }
 
   private static void placeChest(GameTestHelper helper, ItemStack content) {
     helper.setBlock(CHEST, Blocks.CHEST.defaultBlockState());
-    if (!(helper.getBlockEntity(CHEST) instanceof ChestBlockEntity chest)) {
-      throw new GameTestAssertException("no chest block entity");
+    if (!(TestUtil.blockEntity(helper, CHEST) instanceof ChestBlockEntity chest)) {
+      throw TestUtil.assertion(helper, "no chest block entity");
     }
     chest.setItem(0, content);
   }
 
   private static Pig spawnPig(GameTestHelper helper) {
-    return helper.spawn(EntityType.PIG, PIG);
+    return helper.spawn(EntityTypes.PIG, PIG);
   }
 
   private static void pulse(GameTestHelper helper) {
@@ -61,7 +57,7 @@ public class RadiationGameTest {
     Pig pig = spawnPig(helper);
     helper.runAfterDelay(2, () -> {
       pulse(helper);
-      if (!pig.hasEffect(ModEffects.RADIATION)) {
+      if (!pig.hasEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(ModEffects.RADIATION))) {
         helper.fail("pig next to enriched uranium chest has no radiation effect");
       }
       helper.succeed();
@@ -78,7 +74,7 @@ public class RadiationGameTest {
     Pig pig = spawnPig(helper);
     helper.runAfterDelay(2, () -> {
       pulse(helper);
-      if (pig.hasEffect(ModEffects.RADIATION)) {
+      if (pig.hasEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(ModEffects.RADIATION))) {
         helper.fail("lead wall did not block the radiation");
       }
       helper.succeed();
@@ -94,11 +90,11 @@ public class RadiationGameTest {
     pig.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ModItems.HAZMAT_LEGGINGS));
     pig.setItemSlot(EquipmentSlot.FEET, new ItemStack(ModItems.HAZMAT_BOOTS));
     if (!HazmatArmorItem.isFullSuit(pig)) {
-      throw new GameTestAssertException("pig is not wearing the full suit");
+      throw TestUtil.assertion(helper, "pig is not wearing the full suit");
     }
     helper.runAfterDelay(2, () -> {
       pulse(helper);
-      if (pig.hasEffect(ModEffects.RADIATION)) {
+      if (pig.hasEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(ModEffects.RADIATION))) {
         helper.fail("full hazmat suit did not grant immunity");
       }
       helper.succeed();
@@ -109,7 +105,7 @@ public class RadiationGameTest {
   public static void lowDoseHurtsOnlyAfterExposure(GameTestHelper helper) {
     placeChest(helper, new ItemStack(ModItems.ENRICHED_URANIUM_DUST, 8));
     BlockPos near = new BlockPos(3, 1, 1);
-    Pig pig = helper.spawn(EntityType.PIG, near);
+    Pig pig = helper.spawn(EntityTypes.PIG, near);
     float full = pig.getHealth();
     helper.runAfterDelay(2, () -> {
       List<BlockPos> centers = List.of(helper.absolutePos(near));
@@ -119,7 +115,7 @@ public class RadiationGameTest {
       if (pig.getHealth() < full) {
         helper.fail("a weak dose hurt right away");
       }
-      if (!pig.hasEffect(ModEffects.RADIATION)) {
+      if (!pig.hasEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(ModEffects.RADIATION))) {
         helper.fail("no warning effect while the dose builds up");
       }
       for (int i = 0; i < 70; i++) {
@@ -135,13 +131,13 @@ public class RadiationGameTest {
   @GameTest(template = TEMPLATE, timeoutTicks = 80)
   public static void highDoseHurtsHardButNeverOneShots(GameTestHelper helper) {
     placeHotChest(helper);
-    if (helper.getBlockEntity(CHEST) instanceof ChestBlockEntity chest) {
+    if (TestUtil.blockEntity(helper, CHEST) instanceof ChestBlockEntity chest) {
       for (int slot = 2; slot < 8; slot++) {
         chest.setItem(slot, new ItemStack(ModItems.ENRICHED_URANIUM_DUST, 64));
       }
     }
     BlockPos next = new BlockPos(2, 1, 1);
-    Pig pig = helper.spawn(EntityType.PIG, next);
+    Pig pig = helper.spawn(EntityTypes.PIG, next);
     float full = pig.getHealth();
     List<BlockPos> centers = List.of(helper.absolutePos(next));
     helper.runAfterDelay(2, () -> {
@@ -185,13 +181,13 @@ public class RadiationGameTest {
 
   @GameTest(template = TEMPLATE, timeoutTicks = 40, batch = "radiationRejoin")
   public static void radiationExposureKeepsDecayingAfterRejoin(GameTestHelper helper) {
-    Pig pig = EntityType.PIG.create(helper.getLevel());
+    Pig pig = EntityTypes.PIG.create(helper.getLevel(), EntitySpawnReason.STRUCTURE);
     if (pig == null) {
       helper.fail("could not create a pig");
       return;
     }
     Vec3 at = Vec3.atBottomCenterOf(helper.absolutePos(PIG));
-    pig.moveTo(at.x, at.y, at.z, 0.0F, 0.0F);
+    pig.snapTo(at.x, at.y, at.z, 0.0F, 0.0F);
     RadiationExposure.set(pig, 10.0F);
     helper.getLevel().addFreshEntity(pig);
     helper.runAfterDelay(2, () -> {
@@ -226,7 +222,7 @@ public class RadiationGameTest {
     });
   }
 
-  @GameTest(template = TEMPLATE, timeoutTicks = 20)
+  @GameTest(template = TEMPLATE, timeoutTicks = 20, batch = "radiationVein")
   public static void uraniumOreVeinRadiatesFaintly(GameTestHelper helper) {
     List<BlockPos> vein = new ArrayList<>();
     for (int x = 1; x <= 2; x++) {

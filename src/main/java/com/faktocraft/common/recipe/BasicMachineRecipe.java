@@ -2,29 +2,28 @@ package com.faktocraft.common.recipe;
 
 import com.faktocraft.common.interfaces.receipe.IRecipeSingleIngredient;
 import com.faktocraft.common.item.crafting.CountedIngredient;
-import com.google.gson.JsonObject;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BasicMachineRecipe implements IRecipeSingleIngredient {
-
-  protected final ResourceLocation id;
   protected final CountedIngredient ingredient;
-  protected final ItemStack result;
+  @Nullable
+  protected final ItemStackTemplate result;
   protected final float experience;
   protected final int duration;
   protected final int powerCost;
 
-  protected BasicMachineRecipe(ResourceLocation id, CountedIngredient ingredient, ItemStack result, float experience,
+  protected BasicMachineRecipe(CountedIngredient ingredient, @Nullable ItemStackTemplate result, float experience,
       int duration, int powerCost) {
-    this.id = id;
     this.ingredient = ingredient;
     this.result = result;
     this.experience = experience;
@@ -33,18 +32,18 @@ public abstract class BasicMachineRecipe implements IRecipeSingleIngredient {
   }
 
   @Override
-  public boolean matches(Container container, Level level) {
-    return ingredient.testType(container.getItem(0));
+  public boolean matches(MachineRecipeInput input, Level level) {
+    return ingredient.testType(input.getItem(0));
   }
 
   @Override
-  public ItemStack assemble(Container container, RegistryAccess registryAccess) {
-    return result.copy();
+  public ItemStack assemble(MachineRecipeInput input) {
+    return getResultItem();
   }
 
   @Override
   public ItemStack getResultItem() {
-    return result.copy();
+    return result == null ? ItemStack.EMPTY : result.create();
   }
 
   public Ingredient getIngredient() {
@@ -71,52 +70,40 @@ public abstract class BasicMachineRecipe implements IRecipeSingleIngredient {
     return powerCost;
   }
 
-  @Override
-  public ResourceLocation getId() {
-    return id;
-  }
-
   @FunctionalInterface
   public interface Factory<T extends BasicMachineRecipe> {
-    T create(ResourceLocation id, CountedIngredient ingredient, ItemStack result, float experience, int duration,
-        int powerCost);
+    T create(CountedIngredient ingredient, ItemStackTemplate result, float experience, int duration, int powerCost);
   }
 
-  public static class Serializer<T extends BasicMachineRecipe> implements RecipeSerializer<T> {
+  public static <T extends BasicMachineRecipe> RecipeSerializer<T> serializer(Factory<T> factory) {
+    return new RecipeSerializer<>(mapCodec(factory), streamCodec(factory));
+  }
 
-    private final Factory<T> factory;
+  public static <T extends BasicMachineRecipe> MapCodec<T> mapCodec(Factory<T> factory) {
+    return RecordCodecBuilder.mapCodec(i -> i.group(
+        CountedIngredient.CODEC.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
+        RecipeJsonHelper.RESULT.fieldOf("result").forGetter(recipe -> recipe.result),
+        Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(recipe -> recipe.experience),
+        Codec.INT.optionalFieldOf("duration", 180).forGetter(recipe -> recipe.duration),
+        Codec.INT.optionalFieldOf("power_cost", 8).forGetter(recipe -> recipe.powerCost))
+        .apply(i, factory::create));
+  }
 
-    public Serializer(Factory<T> factory) {
-      this.factory = factory;
-    }
-
-    @Override
-    public T fromJson(ResourceLocation id, JsonObject json) {
-      CountedIngredient ingredient = CountedIngredient.fromJson(json.get("ingredient"));
-      ItemStack result = RecipeJsonHelper.result(json.get("result"));
-      float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
-      int duration = GsonHelper.getAsInt(json, "duration", 180);
-      int powerCost = GsonHelper.getAsInt(json, "power_cost", 8);
-      return factory.create(id, ingredient, result, experience, duration, powerCost);
-    }
-
-    @Override
-    public T fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-      CountedIngredient ingredient = CountedIngredient.fromNetwork(buf);
-      ItemStack result = buf.readItem();
-      float experience = buf.readFloat();
-      int duration = buf.readVarInt();
-      int powerCost = buf.readVarInt();
-      return factory.create(id, ingredient, result, experience, duration, powerCost);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buf, T recipe) {
+  public static <T extends BasicMachineRecipe> StreamCodec<RegistryFriendlyByteBuf, T> streamCodec(
+      Factory<T> factory) {
+    return StreamCodec.of((buf, recipe) -> {
       recipe.ingredient.toNetwork(buf);
-      buf.writeItem(recipe.result);
+      ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.result);
       buf.writeFloat(recipe.experience);
       buf.writeVarInt(recipe.duration);
       buf.writeVarInt(recipe.powerCost);
-    }
+    }, buf -> {
+      CountedIngredient ingredient = CountedIngredient.fromNetwork(buf);
+      ItemStackTemplate result = ItemStackTemplate.STREAM_CODEC.decode(buf);
+      float experience = buf.readFloat();
+      int duration = buf.readVarInt();
+      int powerCost = buf.readVarInt();
+      return factory.create(ingredient, result, experience, duration, powerCost);
+    });
   }
 }

@@ -4,7 +4,7 @@ import com.faktocraft.common.interfaces.entity.IProgress;
 import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.util.GuiUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class GuiTextCurrentProgress extends GuiElement {
 
@@ -21,7 +21,7 @@ public class GuiTextCurrentProgress extends GuiElement {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
     int currProgress = (int) progress.getProgress();
     GuiUtil.renderScaled(graphics, prepend + currProgress + append, getLeftOffset(), getTopOffset(), 0.8f, 4210752,
         false);

@@ -16,16 +16,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import com.faktocraft.common.util.transfer.Capability;
+import com.faktocraft.common.util.transfer.ForgeCapabilities;
+import com.faktocraft.common.util.transfer.LazyOptional;
+import com.faktocraft.common.util.transfer.ItemHandlerHelper;
+import com.faktocraft.common.util.transfer.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -237,12 +237,12 @@ public class BlockEntityAssemblyTable extends FaktocraftBlockEntity
     if (consumeSlots.isEmpty()) {
       return false;
     }
-    CraftingContainer view = BlockEntityCraftPipe.viewOf(claimed);
+    CraftingInput view = BlockEntityCraftPipe.viewOf(claimed).asCraftInput();
 
     if (!recipe.matches(view, level)) {
       return false;
     }
-    ItemStack result = recipe.assemble(view, level.registryAccess());
+    ItemStack result = recipe.assemble(view);
     if (result.isEmpty()) {
       return false;
     }
@@ -336,12 +336,12 @@ public class BlockEntityAssemblyTable extends FaktocraftBlockEntity
   public void load(CompoundTag tag) {
     super.load(tag);
     if (tag.contains("ingredients")) {
-      ingredients.load(tag.getCompound("ingredients"));
+      ingredients.load(tag.getCompoundOrEmpty("ingredients"));
     }
     if (tag.contains("output")) {
-      output.load(tag.getCompound("output"));
+      output.load(tag.getCompoundOrEmpty("output"));
     }
-    progress.setData(tag.getFloat("progress"), tag.getFloat("progressMax"));
+    progress.setData(tag.getFloatOr("progress", 0.0F), tag.getFloatOr("progressMax", 0.0F));
   }
 
   @Override

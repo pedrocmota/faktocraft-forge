@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "faktocraft",
+  "ingredients": [
+    "faktocraft:cutter",
+    "#c:plates/gold"
+  ],
+  "result": {
+    "id": "faktocraft:gold_cable",
+    "count": 3
+  }
+}

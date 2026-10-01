@@ -7,7 +7,6 @@ import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
@@ -15,11 +14,11 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import static com.faktocraft.common.util.Constants.JEI_LARGE;
 import static com.faktocraft.common.util.Constants.PROCESS;
 
@@ -29,8 +28,8 @@ public class DistillingCategory extends AbstractRecipeCategory<DistillingCategor
       ItemStack byproduct, float byproductChance, int duration, int powerCost) {
   }
 
-  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "distilling");
-  public static final RecipeType<Entry> TYPE = new RecipeType<>(UID, Entry.class);
+  public static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "distilling");
+  public static final IRecipeType<Entry> TYPE = IRecipeType.create(UID, Entry.class);
 
   private final LoadingCache<Integer, IDrawableAnimated> progress;
   private final IDrawableAnimated energy;
@@ -44,7 +43,7 @@ public class DistillingCategory extends AbstractRecipeCategory<DistillingCategor
         "distilling",
         guiHelper,
         guiHelper.createDrawable(JEI_LARGE, 0, 165, 152, 54),
-        guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(DistilleryRegistry.DISTILLERY)));
+        guiHelper.createDrawableItemStack(new ItemStack(DistilleryRegistry.DISTILLERY)));
     this.tankFrame = guiHelper.createDrawable(JEI_LARGE, 160, 165, 16, 37);
     this.slotFrame = guiHelper.createDrawable(JEI_LARGE, 180, 165, 18, 18);
     this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
@@ -57,24 +56,24 @@ public class DistillingCategory extends AbstractRecipeCategory<DistillingCategor
   public void setRecipe(IRecipeLayoutBuilder builder, Entry recipe, IFocusGroup focuses) {
     builder.addSlot(RecipeIngredientRole.INPUT, 8, 12)
         .setFluidRenderer(recipe.oil().getAmount(), false, 8, 29)
-        .addFluidStack(recipe.oil().getFluid(), recipe.oil().getAmount());
+        .add(recipe.oil().getFluid(), recipe.oil().getAmount());
     builder.addSlot(RecipeIngredientRole.INPUT, 26, 12)
         .setFluidRenderer(recipe.acid().getAmount(), false, 8, 29)
-        .addFluidStack(recipe.acid().getFluid(), recipe.acid().getAmount());
+        .add(recipe.acid().getFluid(), recipe.acid().getAmount());
     builder.addSlot(RecipeIngredientRole.INPUT, 44, 12)
         .setFluidRenderer(recipe.water().getAmount(), false, 8, 29)
-        .addFluidStack(recipe.water().getFluid(), recipe.water().getAmount());
+        .add(recipe.water().getFluid(), recipe.water().getAmount());
 
     builder.addSlot(RecipeIngredientRole.OUTPUT, 106, 12)
         .setFluidRenderer(recipe.fuel().getAmount(), false, 8, 29)
-        .addFluidStack(recipe.fuel().getFluid(), recipe.fuel().getAmount());
+        .add(recipe.fuel().getFluid(), recipe.fuel().getAmount());
 
     builder.addSlot(RecipeIngredientRole.OUTPUT, 74, 36)
-        .addItemStack(recipe.byproduct());
+        .add(recipe.byproduct());
   }
 
   @Override
-  public void draw(Entry recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics,
+  public void draw(Entry recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor graphics,
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 

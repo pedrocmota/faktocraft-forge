@@ -1,17 +1,38 @@
 {
- "credit": "Faktocraft",
- "render_type": "minecraft:translucent",
- "textures": {
-  "shadow": "faktocraft:block/base/panel_rim_shadow",
-  "particle": "faktocraft:block/base/panel_rim_shadow"
- },
- "elements": [
-  {
-   "from": [0, 7.02, 1],
-   "to": [12.5, 7.02, 3.5],
-   "faces": {
-    "up": { "texture": "#shadow", "uv": [0, 0, 12.5, 16] }
-   }
-  }
- ]
+  "credit": "Faktocraft",
+  "textures": {
+    "shadow": {
+      "sprite": "faktocraft:block/base/panel_rim_shadow",
+      "force_translucent": true
+    },
+    "particle": {
+      "sprite": "faktocraft:block/base/panel_rim_shadow",
+      "force_translucent": true
+    }
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        7.02,
+        1
+      ],
+      "to": [
+        12.5,
+        7.02,
+        3.5
+      ],
+      "faces": {
+        "up": {
+          "texture": "#shadow",
+          "uv": [
+            0,
+            0,
+            12.5,
+            16
+          ]
+        }
+      }
+    }
+  ]
 }

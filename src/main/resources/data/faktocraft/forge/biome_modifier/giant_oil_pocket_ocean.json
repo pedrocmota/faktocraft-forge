@@ -1,6 +1,0 @@
-{
-  "type": "forge:add_features",
-  "biomes": "#minecraft:is_ocean",
-  "features": "faktocraft:giant_oil_pocket_ocean_placed",
-  "step": "lakes"
-}

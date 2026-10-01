@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "faktocraft",
+  "key": {
+    "c": "faktocraft:basic_machine_casing",
+    "e": "faktocraft:energy_crystal",
+    "g": "faktocraft:gold_cable_insulated"
+  },
+  "pattern": [
+    "geg",
+    "ece",
+    "geg"
+  ],
+  "result": {
+    "id": "faktocraft:mfe"
+  }
+}

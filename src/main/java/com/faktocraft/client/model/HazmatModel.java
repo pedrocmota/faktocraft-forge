@@ -11,33 +11,40 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
+import java.util.EnumMap;
+import java.util.Map;
 
-public class HazmatModel extends HumanoidModel<LivingEntity> {
-
+public class HazmatModel extends HumanoidModel<HumanoidRenderState> {
   public static final ModelLayerLocation LAYER = new ModelLayerLocation(
-      new ResourceLocation(Faktocraft.MODID, "hazmat"), "main");
+      Identifier.fromNamespaceAndPath(Faktocraft.MODID, "hazmat"), "main");
 
-  private static HazmatModel instance;
+  private static final Map<EquipmentSlot, HazmatModel> INSTANCES = new EnumMap<>(EquipmentSlot.class);
 
+  private final EquipmentSlot slot;
   private final ModelPart respirator;
   private final ModelPart tank;
 
-  public HazmatModel(ModelPart root) {
+  public HazmatModel(ModelPart root, EquipmentSlot slot) {
     super(root);
+    this.slot = slot;
     this.respirator = root.getChild("head").getChild("respirator");
     this.tank = root.getChild("body").getChild("tank");
   }
 
   public static HazmatModel get(EquipmentSlot slot) {
-    if (instance == null) {
-      instance = new HazmatModel(Minecraft.getInstance().getEntityModels().bakeLayer(LAYER));
-    }
-    instance.respirator.visible = slot == EquipmentSlot.HEAD;
-    instance.tank.visible = slot == EquipmentSlot.CHEST;
-    return instance;
+    return INSTANCES.computeIfAbsent(slot,
+        s -> new HazmatModel(Minecraft.getInstance().getEntityModels().bakeLayer(LAYER), s));
+  }
+
+  @Override
+  public void setupAnim(HumanoidRenderState state) {
+    super.setupAnim(state);
+    ArmorVisibility.apply(this, slot);
+    respirator.visible = slot == EquipmentSlot.HEAD;
+    tank.visible = slot == EquipmentSlot.CHEST;
   }
 
   public static LayerDefinition createLayer() {

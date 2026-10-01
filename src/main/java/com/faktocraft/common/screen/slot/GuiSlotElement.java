@@ -6,8 +6,8 @@ import com.faktocraft.common.interfaces.screen.IGuiWrapper;
 import com.faktocraft.common.screen.widgets.GuiElement;
 import com.faktocraft.common.util.Constants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 
 public class GuiSlotElement extends GuiElement {
 
@@ -23,7 +23,7 @@ public class GuiSlotElement extends GuiElement {
   }
 
   @Override
-  protected void renderBg(GuiGraphics graphics, Minecraft minecraft, int mouseX, int mouseY) {
+  protected void renderBg(GuiGraphicsExtractor graphics, Minecraft minecraft, int mouseX, int mouseY) {
 
     boolean hideBoltPlaceholder = getSlotType() == GuiSlotType.NORMAL_BLANK
         && !getWrapper().getBlockEntity().getItemStackHandler().getStackInSlot(slot.getSlotId()).isEmpty();
@@ -44,7 +44,7 @@ public class GuiSlotElement extends GuiElement {
   }
 
   @Override
-  public ResourceLocation getResourceLocation() {
+  public Identifier getResourceLocation() {
     return Constants.PROCESS;
   }
 }

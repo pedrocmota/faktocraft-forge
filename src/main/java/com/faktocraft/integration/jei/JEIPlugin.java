@@ -89,22 +89,31 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
+import com.faktocraft.common.util.RecipeUtil;
+import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import net.minecraft.world.level.Level;
 import java.util.List;
+import java.util.Optional;
 
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {
-
-  private static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, Faktocraft.MODID);
+  private static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, Faktocraft.MODID);
 
   @Override
-  public ResourceLocation getPluginUid() {
+  public Identifier getPluginUid() {
     return UID;
   }
 
@@ -168,30 +177,24 @@ public class JEIPlugin implements IModPlugin {
       Faktocraft.LOGGER.warn("JEI recipe registration ran without a client level; Faktocraft recipes skipped");
       return;
     }
-    RecipeManager recipeManager = level.getRecipeManager();
 
-    registration.addRecipes(CrushingCategory.TYPE, recipes(recipeManager, ModRecipeType.CRUSHING));
-    registration.addRecipes(CompressingCategory.TYPE, recipes(recipeManager, ModRecipeType.COMPRESSING));
-    registration.addRecipes(ExtractingCategory.TYPE, recipes(recipeManager, ModRecipeType.EXTRACTING));
-    registration.addRecipes(FluidExtrudingCategory.TYPE, recipes(recipeManager, ModRecipeType.FLUID_EXTRUDING));
-    registration.addRecipes(SawingCategory.TYPE, recipes(recipeManager, ModRecipeType.SAWING));
-    registration.addRecipes(AlloySmeltingCategory.TYPE, recipes(recipeManager, ModRecipeType.ALLOY_SMELTING));
-    registration.addRecipes(CircuitAssemblingCategory.TYPE, recipes(recipeManager, ModRecipeType.CIRCUIT_ASSEMBLING));
-    Faktocraft.LOGGER.info("JEI sync check: alloy_smelting={} circuit_assembling={}",
-        recipes(recipeManager, ModRecipeType.ALLOY_SMELTING).size(),
-        recipes(recipeManager, ModRecipeType.CIRCUIT_ASSEMBLING).size());
-    registration.addRecipes(RecyclingCategory.TYPE, recipes(recipeManager, ModRecipeType.RECYCLING));
-    registration.addRecipes(FluidEnrichingCategory.TYPE, recipes(recipeManager, ModRecipeType.FLUID_ENRICHING));
-    registration.addRecipes(OreWashingCategory.TYPE, recipes(recipeManager, ModRecipeType.ORE_WASHING));
-    registration.addRecipes(PolymerizingCategory.TYPE, recipes(recipeManager, ModRecipeType.POLYMERIZING));
-    registration.addRecipes(ThermalCentrifugingCategory.TYPE,
-        recipes(recipeManager, ModRecipeType.THERMAL_CENTRIFUGING));
-    registration.addRecipes(UraniumCentrifugingCategory.TYPE,
-        recipes(recipeManager, ModRecipeType.URANIUM_CENTRIFUGING));
-    registration.addRecipes(ScannerCategory.TYPE, recipes(recipeManager, ModRecipeType.SCANNER));
-    registration.addRecipes(RollingCategory.TYPE, recipes(recipeManager, ModRecipeType.ROLLING));
-    registration.addRecipes(CuttingCategory.TYPE, recipes(recipeManager, ModRecipeType.CUTTING));
-    registration.addRecipes(ExtrudingCategory.TYPE, recipes(recipeManager, ModRecipeType.EXTRUDING));
+    registration.addRecipes(CrushingCategory.TYPE, recipes(level, ModRecipeType.CRUSHING));
+    registration.addRecipes(CompressingCategory.TYPE, recipes(level, ModRecipeType.COMPRESSING));
+    registration.addRecipes(ExtractingCategory.TYPE, recipes(level, ModRecipeType.EXTRACTING));
+    registration.addRecipes(FluidExtrudingCategory.TYPE, recipes(level, ModRecipeType.FLUID_EXTRUDING));
+    registration.addRecipes(SawingCategory.TYPE, recipes(level, ModRecipeType.SAWING));
+    registration.addRecipes(AlloySmeltingCategory.TYPE, recipes(level, ModRecipeType.ALLOY_SMELTING));
+    registration.addRecipes(CircuitAssemblingCategory.TYPE, recipes(level, ModRecipeType.CIRCUIT_ASSEMBLING));
+    registration.addRecipes(RecyclingCategory.TYPE, recipes(level, ModRecipeType.RECYCLING));
+    registration.addRecipes(FluidEnrichingCategory.TYPE, recipes(level, ModRecipeType.FLUID_ENRICHING));
+    registration.addRecipes(OreWashingCategory.TYPE, recipes(level, ModRecipeType.ORE_WASHING));
+    registration.addRecipes(PolymerizingCategory.TYPE, recipes(level, ModRecipeType.POLYMERIZING));
+    registration.addRecipes(ThermalCentrifugingCategory.TYPE, recipes(level, ModRecipeType.THERMAL_CENTRIFUGING));
+    registration.addRecipes(UraniumCentrifugingCategory.TYPE, recipes(level, ModRecipeType.URANIUM_CENTRIFUGING));
+    registration.addRecipes(ScannerCategory.TYPE, recipes(level, ModRecipeType.SCANNER));
+    registration.addRecipes(RollingCategory.TYPE, recipes(level, ModRecipeType.ROLLING));
+    registration.addRecipes(CuttingCategory.TYPE, recipes(level, ModRecipeType.CUTTING));
+    registration.addRecipes(ExtrudingCategory.TYPE, recipes(level, ModRecipeType.EXTRUDING));
 
     registration.addRecipes(FermentingCategory.TYPE, List.of(fermentingEntry()));
     registration.addRecipes(DistillingCategory.TYPE, List.of(distillingEntry()));
@@ -201,7 +204,7 @@ public class JEIPlugin implements IModPlugin {
         net.minecraft.network.chat.Component.translatable("jei." + Faktocraft.MODID + ".fertilizer.info",
             BlockEntityFermenter.WASTE_EVERY_TICKS / 20));
 
-    List<ScrapBoxRecipe> scrapBoxRecipes = recipeManager.getAllRecipesFor(ModRecipeType.SCRAP_BOX);
+    List<ScrapBoxRecipe> scrapBoxRecipes = recipes(level, ModRecipeType.SCRAP_BOX);
     ScrapBoxCategory.setTotalWeight(ScrapBoxRecipe.getTotalWeight(scrapBoxRecipes));
     registration.addRecipes(ScrapBoxCategory.TYPE, scrapBoxRecipes);
 
@@ -211,9 +214,9 @@ public class JEIPlugin implements IModPlugin {
   private static FermentingCategory.Entry fermentingEntry() {
     return new FermentingCategory.Entry(
         new net.minecraft.world.item.ItemStack(ModItems.MUD_PILE, BlockEntityFermenter.MUD_PER_OP),
-        new net.minecraftforge.fluids.FluidStack(com.faktocraft.common.fluid.ModFluids.BIOMASS.still(),
+        new net.neoforged.neoforge.fluids.FluidStack(com.faktocraft.common.fluid.ModFluids.BIOMASS.still(),
             BlockEntityFermenter.BIOMASS_PER_OP),
-        new net.minecraftforge.fluids.FluidStack(com.faktocraft.common.fluid.ModFluids.BIOGAS.still(),
+        new net.neoforged.neoforge.fluids.FluidStack(com.faktocraft.common.fluid.ModFluids.BIOGAS.still(),
             BlockEntityFermenter.BIOGAS_PER_OP),
         BlockEntityFermenter.DURATION_TICKS,
         com.faktocraft.common.config.ModConfig.server().fermenter_tick_usage);
@@ -221,13 +224,13 @@ public class JEIPlugin implements IModPlugin {
 
   private static DistillingCategory.Entry distillingEntry() {
     return new DistillingCategory.Entry(
-        new net.minecraftforge.fluids.FluidStack(com.faktocraft.common.fluid.ModFluids.OIL.still(),
+        new net.neoforged.neoforge.fluids.FluidStack(com.faktocraft.common.fluid.ModFluids.OIL.still(),
             BlockEntityDistillery.OIL_PER_OP),
-        new net.minecraftforge.fluids.FluidStack(com.faktocraft.common.fluid.ModFluids.SULFURIC_ACID.still(),
+        new net.neoforged.neoforge.fluids.FluidStack(com.faktocraft.common.fluid.ModFluids.SULFURIC_ACID.still(),
             BlockEntityDistillery.ACID_PER_OP),
-        new net.minecraftforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER,
+        new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER,
             BlockEntityDistillery.WATER_PER_OP),
-        new net.minecraftforge.fluids.FluidStack(com.faktocraft.common.fluid.ModFluids.FUEL.still(),
+        new net.neoforged.neoforge.fluids.FluidStack(com.faktocraft.common.fluid.ModFluids.FUEL.still(),
             BlockEntityDistillery.FUEL_PER_OP),
         new net.minecraft.world.item.ItemStack(ModItems.SULFUR_DUST),
         BlockEntityDistillery.SULFUR_CHANCE,
@@ -236,7 +239,7 @@ public class JEIPlugin implements IModPlugin {
   }
 
   private static List<MatterFabricatingCategory.Entry> matterFabricatingEntries() {
-    net.minecraftforge.fluids.FluidStack matter = new net.minecraftforge.fluids.FluidStack(
+    net.neoforged.neoforge.fluids.FluidStack matter = new net.neoforged.neoforge.fluids.FluidStack(
         com.faktocraft.common.fluid.ModFluids.MATTER.still(),
         com.faktocraft.common.config.ModConfig.server().matter_fabricator_produce_run);
 
@@ -255,37 +258,36 @@ public class JEIPlugin implements IModPlugin {
             new net.minecraft.world.item.ItemStack(ModItems.SCRAP_BOX, scrapBoxCount), amplifiedCost, matter));
   }
 
-  private static <C extends Container, T extends Recipe<C>> List<T> recipes(RecipeManager recipeManager,
-      RecipeType<T> type) {
-    return recipeManager.getAllRecipesFor(type);
+  private static <I extends RecipeInput, T extends Recipe<I>> List<T> recipes(Level level, RecipeType<T> type) {
+    return RecipeUtil.getAllRecipesFor(level, type);
   }
 
   @Override
   public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-    registration.addRecipeCatalysts(RecipeTypes.SMELTING, M2Registry.IRON_FURNACE, M2Registry.ELECTRIC_FURNACE);
+    registration.addCraftingStation(RecipeTypes.SMELTING, M2Registry.IRON_FURNACE, M2Registry.ELECTRIC_FURNACE);
 
-    registration.addRecipeCatalysts(CrushingCategory.TYPE, M2Registry.CRUSHER);
-    registration.addRecipeCatalysts(CompressingCategory.TYPE, M2Registry.COMPRESSOR);
-    registration.addRecipeCatalysts(ExtractingCategory.TYPE, M2Registry.EXTRACTOR);
-    registration.addRecipeCatalysts(FluidExtrudingCategory.TYPE, M3Registry.EXTRUDER);
-    registration.addRecipeCatalysts(SawingCategory.TYPE, M2Registry.SAWMILL);
-    registration.addRecipeCatalysts(AlloySmeltingCategory.TYPE, M3Registry.ALLOY_SMELTER,
+    registration.addCraftingStation(CrushingCategory.TYPE, M2Registry.CRUSHER);
+    registration.addCraftingStation(CompressingCategory.TYPE, M2Registry.COMPRESSOR);
+    registration.addCraftingStation(ExtractingCategory.TYPE, M2Registry.EXTRACTOR);
+    registration.addCraftingStation(FluidExtrudingCategory.TYPE, M3Registry.EXTRUDER);
+    registration.addCraftingStation(SawingCategory.TYPE, M2Registry.SAWMILL);
+    registration.addCraftingStation(AlloySmeltingCategory.TYPE, M3Registry.ALLOY_SMELTER,
         M3Registry.COAL_ALLOY_SMELTER, M3Registry.COMBUSTION_ALLOY_SMELTER);
-    registration.addRecipeCatalysts(CircuitAssemblingCategory.TYPE, M3Registry.CIRCUIT_ASSEMBLER);
-    registration.addRecipeCatalysts(RecyclingCategory.TYPE, M2Registry.RECYCLER);
-    registration.addRecipeCatalysts(FluidEnrichingCategory.TYPE, M3Registry.FLUID_ENRICHER);
-    registration.addRecipeCatalysts(OreWashingCategory.TYPE, M3Registry.ORE_WASHING_PLANT);
-    registration.addRecipeCatalysts(PolymerizingCategory.TYPE, M3Registry.POLYMERIZER);
-    registration.addRecipeCatalysts(ThermalCentrifugingCategory.TYPE, M3Registry.THERMAL_CENTRIFUGE);
-    registration.addRecipeCatalysts(UraniumCentrifugingCategory.TYPE, M3Registry.URANIUM_CENTRIFUGE);
-    registration.addRecipeCatalysts(RollingCategory.TYPE, M3Registry.METAL_FORMER);
-    registration.addRecipeCatalysts(CuttingCategory.TYPE, M3Registry.METAL_FORMER);
-    registration.addRecipeCatalysts(ExtrudingCategory.TYPE, M3Registry.METAL_FORMER);
-    registration.addRecipeCatalysts(FermentingCategory.TYPE, M3Registry.FERMENTER);
-    registration.addRecipeCatalysts(DistillingCategory.TYPE,
+    registration.addCraftingStation(CircuitAssemblingCategory.TYPE, M3Registry.CIRCUIT_ASSEMBLER);
+    registration.addCraftingStation(RecyclingCategory.TYPE, M2Registry.RECYCLER);
+    registration.addCraftingStation(FluidEnrichingCategory.TYPE, M3Registry.FLUID_ENRICHER);
+    registration.addCraftingStation(OreWashingCategory.TYPE, M3Registry.ORE_WASHING_PLANT);
+    registration.addCraftingStation(PolymerizingCategory.TYPE, M3Registry.POLYMERIZER);
+    registration.addCraftingStation(ThermalCentrifugingCategory.TYPE, M3Registry.THERMAL_CENTRIFUGE);
+    registration.addCraftingStation(UraniumCentrifugingCategory.TYPE, M3Registry.URANIUM_CENTRIFUGE);
+    registration.addCraftingStation(RollingCategory.TYPE, M3Registry.METAL_FORMER);
+    registration.addCraftingStation(CuttingCategory.TYPE, M3Registry.METAL_FORMER);
+    registration.addCraftingStation(ExtrudingCategory.TYPE, M3Registry.METAL_FORMER);
+    registration.addCraftingStation(FermentingCategory.TYPE, M3Registry.FERMENTER);
+    registration.addCraftingStation(DistillingCategory.TYPE,
         com.faktocraft.common.block.impl.machines.distillery.DistilleryRegistry.DISTILLERY);
-    registration.addRecipeCatalysts(MatterFabricatingCategory.TYPE, M4Registry.MATTER_FABRICATOR);
-    registration.addRecipeCatalysts(RecipeTypes.CRAFTING,
+    registration.addCraftingStation(MatterFabricatingCategory.TYPE, M4Registry.MATTER_FABRICATOR);
+    registration.addCraftingStation(RecipeTypes.CRAFTING,
         com.faktocraft.common.block.impl.logistics.LogisticsRegistry.REQUEST_TABLE_ITEM,
         com.faktocraft.common.block.impl.logistics.LogisticsRegistry.ASSEMBLY_TABLE_ITEM);
   }
@@ -302,23 +304,26 @@ public class JEIPlugin implements IModPlugin {
       @Override
       public void onClick(mezz.jei.api.recipe.IFocusFactory focusFactory,
           mezz.jei.api.runtime.IRecipesGui recipesGui) {
-        net.minecraft.client.multiplayer.ClientLevel level = net.minecraft.client.Minecraft.getInstance().level;
-        net.minecraft.world.item.crafting.CraftingRecipe recipe = current.get();
-        if (recipe == null || level == null || activeRuntime == null) {
+        ClientLevel level = Minecraft.getInstance().level;
+        CraftingRecipe recipe = current.get();
+        ItemStack result = recipe != null && level != null ? resultOf(recipe, level) : ItemStack.EMPTY;
+        if (recipe == null || level == null || activeRuntime == null || result.isEmpty()) {
           recipesGui.showTypes(List.of(RecipeTypes.CRAFTING));
           return;
         }
         List<mezz.jei.api.recipe.IFocus<?>> focuses = List.of(focusFactory.createFocus(
             mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT,
-            mezz.jei.api.constants.VanillaTypes.ITEM_STACK,
-            recipe.getResultItem(level.registryAccess())));
+            mezz.jei.api.constants.VanillaTypes.ITEM_STACK, result));
         mezz.jei.api.recipe.IRecipeManager manager = activeRuntime.getRecipeManager();
 
-        List<net.minecraft.world.item.crafting.CraftingRecipe> found = manager.createRecipeLookup(RecipeTypes.CRAFTING)
+        Optional<Identifier> id = RecipeUtil.idOf(level, recipe);
+        java.util.function.Predicate<RecipeHolder<CraftingRecipe>> same = other -> other.value() == recipe
+            || (id.isPresent() && other.id().identifier().equals(id.get()));
+        List<RecipeHolder<CraftingRecipe>> found = manager.createRecipeLookup(RecipeTypes.CRAFTING)
             .limitFocus(focuses).get().toList();
-        List<net.minecraft.world.item.crafting.CraftingRecipe> ordered = new java.util.ArrayList<>();
-        found.stream().filter(other -> other.getId().equals(recipe.getId())).forEach(ordered::add);
-        found.stream().filter(other -> !other.getId().equals(recipe.getId())).forEach(ordered::add);
+        List<RecipeHolder<CraftingRecipe>> ordered = new java.util.ArrayList<>();
+        found.stream().filter(same).forEach(ordered::add);
+        found.stream().filter(same.negate()).forEach(ordered::add);
         if (ordered.isEmpty()) {
           recipesGui.show(focuses);
           return;
@@ -326,6 +331,17 @@ public class JEIPlugin implements IModPlugin {
         recipesGui.showRecipes(manager.getRecipeCategory(RecipeTypes.CRAFTING), ordered, focuses);
       }
     };
+  }
+
+  private static ItemStack resultOf(CraftingRecipe recipe, Level level) {
+    net.minecraft.util.context.ContextMap context = SlotDisplayContext.fromLevel(level);
+    for (RecipeDisplay display : recipe.display()) {
+      ItemStack stack = display.result().resolveForFirstStack(context);
+      if (!stack.isEmpty()) {
+        return stack;
+      }
+    }
+    return ItemStack.EMPTY;
   }
 
   private static mezz.jei.api.gui.handlers.IGuiClickableArea focusArea(int x, int y,
@@ -457,8 +473,7 @@ public class JEIPlugin implements IModPlugin {
             mezz.jei.api.recipe.RecipeIngredientRole role = mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT;
             net.minecraft.world.item.ItemStack stack = screen.declaredOutput();
             if (stack.isEmpty()) {
-
-              role = mezz.jei.api.recipe.RecipeIngredientRole.CATALYST;
+              role = mezz.jei.api.recipe.RecipeIngredientRole.CRAFTING_STATION;
               stack = screen.dockedStack();
             }
             if (stack.isEmpty()) {
@@ -482,10 +497,27 @@ public class JEIPlugin implements IModPlugin {
             if (!screen.isRequestsTab()) {
               return List.of();
             }
-            return List.of(mezz.jei.api.gui.handlers.IGuiClickableArea.createBasic(
-                66, 52, 28, 23, RecipeTypes.CRAFTING));
+            return List.of(typesArea(66, 52, 28, 23, RecipeTypes.CRAFTING));
           }
         });
+  }
+
+  private static mezz.jei.api.gui.handlers.IGuiClickableArea typesArea(int x, int y, int width, int height,
+      mezz.jei.api.recipe.types.IRecipeType<?>... types) {
+    net.minecraft.client.renderer.Rect2i area = new net.minecraft.client.renderer.Rect2i(x, y, width, height);
+    List<mezz.jei.api.recipe.types.IRecipeType<?>> shown = List.of(types);
+    return new mezz.jei.api.gui.handlers.IGuiClickableArea() {
+      @Override
+      public net.minecraft.client.renderer.Rect2i getArea() {
+        return area;
+      }
+
+      @Override
+      public void onClick(mezz.jei.api.recipe.IFocusFactory focusFactory,
+          mezz.jei.api.runtime.IRecipesGui recipesGui) {
+        recipesGui.showTypes(shown);
+      }
+    };
   }
 
   @Override
@@ -544,44 +576,53 @@ public class JEIPlugin implements IModPlugin {
         M3Registry.METAL_FORMER_MENU, ExtrudingCategory.TYPE, BlockEntityMetalFormer.INPUT_SLOT, 1));
   }
 
+  private static final ISubtypeInterpreter<ItemStack> ALL_COMPONENTS = (stack, context) -> {
+    DataComponentPatch patch = stack.getComponentsPatch();
+    return patch.isEmpty() ? null : patch;
+  };
+
+  private static void useNbtForSubtypes(ISubtypeRegistration registration, Item item) {
+    registration.registerSubtypeInterpreter(item, ALL_COMPONENTS);
+  }
+
   @Override
   public void registerItemSubtypes(ISubtypeRegistration registration) {
-    registration.useNbtForSubtypes(ModItems.NANO_SABER);
-    registration.useNbtForSubtypes(ModItems.NANO_HELMET);
-    registration.useNbtForSubtypes(ModItems.NANO_CHESTPLATE);
-    registration.useNbtForSubtypes(ModItems.NANO_LEGGINGS);
-    registration.useNbtForSubtypes(ModItems.NANO_BOOTS);
+    useNbtForSubtypes(registration, ModItems.NANO_SABER);
+    useNbtForSubtypes(registration, ModItems.NANO_HELMET);
+    useNbtForSubtypes(registration, ModItems.NANO_CHESTPLATE);
+    useNbtForSubtypes(registration, ModItems.NANO_LEGGINGS);
+    useNbtForSubtypes(registration, ModItems.NANO_BOOTS);
 
-    registration.useNbtForSubtypes(ModItems.FLUID_CELL);
-    registration.useNbtForSubtypes(ModItems.MEDIUM_COOLANT_CELL);
-    registration.useNbtForSubtypes(ModItems.LARGE_COOLANT_CELL);
+    useNbtForSubtypes(registration, ModItems.FLUID_CELL);
+    useNbtForSubtypes(registration, ModItems.MEDIUM_COOLANT_CELL);
+    useNbtForSubtypes(registration, ModItems.LARGE_COOLANT_CELL);
 
-    registration.useNbtForSubtypes(ModItems.ELECTRIC_HOE);
-    registration.useNbtForSubtypes(ModItems.ELECTRIC_WRENCH);
-    registration.useNbtForSubtypes(ModItems.ELECTRIC_TREETAP);
-    registration.useNbtForSubtypes(ModItems.MULTI_TOOL);
+    useNbtForSubtypes(registration, ModItems.ELECTRIC_HOE);
+    useNbtForSubtypes(registration, ModItems.ELECTRIC_WRENCH);
+    useNbtForSubtypes(registration, ModItems.ELECTRIC_TREETAP);
+    useNbtForSubtypes(registration, ModItems.MULTI_TOOL);
 
-    registration.useNbtForSubtypes(ModItems.MINING_DRILL);
-    registration.useNbtForSubtypes(ModItems.DIAMOND_DRILL);
-    registration.useNbtForSubtypes(ModItems.IRIDIUM_DRILL);
+    useNbtForSubtypes(registration, ModItems.MINING_DRILL);
+    useNbtForSubtypes(registration, ModItems.DIAMOND_DRILL);
+    useNbtForSubtypes(registration, ModItems.IRIDIUM_DRILL);
 
-    registration.useNbtForSubtypes(ModItems.CHAINSAW);
-    registration.useNbtForSubtypes(ModItems.DIAMOND_CHAINSAW);
-    registration.useNbtForSubtypes(ModItems.IRIDIUM_CHAINSAW);
+    useNbtForSubtypes(registration, ModItems.CHAINSAW);
+    useNbtForSubtypes(registration, ModItems.DIAMOND_CHAINSAW);
+    useNbtForSubtypes(registration, ModItems.IRIDIUM_CHAINSAW);
 
-    registration.useNbtForSubtypes(ModItems.BATTERY);
-    registration.useNbtForSubtypes(ModItems.ADVANCED_BATTERY);
-    registration.useNbtForSubtypes(ModItems.MEDIUM_BATTERY);
-    registration.useNbtForSubtypes(ModItems.ADVANCED_MEDIUM_BATTERY);
-    registration.useNbtForSubtypes(ModItems.ENERGY_CRYSTAL);
-    registration.useNbtForSubtypes(ModItems.LAPOTRON_CRYSTAL);
-    registration.useNbtForSubtypes(ModItems.ADVANCED_ENERGY_CRYSTAL);
-    registration.useNbtForSubtypes(ModItems.ADVANCED_LAPOTRON_CRYSTAL);
-    registration.useNbtForSubtypes(ModItems.IRIDIUM_CRYSTAL);
+    useNbtForSubtypes(registration, ModItems.BATTERY);
+    useNbtForSubtypes(registration, ModItems.ADVANCED_BATTERY);
+    useNbtForSubtypes(registration, ModItems.MEDIUM_BATTERY);
+    useNbtForSubtypes(registration, ModItems.ADVANCED_MEDIUM_BATTERY);
+    useNbtForSubtypes(registration, ModItems.ENERGY_CRYSTAL);
+    useNbtForSubtypes(registration, ModItems.LAPOTRON_CRYSTAL);
+    useNbtForSubtypes(registration, ModItems.ADVANCED_ENERGY_CRYSTAL);
+    useNbtForSubtypes(registration, ModItems.ADVANCED_LAPOTRON_CRYSTAL);
+    useNbtForSubtypes(registration, ModItems.IRIDIUM_CRYSTAL);
 
-    registration.useNbtForSubtypes(ModItems.CHARGING_BATTERY);
-    registration.useNbtForSubtypes(ModItems.ADVANCED_CHARGING_BATTERY);
-    registration.useNbtForSubtypes(ModItems.CHARGING_ENERGY_CRYSTAL);
-    registration.useNbtForSubtypes(ModItems.CHARGING_LAPOTRON_CRYSTAL);
+    useNbtForSubtypes(registration, ModItems.CHARGING_BATTERY);
+    useNbtForSubtypes(registration, ModItems.ADVANCED_CHARGING_BATTERY);
+    useNbtForSubtypes(registration, ModItems.CHARGING_ENERGY_CRYSTAL);
+    useNbtForSubtypes(registration, ModItems.CHARGING_LAPOTRON_CRYSTAL);
   }
 }

@@ -2,53 +2,74 @@ package com.faktocraft.common.recipe.impl;
 
 import com.faktocraft.common.interfaces.receipe.IBaseRecipe;
 import com.faktocraft.common.item.crafting.CountedIngredient;
+import com.faktocraft.common.recipe.MachineRecipeInput;
 import com.faktocraft.common.registries.ModRecipeType;
-import com.google.gson.JsonObject;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
-public class ScannerRecipe implements IBaseRecipe<Container> {
-
+public class ScannerRecipe implements IBaseRecipe<MachineRecipeInput> {
   public record Replication(int matterCost, int energyCost) {
+    public static final Replication NONE = new Replication(0, 0);
 
-    public static Replication fromJson(JsonObject json) {
-      int matterCost = GsonHelper.getAsInt(json, "matter_cost", 0);
-      int energyCost = GsonHelper.getAsInt(json, "energy_cost", 0);
-      return new Replication(matterCost, energyCost);
-    }
+    public static final Codec<Replication> CODEC = RecordCodecBuilder.create(i -> i.group(
+        Codec.INT.optionalFieldOf("matter_cost", 0).forGetter(Replication::matterCost),
+        Codec.INT.optionalFieldOf("energy_cost", 0).forGetter(Replication::energyCost))
+        .apply(i, Replication::new));
 
-    public static Replication fromNetwork(FriendlyByteBuf buf) {
+    public static Replication fromNetwork(RegistryFriendlyByteBuf buf) {
       int matterCost = buf.readVarInt();
       int energyCost = buf.readVarInt();
       return new Replication(matterCost, energyCost);
     }
 
-    public void toNetwork(FriendlyByteBuf buf) {
+    public void toNetwork(RegistryFriendlyByteBuf buf) {
       buf.writeVarInt(matterCost);
       buf.writeVarInt(energyCost);
     }
   }
 
-  public static final RecipeSerializer<ScannerRecipe> SERIALIZER = new Serializer();
+  public static final MapCodec<ScannerRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+      CountedIngredient.CODEC.fieldOf("item").forGetter(recipe -> recipe.item),
+      Replication.CODEC.optionalFieldOf("replication", Replication.NONE).forGetter(recipe -> recipe.replication),
+      Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(recipe -> recipe.experience),
+      Codec.INT.optionalFieldOf("duration", 500).forGetter(recipe -> recipe.duration),
+      Codec.INT.optionalFieldOf("power_cost", 256).forGetter(recipe -> recipe.powerCost))
+      .apply(i, ScannerRecipe::new));
 
-  private final ResourceLocation id;
+  public static final StreamCodec<RegistryFriendlyByteBuf, ScannerRecipe> STREAM_CODEC = StreamCodec.of(
+      (buf, recipe) -> {
+        recipe.item.toNetwork(buf);
+        recipe.replication.toNetwork(buf);
+        buf.writeFloat(recipe.experience);
+        buf.writeVarInt(recipe.duration);
+        buf.writeVarInt(recipe.powerCost);
+      }, buf -> {
+        CountedIngredient item = CountedIngredient.fromNetwork(buf);
+        Replication replication = Replication.fromNetwork(buf);
+        float experience = buf.readFloat();
+        int duration = buf.readVarInt();
+        int powerCost = buf.readVarInt();
+        return new ScannerRecipe(item, replication, experience, duration, powerCost);
+      });
+
+  public static final RecipeSerializer<ScannerRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+
   private final CountedIngredient item;
   private final Replication replication;
   private final float experience;
   private final int duration;
   private final int powerCost;
 
-  public ScannerRecipe(ResourceLocation id, CountedIngredient item, Replication replication, float experience,
-      int duration, int powerCost) {
-    this.id = id;
+  public ScannerRecipe(CountedIngredient item, Replication replication, float experience, int duration,
+      int powerCost) {
     this.item = item;
     this.replication = replication;
     this.experience = experience;
@@ -57,12 +78,12 @@ public class ScannerRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public boolean matches(Container container, Level level) {
-    return item.testType(container.getItem(0));
+  public boolean matches(MachineRecipeInput input, Level level) {
+    return item.testType(input.getItem(0));
   }
 
   @Override
-  public ItemStack assemble(Container container, RegistryAccess registryAccess) {
+  public ItemStack assemble(MachineRecipeInput input) {
     return ItemStack.EMPTY;
   }
 
@@ -94,11 +115,6 @@ public class ScannerRecipe implements IBaseRecipe<Container> {
   }
 
   @Override
-  public ResourceLocation getId() {
-    return id;
-  }
-
-  @Override
   public RecipeSerializer<ScannerRecipe> getSerializer() {
     return SERIALIZER;
   }
@@ -106,39 +122,5 @@ public class ScannerRecipe implements IBaseRecipe<Container> {
   @Override
   public RecipeType<ScannerRecipe> getType() {
     return ModRecipeType.SCANNER;
-  }
-
-  public static class Serializer implements RecipeSerializer<ScannerRecipe> {
-
-    @Override
-    public ScannerRecipe fromJson(ResourceLocation id, JsonObject json) {
-      CountedIngredient item = CountedIngredient.fromJson(json.get("item"));
-      Replication replication = json.has("replication")
-          ? Replication.fromJson(GsonHelper.getAsJsonObject(json, "replication"))
-          : new Replication(0, 0);
-      float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
-      int duration = GsonHelper.getAsInt(json, "duration", 500);
-      int powerCost = GsonHelper.getAsInt(json, "power_cost", 256);
-      return new ScannerRecipe(id, item, replication, experience, duration, powerCost);
-    }
-
-    @Override
-    public ScannerRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-      CountedIngredient item = CountedIngredient.fromNetwork(buf);
-      Replication replication = Replication.fromNetwork(buf);
-      float experience = buf.readFloat();
-      int duration = buf.readVarInt();
-      int powerCost = buf.readVarInt();
-      return new ScannerRecipe(id, item, replication, experience, duration, powerCost);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buf, ScannerRecipe recipe) {
-      recipe.item.toNetwork(buf);
-      recipe.replication.toNetwork(buf);
-      buf.writeFloat(recipe.experience);
-      buf.writeVarInt(recipe.duration);
-      buf.writeVarInt(recipe.powerCost);
-    }
   }
 }

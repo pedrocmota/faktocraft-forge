@@ -8,6 +8,10 @@ import com.faktocraft.integration.jade.provider.JadeCableDataProvider;
 import com.faktocraft.integration.jade.provider.JadeCableProvider;
 import com.faktocraft.integration.jade.provider.JadeEnergyDataProvider;
 import com.faktocraft.integration.jade.provider.JadeEnergyProvider;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.block.Block;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaCommonRegistration;
 import snownee.jade.api.IWailaPlugin;
@@ -15,6 +19,9 @@ import snownee.jade.api.WailaPlugin;
 
 @WailaPlugin
 public class JadePlugin implements IWailaPlugin {
+  private static ResourceKey<Block> key(Block block) {
+    return ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(block));
+  }
 
   @Override
   public void register(IWailaCommonRegistration registration) {
@@ -27,6 +34,8 @@ public class JadePlugin implements IWailaPlugin {
     registration.registerBlockDataProvider(
         com.faktocraft.integration.jade.provider.JadeReactorDataProvider.INSTANCE,
         com.faktocraft.common.block.impl.machines.nuclear_reactor.BlockEntityNuclearReactor.class);
+    registration.blockOperations().hide(key(com.faktocraft.common.registries.PipeRegistry.PUMP_TUBE_BLOCK));
+    registration.blockOperations().hide(key(com.faktocraft.common.registries.ModBlocks.HANDLE_GUARD));
   }
 
   @Override
@@ -44,8 +53,6 @@ public class JadePlugin implements IWailaPlugin {
         com.faktocraft.common.block.impl.cable.BlockBreaker.class);
     registration.registerBlockComponent(com.faktocraft.integration.jade.provider.JadeValveProvider.INSTANCE,
         com.faktocraft.common.block.impl.pipe.BlockFluidPipe.class);
-    registration.hideTarget(com.faktocraft.common.registries.PipeRegistry.PUMP_TUBE_BLOCK);
-    registration.hideTarget(com.faktocraft.common.registries.ModBlocks.HANDLE_GUARD);
     registration.addRayTraceCallback((hit, accessor, original) -> {
       if (accessor instanceof snownee.jade.api.BlockAccessor part
           && part.getBlock() instanceof com.faktocraft.common.block.impl.machines.nuclear_reactor.BlockNuclearReactor) {

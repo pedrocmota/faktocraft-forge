@@ -2,98 +2,83 @@ package com.faktocraft.common.recipe.impl;
 
 import com.faktocraft.common.item.crafting.CountedRecipePattern;
 import com.faktocraft.common.recipe.RecipeJsonHelper;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.Level;
+import java.util.Optional;
 
 public class AdvancedShapedRecipe extends ShapedRecipe {
+  public static final MapCodec<AdvancedShapedRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+      Recipe.CommonInfo.MAP_CODEC.forGetter(recipe -> recipe.commonInfo),
+      CraftingRecipe.CraftingBookInfo.MAP_CODEC.forGetter(recipe -> recipe.bookInfo),
+      CountedRecipePattern.MAP_CODEC.forGetter(recipe -> recipe.pattern),
+      RecipeJsonHelper.RESULT.fieldOf("result").forGetter(recipe -> recipe.result))
+      .apply(i, AdvancedShapedRecipe::new));
 
-  public static final RecipeSerializer<AdvancedShapedRecipe> SERIALIZER = new Serializer();
+  public static final StreamCodec<RegistryFriendlyByteBuf, AdvancedShapedRecipe> STREAM_CODEC = StreamCodec.composite(
+      Recipe.CommonInfo.STREAM_CODEC, recipe -> recipe.commonInfo,
+      CraftingRecipe.CraftingBookInfo.STREAM_CODEC, recipe -> recipe.bookInfo,
+      CountedRecipePattern.STREAM_CODEC, recipe -> recipe.pattern,
+      ItemStackTemplate.STREAM_CODEC, recipe -> recipe.result,
+      AdvancedShapedRecipe::new);
+
+  public static final RecipeSerializer<AdvancedShapedRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC,
+      STREAM_CODEC);
 
   private final CountedRecipePattern pattern;
-  private final ItemStack result;
+  private final ItemStackTemplate result;
 
-  public AdvancedShapedRecipe(ResourceLocation id, String group, CraftingBookCategory category,
-      CountedRecipePattern pattern, ItemStack result, boolean showNotification) {
-    super(id, group, category, pattern.width(), pattern.height(), pattern.plainIngredients(), result,
-        showNotification);
+  public AdvancedShapedRecipe(Recipe.CommonInfo commonInfo, CraftingRecipe.CraftingBookInfo bookInfo,
+      CountedRecipePattern pattern, ItemStackTemplate result) {
+    super(commonInfo, bookInfo,
+        new ShapedRecipePattern(pattern.width(), pattern.height(), pattern.plainIngredients(), Optional.empty()),
+        result);
     this.pattern = pattern;
     this.result = result;
   }
 
-  @Override
-  public RecipeSerializer<AdvancedShapedRecipe> getSerializer() {
-    return SERIALIZER;
+  public AdvancedShapedRecipe(String group, CraftingBookCategory category, CountedRecipePattern pattern,
+      ItemStack result, boolean showNotification) {
+    this(new Recipe.CommonInfo(showNotification), new CraftingRecipe.CraftingBookInfo(category, group), pattern,
+        ItemStackTemplate.fromNonEmptyStack(result));
   }
 
   @Override
-  public boolean matches(CraftingContainer container, Level level) {
-    return pattern.matches(container);
+  @SuppressWarnings("unchecked")
+  public RecipeSerializer<ShapedRecipe> getSerializer() {
+    return (RecipeSerializer<ShapedRecipe>) (RecipeSerializer<?>) SERIALIZER;
   }
 
   @Override
-  public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
-    return result.copy();
+  public boolean matches(CraftingInput input, Level level) {
+    return pattern.matches(input);
   }
 
   @Override
-  public NonNullList<ItemStack> getRemainingItems(CraftingContainer container) {
-    NonNullList<ItemStack> remainder = super.getRemainingItems(container);
-    pattern.consumeExtra(container);
+  public ItemStack assemble(CraftingInput input) {
+    return result.create();
+  }
+
+  @Override
+  public NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
+    NonNullList<ItemStack> remainder = super.getRemainingItems(input);
+    pattern.consumeExtra(input);
     return remainder;
   }
 
   public ItemStack getResultItem() {
-    return result.copy();
-  }
-
-  public static class Serializer implements RecipeSerializer<AdvancedShapedRecipe> {
-
-    @Override
-    public AdvancedShapedRecipe fromJson(ResourceLocation id, JsonObject json) {
-      String group = GsonHelper.getAsString(json, "group", "");
-      String categoryName = GsonHelper.getAsString(json, "category", null);
-      CraftingBookCategory category = CraftingBookCategory.MISC;
-      if (categoryName != null) {
-        for (CraftingBookCategory candidate : CraftingBookCategory.values()) {
-          if (candidate.getSerializedName().equals(categoryName)) {
-            category = candidate;
-            break;
-          }
-        }
-      }
-      CountedRecipePattern pattern = CountedRecipePattern.fromJson(json);
-      ItemStack result = RecipeJsonHelper.result(json.get("result"));
-      boolean showNotification = GsonHelper.getAsBoolean(json, "show_notification", true);
-      return new AdvancedShapedRecipe(id, group, category, pattern, result, showNotification);
-    }
-
-    @Override
-    public AdvancedShapedRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-      String group = buf.readUtf();
-      CraftingBookCategory category = buf.readEnum(CraftingBookCategory.class);
-      CountedRecipePattern pattern = CountedRecipePattern.fromNetwork(buf);
-      ItemStack result = buf.readItem();
-      boolean showNotification = buf.readBoolean();
-      return new AdvancedShapedRecipe(id, group, category, pattern, result, showNotification);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buf, AdvancedShapedRecipe recipe) {
-      buf.writeUtf(recipe.getGroup());
-      buf.writeEnum(recipe.category());
-      recipe.pattern.toNetwork(buf);
-      buf.writeItem(recipe.result);
-      buf.writeBoolean(recipe.showNotification());
-    }
+    return result.create();
   }
 }

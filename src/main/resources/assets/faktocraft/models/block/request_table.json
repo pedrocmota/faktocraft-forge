@@ -1,9 +1,9 @@
 {
- "parent": "minecraft:block/orientable_with_bottom",
- "textures": {
-  "front": "faktocraft:block/request_table_front",
-  "top": "faktocraft:block/request_table_top",
-  "bottom": "faktocraft:block/request_table_bottom",
-  "side": "faktocraft:block/request_table_side"
- }
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "front": "faktocraft:block/request_table_front",
+    "top": "faktocraft:block/request_table_top",
+    "bottom": "faktocraft:block/request_table_bottom",
+    "side": "faktocraft:block/request_table_side"
+  }
 }

@@ -1,27 +1,46 @@
 package com.faktocraft.client.render;
 
-import com.faktocraft.common.block.impl.pipe.BlockEntityTank;
 import com.faktocraft.common.util.SpriteUtil;
+import com.faktocraft.common.block.impl.pipe.BlockEntityTank;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
-public class TankRenderer implements BlockEntityRenderer<BlockEntityTank> {
+public class TankRenderer implements BlockEntityRenderer<BlockEntityTank, TankRenderer.State> {
 
   private static final float X0 = 2.5f / 16.0f;
   private static final float X1 = 13.5f / 16.0f;
   private static final float Y0 = 0.5f / 16.0f;
   private static final float Y_MAX = 15.5f / 16.0f;
 
+  public static class State extends BlockEntityRenderState {
+    @Nullable
+    TextureAtlasSprite sprite;
+    int color;
+    float y0;
+    float top;
+    boolean seamDown;
+    boolean seamUp;
+  }
+
   @Override
-  public void render(BlockEntityTank tank, float partialTick, PoseStack poseStack, MultiBufferSource buffer,
-      int packedLight, int packedOverlay) {
+  public State createRenderState() {
+    return new State();
+  }
+
+  @Override
+  public void extractRenderState(BlockEntityTank tank, State state, float partialTick, Vec3 cameraPos,
+      ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    BlockEntityRenderer.super.extractRenderState(tank, state, partialTick, cameraPos, breakProgress);
+    state.sprite = null;
     if (tank.tank.isEmpty()) {
       return;
     }
@@ -30,11 +49,11 @@ public class TankRenderer implements BlockEntityRenderer<BlockEntityTank> {
       return;
     }
     Fluid fluid = tank.tank.getFluid();
-    TextureAtlasSprite sprite = SpriteUtil.getFluidSprite(fluid);
+    TextureAtlasSprite sprite = FluidSprites.still(fluid);
     if (sprite == null) {
       return;
     }
-    int color = IClientFluidTypeExtensions.of(fluid).getTintColor() | 0xFF000000;
+    state.color = FluidSprites.tint(fluid) | 0xFF000000;
 
     boolean seamDown = false;
     boolean seamUp = false;
@@ -49,10 +68,22 @@ public class TankRenderer implements BlockEntityRenderer<BlockEntityTank> {
     }
     float y0 = seamDown ? 0.0f : Y0;
     float topLimit = seamUp ? 1.0f : Y_MAX;
-    float top = y0 + (topLimit - y0) * Math.min(1.0f, fillFraction);
+    state.y0 = y0;
+    state.top = y0 + (topLimit - y0) * Math.min(1.0f, fillFraction);
+    state.seamDown = seamDown;
+    state.seamUp = seamUp;
+    state.sprite = sprite;
+  }
 
-    VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(InventoryMenu.BLOCK_ATLAS));
-    CuboidRenderer.drawBox(poseStack.last(), vc, sprite, color, packedLight, X0, y0, X0, X1, top, X1,
-        !seamDown, !seamUp);
+  @Override
+  public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    TextureAtlasSprite sprite = state.sprite;
+    if (sprite == null) {
+      return;
+    }
+    int light = state.lightCoords;
+    collector.submitCustomGeometry(poseStack, RenderTypes.entityTranslucent(SpriteUtil.blockAtlas()),
+        (pose, vc) -> CuboidRenderer.drawBox(pose, vc, sprite, state.color, light, X0, state.y0, X0, X1, state.top,
+            X1, !state.seamDown, !state.seamUp));
   }
 }

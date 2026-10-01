@@ -1,28 +1,34 @@
 package com.faktocraft.common.item.impl.armor;
 
+import com.faktocraft.common.enums.ModArmorMaterials;
+import com.faktocraft.common.util.NbtBridge;
+import com.faktocraft.common.util.PlayerMessages;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Unit;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
 public class AdvancedJetpackItem extends JetpackItem {
-
   private static final String TAG_MODE = "JetpackMode";
 
   public AdvancedJetpackItem(Properties properties) {
-    super(properties, 12000);
+    super(ModArmorMaterials.ADVANCED_JETPACK, properties, 12000);
   }
 
   public static boolean isElytraMode(ItemStack stack) {
-    return stack.hasTag() && stack.getTag().getInt(TAG_MODE) == 1;
+    return NbtBridge.hasCustomData(stack) && NbtBridge.customDataOrEmpty(stack).getIntOr(TAG_MODE, 0) == 1;
   }
 
   public static void toggleMode(ServerPlayer player) {
@@ -31,39 +37,58 @@ public class AdvancedJetpackItem extends JetpackItem {
       return;
     }
     boolean elytra = !isElytraMode(chest);
-    chest.getOrCreateTag().putInt(TAG_MODE, elytra ? 1 : 0);
-    player.displayClientMessage(Component.translatable(
+    NbtBridge.updateCustomData(chest, tag -> tag.putInt(TAG_MODE, elytra ? 1 : 0));
+    syncGlider(chest, player);
+    PlayerMessages.display(player, Component.translatable(
         elytra ? "gui.faktocraft.jetpack.mode_elytra" : "gui.faktocraft.jetpack.mode_vertical"), true);
   }
 
   @Override
-  protected void jetpackTick(ItemStack stack, Level level, Player player) {
-    if (player.noCulling && !player.isFallFlying()) {
-      player.noCulling = false;
+  public void wornTick(ItemStack stack, Level level, Entity entity) {
+    super.wornTick(stack, level, entity);
+    if (!(entity instanceof Player player) || player.getItemBySlot(EquipmentSlot.CHEST) != stack) {
+      return;
     }
+    if (!level.isClientSide()) {
+      syncGlider(stack, player);
+    }
+    if (player.isFallFlying() && canElytraFly(stack, player)) {
+      elytraFlightTick(stack, player, player.getFallFlyingTicks());
+    }
+  }
+
+  @Override
+  protected void jetpackTick(ItemStack stack, Level level, Player player) {
     if (!isElytraMode(stack)) {
       super.jetpackTick(stack, level, player);
     } else if (!player.isFallFlying()
-        && player.getPersistentData().getBoolean(TAG_THRUST)
+        && player.getPersistentData().getBooleanOr(TAG_THRUST, false)
         && !drainFuel(stack, 1, true)) {
       glideTick(level, player);
     }
   }
 
-  @Override
-  public boolean canElytraFly(ItemStack stack, LivingEntity entity) {
-
+  public static boolean canElytraFly(ItemStack stack, LivingEntity entity) {
     return isElytraMode(stack) && drainFuel(stack, 1, true)
-        && (entity.isFallFlying() || entity.getPersistentData().getInt(TAG_AIR_TICKS) >= 3);
+        && (entity.isFallFlying() || entity.getPersistentData().getIntOr(TAG_AIR_TICKS, 0) >= 3);
   }
 
-  @Override
-  public boolean elytraFlightTick(ItemStack stack, LivingEntity entity, int flightTicks) {
+  private static void syncGlider(ItemStack stack, LivingEntity entity) {
+    boolean glider = canElytraFly(stack, entity);
+    if (glider != stack.has(DataComponents.GLIDER)) {
+      if (glider) {
+        stack.set(DataComponents.GLIDER, Unit.INSTANCE);
+      } else {
+        stack.remove(DataComponents.GLIDER);
+      }
+    }
+  }
+
+  public void elytraFlightTick(ItemStack stack, LivingEntity entity, int flightTicks) {
     Level level = entity.level();
 
-    entity.noCulling = true;
     entity.getPersistentData().putBoolean(TAG_GLIDE, true);
-    boolean boosting = entity.getPersistentData().getBoolean(TAG_THRUST)
+    boolean boosting = entity.getPersistentData().getBooleanOr(TAG_THRUST, false)
         && drainFuel(stack, BOOST_MB_PER_TICK, true);
     if (boosting) {
       Vec3 look = entity.getLookAngle();
@@ -73,7 +98,7 @@ public class AdvancedJetpackItem extends JetpackItem {
           look.y * 0.1 + (look.y * 1.5 - dm.y) * 0.5,
           look.z * 0.1 + (look.z * 1.5 - dm.z) * 0.5));
       if (level.isClientSide()) {
-        double yOff = com.faktocraft.client.ClientCamera.isFirstPerson() ? 0.6 : 0.0;
+        double yOff = com.faktocraft.common.util.ClientProxy.get().isFirstPerson() ? 0.6 : 0.0;
         Vec3 tail = entity.position().add(0, yOff, 0).subtract(look.scale(1.2));
         if (flightTicks % 5 == 0) {
           level.addParticle(net.minecraft.core.particles.ParticleTypes.FIREWORK,
@@ -93,21 +118,18 @@ public class AdvancedJetpackItem extends JetpackItem {
         drainFuel(stack, GLIDE_MB_PER_4_TICKS, false);
       }
     }
-    return true;
-  }
-
-  @Nullable
-  @Override
-  public String getArmorTexture(ItemStack stack, net.minecraft.world.entity.Entity entity,
-      EquipmentSlot slot, String type) {
-    return "faktocraft:textures/models/armor/advanced_jetpack_layer_1.png";
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-    tooltip.add(Component.translatable(
+  public void onGlideDamage(ItemStack stack, LivingEntity wearer, EquipmentSlot slot) {
+  }
+
+  @Override
+  public void appendHoverText(ItemStack stack, Item.TooltipContext level, TooltipDisplay display,
+      Consumer<Component> tooltip, TooltipFlag flag) {
+    tooltip.accept(Component.translatable(
         isElytraMode(stack) ? "gui.faktocraft.jetpack.mode_elytra" : "gui.faktocraft.jetpack.mode_vertical")
         .withStyle(ChatFormatting.DARK_AQUA));
-    super.appendHoverText(stack, level, tooltip, flag);
+    super.appendHoverText(stack, level, display, tooltip, flag);
   }
 }

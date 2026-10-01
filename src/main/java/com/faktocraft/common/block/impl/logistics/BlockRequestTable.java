@@ -32,7 +32,6 @@ public class BlockRequestTable extends BlockMachine implements IHasMenu {
     return new BlockEntityRequestTable(pos, state);
   }
 
-  @SuppressWarnings("deprecation")
   @Override
   public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
     super.onPlace(state, level, pos, oldState, isMoving);

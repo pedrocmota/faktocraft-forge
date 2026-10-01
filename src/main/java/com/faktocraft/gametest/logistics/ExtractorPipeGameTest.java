@@ -1,18 +1,16 @@
 package com.faktocraft.gametest.logistics;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.pipe.BlockEntityFluidExtractorPipe;
 import com.faktocraft.common.block.impl.pipe.BlockEntityTank;
 import com.faktocraft.common.block.impl.pipe.BlockFluidExtractorPipe;
 import com.faktocraft.common.registries.PipeRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 
-@net.minecraftforge.gametest.GameTestHolder(Faktocraft.MODID)
-@net.minecraftforge.gametest.PrefixGameTestTemplate(false)
 public class ExtractorPipeGameTest {
 
   private static final String TEMPLATE = "gametest_platform";
@@ -28,14 +26,14 @@ public class ExtractorPipeGameTest {
     helper.setBlock(pipe, PipeRegistry.FLUID_EXTRACTOR_PIPE.defaultBlockState());
     helper.setBlock(new BlockPos(1, 1, 1), PipeRegistry.TANK.defaultBlockState());
     helper.setBlock(new BlockPos(3, 1, 1), PipeRegistry.TANK.defaultBlockState());
-    if (helper.getBlockEntity(new BlockPos(1, 1, 1)) instanceof BlockEntityTank tank) {
-      tank.tank.fillFluid(new net.minecraftforge.fluids.FluidStack(
+    if (TestUtil.blockEntity(helper, new BlockPos(1, 1, 1)) instanceof BlockEntityTank tank) {
+      tank.tank.fillFluid(new net.neoforged.neoforge.fluids.FluidStack(
           net.minecraft.world.level.material.Fluids.WATER, 4000), 4000, false);
     }
     BlockPos abs = helper.absolutePos(pipe);
     helper.getLevel().setBlockAndUpdate(abs,
         helper.getLevel().getBlockState(abs).setValue(BlockFluidExtractorPipe.SOURCE, Direction.WEST));
-    if (powered && helper.getBlockEntity(pipe) instanceof BlockEntityFluidExtractorPipe extractor) {
+    if (powered && TestUtil.blockEntity(helper, pipe) instanceof BlockEntityFluidExtractorPipe extractor) {
       energize(extractor.extractor());
     }
     return pipe;
@@ -45,7 +43,7 @@ public class ExtractorPipeGameTest {
   public static void fluidExtractorPipeDraftsFromItsTank(GameTestHelper helper) {
     buildFluidLine(helper, true);
     helper.succeedWhen(() -> {
-      if (!(helper.getBlockEntity(new BlockPos(3, 1, 1)) instanceof BlockEntityTank dest)
+      if (!(TestUtil.blockEntity(helper, new BlockPos(3, 1, 1)) instanceof BlockEntityTank dest)
           || dest.tank.getFluidAmount() < 50) {
         helper.fail("no water reached the far tank");
       }
@@ -56,7 +54,7 @@ public class ExtractorPipeGameTest {
   public static void fluidExtractorPipeIdlesWithoutPower(GameTestHelper helper) {
     buildFluidLine(helper, false);
     helper.runAfterDelay(120, () -> {
-      if (!(helper.getBlockEntity(new BlockPos(1, 1, 1)) instanceof BlockEntityTank tank)
+      if (!(TestUtil.blockEntity(helper, new BlockPos(1, 1, 1)) instanceof BlockEntityTank tank)
           || tank.tank.getFluidAmount() != 4000) {
         helper.fail("the pipe drafted with an empty buffer");
         return;
@@ -80,7 +78,7 @@ public class ExtractorPipeGameTest {
   public static void extractorPipeBufferIsTheDockedCapacitor(GameTestHelper helper) {
     BlockPos pipe = new BlockPos(2, 1, 1);
     helper.setBlock(pipe, PipeRegistry.FLUID_EXTRACTOR_PIPE.defaultBlockState());
-    if (!(helper.getBlockEntity(pipe) instanceof BlockEntityFluidExtractorPipe extractor)) {
+    if (!(TestUtil.blockEntity(helper, pipe) instanceof BlockEntityFluidExtractorPipe extractor)) {
       helper.fail("no fluid extractor pipe");
       return;
     }

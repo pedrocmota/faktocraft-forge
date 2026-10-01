@@ -1,16 +1,31 @@
 package com.faktocraft.client.render;
 
 import com.faktocraft.common.block.impl.pipe.BlockEntityFluidPipe;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 public class FluidExtractorPipeRenderer extends FluidPipeRenderer {
 
   @Override
-  public void render(BlockEntityFluidPipe pipe, float partialTick, PoseStack poseStack,
-      MultiBufferSource buffer, int packedLight, int packedOverlay) {
-    super.render(pipe, partialTick, poseStack, buffer, packedLight, packedOverlay);
-    ExtractorSocketRenderer.render(pipe, poseStack, buffer, packedOverlay);
-    ExtractorRingRenderer.render(pipe, poseStack, buffer, packedOverlay);
+  public State createRenderState() {
+    State state = new State();
+    state.socket = new ExtractorSocketRenderer.Data();
+    state.ring = new ExtractorRingRenderer.Data();
+    return state;
+  }
+
+  @Override
+  public void extractRenderState(BlockEntityFluidPipe pipe, State state, float partialTick, Vec3 cameraPos,
+      ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    super.extractRenderState(pipe, state, partialTick, cameraPos, breakProgress);
+    if (state.socket == null) {
+      state.socket = new ExtractorSocketRenderer.Data();
+    }
+    if (state.ring == null) {
+      state.ring = new ExtractorRingRenderer.Data();
+    }
+    ExtractorSocketRenderer.extract(pipe, state.socket);
+    ExtractorRingRenderer.extract(pipe, state.ring);
   }
 }

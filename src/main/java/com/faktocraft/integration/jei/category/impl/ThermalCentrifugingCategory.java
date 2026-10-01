@@ -8,24 +8,23 @@ import com.faktocraft.integration.jei.category.AbstractRecipeCategory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import static com.faktocraft.common.util.Constants.JEI;
 import static com.faktocraft.common.util.Constants.PROCESS;
 
 public class ThermalCentrifugingCategory extends AbstractRecipeCategory<ThermalCentrifugingRecipe> {
 
-  public static final ResourceLocation UID = new ResourceLocation(Faktocraft.MODID, "thermal_centrifuging");
-  public static final RecipeType<ThermalCentrifugingRecipe> TYPE = new RecipeType<>(UID,
+  public static final Identifier UID = Identifier.fromNamespaceAndPath(Faktocraft.MODID, "thermal_centrifuging");
+  public static final IRecipeType<ThermalCentrifugingRecipe> TYPE = IRecipeType.create(UID,
       ThermalCentrifugingRecipe.class);
 
   private final LoadingCache<Integer, IDrawableAnimated> progress;
@@ -37,7 +36,7 @@ public class ThermalCentrifugingCategory extends AbstractRecipeCategory<ThermalC
         "thermal_centrifuging",
         guiHelper,
         guiHelper.createDrawable(JEI, 117, 55, 114, 54),
-        guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(M3Registry.THERMAL_CENTRIFUGE)));
+        guiHelper.createDrawableItemStack(new ItemStack(M3Registry.THERMAL_CENTRIFUGE)));
     this.progress = CacheBuilder.newBuilder().build(CacheLoader.from(
         (Integer duration) -> guiHelper.drawableBuilder(PROCESS, 25, 0, 24, 16).buildAnimated(duration,
             IDrawableAnimated.StartDirection.LEFT, false)));
@@ -59,14 +58,14 @@ public class ThermalCentrifugingCategory extends AbstractRecipeCategory<ThermalC
     int i = 0;
     for (ItemStack stack : recipe.getResults()) {
       if (!stack.isEmpty()) {
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 65, (i * 16 + (i == 0 ? 0 : 1)) + startPos).addItemStack(stack);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 65, (i * 16 + (i == 0 ? 0 : 1)) + startPos).add(stack);
         i++;
       }
     }
   }
 
   @Override
-  public void draw(ThermalCentrifugingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics,
+  public void draw(ThermalCentrifugingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor graphics,
       double mouseX, double mouseY) {
     super.draw(recipe, recipeSlotsView, graphics, mouseX, mouseY);
 

@@ -1,6 +1,5 @@
 package com.faktocraft.gametest.logistics;
 
-import com.faktocraft.Faktocraft;
 import com.faktocraft.common.block.impl.logistics.BlockEntityAssemblyTable;
 import com.faktocraft.common.block.impl.logistics.BlockEntityChassis;
 import com.faktocraft.common.block.impl.logistics.BlockEntityCraftPipe;
@@ -21,7 +20,8 @@ import com.faktocraft.common.registries.machines.M2Registry;
 import com.faktocraft.common.registries.machines.M3Registry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import com.faktocraft.gametest.GameTest;
+import com.faktocraft.gametest.TestUtil;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -31,17 +31,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
-import net.minecraftforge.items.IItemHandler;
+import com.faktocraft.common.util.transfer.IItemHandler;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-@GameTestHolder(Faktocraft.MODID)
-@PrefixGameTestTemplate(false)
 public class LogisticsChainGameTest {
 
   static final String TEMPLATE = "gametest_platform";
@@ -62,7 +58,7 @@ public class LogisticsChainGameTest {
 
   static void placeChest(GameTestHelper helper, BlockPos rel, ItemStack... stacks) {
     helper.setBlock(rel, Blocks.CHEST.defaultBlockState());
-    if (helper.getBlockEntity(rel) instanceof ChestBlockEntity chest) {
+    if (TestUtil.blockEntity(helper, rel) instanceof ChestBlockEntity chest) {
       for (int i = 0; i < stacks.length && i < chest.getContainerSize(); i++) {
         chest.setItem(i, stacks[i]);
       }
@@ -70,14 +66,14 @@ public class LogisticsChainGameTest {
   }
 
   static void fillEnergy(GameTestHelper helper, BlockPos rel) {
-    if (helper.getBlockEntity(rel) instanceof FaktocraftBlockEntity be) {
+    if (TestUtil.blockEntity(helper, rel) instanceof FaktocraftBlockEntity be) {
       be.getBatteryStackHandler().setStackInSlot(0, new ItemStack(ModItems.ADVANCED_CAPACITOR));
       be.getEnergyStorage().setEnergy(be.getEnergyStorage().maxEnergy());
     }
   }
 
   static void putModule(GameTestHelper helper, BlockPos rel, int slot, ItemStack module) {
-    if (helper.getBlockEntity(rel) instanceof BlockEntityChassis chassis) {
+    if (TestUtil.blockEntity(helper, rel) instanceof BlockEntityChassis chassis) {
       chassis.getModules().setStackInSlot(slot, module);
     } else {
       helper.fail("no chassis at " + rel);
@@ -133,7 +129,7 @@ public class LogisticsChainGameTest {
       }
       fillEnergy(helper, CORE);
       for (int station = 0; station < STATIONS; station++) {
-        if (helper.getBlockEntity(machineAt(station)) instanceof FaktocraftBlockEntity be) {
+        if (TestUtil.blockEntity(helper, machineAt(station)) instanceof FaktocraftBlockEntity be) {
           be.getEnergyStorage().setEnergy(be.getEnergyStorage().maxEnergy());
         }
       }
@@ -152,7 +148,7 @@ public class LogisticsChainGameTest {
     helper.setBlock(pipeAt(station), LogisticsRegistry.RECIPE_PIPE.defaultBlockState());
     helper.setBlock(machineAt(station), facingSouth(machine));
     fillEnergy(helper, machineAt(station));
-    if (helper.getBlockEntity(pipeAt(station)) instanceof BlockEntityRecipePipe pipe) {
+    if (TestUtil.blockEntity(helper, pipeAt(station)) instanceof BlockEntityRecipePipe pipe) {
       return pipe;
     }
     helper.fail("no recipe pipe at station " + station);
@@ -163,7 +159,7 @@ public class LogisticsChainGameTest {
     helper.setBlock(pipeAt(station), LogisticsRegistry.CRAFT_PIPE.defaultBlockState());
     helper.setBlock(machineAt(station), LogisticsRegistry.ASSEMBLY_TABLE.defaultBlockState());
     fillEnergy(helper, machineAt(station));
-    if (helper.getBlockEntity(pipeAt(station)) instanceof BlockEntityCraftPipe pipe) {
+    if (TestUtil.blockEntity(helper, pipeAt(station)) instanceof BlockEntityCraftPipe pipe) {
       return pipe;
     }
     helper.fail("no craft pipe at station " + station);
@@ -198,7 +194,7 @@ public class LogisticsChainGameTest {
   static void furnaceStation(GameTestHelper helper, int station, ItemStack input, ItemStack output) {
     helper.setBlock(pipeAt(station), LogisticsRegistry.RECIPE_PIPE.defaultBlockState());
     helper.setBlock(machineAt(station), Blocks.FURNACE.defaultBlockState());
-    if (!(helper.getBlockEntity(pipeAt(station)) instanceof BlockEntityRecipePipe pipe)) {
+    if (!(TestUtil.blockEntity(helper, pipeAt(station)) instanceof BlockEntityRecipePipe pipe)) {
       helper.fail("no recipe pipe at station " + station);
       return;
     }
@@ -214,7 +210,7 @@ public class LogisticsChainGameTest {
 
   static void request(GameTestHelper helper, ItemStack target, int quantity, int times) {
     helper.runAfterDelay(SETUP_DELAY, () -> {
-      if (helper.getBlockEntity(TABLE) instanceof BlockEntityRequestTable table) {
+      if (TestUtil.blockEntity(helper, TABLE) instanceof BlockEntityRequestTable table) {
         table.setGhostTarget(target);
         for (int i = 0; i < times; i++) {
           table.request(null, quantity);
@@ -226,7 +222,7 @@ public class LogisticsChainGameTest {
   }
 
   static int countInTable(GameTestHelper helper, Predicate<ItemStack> what) {
-    if (!(helper.getBlockEntity(TABLE) instanceof BlockEntityRequestTable table)) {
+    if (!(TestUtil.blockEntity(helper, TABLE) instanceof BlockEntityRequestTable table)) {
       return -1;
     }
     int count = 0;
@@ -240,7 +236,7 @@ public class LogisticsChainGameTest {
   }
 
   static int countInChest(GameTestHelper helper, BlockPos rel, Predicate<ItemStack> what) {
-    if (!(helper.getBlockEntity(rel) instanceof ChestBlockEntity chest)) {
+    if (!(TestUtil.blockEntity(helper, rel) instanceof ChestBlockEntity chest)) {
       return -1;
     }
     int count = 0;
@@ -254,7 +250,7 @@ public class LogisticsChainGameTest {
   }
 
   static BlockEntityLogisticsController core(GameTestHelper helper) {
-    return helper.getBlockEntity(CORE) instanceof BlockEntityLogisticsController core ? core : null;
+    return TestUtil.blockEntity(helper, CORE) instanceof BlockEntityLogisticsController core ? core : null;
   }
 
   static long holder(GameTestHelper helper, int station) {
@@ -402,7 +398,7 @@ public class LogisticsChainGameTest {
         helper.fail("expected 4 iron ingots at the table, found " + delivered + "; " + ledgerState(helper));
         return;
       }
-      if (!(helper.getBlockEntity(machineAt(0)) instanceof AbstractFurnaceBlockEntity furnace)) {
+      if (!(TestUtil.blockEntity(helper, machineAt(0)) instanceof AbstractFurnaceBlockEntity furnace)) {
         helper.fail("no furnace");
         return;
       }
@@ -517,7 +513,7 @@ public class LogisticsChainGameTest {
         helper.fail("the vanilla furnace never received coal, so it did not share the work");
         return;
       }
-      if (!(helper.getBlockEntity(machineAt(1)) instanceof AbstractFurnaceBlockEntity furnace)
+      if (!(TestUtil.blockEntity(helper, machineAt(1)) instanceof AbstractFurnaceBlockEntity furnace)
           || furnace.getItem(1).isEmpty()) {
         helper.fail("coal was not kept stocked in the vanilla furnace");
         return;
@@ -542,7 +538,7 @@ public class LogisticsChainGameTest {
     if (rolling == null) {
       return;
     }
-    if (helper.getBlockEntity(machineAt(2)) instanceof BlockEntityMetalFormer former) {
+    if (TestUtil.blockEntity(helper, machineAt(2)) instanceof BlockEntityMetalFormer former) {
       former.changeMode();
     }
     simpleRecipe(rolling, new ItemStack(Items.COPPER_INGOT), new ItemStack(ModItems.COPPER_PLATE));
@@ -691,7 +687,7 @@ public class LogisticsChainGameTest {
         return;
       }
       for (int station = 0; station < 2; station++) {
-        if (helper.getBlockEntity(machineAt(station)) instanceof BlockEntityAssemblyTable table) {
+        if (TestUtil.blockEntity(helper, machineAt(station)) instanceof BlockEntityAssemblyTable table) {
           for (int i = 0; i < table.getIngredients().getSlots(); i++) {
             if (!table.getIngredients().getStackInSlot(i).isEmpty()) {
               helper.fail("ingredients left in the assembly table at station " + station);
@@ -785,7 +781,7 @@ public class LogisticsChainGameTest {
     pattern(helper, 1, planks, planks, null, planks, planks);
     furnaceStation(helper, 2, new ItemStack(Items.RAW_IRON), new ItemStack(Items.IRON_INGOT));
     helper.runAfterDelay(SETUP_DELAY, () -> {
-      if (!(helper.getBlockEntity(TABLE) instanceof BlockEntityRequestTable table)) {
+      if (!(TestUtil.blockEntity(helper, TABLE) instanceof BlockEntityRequestTable table)) {
         helper.fail("no request table");
         return;
       }
