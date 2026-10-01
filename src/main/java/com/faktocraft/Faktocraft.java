@@ -32,7 +32,7 @@ public class Faktocraft {
     ModConfig.register();
     container.registerConfig(net.neoforged.fml.config.ModConfig.Type.CLIENT,
         com.faktocraft.common.config.BasicConfig.CLIENT_SPEC, "faktocraft-basic-client.toml");
-    container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER,
+    container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SYNCED,
         com.faktocraft.common.config.BasicConfig.SERVER_SPEC, "faktocraft-basic-server.toml");
 
     RegistrationHandler.setBootstrap(Faktocraft::bootstrapRegistries);

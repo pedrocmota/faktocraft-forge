@@ -49,10 +49,11 @@ public class ModBlocks {
   public static final Block DEEPSLATE_LITHIUM_ORE = register("deepslate_lithium_ore", BlockOre::new,
       BlockOre.oreProperties());
   public static final Block IRIDIUM_ORE = register("iridium_ore",
-      com.faktocraft.common.block.BlockIridiumOre::new, BlockOre.oreProperties());
+      com.faktocraft.common.block.BlockIridiumOre::new,
+      BlockOre.oreProperties().lightLevel(state -> com.faktocraft.common.block.BlockIridiumOre.LIGHT_LEVEL));
   public static final Block DEEPSLATE_IRIDIUM_ORE = register("deepslate_iridium_ore",
       com.faktocraft.common.block.BlockIridiumOre::new,
-      BlockOre.oreProperties());
+      BlockOre.oreProperties().lightLevel(state -> com.faktocraft.common.block.BlockIridiumOre.LIGHT_LEVEL));
 
   public static final Block TIN_CABLE = registerCable("tin_cable", 0.127F, CableTier.TIN_CABLE);
   public static final Block TIN_CABLE_INSULATED = registerCable("tin_cable_insulated", 0.189F,

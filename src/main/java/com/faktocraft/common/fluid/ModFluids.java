@@ -47,12 +47,11 @@ public class ModFluids {
   public static final FluidSet SULFURIC_ACID = createSet("sulfuric_acid", "flowing_sulfuric_acid",
       "liquid_sulfuric_acid", 0, 0x50FFFAE0,
       false, true,
-      delayedContact("acid",
-          (level, living) -> {
-            if (level instanceof ServerLevel serverLevel) {
-              living.hurtServer(serverLevel, com.faktocraft.common.registries.ModDamageTypes.acid(level), 6.0F);
-            }
-          }),
+      (level, living) -> {
+        if (level instanceof ServerLevel serverLevel) {
+          living.hurtServer(serverLevel, com.faktocraft.common.registries.ModDamageTypes.acid(level), 6.0F);
+        }
+      },
       MapColor.SAND);
   public static final FluidSet OIL = createSet("oil", "flowing_oil", "liquid_oil", 0, 0xFA3A3A3A,
       false, false, delayedToxicity("oil"),
