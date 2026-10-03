@@ -41,7 +41,7 @@ import java.util.Map;
 @Mod.EventBusSubscriber(modid = Faktocraft.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class StatusMonitorTextures {
 
-  public static final int SCALE = 2;
+  public static final int SCALE = 4;
   private static final int TEXTURE_W = StatusMonitorContent.PANEL_W * SCALE;
   private static final int TEXTURE_H = StatusMonitorContent.PANEL_H * SCALE;
   private static final int IDLE_FRAMES = 200;

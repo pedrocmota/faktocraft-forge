@@ -193,7 +193,7 @@ public class MenuRequestTable extends AbstractContainerMenu {
     return recipe != null ? recipe.assemble(craftView, level.registryAccess()) : ItemStack.EMPTY;
   }
 
-  void refreshResult() {
+  public void refreshResult() {
     if (table == null || level.isClientSide()) {
       return;
     }
@@ -216,12 +216,14 @@ public class MenuRequestTable extends AbstractContainerMenu {
   }
 
   private void consumeMatrix(Player taker) {
+    NonNullList<ItemStack> remainders = level.getRecipeManager()
+        .getRemainingItemsFor(RecipeType.CRAFTING, craftView, level);
     for (int i = 0; i < 9; i++) {
       ItemStack inMatrix = craftView.getItem(i);
       if (inMatrix.isEmpty()) {
         continue;
       }
-      ItemStack remainder = inMatrix.getCraftingRemainingItem();
+      ItemStack remainder = remainders.get(i);
       craftView.removeItem(i, 1);
       if (!remainder.isEmpty()) {
         if (craftView.getItem(i).isEmpty()) {

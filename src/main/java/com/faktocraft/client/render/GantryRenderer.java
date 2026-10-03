@@ -91,9 +91,9 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
     PoseStack.Pose pose = poseStack.last();
 
     BlockPos origin = quarry.getBlockPos();
-    float headX = quarry.clientHeadX - origin.getX();
-    float headY = quarry.clientHeadY - origin.getY();
-    float headZ = quarry.clientHeadZ - origin.getZ();
+    float headX = (float) (quarry.clientHeadX - origin.getX());
+    float headY = (float) (quarry.clientHeadY - origin.getY());
+    float headZ = (float) (quarry.clientHeadZ - origin.getZ());
     float gantryY = quarry.clientRailY;
     float innerX0 = quarry.areaMinX() + 1 - origin.getX();
     float innerX1 = quarry.areaMaxX() - origin.getX();
@@ -378,26 +378,26 @@ public class GantryRenderer<T extends BlockEntityGantry> implements BlockEntityR
   }
 
   private static boolean farFromSynced(BlockEntityGantry quarry) {
-    float dx = quarry.headX - quarry.clientHeadX;
-    float dy = quarry.headY - quarry.clientHeadY;
-    float dz = quarry.headZ - quarry.clientHeadZ;
+    double dx = quarry.headX - quarry.clientHeadX;
+    double dy = quarry.headY - quarry.clientHeadY;
+    double dz = quarry.headZ - quarry.clientHeadZ;
     return dx * dx + dy * dy + dz * dz > RESYNC_DISTANCE * RESYNC_DISTANCE;
   }
 
   private static void followGoal(BlockEntityGantry quarry, float elapsed) {
-    float[] goal = new float[3];
+    double[] goal = new double[3];
     if (!quarry.headGoal(goal)) {
       return;
     }
-    float dx = goal[0] - quarry.clientHeadX;
-    float dy = goal[1] - quarry.clientHeadY;
-    float dz = goal[2] - quarry.clientHeadZ;
-    float distance = Mth.sqrt(dx * dx + dy * dy + dz * dz);
-    float sx = quarry.headX - quarry.clientHeadX;
-    float sy = quarry.headY - quarry.clientHeadY;
-    float sz = quarry.headZ - quarry.clientHeadZ;
-    float behind = Mth.sqrt(sx * sx + sy * sy + sz * sz);
-    float step = quarry.armSpeed() * elapsed * (1.0F + CATCH_UP_BOOST * Math.min(1.0F, behind));
+    double dx = goal[0] - quarry.clientHeadX;
+    double dy = goal[1] - quarry.clientHeadY;
+    double dz = goal[2] - quarry.clientHeadZ;
+    double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    double sx = quarry.headX - quarry.clientHeadX;
+    double sy = quarry.headY - quarry.clientHeadY;
+    double sz = quarry.headZ - quarry.clientHeadZ;
+    double behind = Math.sqrt(sx * sx + sy * sy + sz * sz);
+    double step = quarry.armSpeed() * elapsed * (1.0 + CATCH_UP_BOOST * Math.min(1.0, behind));
     if (distance <= step) {
       quarry.clientHeadX = goal[0];
       quarry.clientHeadY = goal[1];

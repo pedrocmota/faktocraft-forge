@@ -263,7 +263,7 @@ public class BlockEntityForester extends BlockEntityGantry {
   }
 
   @Override
-  public boolean headGoal(float[] out) {
+  public boolean headGoal(double[] out) {
     if (stage == STAGE_WORK && resizePhase != RESIZE_NONE && !targetValid) {
       boolean client = level != null && level.isClientSide();
       out[0] = client ? clientHeadX : headX;

@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockIridiumOre extends BlockOre {
 
+  public static final int LIGHT_LEVEL = 3;
+
   public BlockIridiumOre(Properties properties) {
     super(properties);
   }

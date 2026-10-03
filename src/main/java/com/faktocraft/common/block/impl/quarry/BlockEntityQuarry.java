@@ -32,6 +32,11 @@ public class BlockEntityQuarry extends BlockEntityGantry {
   }
 
   @Override
+  protected float baseSpeedMultiplier() {
+    return 2.0F;
+  }
+
+  @Override
   protected void onWorkStageStarted() {
     mineIndex = 0;
   }

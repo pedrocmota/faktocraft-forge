@@ -47,6 +47,17 @@ public class ElectricArmorItem extends ArmorItem implements IElectricItem {
   }
 
   @Override
+  public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
+    return false;
+  }
+
+  @Override
+  public boolean canApplyAtEnchantingTable(ItemStack stack,
+      net.minecraft.world.item.enchantment.Enchantment enchantment) {
+    return false;
+  }
+
+  @Override
   public EnergyTier getEnergyTier() {
     return energyTier;
   }
