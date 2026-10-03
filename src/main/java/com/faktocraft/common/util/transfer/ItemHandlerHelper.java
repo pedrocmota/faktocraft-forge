@@ -1,7 +1,11 @@
 package com.faktocraft.common.util.transfer;
 
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public final class ItemHandlerHelper {
@@ -90,8 +94,20 @@ public final class ItemHandlerHelper {
         }
       }
     }
-    if (!remainder.isEmpty() && !player.getInventory().add(remainder)) {
-      player.drop(remainder, false, net.minecraft.util.Prediction.SERVER_ONLY);
+    if (!remainder.isEmpty()) {
+      player.getInventory().add(remainder);
+    }
+    Level level = player.level();
+    if (remainder.isEmpty() || remainder.getCount() != stack.getCount()) {
+      float pitch = ((level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F;
+      level.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), SoundEvents.ITEM_PICKUP,
+          SoundSource.PLAYERS, 0.2F, pitch);
+    }
+    if (!remainder.isEmpty() && !level.isClientSide()) {
+      ItemEntity entity = new ItemEntity(level, player.getX(), player.getY() + 0.5, player.getZ(), remainder);
+      entity.setPickUpDelay(40);
+      entity.setDeltaMovement(entity.getDeltaMovement().multiply(0, 1, 0));
+      level.addFreshEntity(entity);
     }
     player.containerMenu.broadcastChanges();
   }

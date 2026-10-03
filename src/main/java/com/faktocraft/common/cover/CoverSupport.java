@@ -133,7 +133,9 @@ public final class CoverSupport {
         host.setCover(pending.cover(), pending.holes());
       }
     }
-    refreshClientModel(blockEntity);
+    if (host.getCover() != null) {
+      refreshClientModel(blockEntity);
+    }
   }
 
   public static boolean isCovered(BlockState state) {

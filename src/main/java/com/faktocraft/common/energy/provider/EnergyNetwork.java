@@ -3,20 +3,54 @@ package com.faktocraft.common.energy.provider;
 import com.faktocraft.common.energy.interfaces.IEnergy;
 import com.faktocraft.common.enums.EnergyTier;
 import com.faktocraft.common.enums.EnergyType;
+import com.faktocraft.common.util.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public class EnergyNetwork implements IEnergy {
 
   private static final Random RANDOM = new Random();
 
   private int energy;
-  private final HashSet<BlockPos> connections = new HashSet<>();
-  private final HashSet<BlockPos> electrics = new HashSet<>();
+  @Nullable
+  private EnergyNetworks owner;
+  private boolean adjacencyDirty = true;
+  private final Map<BlockPos, Byte> electricSides = new HashMap<>();
+  private final TrackedPosSet connections = new TrackedPosSet(new TrackedPosSet.Listener() {
+    @Override
+    public void added(BlockPos pos) {
+      adjacencyDirty = true;
+      if (owner != null) {
+        owner.claim(pos, EnergyNetwork.this);
+      }
+    }
+
+    @Override
+    public void removed(BlockPos pos) {
+      adjacencyDirty = true;
+      if (owner != null) {
+        owner.release(pos, EnergyNetwork.this);
+      }
+    }
+  });
+  private final TrackedPosSet electrics = new TrackedPosSet(new TrackedPosSet.Listener() {
+    @Override
+    public void added(BlockPos pos) {
+      adjacencyDirty = true;
+    }
+
+    @Override
+    public void removed(BlockPos pos) {
+      adjacencyDirty = true;
+    }
+  });
   private final HashSet<BlockPos> transmitters = new HashSet<>();
   @Nullable
   private EnergyTier currentTier;
@@ -91,12 +125,44 @@ public class EnergyNetwork implements IEnergy {
     return lastDemand;
   }
 
-  public HashSet<BlockPos> getConnections() {
+  public Set<BlockPos> getConnections() {
     return connections;
   }
 
-  public HashSet<BlockPos> getElectrics() {
+  public Set<BlockPos> getElectrics() {
     return electrics;
+  }
+
+  void setOwner(@Nullable EnergyNetworks owner) {
+    this.owner = owner;
+  }
+
+  public int electricSides(BlockPos cablePos) {
+    if (adjacencyDirty) {
+      rebuildAdjacency();
+    }
+    Byte mask = electricSides.get(cablePos);
+    return mask == null ? 0 : mask;
+  }
+
+  private void rebuildAdjacency() {
+    electricSides.clear();
+    if (!electrics.isEmpty()) {
+      BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+      for (BlockPos cablePos : connections) {
+        int mask = 0;
+        for (int i = 0; i < Constants.DIRECTIONS.length; i++) {
+          cursor.setWithOffset(cablePos, Constants.DIRECTIONS[i]);
+          if (electrics.contains(cursor)) {
+            mask |= 1 << i;
+          }
+        }
+        if (mask != 0) {
+          electricSides.put(cablePos, (byte) mask);
+        }
+      }
+    }
+    adjacencyDirty = false;
   }
 
   public HashSet<BlockPos> getTransmitters() {

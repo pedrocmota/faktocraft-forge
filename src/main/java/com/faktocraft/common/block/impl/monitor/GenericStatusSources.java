@@ -38,9 +38,9 @@ public final class GenericStatusSources {
   static final String TAG_ITEMS = "monitorItems";
   public static final String TAG_ITEM_TOTAL = "monitorItemTotal";
   static final String TAG_ITEM_SLOTS = "monitorItemSlots";
-  static final String TAG_COOK = "monitorCook";
-  static final String TAG_COOK_TOTAL = "monitorCookTotal";
-  static final String TAG_BURNING = "monitorBurning";
+  public static final String TAG_COOK = "monitorCook";
+  public static final String TAG_COOK_TOTAL = "monitorCookTotal";
+  public static final String TAG_BURNING = "monitorBurning";
 
   private static final int MAX_TANKS = 4;
   private static final int MAX_ITEM_LINES = 4;
@@ -207,9 +207,9 @@ public final class GenericStatusSources {
         return;
       }
       CompoundTag saved = blockEntity.saveWithoutMetadata(NbtBridge.registries());
-      out.putInt(TAG_COOK, saved.getIntOr("CookTime", 0));
-      out.putInt(TAG_COOK_TOTAL, saved.getIntOr("CookTimeTotal", 0));
-      out.putBoolean(TAG_BURNING, saved.getIntOr("BurnTime", 0) > 0);
+      out.putInt(TAG_COOK, saved.getIntOr("cooking_time_spent", 0));
+      out.putInt(TAG_COOK_TOTAL, saved.getIntOr("cooking_total_time", 0));
+      out.putBoolean(TAG_BURNING, saved.getIntOr("lit_time_remaining", 0) > 0);
     }
 
     @Override

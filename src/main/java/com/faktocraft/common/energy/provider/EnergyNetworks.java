@@ -11,11 +11,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class EnergyNetworks {
 
   private final ArrayList<EnergyNetwork> networks = new ArrayList<>();
+  private final HashMap<BlockPos, EnergyNetwork> cableOwner = new HashMap<>();
+  private boolean ownerIndexDirty;
   private final Level level;
 
   public EnergyNetworks(Level level) {
@@ -26,18 +31,64 @@ public class EnergyNetworks {
     return level;
   }
 
-  public ArrayList<EnergyNetwork> getNetworks() {
-    return networks;
+  public List<EnergyNetwork> getNetworks() {
+    return Collections.unmodifiableList(networks);
+  }
+
+  public void addNetwork(EnergyNetwork network) {
+    attach(network);
   }
 
   @Nullable
   public EnergyNetwork getNetwork(BlockPos pos) {
+    if (ownerIndexDirty) {
+      rebuildOwnerIndex();
+    }
+    return cableOwner.get(pos);
+  }
+
+  void claim(BlockPos pos, EnergyNetwork network) {
+    if (ownerIndexDirty) {
+      return;
+    }
+    EnergyNetwork previous = cableOwner.putIfAbsent(pos, network);
+    if (previous != null && previous != network) {
+      ownerIndexDirty = true;
+    }
+  }
+
+  void release(BlockPos pos, EnergyNetwork network) {
+    if (ownerIndexDirty) {
+      return;
+    }
+    if (cableOwner.get(pos) == network) {
+      cableOwner.remove(pos);
+    }
+  }
+
+  private void attach(EnergyNetwork network) {
+    networks.add(network);
+    network.setOwner(this);
+    for (BlockPos pos : network.getConnections()) {
+      claim(pos, network);
+    }
+  }
+
+  private void detach(EnergyNetwork network) {
+    if (networks.remove(network)) {
+      network.setOwner(null);
+      ownerIndexDirty = true;
+    }
+  }
+
+  private void rebuildOwnerIndex() {
+    cableOwner.clear();
     for (EnergyNetwork network : networks) {
-      if (network.getConnections().contains(pos)) {
-        return network;
+      for (BlockPos pos : network.getConnections()) {
+        cableOwner.putIfAbsent(pos, network);
       }
     }
-    return null;
+    ownerIndexDirty = false;
   }
 
   @Nullable
@@ -53,12 +104,12 @@ public class EnergyNetworks {
 
   public EnergyNetwork createNetwork(BlockPos pos, EnergyTier tier) {
     EnergyNetwork network = new EnergyNetwork(pos, tier);
-    networks.add(network);
+    attach(network);
     return network;
   }
 
   public void removeNetwork(EnergyNetwork network) {
-    networks.remove(network);
+    detach(network);
   }
 
   private static boolean linkAllowed(BlockState state, Direction direction) {
@@ -83,7 +134,7 @@ public class EnergyNetworks {
 
     for (EnergyNetwork stale : new ArrayList<>(networks)) {
       if (stale.getConnections().remove(pos) && stale.getConnections().isEmpty()) {
-        networks.remove(stale);
+        detach(stale);
       }
     }
     for (Direction direction : Constants.DIRECTIONS) {
@@ -129,9 +180,9 @@ public class EnergyNetworks {
         target.getElectrics().addAll(network.getElectrics());
         target.getTransmitters().addAll(network.getTransmitters());
         target.setEnergy(Math.min(target.maxEnergy(), target.energyStored() + network.energyStored()));
-        networks.remove(network);
+        detach(network);
       }
-      networks.add(target);
+      attach(target);
     } else if (adjacentNetworks.size() == 1) {
       target = adjacentNetworks.get(0);
       target.getConnections().add(pos);
@@ -172,7 +223,7 @@ public class EnergyNetworks {
       candidates.removeAll(rebuilt.getConnections());
       candidates.remove(orphanStart);
       if (!rebuilt.getConnections().isEmpty()) {
-        networks.add(rebuilt);
+        attach(rebuilt);
       }
     }
     EnergyAudit.check(this, "rebuildLinks");
@@ -214,7 +265,7 @@ public class EnergyNetworks {
     if (network.getConnections().isEmpty()) {
       return;
     }
-    networks.add(network);
+    attach(network);
     rebuildLinks(network, start);
     EnergyAudit.check(this, "adoptOrphans");
   }
@@ -239,7 +290,7 @@ public class EnergyNetworks {
         floodFill(rebuilt, relative, remaining);
 
         remaining.removeAll(rebuilt.getConnections());
-        networks.add(rebuilt);
+        attach(rebuilt);
         rebuiltSegments.add(rebuilt);
       }
     }
@@ -249,7 +300,7 @@ public class EnergyNetworks {
         rebuilt.setEnergy(Math.min(rebuilt.maxEnergy(), share));
       }
     }
-    networks.remove(network);
+    detach(network);
     EnergyAudit.check(this, "onRemove");
   }
 
@@ -435,12 +486,17 @@ public class EnergyNetworks {
   }
 
   public void deserializeNBT(CompoundTag tag) {
+    for (EnergyNetwork network : networks) {
+      network.setOwner(null);
+    }
     networks.clear();
+    cableOwner.clear();
+    ownerIndexDirty = false;
     for (String key : tag.keySet()) {
       if (tag.contains(key)) {
         EnergyNetwork network = new EnergyNetwork();
         network.deserializeNBT(tag.getCompoundOrEmpty(key));
-        networks.add(network);
+        attach(network);
         pendingRepair.add(network);
       }
     }
@@ -453,7 +509,7 @@ public class EnergyNetworks {
     for (EnergyNetwork network : new ArrayList<>(networks)) {
       network.getConnections().removeIf(pos -> !claimed.add(pos));
       if (network.getConnections().isEmpty()) {
-        networks.remove(network);
+        detach(network);
         pendingRepair.remove(network);
       }
     }

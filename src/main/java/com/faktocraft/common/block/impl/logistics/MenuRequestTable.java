@@ -196,7 +196,7 @@ public class MenuRequestTable extends AbstractContainerMenu {
     return recipe != null ? recipe.assemble(input) : ItemStack.EMPTY;
   }
 
-  void refreshResult() {
+  public void refreshResult() {
     if (table == null || level.isClientSide()) {
       return;
     }
@@ -219,16 +219,23 @@ public class MenuRequestTable extends AbstractContainerMenu {
   }
 
   private void consumeMatrix(Player taker) {
-    for (int i = 0; i < 9; i++) {
-      ItemStack inMatrix = craftView.getItem(i);
-      if (inMatrix.isEmpty()) {
-        continue;
-      }
-      ItemStack remainder = com.faktocraft.common.util.ItemStackUtil.craftingRemainder(inMatrix);
-      craftView.removeItem(i, 1);
-      if (!remainder.isEmpty()) {
-        if (craftView.getItem(i).isEmpty()) {
-          craftView.setItem(i, remainder);
+    CraftingInput.Positioned positioned = craftView.asPositionedCraftInput();
+    CraftingInput input = positioned.input();
+    CraftingRecipe recipe = RecipeUtil.findRecipe(level, RecipeType.CRAFTING, input).orElse(null);
+    List<ItemStack> remainders = recipe != null ? recipe.getRemainingItems(input)
+        : CraftingRecipe.defaultCraftingReminder(input);
+    for (int y = 0; y < input.height(); y++) {
+      for (int x = 0; x < input.width(); x++) {
+        int slot = x + positioned.left() + (y + positioned.top()) * craftView.getWidth();
+        if (!craftView.getItem(slot).isEmpty()) {
+          craftView.removeItem(slot, 1);
+        }
+        ItemStack remainder = remainders.get(x + y * input.width());
+        if (remainder.isEmpty()) {
+          continue;
+        }
+        if (craftView.getItem(slot).isEmpty()) {
+          craftView.setItem(slot, remainder);
         } else if (!taker.getInventory().add(remainder)) {
           taker.drop(remainder, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }

@@ -258,4 +258,9 @@ public class BlockEntityFuelingStation extends FaktocraftBlockEntity implements 
   public java.util.List<FluidStorage> getGuiTanks() {
     return java.util.List.of(tank);
   }
+
+  @Override
+  protected boolean syncEnergyToWorld() {
+    return true;
+  }
 }

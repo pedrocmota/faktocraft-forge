@@ -71,6 +71,23 @@ public class BlockEntityLogisticsController extends FaktocraftBlockEntity implem
         && getEnergyStorage().energyStored() > 0;
   }
 
+  @Nullable
+  private List<BlockEntityChassis.ProviderRef> tickProviders;
+  @Nullable
+  private LogisticsGraph tickProvidersGraph;
+  private long tickProvidersTime = Long.MIN_VALUE;
+
+  public List<BlockEntityChassis.ProviderRef> providersThisTick(net.minecraft.world.level.Level level,
+      LogisticsGraph currentGraph) {
+    long now = level.getGameTime();
+    if (tickProviders == null || tickProvidersGraph != currentGraph || tickProvidersTime != now) {
+      tickProviders = BlockEntityChassis.providers(level, currentGraph);
+      tickProvidersGraph = currentGraph;
+      tickProvidersTime = now;
+    }
+    return new java.util.ArrayList<>(tickProviders);
+  }
+
   public TaskLedger getLedger() {
     return ledger;
   }
@@ -88,7 +105,8 @@ public class BlockEntityLogisticsController extends FaktocraftBlockEntity implem
   public GuiSnapshot guiSnapshot(net.minecraft.world.level.Level level, LogisticsGraph currentGraph) {
     if (guiSnapshotCache == null || level.getGameTime() != guiSnapshotTick) {
       guiSnapshotTick = level.getGameTime();
-      java.util.Map<ItemKey, Integer> stock = BlockEntityChassis.stockSnapshot(level, currentGraph, ledger);
+      java.util.Map<ItemKey, Integer> stock = BlockEntityChassis.stockSnapshot(level, ledger,
+          providersThisTick(level, currentGraph));
       List<LogisticsPlanner.CraftDecl> decls = collectDecls(currentGraph);
       guiSnapshotCache = new GuiSnapshot(stock, decls, List.copyOf(configErrors),
           LogisticsPlanner.craftableSet(stock, decls), LogisticsPlanner.producibleSet(stock, decls));
@@ -147,7 +165,7 @@ public class BlockEntityLogisticsController extends FaktocraftBlockEntity implem
     if (system && hasPendingPlanFor(dest)) {
       return;
     }
-    Map<ItemKey, Integer> stock = BlockEntityChassis.stockSnapshot(level, current, ledger);
+    Map<ItemKey, Integer> stock = BlockEntityChassis.stockSnapshot(level, ledger, providersThisTick(level, current));
     List<LogisticsPlanner.CraftDecl> decls = allowCrafts ? collectDecls(current) : List.of();
     LogisticsPlanner.PlanRequest request = new LogisticsPlanner.PlanRequest(target, quantity, stock, decls);
     CompletableFuture<LogisticsPlanner.Plan> future = LogisticsEngine.submit(() -> LogisticsPlanner.plan(request));
@@ -221,7 +239,7 @@ public class BlockEntityLogisticsController extends FaktocraftBlockEntity implem
       }
     }
 
-    Map<ItemKey, Integer> stock = BlockEntityChassis.stockSnapshot(level, current, ledger);
+    Map<ItemKey, Integer> stock = BlockEntityChassis.stockSnapshot(level, ledger, providersThisTick(level, current));
     for (Map.Entry<ItemKey, Integer> entry : plan.withdrawals().entrySet()) {
       if (stock.getOrDefault(entry.getKey(), 0) < entry.getValue()) {
         recordFailure(pending.player(), pending.system(), pending.target(), failedQuantity(pending),
@@ -305,7 +323,7 @@ public class BlockEntityLogisticsController extends FaktocraftBlockEntity implem
     if (current == null || level == null) {
       return;
     }
-    Map<ItemKey, Integer> stock = BlockEntityChassis.stockSnapshot(level, current, ledger);
+    Map<ItemKey, Integer> stock = BlockEntityChassis.stockSnapshot(level, ledger, providersThisTick(level, current));
     List<LogisticsPlanner.CraftDecl> decls = collectDecls(current);
     LogisticsPlanner.PlanRequest request = new LogisticsPlanner.PlanRequest(origin.target(), quantity, stock,
         decls);

@@ -121,6 +121,7 @@ public class ElectricArmorItem extends BaseArmor implements IElectricItem {
 
   @Override
   public void inventoryTick(ItemStack stack, ServerLevel level, Entity owner, @Nullable EquipmentSlot slot) {
+    super.inventoryTick(stack, level, owner, slot);
     tickElectric(stack);
   }
 

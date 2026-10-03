@@ -33,8 +33,11 @@ public class InvWrapper implements IItemHandler {
       return ItemStack.EMPTY;
     }
     ItemStack existing = inv.getItem(slot);
-    int limit = Math.min(inv.getMaxStackSize(), stack.getMaxStackSize());
+    int limit = Math.min(getSlotLimit(slot), stack.getMaxStackSize());
     if (!existing.isEmpty()) {
+      if (existing.getCount() >= Math.min(existing.getMaxStackSize(), getSlotLimit(slot))) {
+        return stack;
+      }
       if (!ItemHandlerHelper.canItemStacksStack(stack, existing)) {
         return stack;
       }
@@ -48,11 +51,8 @@ public class InvWrapper implements IItemHandler {
     }
     boolean reachedLimit = stack.getCount() > limit;
     if (!simulate) {
-      if (existing.isEmpty()) {
-        inv.setItem(slot, reachedLimit ? stack.copyWithCount(limit) : stack.copy());
-      } else {
-        existing.grow(reachedLimit ? limit : stack.getCount());
-      }
+      int moved = reachedLimit ? limit : stack.getCount();
+      inv.setItem(slot, stack.copyWithCount(existing.getCount() + moved));
       inv.setChanged();
     }
     return reachedLimit ? stack.copyWithCount(stack.getCount() - limit) : ItemStack.EMPTY;

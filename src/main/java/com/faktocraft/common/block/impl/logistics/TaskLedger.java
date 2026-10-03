@@ -1675,7 +1675,7 @@ public final class TaskLedger {
   private void pullUnreserved(Level level, LogisticsGraph graph, RequestJob job, StepData step, ItemKey item,
       int amount, Endpoint dest, BlockPos destNode) {
     int perItem = Math.max(0, ModConfig.server().logistics_energy_per_item);
-    List<BlockEntityChassis.ProviderRef> providers = BlockEntityChassis.providers(level, graph);
+    List<BlockEntityChassis.ProviderRef> providers = core.providersThisTick(level, graph);
     providers.sort((a, b) -> Integer.compare(b.priority(), a.priority()));
     for (BlockEntityChassis.ProviderRef provider : providers) {
       if (amount <= 0) {
@@ -1799,7 +1799,7 @@ public final class TaskLedger {
       return amount;
     }
     int pulled = 0;
-    List<BlockEntityChassis.ProviderRef> providers = BlockEntityChassis.providers(level, graph);
+    List<BlockEntityChassis.ProviderRef> providers = core.providersThisTick(level, graph);
 
     providers.sort((a, b) -> Integer.compare(b.priority(), a.priority()));
     for (BlockEntityChassis.ProviderRef provider : providers) {

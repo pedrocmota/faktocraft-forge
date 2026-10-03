@@ -2,23 +2,15 @@ package com.faktocraft.gametest.fluids;
 
 import com.faktocraft.common.fluid.ModFluids;
 import com.faktocraft.gametest.GameTest;
-import com.mojang.authlib.GameProfile;
-import io.netty.channel.embedded.EmbeddedChannel;
-import java.util.UUID;
+import com.faktocraft.gametest.MockPlayers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.network.protocol.game.ServerboundAcceptTeleportationPacket;
 import net.minecraft.network.protocol.game.ServerboundClientTickEndPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.CommonListenerCookie;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.pig.Pig;
-import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 
 public class AcidDamageGameTest {
@@ -47,32 +39,7 @@ public class AcidDamageGameTest {
   }
 
   private static ServerPlayer survivalPlayer(GameTestHelper helper, double x, double y, double z) {
-    CommonListenerCookie cookie = CommonListenerCookie
-        .createInitial(new GameProfile(UUID.randomUUID(), "acid-test-player"), false);
-    ServerPlayer player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(), cookie.gameProfile(),
-        cookie.clientInformation()) {
-      @Override
-      public GameType gameMode() {
-        return GameType.SURVIVAL;
-      }
-    };
-    Connection connection = new Connection(PacketFlow.SERVERBOUND);
-    new EmbeddedChannel(connection);
-    helper.getLevel().getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
-    player.connection.markClientLoaded();
-    GameType.SURVIVAL.updatePlayerAbilities(player.getAbilities());
-    player.onUpdateAbilities();
-    player.teleportTo(x, y, z);
-    try {
-      var field = ServerGamePacketListenerImpl.class.getDeclaredField("awaitingTeleport");
-      field.setAccessible(true);
-      int id = field.getInt(player.connection);
-      player.connection.handleAcceptTeleportPacket(new ServerboundAcceptTeleportationPacket(id, x, y, z, 0.0F, 0.0F));
-    } catch (ReflectiveOperationException e) {
-      throw new IllegalStateException(e);
-    }
-    helper.onEachTick(() -> player.connection.tick());
-    return player;
+    return MockPlayers.survival(helper, x, y, z).player();
   }
 
   private static void assertHurtOnContact(GameTestHelper helper, LivingEntity entity, Runnable eachTick,
@@ -105,7 +72,9 @@ public class AcidDamageGameTest {
   public static void acidHurtsOnContact(GameTestHelper helper) {
     buildPool(helper);
     Pig pig = helper.spawn(EntityTypes.PIG, SPAWN);
-    assertHurtOnContact(helper, pig, () -> { }, () -> { }, "pig");
+    assertHurtOnContact(helper, pig, () -> {
+    }, () -> {
+    }, "pig");
   }
 
   @GameTest(template = TEMPLATE, timeoutTicks = 80)
@@ -113,7 +82,8 @@ public class AcidDamageGameTest {
     buildPool(helper);
     BlockPos abs = helper.absolutePos(PLAYER_SPAWN);
     ServerPlayer player = survivalPlayer(helper, abs.getX() + 0.5, abs.getY(), abs.getZ() + 0.5);
-    assertHurtOnContact(helper, player, () -> { },
+    assertHurtOnContact(helper, player, () -> {
+    },
         () -> helper.getLevel().getServer().getPlayerList().remove(player), "standing player");
   }
 

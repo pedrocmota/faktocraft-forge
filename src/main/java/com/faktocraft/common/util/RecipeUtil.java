@@ -21,15 +21,29 @@ import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.WeakHashMap;
 import java.util.stream.Stream;
 
 @EventBusSubscriber(modid = Faktocraft.MODID)
 public final class RecipeUtil {
   private static volatile RecipeMap clientRecipes = RecipeMap.EMPTY;
+  private static final Map<Recipe<?>, Identifier> KNOWN_IDS = Collections.synchronizedMap(new WeakHashMap<>());
 
   private RecipeUtil() {
+  }
+
+  public static <T extends Recipe<?>> RecipeHolder<T> remember(RecipeHolder<T> holder) {
+    KNOWN_IDS.put(holder.value(), holder.id().identifier());
+    return holder;
+  }
+
+  private static <T extends Recipe<?>> Optional<RecipeHolder<T>> remember(Optional<RecipeHolder<T>> holder) {
+    holder.ifPresent(RecipeUtil::remember);
+    return holder;
   }
 
   public static void setClientRecipes(RecipeMap recipes) {
@@ -60,13 +74,13 @@ public final class RecipeUtil {
   public static <I extends RecipeInput, T extends Recipe<I>> Optional<RecipeHolder<T>> getRecipeFor(
       @Nullable Level level, RecipeType<T> type, I input) {
     if (level instanceof ServerLevel serverLevel) {
-      return serverLevel.recipeAccess().getRecipeFor(type, input, level);
+      return remember(serverLevel.recipeAccess().getRecipeFor(type, input, level));
     }
     RecipeMap map = recipeMap(level);
     if (map == null) {
       return Optional.empty();
     }
-    return map.getRecipesFor(type, input, level).findFirst();
+    return remember(map.getRecipesFor(type, input, level).findFirst());
   }
 
   public static <I extends RecipeInput, T extends Recipe<I>> Optional<T> findRecipe(@Nullable Level level,
@@ -80,7 +94,9 @@ public final class RecipeUtil {
     if (map == null) {
       return List.of();
     }
-    return List.copyOf(map.byType(type));
+    List<RecipeHolder<T>> holders = List.copyOf(map.byType(type));
+    holders.forEach(RecipeUtil::remember);
+    return holders;
   }
 
   public static <I extends RecipeInput, T extends Recipe<I>> List<T> getAllRecipesFor(@Nullable Level level,
@@ -92,7 +108,7 @@ public final class RecipeUtil {
     Collection<RecipeHolder<T>> holders = map.byType(type);
     List<T> recipes = new ArrayList<>(holders.size());
     for (RecipeHolder<T> holder : holders) {
-      recipes.add(holder.value());
+      recipes.add(remember(holder).value());
     }
     return recipes;
   }
@@ -109,20 +125,31 @@ public final class RecipeUtil {
     if (map == null) {
       return Optional.empty();
     }
-    return Optional.ofNullable(map.byKey(ResourceKey.create(Registries.RECIPE, id)));
+    RecipeHolder<?> holder = map.byKey(ResourceKey.create(Registries.RECIPE, id));
+    if (holder != null) {
+      remember(holder);
+    }
+    return Optional.ofNullable(holder);
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
   public static Optional<Identifier> idOf(@Nullable Level level, @Nullable Recipe<?> recipe) {
+    if (recipe == null) {
+      return Optional.empty();
+    }
+    Identifier known = KNOWN_IDS.get(recipe);
+    if (known != null) {
+      return Optional.of(known);
+    }
     RecipeMap map = recipeMap(level);
-    if (map == null || recipe == null) {
+    if (map == null) {
       return Optional.empty();
     }
     Collection<RecipeHolder<?>> holders = (Collection<RecipeHolder<?>>) (Collection) map
         .byType((RecipeType) recipe.getType());
     for (RecipeHolder<?> holder : holders) {
       if (holder.value() == recipe) {
-        return Optional.of(holder.id().identifier());
+        return Optional.of(remember(holder).id().identifier());
       }
     }
     return Optional.empty();
@@ -144,7 +171,7 @@ public final class RecipeUtil {
     public Optional<RecipeHolder<T>> getHolderFor(I input, @Nullable Level level) {
       Optional<RecipeHolder<T>> result;
       if (level instanceof ServerLevel serverLevel) {
-        result = serverLevel.recipeAccess().getRecipeFor(type, input, level, lastRecipe);
+        result = RecipeUtil.remember(serverLevel.recipeAccess().getRecipeFor(type, input, level, lastRecipe));
       } else {
         result = RecipeUtil.getRecipeFor(level, type, input);
       }

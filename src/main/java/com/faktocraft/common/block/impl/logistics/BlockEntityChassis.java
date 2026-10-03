@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import com.faktocraft.common.util.transfer.IItemHandler;
+import com.faktocraft.common.util.transfer.ItemHandlerHelper;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -520,9 +521,50 @@ public class BlockEntityChassis extends LegacyNbtBlockEntity implements com.fakt
   private static final int RANK_MATCH = 0;
   private static final int RANK_OVERFLOW = 1;
 
-  public record SinkCandidate(BlockPos nodePos, Endpoint endpoint,
-      @Nullable List<ModuleSettings.FilterLine> lines,
-      @Nullable java.util.Map<String, Boolean> tree, int fallbackRank, int priority, int distance) {
+  public static final class SinkCandidate {
+
+    private final BlockPos nodePos;
+    private final Endpoint endpoint;
+    @Nullable
+    private final List<ModuleSettings.FilterLine> lines;
+    @Nullable
+    private final java.util.Map<String, Boolean> tree;
+    private final int fallbackRank;
+    private final int priority;
+    private final int distance;
+    @Nullable
+    private List<AdjacentHandler> handlers;
+
+    public SinkCandidate(BlockPos nodePos, Endpoint endpoint, @Nullable List<ModuleSettings.FilterLine> lines,
+        @Nullable java.util.Map<String, Boolean> tree, int fallbackRank, int priority, int distance) {
+      this.nodePos = nodePos;
+      this.endpoint = endpoint;
+      this.lines = lines;
+      this.tree = tree;
+      this.fallbackRank = fallbackRank;
+      this.priority = priority;
+      this.distance = distance;
+    }
+
+    public BlockPos nodePos() {
+      return nodePos;
+    }
+
+    public Endpoint endpoint() {
+      return endpoint;
+    }
+
+    public int fallbackRank() {
+      return fallbackRank;
+    }
+
+    public int priority() {
+      return priority;
+    }
+
+    public int distance() {
+      return distance;
+    }
 
     boolean accepts(ItemStack stack) {
       if (lines == null && tree == null) {
@@ -530,6 +572,27 @@ public class BlockEntityChassis extends LegacyNbtBlockEntity implements com.fakt
       }
       return tree != null ? LogisticsItemTree.allows(tree, stack)
           : ModuleSettings.anyMatches(lines, stack);
+    }
+
+    ItemStack simulateInsert(Level level, ItemStack stack) {
+      if (endpoint.type() != Endpoint.Type.CHASSIS) {
+        return endpoint.insert(level, stack, true);
+      }
+      if (!endpoint.isLoaded(level) || stack.isEmpty()) {
+        return stack;
+      }
+      if (handlers == null) {
+        handlers = level.getBlockEntity(endpoint.pos()) instanceof BlockEntityChassis chassis
+            ? chassis.adjacentHandlers() : List.of();
+      }
+      ItemStack remaining = stack.copy();
+      for (AdjacentHandler adjacent : handlers) {
+        remaining = ItemHandlerHelper.insertItemStacked(adjacent.handler(), remaining, true);
+        if (remaining.isEmpty()) {
+          return ItemStack.EMPTY;
+        }
+      }
+      return remaining;
     }
   }
 
@@ -587,7 +650,7 @@ public class BlockEntityChassis extends LegacyNbtBlockEntity implements com.fakt
       if (!better) {
         continue;
       }
-      ItemStack leftover = candidate.endpoint().insert(level, stack, true);
+      ItemStack leftover = candidate.simulateInsert(level, stack);
       if (leftover.getCount() < stack.getCount()) {
         best = new SinkTarget(candidate.nodePos(), candidate.endpoint(), candidate.priority());
         bestRank = rank;
@@ -709,9 +772,13 @@ public class BlockEntityChassis extends LegacyNbtBlockEntity implements com.fakt
   }
 
   public static Map<ItemKey, Integer> stockSnapshot(Level level, LogisticsGraph graph, TaskLedger ledger) {
+    return stockSnapshot(level, ledger, providers(level, graph));
+  }
+
+  public static Map<ItemKey, Integer> stockSnapshot(Level level, TaskLedger ledger, List<ProviderRef> providers) {
     Map<ItemKey, Integer> stock = new HashMap<>();
     java.util.Set<BlockPos> seen = new java.util.HashSet<>();
-    for (ProviderRef provider : providers(level, graph)) {
+    for (ProviderRef provider : providers) {
       if (!seen.add(provider.inventoryPos())) {
         continue;
       }

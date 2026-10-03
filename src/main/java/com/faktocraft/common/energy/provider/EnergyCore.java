@@ -229,10 +229,21 @@ public class EnergyCore extends SavedData implements IEnergyCore {
   }
 
   private boolean hasLocalDemand(EnergyNetwork network) {
+    if (network.getElectrics().isEmpty()) {
+      return false;
+    }
     for (BlockPos cablePos : network.getConnections()) {
-      for (Direction direction : Constants.DIRECTIONS) {
+      int sides = network.electricSides(cablePos);
+      if (sides == 0) {
+        continue;
+      }
+      for (int i = 0; i < Constants.DIRECTIONS.length; i++) {
+        if ((sides & (1 << i)) == 0) {
+          continue;
+        }
+        Direction direction = Constants.DIRECTIONS[i];
         BlockPos relative = cablePos.relative(direction);
-        if (!network.getElectrics().contains(relative) || !level.isLoaded(relative)) {
+        if (!level.isLoaded(relative)) {
           continue;
         }
         IEnergy energy = EnergyLookup.find(level, relative, direction.getOpposite());
@@ -723,9 +734,17 @@ public class EnergyCore extends SavedData implements IEnergyCore {
       boolean exploded = false;
 
       for (BlockPos cablePos : network.getConnections()) {
-        for (Direction direction : Constants.DIRECTIONS) {
+        int sides = network.electricSides(cablePos);
+        if (sides == 0) {
+          continue;
+        }
+        for (int i = 0; i < Constants.DIRECTIONS.length; i++) {
+          if ((sides & (1 << i)) == 0) {
+            continue;
+          }
+          Direction direction = Constants.DIRECTIONS[i];
           BlockPos relative = cablePos.relative(direction);
-          if (!network.getElectrics().contains(relative) || posChecked.contains(relative)) {
+          if (posChecked.contains(relative)) {
             continue;
           }
           if (!level.isLoaded(relative)) {

@@ -89,6 +89,7 @@ public class JetpackItem extends BaseArmor implements CapabilityBridge.IFluidHan
 
   @Override
   public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
+    super.inventoryTick(stack, level, entity, slot);
     wornTick(stack, level, entity);
   }
 

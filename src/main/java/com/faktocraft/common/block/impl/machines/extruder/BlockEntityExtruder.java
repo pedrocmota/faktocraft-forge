@@ -28,7 +28,6 @@ import com.faktocraft.common.util.RecipeUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
@@ -45,7 +44,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 public class BlockEntityExtruder extends FaktocraftBlockEntity
     implements IEnergyBlock, ITileSound, IExpCollector, ISupportUpgrades, IMachineActions.IRecipeSwitcher {
@@ -62,9 +60,9 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
 
   protected int recipeIndex = 0;
   @Nullable
-  protected List<FluidExtrudingRecipe> recipes;
+  protected List<RecipeHolder<FluidExtrudingRecipe>> recipes;
   @Nullable
-  protected FluidExtrudingRecipe recipe;
+  protected RecipeHolder<FluidExtrudingRecipe> recipe;
   @Nullable
   private String pendingRecipeId;
 
@@ -107,7 +105,6 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
     if (level instanceof ServerLevel serverLevel) {
       recipes = RecipeUtil.getAllRecipeHoldersFor(serverLevel, ModRecipeType.FLUID_EXTRUDING).stream()
           .sorted(Comparator.comparing(holder -> holder.id().identifier()))
-          .map(RecipeHolder::value)
           .toList();
     }
   }
@@ -127,7 +124,7 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
     index = Math.max(0, Math.min(index, recipes.size() - 1));
     this.recipe = recipes.get(index);
     this.recipeIndex = index;
-    getItemStackHandler().setStackInSlot(INPUT_SLOT, recipe.getResultItem());
+    getItemStackHandler().setStackInSlot(INPUT_SLOT, recipe.value().getResultItem());
   }
 
   private int indexOfRecipe(@Nullable String id) {
@@ -135,7 +132,7 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
       return -1;
     }
     for (int i = 0; i < recipes.size(); i++) {
-      if (RecipeUtil.idOf(level, recipes.get(i)).filter(recipeId -> recipeId.toString().equals(id)).isPresent()) {
+      if (recipes.get(i).id().identifier().toString().equals(id)) {
         return i;
       }
     }
@@ -194,7 +191,7 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
     final ItemStack outputStack = getItemStackHandler().getStackInSlot(OUTPUT_SLOT);
 
     if (recipe != null) {
-      FluidExtrudingRecipe currentRecipe = recipe;
+      FluidExtrudingRecipe currentRecipe = recipe.value();
       ItemStack resultItem = currentRecipe.getResultItem();
 
       progress.rescaleMax(getSpeedFactor() * currentRecipe.getDuration());
@@ -260,9 +257,8 @@ public class BlockEntityExtruder extends FaktocraftBlockEntity
     CompoundTag progressTag = new CompoundTag();
     progress.save(progressTag);
     tag.put("progress", progressTag);
-    Optional<Identifier> recipeId = RecipeUtil.idOf(level, recipe);
-    if (recipeId.isPresent()) {
-      tag.putString("recipe", recipeId.get().toString());
+    if (recipe != null) {
+      tag.putString("recipe", recipe.id().identifier().toString());
     } else if (pendingRecipeId != null) {
       tag.putString("recipe", pendingRecipeId);
     }

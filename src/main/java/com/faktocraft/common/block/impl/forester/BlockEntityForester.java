@@ -118,6 +118,20 @@ public class BlockEntityForester extends BlockEntityGantry {
     public boolean isItemValid(int slot, @NotNull ItemStack stack) {
       return slot < INPUT_SLOTS && inputs.isItemValid(slot, stack);
     }
+
+    @Override
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+      if (slot < INPUT_SLOTS) {
+        inputs.setStackInSlot(slot, stack);
+      } else {
+        inventory.setStackInSlot(slot - INPUT_SLOTS, stack);
+      }
+    }
+
+    @Override
+    public boolean supportsSetStackInSlot() {
+      return true;
+    }
   };
 
   private boolean resinMode = false;

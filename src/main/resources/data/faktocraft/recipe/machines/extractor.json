@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "faktocraft:consuming_shaped",
   "group": "faktocraft_machines",
   "key": {
     "C": "faktocraft:basic_machine_casing",

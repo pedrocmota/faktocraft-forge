@@ -41,6 +41,8 @@ public final class GuiScaleHelper {
       return;
     }
     window.setGuiScale(scale);
+    net.neoforged.neoforge.client.ClientHooks.fireWindowResize(window);
+    minecraft.gui.resizeScreenLayers(window.getGuiScaledWidth(), window.getGuiScaledHeight());
     minecraft.mouseHandler.setIgnoreFirstMove();
     screen.width = window.getGuiScaledWidth();
     screen.height = window.getGuiScaledHeight();

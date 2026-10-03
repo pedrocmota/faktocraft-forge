@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "faktocraft:bronze_helmet",
+    "faktocraft:bronze_chestplate",
+    "faktocraft:bronze_leggings",
+    "faktocraft:bronze_boots"
+  ]
+}

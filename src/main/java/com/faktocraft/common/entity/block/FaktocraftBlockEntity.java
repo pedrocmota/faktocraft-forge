@@ -33,6 +33,7 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -465,7 +466,10 @@ public class FaktocraftBlockEntity extends CapabilityBlockEntity {
       @Override
       public void updated() {
         setChanged();
-        shouldUpdateState = true;
+        markGuiChanged();
+        if (syncEnergyToWorld()) {
+          shouldUpdateState = true;
+        }
       }
     };
     this.hasEnergy = true;
@@ -811,6 +815,16 @@ public class FaktocraftBlockEntity extends CapabilityBlockEntity {
     return 10;
   }
 
+  protected boolean syncEnergyToWorld() {
+    return false;
+  }
+
+  protected void markGuiChanged() {
+    if (level != null && !level.isClientSide()) {
+      guiChangeTick = level.getGameTime();
+    }
+  }
+
   public long getGuiChangeTick() {
     return guiChangeTick;
   }
@@ -886,6 +900,12 @@ public class FaktocraftBlockEntity extends CapabilityBlockEntity {
   public void addRecipeUsed(@Nullable Recipe<?> recipe) {
     if (recipe != null) {
       RecipeUtil.idOf(level, recipe).ifPresent(id -> recipesUsed.merge(id, 1, Integer::sum));
+    }
+  }
+
+  public void addRecipeUsed(@Nullable RecipeHolder<?> holder) {
+    if (holder != null) {
+      recipesUsed.merge(holder.id().identifier(), 1, Integer::sum);
     }
   }
 

@@ -21,7 +21,7 @@ public final class FuelUtil {
   }
 
   public static int burnTime(@Nullable Level level, ItemStack stack, @Nullable BlockEntity blockEntity) {
-    if (stack.isEmpty() || !(level instanceof ServerLevel serverLevel)) {
+    if (stack.isEmpty()) {
       return 0;
     }
     CookingFuel fuel = stack.get(DataComponents.COOKING_FUEL);
@@ -30,6 +30,9 @@ public final class FuelUtil {
     }
     if (fuel.burnTime() instanceof ResolvableInt.Constant constant) {
       return constant.value();
+    }
+    if (!(level instanceof ServerLevel serverLevel)) {
+      return 1;
     }
     BlockPos pos = blockEntity != null ? blockEntity.getBlockPos() : BlockPos.ZERO;
     LootParams.Builder params = new LootParams.Builder(serverLevel)

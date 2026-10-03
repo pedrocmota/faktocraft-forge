@@ -490,8 +490,7 @@ public class EnergyNetworkGameTest {
     com.faktocraft.common.energy.provider.EnergyNetwork ghost = new com.faktocraft.common.energy.provider.EnergyNetwork(
         haunted,
         com.faktocraft.common.enums.EnergyTier.VERY_HIGH);
-    com.faktocraft.common.energy.provider.EnergyCore.get(helper.getLevel()).getNetworks()
-        .getNetworks().add(ghost);
+    com.faktocraft.common.energy.provider.EnergyCore.get(helper.getLevel()).getNetworks().addNetwork(ghost);
 
     placeCable(helper, new BlockPos(3, 1, 1), ModBlocks.HV_CABLE_INSULATED);
 

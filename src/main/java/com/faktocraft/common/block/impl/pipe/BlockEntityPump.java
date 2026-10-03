@@ -472,4 +472,9 @@ public class BlockEntityPump extends FaktocraftBlockEntity
   public boolean canReceiveEnergyDir(@Nullable Direction side) {
     return side != Direction.DOWN;
   }
+
+  @Override
+  protected boolean syncEnergyToWorld() {
+    return true;
+  }
 }

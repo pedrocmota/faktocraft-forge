@@ -172,10 +172,11 @@ public final class NbtBridge {
   }
 
   public static void migrateLegacyComponents(ItemStack stack) {
-    CompoundTag data = customData(stack);
-    if (data == null) {
+    CustomData raw = stack.get(DataComponents.CUSTOM_DATA);
+    if (raw == null || !(raw.contains("energy") || raw.contains("fluid"))) {
       return;
     }
+    CompoundTag data = raw.copyTag();
     if (data.contains("energy")) {
       com.faktocraft.common.registries.ModComponents.setEnergy(stack, data.getIntOr("energy", 0));
     }

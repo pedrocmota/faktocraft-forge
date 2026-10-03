@@ -27,6 +27,7 @@ public class ItemNanosaber extends SwordElectricItem {
 
   @Override
   public void inventoryTick(ItemStack stack, ServerLevel level, Entity owner, @Nullable EquipmentSlot slot) {
+    super.inventoryTick(stack, level, owner, slot);
     if (level.getGameTime() % 20 == 0) {
       IEnergy energy = getEnergy(stack);
       if (isActive(stack)) {

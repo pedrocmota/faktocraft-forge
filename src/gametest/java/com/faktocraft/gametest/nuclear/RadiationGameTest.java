@@ -235,6 +235,7 @@ public class RadiationGameTest {
       }
     }
     Pig pig = spawnPig(helper);
+    RadiationManager.clear(helper.getLevel().dimension());
     RadiationManager.Reading reading = RadiationManager.measure(helper.getLevel(), pig);
     if (reading.ambient() <= 0.0F || reading.strongest() == null || !vein.contains(reading.strongest())) {
       helper.fail("uranium ore vein was not measured: " + reading);

@@ -168,4 +168,30 @@ public class StatusMonitorGameTest {
       }
     });
   }
+
+  @GameTest(template = TEMPLATE, timeoutTicks = 200)
+  public static void statusMonitorReadsVanillaFurnace(GameTestHelper helper) {
+    helper.setBlock(MACHINE, Blocks.FURNACE.defaultBlockState());
+    if (!(TestUtil.blockEntity(helper,
+        MACHINE) instanceof net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity furnace)) {
+      helper.fail("no furnace block entity");
+      return;
+    }
+    furnace.setItem(0, new ItemStack(Items.COBBLESTONE, 8));
+    furnace.setItem(1, new ItemStack(Items.COAL, 4));
+    BlockEntityStatusMonitor monitor = panel(helper, MASTER);
+    probe(helper, monitor, MACHINE);
+    helper.succeedWhen(() -> {
+      if (monitor.status() != BlockEntityStatusMonitor.STATUS_OK) {
+        throw TestUtil.assertion(helper, "monitor status " + monitor.status());
+      }
+      if (!monitor.data().getBooleanOr(GenericStatusSources.TAG_BURNING, false)) {
+        throw TestUtil.assertion(helper, "furnace not reported as lit");
+      }
+      if (monitor.data().getIntOr(GenericStatusSources.TAG_COOK_TOTAL, 0) <= 0
+          || monitor.data().getIntOr(GenericStatusSources.TAG_COOK, 0) <= 0) {
+        throw TestUtil.assertion(helper, "furnace progress not reported: " + monitor.data());
+      }
+    });
+  }
 }

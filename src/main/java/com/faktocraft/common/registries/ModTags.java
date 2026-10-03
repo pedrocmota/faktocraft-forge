@@ -31,6 +31,6 @@ public class ModTags {
   }
 
   public static TagKey<Item> commonItemTag(String path) {
-    return TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("forge", path));
+    return TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", path));
   }
 }

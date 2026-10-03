@@ -35,6 +35,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import org.jetbrains.annotations.Nullable;
@@ -66,11 +68,23 @@ public final class StatusMonitorTextures {
   private StatusMonitorTextures() {
   }
 
+  private static int reloadGeneration;
+
   private static final class Entry {
     private final int slot;
     private final Identifier location;
     private final TextureTarget target;
     private long lastSeen;
+    private boolean drawn;
+    @Nullable
+    private BlockEntityStatusMonitor source;
+    private int version;
+    private boolean joinedLeft;
+    private boolean joinedRight;
+    private int reload;
+    private int windowWidth;
+    private int windowHeight;
+    private int guiScale;
 
     private Entry(int slot, Identifier location, TextureTarget target) {
       this.slot = slot;
@@ -116,7 +130,7 @@ public final class StatusMonitorTextures {
     }
     GlobalPos key = GlobalPos.of(level.dimension(), monitor.getBlockPos());
     Entry entry = ENTRIES.get(key);
-    if (refresh || entry == null) {
+    if (entry == null || (refresh && stale(entry, monitor))) {
       PENDING.put(key, monitor);
     }
     if (entry == null) {
@@ -124,6 +138,37 @@ public final class StatusMonitorTextures {
     }
     entry.lastSeen = frame;
     return entry.location;
+  }
+
+  private static boolean stale(Entry entry, BlockEntityStatusMonitor monitor) {
+    if (!entry.drawn || entry.source != monitor || entry.version != monitor.dataVersion()
+        || entry.reload != reloadGeneration) {
+      return true;
+    }
+    if (entry.joinedLeft != monitor.joinedLeft() || entry.joinedRight != monitor.joinedRight()) {
+      return true;
+    }
+    WindowRenderState window = Minecraft.getInstance().gameRenderer.gameRenderState().windowRenderState;
+    return entry.windowWidth != window.width || entry.windowHeight != window.height
+        || entry.guiScale != window.guiScale;
+  }
+
+  private static void remember(Entry entry, BlockEntityStatusMonitor monitor, WindowRenderState window) {
+    entry.drawn = true;
+    entry.source = monitor;
+    entry.version = monitor.dataVersion();
+    entry.joinedLeft = monitor.joinedLeft();
+    entry.joinedRight = monitor.joinedRight();
+    entry.reload = reloadGeneration;
+    entry.windowWidth = window.width;
+    entry.windowHeight = window.height;
+    entry.guiScale = window.guiScale;
+  }
+
+  @SubscribeEvent
+  public static void onAddReloadListeners(AddClientReloadListenersEvent event) {
+    event.addListener(Identifier.fromNamespaceAndPath(Faktocraft.MODID, "status_monitor_textures"),
+        (ResourceManagerReloadListener) manager -> reloadGeneration++);
   }
 
   @SubscribeEvent
@@ -165,6 +210,7 @@ public final class StatusMonitorTextures {
         }
         Entry entry = ENTRIES.computeIfAbsent(pending.getKey(), key -> create(mc));
         entry.lastSeen = frame;
+        remember(entry, monitor, window);
         RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(entry.target.getColorTexture(),
             GuiRenderer.CLEAR_COLOR, entry.target.getDepthTexture(), 0.0);
         GuiGraphicsExtractor graphics = new PanelExtractor(mc, renderState);

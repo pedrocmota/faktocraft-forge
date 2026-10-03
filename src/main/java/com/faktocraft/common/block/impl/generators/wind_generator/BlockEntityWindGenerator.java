@@ -295,4 +295,9 @@ public class BlockEntityWindGenerator extends FaktocraftBlockEntity implements I
     slots.add(new com.faktocraft.common.entity.slot.SlotBattery(0, 152, 62, true));
     return super.addBatterySlot(slots);
   }
+
+  @Override
+  protected boolean syncEnergyToWorld() {
+    return true;
+  }
 }

@@ -481,7 +481,9 @@ public class JEIPlugin implements IModPlugin {
               stack = screen.declaredInput();
             }
             if (stack.isEmpty()) {
-              return List.of();
+              return List.of(typesArea(
+                  com.faktocraft.common.block.impl.logistics.ScreenRecipePipe.ARROW_X,
+                  screen.arrowY(), 24, 16, MACHINE_TYPES));
             }
             return List.of(focusArea(
                 com.faktocraft.common.block.impl.logistics.ScreenRecipePipe.ARROW_X,
@@ -501,6 +503,14 @@ public class JEIPlugin implements IModPlugin {
           }
         });
   }
+
+  private static final mezz.jei.api.recipe.types.IRecipeType<?>[] MACHINE_TYPES = {
+      CrushingCategory.TYPE, CompressingCategory.TYPE, ExtractingCategory.TYPE, FluidExtrudingCategory.TYPE,
+      SawingCategory.TYPE, AlloySmeltingCategory.TYPE, CircuitAssemblingCategory.TYPE, RecyclingCategory.TYPE,
+      FluidEnrichingCategory.TYPE, OreWashingCategory.TYPE, PolymerizingCategory.TYPE,
+      ThermalCentrifugingCategory.TYPE, UraniumCentrifugingCategory.TYPE, ScannerCategory.TYPE,
+      RollingCategory.TYPE, CuttingCategory.TYPE, ExtrudingCategory.TYPE, FermentingCategory.TYPE,
+      DistillingCategory.TYPE, MatterFabricatingCategory.TYPE };
 
   private static mezz.jei.api.gui.handlers.IGuiClickableArea typesArea(int x, int y, int width, int height,
       mezz.jei.api.recipe.types.IRecipeType<?>... types) {

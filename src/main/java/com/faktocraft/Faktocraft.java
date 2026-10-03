@@ -89,5 +89,28 @@ public class Faktocraft {
 
   private static void onServerAboutToStart(ServerAboutToStartEvent event) {
     NbtBridge.setFallbackRegistries(event.getServer().registryAccess());
+    importLegacyServerConfig(event.getServer());
+  }
+
+  private static void importLegacyServerConfig(net.minecraft.server.MinecraftServer server) {
+    String file = "faktocraft-basic-server.toml";
+    java.nio.file.Path legacy = server.getWorldPath(new net.minecraft.world.level.storage.LevelResource("serverconfig"))
+        .resolve(file);
+    java.nio.file.Path syncedDir = server.getWorldPath(
+        new net.minecraft.world.level.storage.LevelResource("syncedconfig"));
+    java.nio.file.Path synced = syncedDir.resolve(file);
+    if (!java.nio.file.Files.isRegularFile(legacy) || java.nio.file.Files.exists(synced)) {
+      return;
+    }
+    try {
+      java.nio.file.Files.createDirectories(syncedDir);
+      java.nio.file.Files.copy(legacy, synced);
+    } catch (java.io.IOException e) {
+      LOGGER.warn("Could not import legacy server config {}", legacy, e);
+      return;
+    }
+    net.neoforged.fml.config.ConfigTracker.INSTANCE.loadConfigs(net.neoforged.fml.config.ModConfig.Type.SYNCED,
+        net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get(), syncedDir);
+    LOGGER.info("Imported legacy server config {} into {}", legacy, synced);
   }
 }

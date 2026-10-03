@@ -45,6 +45,7 @@ public class ChargingBattery extends ElectricItem {
 
   @Override
   public void inventoryTick(ItemStack stack, ServerLevel level, Entity owner, @Nullable EquipmentSlot slot) {
+    super.inventoryTick(stack, level, owner, slot);
     if (!(owner instanceof Player player)) {
       return;
     }

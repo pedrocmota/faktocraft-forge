@@ -3,6 +3,7 @@ package com.faktocraft.common.registries;
 import com.faktocraft.common.recipe.impl.AdvancedShapedRecipe;
 import com.faktocraft.common.recipe.impl.AlloySmeltingRecipe;
 import com.faktocraft.common.recipe.impl.CompressingRecipe;
+import com.faktocraft.common.recipe.impl.ConsumingShapedRecipe;
 import com.faktocraft.common.recipe.impl.CrushingRecipe;
 import com.faktocraft.common.recipe.impl.CuttingRecipe;
 import com.faktocraft.common.recipe.impl.ExtractingRecipe;
@@ -55,6 +56,8 @@ public final class ModRecipeSerializer {
 
   public static final RecipeSerializer<AdvancedShapedRecipe> ADVANCED_SHAPED = register("advanced_shaped",
       AdvancedShapedRecipe.SERIALIZER);
+  public static final RecipeSerializer<ConsumingShapedRecipe> CONSUMING_SHAPED = register("consuming_shaped",
+      ConsumingShapedRecipe.SERIALIZER);
 
   private static <T extends Recipe<?>> RecipeSerializer<T> register(String key, RecipeSerializer<T> serializer) {
     return RegistrationHandler.recipeSerializer(key, serializer);

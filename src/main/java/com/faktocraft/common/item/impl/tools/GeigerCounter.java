@@ -75,6 +75,7 @@ public class GeigerCounter extends BaseItem {
 
   @Override
   public void inventoryTick(ItemStack stack, ServerLevel serverLevel, Entity owner, @Nullable EquipmentSlot slot) {
+    super.inventoryTick(stack, serverLevel, owner, slot);
     Level level = serverLevel;
     if (!(owner instanceof Player player) || !held(player, stack)) {
       return;

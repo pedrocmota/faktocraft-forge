@@ -1,6 +1,8 @@
 package com.faktocraft.common.block.impl.logistics;
 
+import com.faktocraft.common.util.LegacyTags;
 import com.faktocraft.common.util.NbtBridge;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -8,9 +10,13 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public final class ModuleSettings {
 
@@ -57,6 +63,43 @@ public final class ModuleSettings {
   private ModuleSettings() {
   }
 
+  private static final class Parsed {
+    @Nullable
+    private final CustomData data;
+    private final CompoundTag root;
+    @Nullable
+    private List<FilterLine> lines;
+
+    private Parsed(@Nullable CustomData data, CompoundTag root) {
+      this.data = data;
+      this.root = root;
+    }
+
+    private List<FilterLine> lines() {
+      if (lines == null) {
+        lines = Collections.unmodifiableList(ModuleSettings.lines(root));
+      }
+      return lines;
+    }
+  }
+
+  private static final Map<ItemStack, Parsed> PARSED = Collections.synchronizedMap(new WeakHashMap<>());
+
+  private static Parsed parsed(ItemStack module) {
+    CustomData data = module.get(DataComponents.CUSTOM_DATA);
+    Parsed parsed = PARSED.get(module);
+    if (parsed == null || parsed.data != data) {
+      CompoundTag root = data == null ? new CompoundTag() : data.copyTag().getCompoundOrEmpty(ROOT);
+      parsed = new Parsed(data, root);
+      PARSED.put(module, parsed);
+    }
+    return parsed;
+  }
+
+  private static CompoundTag readRoot(ItemStack module) {
+    return parsed(module).root;
+  }
+
   private static CompoundTag root(ItemStack module) {
     return NbtBridge.customDataOrEmpty(module).getCompoundOrEmpty(ROOT);
   }
@@ -66,7 +109,7 @@ public final class ModuleSettings {
   }
 
   public static List<FilterLine> lines(ItemStack module) {
-    return lines(root(module));
+    return new ArrayList<>(parsed(module).lines());
   }
 
   public static List<FilterLine> lines(CompoundTag rootTag) {
@@ -74,10 +117,12 @@ public final class ModuleSettings {
     ListTag list = rootTag.getListOrEmpty("lines");
     for (int i = 0; i < Math.min(list.size(), MAX_LINES); i++) {
       CompoundTag entry = list.getCompoundOrEmpty(i);
+      LineMode mode = LineMode.values()[Math.floorMod(entry.getByteOr("mode", (byte) 0), LineMode.values().length)];
+      String text = entry.getStringOr("text", "");
       result.add(new FilterLine(
-          LineMode.values()[Math.floorMod(entry.getByteOr("mode", (byte) 0), LineMode.values().length)],
+          mode,
           NbtBridge.loadStack(entry.getCompoundOrEmpty("item")),
-          entry.getStringOr("text", ""),
+          mode == LineMode.TAG ? LegacyTags.migrate(text) : text,
           entry.getBooleanOr("nbt", false),
           entry.getBooleanOr("dmg", false),
           entry.getIntOr("count", 0)));
@@ -119,7 +164,7 @@ public final class ModuleSettings {
   }
 
   public static int lineCount(ItemStack module) {
-    return lineCount(root(module));
+    return lineCount(readRoot(module));
   }
 
   public static int lineCount(CompoundTag rootTag) {
@@ -164,7 +209,7 @@ public final class ModuleSettings {
   }
 
   public static boolean anyLineMatches(ItemStack module, ItemStack stack) {
-    return anyMatches(lines(module), stack);
+    return anyMatches(parsed(module).lines(), stack);
   }
 
   public static boolean anyMatches(List<FilterLine> parsed, ItemStack stack) {
@@ -192,16 +237,16 @@ public final class ModuleSettings {
   public static final int TREE_VERSION = 1;
 
   public static boolean hasTree(ItemStack module) {
-    return root(module).contains("tree");
+    return readRoot(module).contains("tree");
   }
 
   public static boolean isTreeCurrent(ItemStack module) {
-    return root(module).getIntOr("treeV", 0) >= TREE_VERSION;
+    return readRoot(module).getIntOr("treeV", 0) >= TREE_VERSION;
   }
 
   public static java.util.Map<String, Boolean> treeOverrides(ItemStack module) {
     java.util.Map<String, Boolean> map = new java.util.LinkedHashMap<>();
-    CompoundTag tree = root(module).getCompoundOrEmpty("tree");
+    CompoundTag tree = readRoot(module).getCompoundOrEmpty("tree");
     for (String key : tree.keySet()) {
       map.put(key, tree.getBooleanOr(key, false));
     }
@@ -219,7 +264,7 @@ public final class ModuleSettings {
 
   public static java.util.Map<String, Integer> treeCounts(ItemStack module) {
     java.util.Map<String, Integer> map = new java.util.LinkedHashMap<>();
-    CompoundTag counts = root(module).getCompoundOrEmpty("counts");
+    CompoundTag counts = readRoot(module).getCompoundOrEmpty("counts");
     for (String key : counts.keySet()) {
       map.put(key, counts.getIntOr(key, 0));
     }
@@ -245,7 +290,7 @@ public final class ModuleSettings {
   }
 
   public static int getPriority(ItemStack module) {
-    return root(module).getIntOr("priority", 0);
+    return readRoot(module).getIntOr("priority", 0);
   }
 
   public static void setPriority(ItemStack module, int value) {
@@ -255,7 +300,7 @@ public final class ModuleSettings {
   }
 
   public static boolean getFlag(ItemStack module, String key) {
-    return root(module).getBooleanOr(key, false);
+    return readRoot(module).getBooleanOr(key, false);
   }
 
   public static void setFlag(ItemStack module, String key, boolean value) {
@@ -269,7 +314,7 @@ public final class ModuleSettings {
   public static final String FLAG_ALLOW_CRAFTS = "allowCrafts";
 
   public static int getMinReserve(ItemStack module) {
-    return root(module).getIntOr("reserve", 0);
+    return readRoot(module).getIntOr("reserve", 0);
   }
 
   public static void setMinReserve(ItemStack module, int value) {

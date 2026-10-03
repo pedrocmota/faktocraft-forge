@@ -26,9 +26,12 @@ public final class EnergyAudit {
     Map<BlockPos, EnergyNetwork> owner = new HashMap<>();
     for (EnergyNetwork network : networks.getNetworks()) {
       for (BlockPos pos : network.getConnections()) {
-        EnergyNetwork previous = owner.put(pos, network);
+        EnergyNetwork previous = owner.putIfAbsent(pos, network);
         if (previous != null && previous != network) {
           report(where, "position claimed by two networks", pos);
+        }
+        if (networks.getNetwork(pos) != (previous != null ? previous : network)) {
+          report(where, "owner index disagrees with the network list", pos);
         }
 
         if (level.isLoaded(pos) && !(level.getBlockState(pos).getBlock() instanceof BlockCable)) {

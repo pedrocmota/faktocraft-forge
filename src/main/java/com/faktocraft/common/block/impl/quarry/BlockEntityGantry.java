@@ -65,6 +65,9 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
   protected static final int REPLACEABLE_BUDGET = 16;
   protected static final int AREA_RETRY_TICKS = 60;
   protected static final float ARM_BASE_SPEED = 0.25F;
+  protected static final float ARM_BOOST_PER_POINT = 0.35F;
+  protected static final double DRAW_BOOST_PER_POINT = 1.6 / 0.65;
+  protected static final int MAX_UPGRADE_POINTS = 8;
   protected static final float GLOBAL_SPEED = 1.1F;
   protected static final float HEAD_HOVER = 1.03F;
   protected static final int DWELL_TICKS = 2;
@@ -117,6 +120,16 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
     @Override
     public boolean isItemValid(int slot, @NotNull ItemStack stack) {
       return false;
+    }
+
+    @Override
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+      inventory.setStackInSlot(slot, stack);
+    }
+
+    @Override
+    public boolean supportsSetStackInSlot() {
+      return true;
     }
   };
 
@@ -294,7 +307,11 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
         points += upgrade.isAdvancedUpgrade() ? 3 : 1;
       }
     }
-    return Math.min(points, 8);
+    return Math.min(points, MAX_UPGRADE_POINTS);
+  }
+
+  protected float baseSpeedMultiplier() {
+    return 1.0F;
   }
 
   protected int boostPoints() {
@@ -311,12 +328,17 @@ public abstract class BlockEntityGantry extends FaktocraftBlockEntity implements
   }
 
   public int maxDrawPerTick() {
-    return (int) Math.ceil(Math.max(1, configMaxDrawPerTick()) * GLOBAL_SPEED
-        * Math.pow(1.6 / 0.65, boostPoints()) * Math.pow(0.85, efficiencyPoints()));
+    float base = baseSpeedMultiplier();
+    double perPoint = DRAW_BOOST_PER_POINT / Math.pow(base, 1.0 / MAX_UPGRADE_POINTS);
+    return (int) Math.ceil(Math.max(1, configMaxDrawPerTick()) * GLOBAL_SPEED * base
+        * Math.pow(perPoint, boostPoints()) * Math.pow(0.85, efficiencyPoints()));
   }
 
   public float armSpeed() {
-    return GLOBAL_SPEED * Math.min(1.2F, ARM_BASE_SPEED * (1.0F + 0.35F * boostPoints()));
+    float base = baseSpeedMultiplier();
+    float maxGain = 1.0F + ARM_BOOST_PER_POINT * MAX_UPGRADE_POINTS;
+    float perPoint = (maxGain / base - 1.0F) / MAX_UPGRADE_POINTS;
+    return GLOBAL_SPEED * Math.min(1.2F, ARM_BASE_SPEED * base * (1.0F + perPoint * boostPoints()));
   }
 
   @Override
